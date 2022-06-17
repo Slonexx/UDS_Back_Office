@@ -21,7 +21,9 @@ class CreateGoodsTable extends Migration
 
             $table->float("offerPrice");
 
-            $table->string("article");
+            $table->string("article")->nullable();
+
+            $table->string("description");
 
             $table->timestamps();
 
