@@ -17,6 +17,8 @@ class InputMcController extends Controller
 
         $offerPrice = 0;
         $price = "";
+        $article = "";
+        $description = "";
 
 
             $service = new ImportDateHttpClient();
@@ -25,7 +27,8 @@ class InputMcController extends Controller
 
             $rows = $date->rows;
             $next = "";
-                 foreach ($rows as $rows_item){
+
+                foreach ($rows as $rows_item){
                     // $name = $row->name;
                      $salePrices_index = $rows_item->salePrices;
                      $attributes_index = $rows_item->attributes;
@@ -52,7 +55,15 @@ class InputMcController extends Controller
                          $index = $index+1;
                      }
 
-                     $product = goods::firstOrCreate([
+                    if(property_exists($rows_item, 'article') == true) $article = $rows_item->article; else  $article = "";
+                    if(property_exists($rows_item, 'description') == true) $description = $rows_item->description; else  $description = "";
+
+                    $images_index =  $rows_item->images;
+
+                    foreach ($images_index as $images_item){
+                        $product = $images_item->href;
+                    }
+                    /* $product = goods::firstOrCreate([
                           'id_MC' => $rows_item->id,
                       ],[
                           'id_MC' => $rows_item->id,
@@ -60,7 +71,9 @@ class InputMcController extends Controller
                           'price' => $price,
                           'offerPrice_type' => $offerPrice_type,
                           'offerPrice' => $offerPrice,
-                      ]);
+                          'article' => $article,
+                          'description' => $description,
+                      ]);*/
 
                  }
 
