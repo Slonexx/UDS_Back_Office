@@ -13,8 +13,10 @@ class goods extends Model
         'name',
         'price',
         'offerPrice_type',
-
         'offerPrice',
+        'article',
+        'description',
+
     ];
 
     use HasFactory;
