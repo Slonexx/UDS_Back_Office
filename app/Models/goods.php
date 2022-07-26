@@ -12,10 +12,15 @@ class goods extends Model
         'id_MC',
         'name',
         'price',
+        'stock',
         'offerPrice_type',
+        'offerSkipLoyalty',
         'offerPrice',
         'article',
         'description',
+        'photos',
+        'measurement',
+        'type_CATEGORY',
 
     ];
 

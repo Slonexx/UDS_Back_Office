@@ -17,13 +17,23 @@ class CreateGoodsTable extends Migration
 
             $table->float("price");
 
+            $table->integer("stock");
+
             $table->boolean("offerPrice_type");
+
+            $table->boolean("offerSkipLoyalty");
 
             $table->float("offerPrice");
 
-            $table->string("article")->nullable();
+            $table->string("article");
 
             $table->string("description");
+
+            $table->string("photos");
+
+            $table->string("measurement");
+
+            $table->string("type_CATEGORY");
 
             $table->timestamps();
 
