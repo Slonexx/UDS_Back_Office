@@ -15,4 +15,12 @@ class AgentController extends Controller
         
     }
 
+    public function insertAgentsToUds(){
+
+    }
+
+    public function insertAgentsToMs(){
+        
+    }
+
 }

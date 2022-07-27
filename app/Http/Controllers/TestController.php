@@ -17,16 +17,20 @@ class TestController extends Controller
         ]);
         $apiKey = $request->tokenMs;
 
-        $urlProduct = "https://online.moysklad.ru/api/remap/1.2/entity/product?search=TestMod";
-        $client = new MsClient($apiKey);
-        $json = $client->get($urlProduct);
-        $productMeta = $json->rows[0]->meta;
+        // $urlProduct = "https://online.moysklad.ru/api/remap/1.2/entity/product?search=TestMod";
+        // $client = new MsClient($apiKey);
+        // $json = $client->get($urlProduct);
+        // $productMeta = $json->rows[0]->meta;
 
-        $nameModify = "color";
-        $character = "red";
+        // $nameModify = "color";
+        // $character = "red";
         
-        app(ModifyProductController::class)->createModifyProductMs($productMeta,$nameModify,$character,$apiKey);
+        // app(ModifyProductController::class)->createModifyProductMs($productMeta,$nameModify,$character,$apiKey);
 
+        // $count = app(StockController::class)->getProductStockMs("TestMod",$apiKey);
+        // return $count;
+
+        
     }
 
 }
