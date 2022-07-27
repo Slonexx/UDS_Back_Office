@@ -23,9 +23,9 @@ class TestController extends Controller
         $productMeta = $json->rows[0]->meta;
 
         $nameModify = "color";
-        $characters = ["red", "blue", "white", "dark"];
+        $character = "red";
         
-        app(ModifyProductController::class)->createModifyProductMs($productMeta,$nameModify,$characters,$apiKey);
+        app(ModifyProductController::class)->createModifyProductMs($productMeta,$nameModify,$character,$apiKey);
 
     }
 

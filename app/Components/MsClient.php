@@ -27,7 +27,6 @@ class MsClient{
 
     public function post($url, $body){
         $res = $this->client->post($url,[
-            'Accept' => 'application/json',
             'body' => json_encode($body),
         ]);
         

@@ -9,31 +9,35 @@ use Illuminate\Support\Str;
 class ModifyProductController extends Controller
 {
     
-    public function createModifyProductMs($productMeta,$nameModify,$characters,$apiKey)
+    public function createModifyProductMs($productMeta,$nameModify,$character,$apiKey)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/variant";
         $client = new MsClient($apiKey);
-        $characteristics = [];
 
         $idCharacter = $this->getCharacterByName($nameModify,$apiKey);
         if($idCharacter == null){
             $idCharacter = $this->createCharacterByName($nameModify,$apiKey);
         }
 
-        foreach($characters as $character){
-                $ch['id'] = $idCharacter;
-                $ch['value'] = $character;
-                array_push($characteristics, $ch);
-        }
-
         $body = [
-            'characteristics' => $characteristics,
+            'name' => $nameModify,
+            'characteristics' => [
+                0 => [
+                    'id' => $idCharacter,
+                    'value' => $character,
+                ]
+            ],
              'product' => [
                  'meta' => $productMeta,
              ],
         ];
-        //dd(json_encode($body));
-        $client->post($url,$body);
+        
+        try {
+            $client->post($url,$body);
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+        
     }
 
     private function createCharacterByName($nameCharacter,$apiKey){
