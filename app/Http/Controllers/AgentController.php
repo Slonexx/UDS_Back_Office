@@ -28,6 +28,14 @@ class AgentController extends Controller
         return $json;
     }
 
+    public function notAddedAgentsInUds(){
+
+    }
+
+    public function notAddedAgentsInMs(){
+        
+    }
+
     public function insertAgentsToUds(){
 
     }
