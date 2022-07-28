@@ -14,8 +14,12 @@ class TestController extends Controller
 
         $request->validate([
             "tokenMs" => 'required|string',
+            "companyId" => "required|string",
+            "apiKeyUds" => "required|string",
         ]);
         $apiKey = $request->tokenMs;
+        $apiKeyUds = $request->apiKeyUds;
+        $companyId = $request->companyId;
 
         // $urlProduct = "https://online.moysklad.ru/api/remap/1.2/entity/product?search=TestMod";
         // $client = new MsClient($apiKey);
@@ -30,7 +34,8 @@ class TestController extends Controller
         // $count = app(StockController::class)->getProductStockMs("TestMod",$apiKey);
         // return $count;
 
-        
+        $json = app(AgentController::class)->getAgentUds($companyId, $apiKeyUds);
+        return $json;
     }
 
 }
