@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
-use Illuminate\Http\Request;
 
-class DocumentController extends Controller
+class DocumentService
 {
-
 
     # APPROVED_BY_BANK – одобрен банком
     #ACCEPTED_BY_MERCHANT– принят на обработку продавцом
@@ -16,7 +14,7 @@ class DocumentController extends Controller
     #CANCELLING – ожидает отмены
 
     #COMPLETED – завершён
-    
+
     #KASPI_DELIVERY_RETURN_REQUESTED – ожидает возврата
     #RETURN_ACCEPTED_BY_MERCHANT – ожидает решения по возврату
     #RETURNED – возвращён
@@ -48,7 +46,7 @@ class DocumentController extends Controller
         } elseif($isPayment == 1) {
             $uri = "https://online.moysklad.ru/api/remap/1.2/entity/cashin";
         }
-        
+
 
         //dd($metaOrder);
 
@@ -76,7 +74,7 @@ class DocumentController extends Controller
         if(array_key_exists("organizationAccount",$formattedOrder)){
             $docBody["organizationAccount"] = $formattedOrder['organizationAccount'];
         }
-        
+
 
         $client->post($uri,$docBody);
     }
@@ -105,7 +103,7 @@ class DocumentController extends Controller
         if(array_key_exists("organizationAccount",$formattedOrder)){
             $docBodyDemand["organizationAccount"] = $formattedOrder['organizationAccount'];
         }
-        
+
 
 
         $createdDemand = $client->post($uri,$docBodyDemand);
@@ -158,7 +156,7 @@ class DocumentController extends Controller
         if(array_key_exists("organizationAccount",$formattedOrder)){
             $docBodyReturn["organizationAccount"] = $formattedOrder['organizationAccount'];
         }
-        
+
 
 
         $createdReturn = $client->post($uri,$docBodyReturn);
@@ -216,7 +214,7 @@ class DocumentController extends Controller
         if(array_key_exists("organizationAccount",$formattedOrder)){
             $docBody["organizationAccount"] = $formattedOrder['organizationAccount'];
         }
-        
+
         $client->post($uri,$docBody);
     }
 

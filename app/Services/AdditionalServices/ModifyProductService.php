@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
-class ModifyProductController extends Controller
+class ModifyProductService
 {
-    
+
     public function createModifyProductMs($productMeta,$nameModify,$character,$apiKey)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/variant";
@@ -27,17 +25,17 @@ class ModifyProductController extends Controller
                     'value' => $character,
                 ]
             ],
-             'product' => [
-                 'meta' => $productMeta,
-             ],
+            'product' => [
+                'meta' => $productMeta,
+            ],
         ];
-        
+
         try {
             $client->post($url,$body);
         } catch (\Throwable $th) {
             dd($th);
         }
-        
+
     }
 
     private function createCharacterByName($nameCharacter,$apiKey){
@@ -46,7 +44,7 @@ class ModifyProductController extends Controller
         $body = [
             "name" => $nameCharacter,
         ];
-       return $client->post($url,$body)->id;
+        return $client->post($url,$body)->id;
     }
 
     private function getCharacterByName($nameCharacter,$apiKey){
@@ -65,7 +63,7 @@ class ModifyProductController extends Controller
 
     public function sendModifyUds()
     {
-                
+
     }
 
 }

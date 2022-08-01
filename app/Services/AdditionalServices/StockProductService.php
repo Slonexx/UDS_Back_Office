@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
-use Illuminate\Http\Request;
 
-class StockController extends Controller
+class StockProductService
 {
     public function getProductStockMs($nameProduct,$apiKey)
     {
