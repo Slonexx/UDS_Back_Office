@@ -8,43 +8,36 @@ use App\Components\UdsClient;
 class AgentService
 {
 
-    public function getAgentMs($apiKey)
+    private function getMs($apiKeyMs)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
-        $client = new MsClient($apiKey);
-        $json = $client->get($url);
-        return $json;
+        $client = new MsClient($apiKeyMs);
+        return $client->get($url);
     }
 
-    private function getAgentUds($companyId, $apiKey)
+    private function getUds($companyId, $apiKeyUds)
     {
         $url = "https://api.uds.app/partner/v2/customers";
-        $client = new UdsClient($companyId,$apiKey);
-        try{
-            $json = $client->get($url);
-        } catch (\Throwable $th) {
-            dd($th);
-        }
-
-        return $json;
+        $client = new UdsClient($companyId,$apiKeyUds);
+        return $client->get($url);
     }
 
-    private function notAddedAgentsInUds()
+    private function notAddedInUds()
     {
 
     }
 
-    private function notAddedAgentsInMs()
+    private function notAddedInMs()
     {
 
     }
 
-    public function insertAgentsToUds()
+    public function insertToUds()
     {
 
     }
 
-    public function insertAgentsToMs()
+    public function insertToMs()
     {
 
     }

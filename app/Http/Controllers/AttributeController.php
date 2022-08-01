@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AttributeService;
+use App\Services\AdditionalServices\AttributeService;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
@@ -19,11 +19,11 @@ class AttributeController extends Controller
 
     public function setAllAttributes(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             "tokenMs" => 'required|string',
         ]);
 
-        $this->attributeService->setAllAttributesMs($request->input('tokenMs'));
+        $this->attributeService->setAllAttributesMs($data["tokenMs"]);
 
     }
 

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
-use Illuminate\Http\Client\Pool;
 
 class AttributeService
 {

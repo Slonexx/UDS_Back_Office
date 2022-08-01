@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class AgentController extends Controller
 {
-    private $agentService;
+    private AgentService $agentService;
 
     /**
      * @param AgentService $agentService
@@ -19,13 +19,12 @@ class AgentController extends Controller
 
     public function insertMs(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
         ]);
-
-
+        //dd($data);
 
     }
 
@@ -36,7 +35,6 @@ class AgentController extends Controller
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
         ]);
-
     }
 
 }
