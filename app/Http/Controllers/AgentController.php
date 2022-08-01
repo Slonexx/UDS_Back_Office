@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\MsClient;
-use App\Components\UdsClient;
 use App\Services\AgentService;
 use Illuminate\Http\Request;
 
@@ -26,6 +24,7 @@ class AgentController extends Controller
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
         ]);
+
 
 
     }

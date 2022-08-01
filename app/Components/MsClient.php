@@ -2,6 +2,9 @@
 
 namespace App\Components;
 use GuzzleHttp\Client;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class MsClient{
 
@@ -11,7 +14,7 @@ class MsClient{
         $this->apiKey = $apiKey;
         $this->client = new Client([
             'headers' => [
-                'Authorization' => $apiKey, 
+                'Authorization' => $apiKey,
                 'Content-Type' => 'application/json',
             ]
         ]);
@@ -20,8 +23,7 @@ class MsClient{
     public function get($url){
         $res = $this->client->get($url,[
             'Accept' => 'application/json',
-        ]
-    );
+        ]);
         return json_decode($res->getBody());
     }
 
@@ -29,7 +31,7 @@ class MsClient{
         $res = $this->client->post($url,[
             'body' => json_encode($body),
         ]);
-        
+
         return json_decode($res->getBody());
     }
 
@@ -40,5 +42,26 @@ class MsClient{
          ]);
          return json_decode($res->getBody());
     }
+
+/*    public function multiPost($url,$bodyArr)
+    {
+        try {
+
+            //$responses =
+                Http::pool(function (Pool $pool) use ($url, $bodyArr){
+                foreach ($bodyArr as $body){
+                    $pool->contentType('application/json')
+                        ->withToken($this->apiKey)
+                        ->post($url,$body);
+                }
+            });
+
+            //dd($responses);
+
+        } catch (RequestException $e){
+            dd($e);
+        }
+
+    }*/
 
 }
