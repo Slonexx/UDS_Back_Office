@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appId' => 'ac217934-edaf-4975-91ae-a0ea408727de',
-    'appUid' => 'kaspi.smartinnovations',
-    'secretKey' => 'MfMotwWe278gFKnpspgxLeWyNkr8eAc4upnz9MJtCIyX9N41rOcKkuYJnIR8WHguSSh5kPUzkWbsFoVh62UzamYYIbJHHQGFuGUSTETgVw304VGvDHKB54TtxsRG6l0U',
-    'appBaseUrl' => 'https://smartkaspi.kz/',
+    'appId' => '1e0e2609-2839-4667-a2f7-964f939c66d3',
+    'appUid' => 'udsbackoffice.smartinnovations',
+    'secretKey' => 'yrLVLeOAiAmtrI5K1HTCGano7VybaSVjPtqWBMnia53iStLaX8KXCET4VvM6INc2Nbz1NbeSTHv5KiCTe3UcEfok8gv8sFDkEqcBi9krAnCy7Rt1y1dIcbcaZPLxKfG5',
+    'appBaseUrl' => 'https://smartuds.kz/',
 ];

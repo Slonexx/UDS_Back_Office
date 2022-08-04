@@ -15,6 +15,8 @@ class SettingController extends Controller
         return view('web.setting.index');
     }
 
+
+
     public function indexDocument(Request $request, $accountId){
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";

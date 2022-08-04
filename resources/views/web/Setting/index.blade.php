@@ -25,7 +25,7 @@
                     <div class="row mt-3">
                         <label class="mx-3">API Key</label>
                         <div class="col-sm-10">
-                            <input type="text" name="companyId" id="companyId" placeholder="API Key"
+                            <input type="text" name="UDSAPIKEY" id="UDSAPIKEY" placeholder="API Key"
                                    class="form-control form-control-orange" required maxlength="255" value="">
                         </div>
                     </div>
