@@ -15,14 +15,14 @@
             </nav>
             <br>
             <div class="toc-list-h1">
-                <a href="{{ route('index') }}">Главная </a>
+                <a href="{{ route('indexMain', ['accountId' => $accountId] ) }}">Главная </a>
                 <div>
                     <button class="dropdown-btn">Настройки
                         <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-container">
-                        <a href="/Setting/12"> Основная </a>
-                        <a href="/Setting/Document/12"> Документы </a>
-                        <a href="/Setting/Add/12"> Дополнительные настройки </a>
+                        <a href="/Setting/{{$accountId}}"> Основная </a>
+                        <a href="/Setting/Document/{{$accountId}}"> Документы </a>
+                        <a href="/Setting/Add/{{$accountId}}"> Дополнительные настройки </a>
                     </div>
                 </div>
                 <a href="">Журнал логов</a>

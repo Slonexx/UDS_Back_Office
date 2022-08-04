@@ -14,7 +14,9 @@ class SettingController extends Controller
 
         $Setting = new getSettingVendorController($accountId);
 
-        return view('web.Setting.index');
+        return view('web.Setting.index', [
+            "accountId"=> $accountId
+        ]);
     }
 
 
@@ -26,22 +28,16 @@ class SettingController extends Controller
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
 
         $Setting = new getSettingVendorController($accountId);
-        $TokenMoySklad = "d86064d4eb4b4a923ff2e679e28774ab63a48c58";
-        $TokenKaspi = $Setting->TokenKaspi;
-
+        $TokenMoySklad = $Setting->TokenMoySklad;
         $Organization = $Setting->Organization;
-
-
         $PaymentDocument = $Setting->PaymentDocument;
-        if ($PaymentDocument == null) $PaymentDocument = "0";
-
         $Document = $Setting->Document;
-        if ($Document == null) $Document = "0";
-
         $PaymentAccount = $Setting->PaymentAccount;
-        if ($PaymentAccount == null) $PaymentAccount = "0";
-
         $Store = $Setting->Store;
+
+        if ($PaymentDocument == null) $PaymentDocument = "0";
+        if ($Document == null) $Document = "0";
+        if ($PaymentAccount == null) $PaymentAccount = "0";
         if ($Store == null) $Store = "0";
 
         if($Organization != null){
@@ -62,15 +58,17 @@ class SettingController extends Controller
             ]);
         }
 
-        return view('web.setting.document', ['Body' => $responses['body']->object()->states,
+        return view('web.setting.document', [
+            'Body' => $responses['body']->object()->states,
             "Body_organization" => $responses['body_organization']->object()->rows,
             "Body_store" => $responses['body_store']->object()->rows,
-            "TokenKaspi" => $TokenKaspi,
+
             "Organization" => $Organization,
             "PaymentDocument" => $PaymentDocument,
             "Document" => $Document,
             "PaymentAccount" => $PaymentAccount,
             "Store" => $Store,
+
             "apiKey" => $TokenMoySklad,
             'accountId' => $accountId,
         ]);
@@ -78,38 +76,19 @@ class SettingController extends Controller
 
     public function indexAdd(Request $request, $accountId){
 
-        if($request->has('error')) {
-            if( $request->error != "0" ) $error = $request->error;
-            else $error = "0" ;
-        }
-        else $error = "0" ;
-
-        if($request->has('success')) {
-            if( $request->success != "0" ) $success = $request->success;
-            else $success = "0" ;
-        }
-        else $success = "0" ;
-
         $Setting = new getSettingVendorController($accountId);
-        $TokenMoySklad = "d86064d4eb4b4a923ff2e679e28774ab63a48c58";
+        $TokenMoySklad = $Setting->TokenMoySklad;
 
         $Saleschannel = $Setting->Saleschannel;
-        if ($Saleschannel == null) $Saleschannel = "0";
-
         $Project = $Setting->Project;
+
+        if ($Saleschannel == null) $Saleschannel = "0";
         if ($Project == null) $Project = "0";
 
-        $CheckCreatProduct = $Setting->CheckCreatProduct;
-        if ($CheckCreatProduct == null) $CheckCreatProduct = "1";
-
-        $Store = $Setting->Store;
-        if ($Store == null) $Store = "0";
-
-        $APPROVED_BY_BANK = $Setting->APPROVED_BY_BANK;
-        $ACCEPTED_BY_MERCHANT = $Setting->ACCEPTED_BY_MERCHANT;
+        $NEW = $Setting->NEW;
         $COMPLETED = $Setting->COMPLETED;
-        $CANCELLED = $Setting->CANCELLED;
-        $RETURNED = $Setting->RETURNED;
+        $DELETED = $Setting->DELETED;
+        $WAITING_PAYMENT = $Setting->WAITING_PAYMENT;
 
         $Organization = $Setting->Organization; //ПРОВЕРКА НА НАСТРОЙКИ ВЫШЕ
 
@@ -130,12 +109,12 @@ class SettingController extends Controller
 
             "Saleschannel" => $Saleschannel,
             "Project" => $Project,
-            "CheckCreatProduct" => $CheckCreatProduct,
-            "Store" => $Store,
-            "APPROVED_BY_BANK" => $APPROVED_BY_BANK,
-            "ACCEPTED_BY_MERCHANT" => $ACCEPTED_BY_MERCHANT,
+
+            "NEW" => $NEW,
             "COMPLETED" => $COMPLETED,
-            "CANCELLED" => $CANCELLED,
-            "RETURNED" => $RETURNED,]);
+            "DELETED" => $DELETED,
+            "WAITING_PAYMENT" => $WAITING_PAYMENT,
+
+            ]);
     }
 }
