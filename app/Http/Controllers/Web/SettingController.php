@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
@@ -33,19 +34,35 @@ class SettingController extends Controller
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
 
-        $app->companyId = $request->companyId;
-        $app->TokenUDS = $request->TokenUDS;
+        $Client = new UdsClient($request->companyId, $request->TokenUDS);
+        $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
+        if ($body == 200){
+            $app->companyId = $request->companyId;
+            $app->TokenUDS = $request->TokenUDS;
+            $app->status = AppInstanceContoller::ACTIVATED;
 
-        $app->status = AppInstanceContoller::ACTIVATED;
+            $vendorAPI = new VendorApiController();
+            $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
 
-        $vendorAPI = new VendorApiController();
-        $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
+            $app->persist();
 
-        $app->persist();
+            $message = "Настройки сохранились!";
+        } else {
+            $message = "Не верный ID Компании или API Key";
+        }
+
+
+
+
 
 
         return view('web.Setting.index', [
-            "accountId"=> $accountId
+            "accountId"=> $accountId,
+
+            "companyId"=> $request->companyId,
+            "TokenUDS"=> $request->TokenUDS,
+
+            "message" => $message,
         ]);
     }
 

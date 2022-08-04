@@ -8,7 +8,14 @@
         <h4> <i class="fa-solid fa-gears text-orange"></i> Данные для интеграции</h4>
 
         <br>
+        @isset($message)
 
+            <div class="alert alert-success alert-dismissible fade show in text-center "> {{ $message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            </div>
+
+        @endisset
 
 
         <form action="  {{ route( 'setSettingIndex' , ['accountId' => $accountId] ) }} " method="post">

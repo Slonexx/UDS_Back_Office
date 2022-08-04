@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 
 class UdsClient {
-    
+
     private Client $client;
 
     public function __construct($companyId, $apiKey) {
@@ -33,6 +33,19 @@ class UdsClient {
         return json_decode($res->getBody());
     }
 
+    public function getisErrors($url){
+        $date = new DateTime();
+        $uuid_v4 = Str::uuid();
+        $res = $this->client->get($url,[
+                "Accept" => "application/json",
+                "X-Origin-Request-Id" => $uuid_v4,
+                "X-Timestamp" => $date->format(DateTime::ATOM),
+                'http_errors' => false,
+                ]
+        );
+        return json_decode($res->getStatusCode());
+    }
+
     public function post($url, $body){
         $date = new DateTime();
         $uuid_v4 = Str::uuid();
@@ -42,7 +55,7 @@ class UdsClient {
                 "X-Timestamp" => $date->format(DateTime::ATOM),
             'body' => json_encode($body),
         ]);
-        
+
         return json_decode($res->getBody());
     }
 
