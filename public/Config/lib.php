@@ -57,12 +57,9 @@ class AppInstanceContoller {
         file_put_contents($this->filename(), serialize($this));
     }
 
-
-    //НЕ ЗАБЫТЬ
     function deleteAnway(){
-        $url = 'https://smartkaspi.kz/api/DeleteVendorApi/'.$this->appId.'/'.$this->accountId;
+        $url = 'https://smartuds.kz/DeleteVendorApi/'.$this->appId.'/'.$this->accountId;
         $result = file_get_contents($url);
-        $this->loginfo('Удлаение', $result);
     }
 
     private function filename() {

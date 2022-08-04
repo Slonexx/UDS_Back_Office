@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\SettingController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Web\indexController;
+use \App\Http\Controllers\Config\DeleteVendorApiController;
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
@@ -13,3 +14,6 @@ Route::get('/Setting/Add/{id}', [SettingController::class, 'indexAdd'])->name('i
 
 
 Route::post('/setSetting/{id}', [SettingController::class, 'index'])->name('setSetting');
+
+
+Route::post('/DeleteVendorApi/{appId}/{accountId}', [DeleteVendorApiController::class, 'Delete']);
