@@ -57,7 +57,7 @@ class AppInstanceContoller {
         file_put_contents($this->filename(), serialize($this));
     }
 
-    function deleteAnway(){
+    function deleteAnyway(){
         $url = 'https://smartuds.kz/DeleteVendorApi/'.$this->appId.'/'.$this->accountId;
         $result = file_get_contents($url);
     }

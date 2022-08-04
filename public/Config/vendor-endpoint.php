@@ -32,7 +32,7 @@ switch ($method) {
     case 'GET':
         break;
     case 'DELETE':
-        $app->deleteAnway();
+        $app->deleteAnyway();
         $replyStatus = false;
         break;
 }

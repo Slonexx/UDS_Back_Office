@@ -16,4 +16,4 @@ Route::get('/Setting/Add/{id}', [SettingController::class, 'indexAdd'])->name('i
 Route::post('/setSetting/{id}', [SettingController::class, 'index'])->name('setSetting');
 
 
-Route::post('/DeleteVendorApi/{appId}/{accountId}', [DeleteVendorApiController::class, 'Delete']);
+Route::get('DeleteVendorApi/{appId}/{accountId}', [DeleteVendorApiController::class, 'Delete'])->name('Delete');
