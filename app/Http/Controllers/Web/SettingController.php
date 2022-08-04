@@ -58,7 +58,7 @@ class SettingController extends Controller
             ]);
         }
 
-        return view('web.setting.document', [
+        return view('web.Setting.document', [
             'Body' => $responses['body']->object()->states,
             "Body_organization" => $responses['body_organization']->object()->rows,
             "Body_store" => $responses['body_store']->object()->rows,
@@ -103,7 +103,7 @@ class SettingController extends Controller
 
 
 
-        return view('web.setting.documentAdd',[
+        return view('web.Setting.documentAdd',[
             "Body_saleschannel" => $responses['body_saleschannel']->object()->rows,
             "Body_project" => $responses['body_project']->object()->rows,
 
@@ -115,6 +115,7 @@ class SettingController extends Controller
             "DELETED" => $DELETED,
             "WAITING_PAYMENT" => $WAITING_PAYMENT,
 
+            "accountId"=> $accountId
             ]);
     }
 }
