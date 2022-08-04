@@ -59,6 +59,18 @@ class AttributeService
                 "required" => false,
                 "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
+            8 => [
+                "name" => "id (UDS)",
+                "type" => "string",
+                "required" => false,
+                "description" => "id (UDS)",
+            ],
+            9 => [
+                "name" => "Ограничен товар (UDS)",
+                "type" => "boolean",
+                "required" => false,
+                "description" => "Ограничен товар (UDS)",
+            ],
         ];
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
@@ -70,7 +82,12 @@ class AttributeService
     private function createAgentAttributes($apiKeyMs): void
     {
         $bodyAttributes = [
-
+            0 => [
+                "name" => "id (UDS)",
+                "type" => "string",
+                "required" => false,
+                "description" => "id (UDS)",
+            ]
         ];
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty/metadata/attributes";
@@ -129,11 +146,11 @@ class AttributeService
     {
         $this->createProductAttributes($apiKeyMs);
         //$this->createAgentAttributes($apiKeyMs);
-        $this->createOrderAttributes($apiKeyMs);
-        $this->createDemandAttributes($apiKeyMs);
-        $this->createPaymentInAttributes($apiKeyMs);
-        $this->createCashInAttributes($apiKeyMs);
-        $this->createInvoiceOutAttributes($apiKeyMs);
+        //$this->createOrderAttributes($apiKeyMs);
+       // $this->createDemandAttributes($apiKeyMs);
+       // $this->createPaymentInAttributes($apiKeyMs);
+      //  $this->createCashInAttributes($apiKeyMs);
+       // $this->createInvoiceOutAttributes($apiKeyMs);
     }
 
     //returns doc attribute values

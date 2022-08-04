@@ -25,16 +25,18 @@ class AgentController extends Controller
             "apiKeyUds" => "required|string",
         ]);
         //dd($data);
-
+        return response(
+            $this->agentService->insertToMs($data)
+        );
     }
 
-    public function insertUds(Request $request)
-    {
-        $request->validate([
-            "tokenMs" => 'required|string',
-            "companyId" => "required|string",
-            "apiKeyUds" => "required|string",
-        ]);
-    }
+//    public function insertUds(Request $request)
+//    {
+//        $request->validate([
+//            "tokenMs" => 'required|string',
+//            "companyId" => "required|string",
+//            "apiKeyUds" => "required|string",
+//        ]);
+//    }
 
 }
