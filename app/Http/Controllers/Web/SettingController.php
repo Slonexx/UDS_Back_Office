@@ -12,7 +12,11 @@ class SettingController extends Controller
 {
     public function index(Request $request, $accountId){
 
-        return view('web.setting.index');
+        $Setting = new getSettingVendorController($accountId);
+        dd($Setting);
+
+
+        return view('web.Setting.index');
     }
 
 
@@ -24,7 +28,7 @@ class SettingController extends Controller
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
 
         $Setting = new getSettingVendorController($accountId);
-        $TokenMoySklad = "12bab5e9858389546cb46a53f126eef4e31020da";
+        $TokenMoySklad = "d86064d4eb4b4a923ff2e679e28774ab63a48c58";
         $TokenKaspi = $Setting->TokenKaspi;
 
         $Organization = $Setting->Organization;
@@ -89,7 +93,7 @@ class SettingController extends Controller
         else $success = "0" ;
 
         $Setting = new getSettingVendorController($accountId);
-        $TokenMoySklad = "12bab5e9858389546cb46a53f126eef4e31020da";
+        $TokenMoySklad = "d86064d4eb4b4a923ff2e679e28774ab63a48c58";
 
         $Saleschannel = $Setting->Saleschannel;
         if ($Saleschannel == null) $Saleschannel = "0";

@@ -15,20 +15,22 @@ class AppInstanceContoller
     var $appId;
     var $accountId;
     var $TokenMoySklad;
-    var $TokenKaspi;
+    var $companyId;
+    var $TokenUDS;
+
     var $Organization;
     var $PaymentDocument;
     var $Document;
     var $PaymentAccount;
+    var $Store;
+
     var $Saleschannel;
     var $Project;
-    var $CheckCreatProduct;
-    var $Store;
-    var $APPROVED_BY_BANK;
-    var $ACCEPTED_BY_MERCHANT;
+
+    var $NEW;
     var $COMPLETED;
-    var $CANCELLED;
-    var $RETURNED;
+    var $DELETED;
+    var $WAITING_PAYMENT;
 
     var $status = AppInstanceContoller::UNKNOWN;
 
@@ -102,20 +104,23 @@ class AppInstanceContoller
         $this->appId = $json->appId;
         $this->accountId = $json->accountId;
         $this->TokenMoySklad = $json->TokenMoySklad;
-        $this->TokenKaspi = $json->TokenKaspi;
+        $this->companyId = $json->companyId;
+        $this->TokenUDS = $json->TokenUDS;
+
         $this->Organization = $json->Organization;
         $this->PaymentDocument = $json->PaymentDocument;
-        $this->Saleschannel = $json->Saleschannel;
-        $this->Project = $json->Project;
         $this->Document = $json->Document;
         $this->PaymentAccount = $json->PaymentAccount;
-        $this->CheckCreatProduct = $json->CheckCreatProduct;
         $this->Store = $json->Store;
-        $this->APPROVED_BY_BANK = $json->APPROVED_BY_BANK;
-        $this->ACCEPTED_BY_MERCHANT = $json->ACCEPTED_BY_MERCHANT;
+
+        $this->Saleschannel = $json->Saleschannel;
+        $this->Project = $json->Project;
+
+        $this->NEW = $json->NEW;
         $this->COMPLETED = $json->COMPLETED;
-        $this->CANCELLED = $json->CANCELLED;
-        $this->RETURNED = $json->RETURNED;
+        $this->DELETED = $json->DELETED;
+        $this->WAITING_PAYMENT = $json->WAITING_PAYMENT;
+
     }
 
 }

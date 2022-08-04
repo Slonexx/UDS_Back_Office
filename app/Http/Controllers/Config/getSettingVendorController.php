@@ -13,21 +13,22 @@ class getSettingVendorController extends Controller
     var $appId;
     var $accountId;
     var $TokenMoySklad;
-    var $TokenKaspi;
+    var $companyId;
+    var $TokenUDS;
+
     var $Organization;
     var $PaymentDocument;
     var $Document;
     var $PaymentAccount;
+    var $Store;
+
     var $Saleschannel;
     var $Project;
-    var $CheckCreatProduct;
-    var $Store;
-    var $APPROVED_BY_BANK;
-    var $ACCEPTED_BY_MERCHANT;
+
+    var $NEW;
     var $COMPLETED;
-    var $CANCELLED;
-    var $RETURNED;
-    var $APP;
+    var $DELETED;
+    var $WAITING_PAYMENT;
 
     public function __construct($accountId)
     {
@@ -35,28 +36,29 @@ class getSettingVendorController extends Controller
         $cfg = new cfg();
 
         $appId = $cfg->appId;
-        $app = AppInstanceContoller::loadApp($appId, $accountId);
+        $json = AppInstanceContoller::loadApp($appId, $accountId);
 
-        $this->appId = $app->appId;
-        $this->accountId = $app->accountId;
-        $this->TokenMoySklad = $app->TokenMoySklad;
-        $this->TokenKaspi = $app->TokenKaspi;
-        $this->Organization = $app->Organization;
-        $this->PaymentDocument = $app->PaymentDocument;
-        $this->Document = $app->Document;
-        $this->PaymentAccount = $app->PaymentAccount;
-        $this->Saleschannel = $app->Saleschannel;
-        $this->Project = $app->Project;
-        $this->CheckCreatProduct = $app->CheckCreatProduct;
-        $this->Store = $app->Store;
-        $this->APPROVED_BY_BANK = $app->APPROVED_BY_BANK;
-        $this->ACCEPTED_BY_MERCHANT = $app->ACCEPTED_BY_MERCHANT;
-        $this->COMPLETED = $app->COMPLETED;
-        $this->CANCELLED = $app->CANCELLED;
-        $this->RETURNED = $app->RETURNED;
-        $this->APP = $app;
+        $this->appId = $json->appId;
+        $this->accountId = $json->accountId;
+        $this->TokenMoySklad = $json->TokenMoySklad;
+        $this->companyId = $json->companyId;
+        $this->TokenUDS = $json->TokenUDS;
 
-        return $app;
+        $this->Organization = $json->Organization;
+        $this->PaymentDocument = $json->PaymentDocument;
+        $this->Document = $json->Document;
+        $this->PaymentAccount = $json->PaymentAccount;
+        $this->Store = $json->Store;
+
+        $this->Saleschannel = $json->Saleschannel;
+        $this->Project = $json->Project;
+
+        $this->NEW = $json->NEW;
+        $this->COMPLETED = $json->COMPLETED;
+        $this->DELETED = $json->DELETED;
+        $this->WAITING_PAYMENT = $json->WAITING_PAYMENT;
+
+        return $json;
 
     }
 
@@ -67,10 +69,6 @@ class getSettingVendorController extends Controller
     {
         return $this->Store;
     }
-
-    public function getSetting(){
-    return $this->APP;
-}
 
     /**
      * @return mixed
