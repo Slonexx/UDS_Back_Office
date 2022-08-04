@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\Config\Lib\AppInstanceContoller;
+use App\Http\Controllers\Config\Lib\cfg;
+use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
@@ -13,6 +16,33 @@ class SettingController extends Controller
     public function index(Request $request, $accountId){
 
         $Setting = new getSettingVendorController($accountId);
+        $companyId = $Setting->companyId;
+        $TokenUDS = $Setting->TokenUDS;
+
+        return view('web.Setting.index', [
+            "accountId"=> $accountId,
+
+            "companyId"=> $companyId,
+            "TokenUDS"=> $TokenUDS,
+        ]);
+    }
+
+    public function postSettingIndex(Request $request, $accountId){
+
+        $cfg = new cfg();
+        $appId = $cfg->appId;
+        $app = AppInstanceContoller::loadApp($appId, $accountId);
+
+        $app->companyId = $request->companyId;
+        $app->TokenUDS = $request->TokenUDS;
+
+        $app->status = AppInstanceContoller::ACTIVATED;
+
+        $vendorAPI = new VendorApiController();
+        $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
+
+        $app->persist();
+
 
         return view('web.Setting.index', [
             "accountId"=> $accountId

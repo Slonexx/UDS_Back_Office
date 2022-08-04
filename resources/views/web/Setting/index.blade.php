@@ -11,7 +11,7 @@
 
 
 
-        <form action=" " method="post">
+        <form action="  {{ route( 'setSettingIndex' , ['accountId' => $accountId] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">
@@ -19,14 +19,14 @@
                         <label class="mx-3">ID компании</label>
                         <div class="col-sm-10">
                             <input type="text" name="companyId" id="companyId" placeholder="ID компании"
-                                   class="form-control form-control-orange" required maxlength="255" value="">
+                                   class="form-control form-control-orange" required maxlength="255" value="{{$companyId}}">
                         </div>
                     </div>
                     <div class="row mt-3">
                         <label class="mx-3">API Key</label>
                         <div class="col-sm-10">
                             <input type="text" name="TokenUDS" id="TokenUDS" placeholder="API Key"
-                                   class="form-control form-control-orange" required maxlength="255" value="">
+                                   class="form-control form-control-orange" required maxlength="255" value="{{$TokenUDS}}">
                         </div>
                     </div>
                 </div>
