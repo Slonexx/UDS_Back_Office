@@ -3,7 +3,7 @@
 @include('head')
 <body style="background-color:#dcdcdc;">
 
-<div class="page">
+<div class="page headfull">
         <div class="sidenav">
 
             <nav class="navbar navbar-light bg-light">
@@ -46,7 +46,7 @@
 
         </div>
 
-        <div class="main">
+        <div class="main headfull">
                 @yield('content')
         </div>
     </div>
@@ -57,7 +57,7 @@
 
 <style>
 
-    page {
+    .headfull {
         height: 720px;
     }
 
