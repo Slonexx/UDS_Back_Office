@@ -13,8 +13,6 @@ class SettingController extends Controller
     public function index(Request $request, $accountId){
 
         $Setting = new getSettingVendorController($accountId);
-        dd($Setting);
-
 
         return view('web.Setting.index');
     }
