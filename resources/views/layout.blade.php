@@ -56,6 +56,11 @@
 
 
 <style>
+
+    page {
+        height: 720px;
+    }
+
     body {
         font-family: 'Helvetica', 'Arial', sans-serif;
         color: #444444;
