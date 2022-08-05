@@ -10,7 +10,7 @@
         <br>
         @isset($message)
 
-            <div class="alert alert-success alert-dismissible fade show in text-center "> {{ $message }}
+            <div class="{{$message['alert']}}"> {{ $message['message'] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 
             </div>
@@ -23,14 +23,28 @@
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">
                     <div class="row">
-                        <label class="mx-3">ID компании</label>
+                        <label class="mx-1">
+                            <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover1"
+                                    data-toggle="popover" data-placement="right" data-trigger="focus"
+                                    data-content="Данный ID находится в UDS &#8594; Настройки &#8594; Интеграция &#8594; Данные для интеграции ">
+                            </button> ID компании </label>
+
+                        <script> $('.myPopover1').popover(); </script>
+
                         <div class="col-sm-10">
                             <input type="text" name="companyId" id="companyId" placeholder="ID компании"
                                    class="form-control form-control-orange" required maxlength="255" value="{{$companyId}}">
                         </div>
                     </div>
                     <div class="row mt-3">
-                        <label class="mx-3">API Key</label>
+                        <label class="mx-1">
+                            <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover2"
+                                    data-toggle="popover" data-placement="right" data-trigger="focus"
+                                    data-content="Данный ID находится в UDS &#8594; Настройки &#8594; Интеграция &#8594; Данные для интеграции ">
+                            </button>  API Key </label>
+
+                        <script> $('.myPopover2').popover(); </script>
+
                         <div class="col-sm-10">
                             <input type="text" name="TokenUDS" id="TokenUDS" placeholder="API Key"
                                    class="form-control form-control-orange" required maxlength="255" value="{{$TokenUDS}}">
@@ -40,7 +54,30 @@
 
             </div>
 
+            <div class="mb-3 row mx-1">
+                <div class="col-sm-6">
+                    <label class="mx-1">
+                        <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover3"
+                                data-toggle="popover" data-placement="right" data-trigger="focus"
+                                data-content="По данному складу будут отправляться остатки в UDS и на данный склад будет создаваться заказ">
+                        </button>  Выберите склад, для остатков товара:  </label>
 
+                    <script> $('.myPopover3').popover(); </script>
+
+
+                    <div class="col-sm-10">
+                        <select name="Store" class="form-select text-black " >
+                            @foreach($Body_store as $Body_store_item)
+                                @if ( $Store == $Body_store_item->name )
+                                    <option selected value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
+                                @else
+                                    <option value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <hr class="href_padding">
 

@@ -16,6 +16,7 @@ class getSettingVendorController extends Controller
     var $companyId;
     var $TokenUDS;
 
+    var $creatDocument;
     var $Organization;
     var $PaymentDocument;
     var $Document;
@@ -43,12 +44,13 @@ class getSettingVendorController extends Controller
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->Store = $json->Store;
 
+        $this->creatDocument = $json->creatDocument;
         $this->Organization = $json->Organization;
         $this->PaymentDocument = $json->PaymentDocument;
         $this->Document = $json->Document;
         $this->PaymentAccount = $json->PaymentAccount;
-        $this->Store = $json->Store;
 
         $this->Saleschannel = $json->Saleschannel;
         $this->Project = $json->Project;
