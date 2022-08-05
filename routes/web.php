@@ -16,8 +16,11 @@ Route::get('/Setting/Document/{accountId}', [SettingController::class, 'indexDoc
 Route::get('/Setting/Add/{accountId}', [SettingController::class, 'indexAdd'])->name('indexAdd');
 
 
+Route::get('/Setting/Error/{accountId}/{message}', [SettingController::class, 'indexError'])->name('indexError');
+
 Route::post('/setSetting/{accountId}', [SettingController::class, 'postSettingIndex'])->name('setSettingIndex');
 Route::post('/setSetting/Document/{accountId}', [SettingController::class, 'postSettingDocument'])->name('setSettingDocument');
+Route::post('/setSetting/Add/{accountId}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
 
 
 Route::get('DeleteVendorApi/{appId}/{accountId}', [DeleteVendorApiController::class, 'Delete'])->name('Delete');

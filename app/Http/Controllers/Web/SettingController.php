@@ -89,11 +89,18 @@ class SettingController extends Controller
     }
 
     public function indexDocument(Request $request, $accountId){
-
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
-
         $Setting = new getSettingVendorController($accountId);
+
+        $companyId = $Setting->companyId;
+        if ( $companyId == null ) {
+            $message = " Основные настройки не были установлены ";
+            return redirect()->route('indexError', [
+                "message" => $message,
+                "accountId" => $accountId,
+                ]);
+        }
+
+
         $TokenMoySklad = $Setting->TokenMoySklad;
         $Organization = $Setting->Organization;
         $PaymentDocument = $Setting->PaymentDocument;
@@ -103,6 +110,9 @@ class SettingController extends Controller
         if ($PaymentDocument == null) $PaymentDocument = "0";
         if ($Document == null) $Document = "0";
         if ($PaymentAccount == null) $PaymentAccount = "0";
+
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
 
         if($Organization != null){
             $urlCheck = $url_organization . "/" . $Organization;
@@ -135,23 +145,17 @@ class SettingController extends Controller
     }
 
     public function postSettingDocument(Request $request, $accountId){
-
         $creatDocument = $request->creatDocument;
-        $Organization = $request->Organization;
-        $Document = $request->Document;
-        $PaymentDocument = $request->PaymentDocument;
-        $PaymentAccount = $request->PaymentAccount;
 
         $cfg = new cfg();
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
-
-        $TokenMoySklad = $app->TokenMoySklad;
-
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+            $TokenMoySklad = $app->TokenMoySklad;
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+            $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
+            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
+            [
                 $pool->as('body')->withToken($TokenMoySklad)->get($url),
                 $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
             ]);
@@ -168,7 +172,7 @@ class SettingController extends Controller
             $app->persist();
 
         } else {
-            $app->creatDocument = "0";
+            $app->creatDocument = null;
             $app->Organization = null;
             $app->Document = null;
             $app->PaymentDocument = null;
@@ -198,9 +202,19 @@ class SettingController extends Controller
 
 
     public function indexAdd(Request $request, $accountId){
-
         $Setting = new getSettingVendorController($accountId);
-        $TokenMoySklad = $Setting->TokenMoySklad;
+
+        $companyId = $Setting->companyId;
+        if ( $companyId == null ) {
+            $message = " Основные настройки не были установлены ";
+
+            return redirect()->route('indexError', [
+                "message" => $message,
+                "accountId" => $accountId,
+            ]);
+        }
+
+
 
         $Saleschannel = $Setting->Saleschannel;
         $Project = $Setting->Project;
@@ -213,15 +227,13 @@ class SettingController extends Controller
         $DELETED = $Setting->DELETED;
         $WAITING_PAYMENT = $Setting->WAITING_PAYMENT;
 
-        $Organization = $Setting->Organization; //ПРОВЕРКА НА НАСТРОЙКИ ВЫШЕ
-
-        $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
-        $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
-
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+            $TokenMoySklad = $Setting->TokenMoySklad;
+            $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
+            $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
+            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
+            [
                 $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
                 $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
-
             ]);
 
 
@@ -240,5 +252,50 @@ class SettingController extends Controller
 
             "accountId"=> $accountId
             ]);
+    }
+
+    public function postSettingAdd(Request $request, $accountId){
+
+        $cfg = new cfg();
+        $appId = $cfg->appId;
+        $app = AppInstanceContoller::loadApp($appId, $accountId);
+
+        $app->Saleschannel = $request->Saleschannel;
+        $app->Project = $request->Project;
+        $app->persist();
+
+
+
+
+            $TokenMoySklad = $app->TokenMoySklad;
+            $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
+            $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
+            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
+            [
+                $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
+                $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
+            ]);
+
+        return view('web.Setting.documentAdd',[
+            "Body_saleschannel" => $responses['body_saleschannel']->object()->rows,
+            "Body_project" => $responses['body_project']->object()->rows,
+
+            "Saleschannel" => $request->Saleschannel,
+            "Project" => $request->Project,
+
+
+            "accountId"=> $accountId
+        ]);
+
+    }
+
+
+    public function indexError($accountId, $message){
+
+        return view('web.Setting.errorSetting',[
+            "message"=> $message,
+            "accountId"=> $accountId,
+        ]);
+
     }
 }

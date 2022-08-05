@@ -12,7 +12,7 @@
 
 
 
-        <form action=" " method="post">
+        <form action=" {{ route('setSettingAdd' , ['accountId' => $accountId] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
 
