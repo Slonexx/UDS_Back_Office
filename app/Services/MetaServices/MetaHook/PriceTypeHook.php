@@ -15,6 +15,7 @@ class PriceTypeHook
         foreach($json as $price){
             if($price->name == $namePrice){
                 $foundedMeta = $price->meta;
+                break;
             }
         }
         return [

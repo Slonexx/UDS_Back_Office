@@ -20,12 +20,17 @@ class ProductController extends Controller
 
     public function insertMs(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
         ]);
 
+       // dd(100/10.0);
+
+        return response(
+            $this->productService->insertToMs($data)
+        );
     }
 
     public function insertUds(Request $request)
