@@ -61,7 +61,7 @@ class ProductService
             "externals" => $propertyExt,
         ];
     }
-
+//
     private function getUds($companyId, $apiKeyUds)
     {
         $url = "https://api.uds.app/partner/v2/goods";
