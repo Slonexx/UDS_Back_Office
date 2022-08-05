@@ -165,13 +165,16 @@ class SettingController extends Controller
             $app->PaymentDocument = $request->PaymentDocument;
             $app->PaymentAccount = $request->PaymentAccount;
 
-            $app->status = AppInstanceContoller::ACTIVATED;
-
-            $vendorAPI = new VendorApiController();
-            $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
-
             $app->persist();
 
+        } else {
+            $app->creatDocument = "0";
+            $app->Organization = null;
+            $app->Document = null;
+            $app->PaymentDocument = null;
+            $app->PaymentAccount = null;
+
+            $app->persist();
         }
 
 

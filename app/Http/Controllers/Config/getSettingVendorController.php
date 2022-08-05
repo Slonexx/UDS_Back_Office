@@ -15,13 +15,13 @@ class getSettingVendorController extends Controller
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $Store;
 
     var $creatDocument;
     var $Organization;
     var $PaymentDocument;
     var $Document;
     var $PaymentAccount;
-    var $Store;
 
     var $Saleschannel;
     var $Project;
