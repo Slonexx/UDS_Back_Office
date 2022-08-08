@@ -3,11 +3,16 @@
 
 @section('counterparty')
 <div class="content p-1 mt-2 bg-white text-Black rounded">
-    {{$accountId}}
+    @php
+
+    dd(app('request'));
+
+    @endphp
     <br>
-    <p><b title="Информацию о текущем пользователе виджет может получить на своем бэкенде через Vendor API, используя contextKey">Текущий пользователь <span class="hint">(?)</span>:</b> <?=$uid?> (<?=$fio?>)</p>
     <br>
-    <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">Открыт объект <span class="hint">(?)</span>:</b> <span id="object"></span></p>
+    <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">
+            Открыт объект
+            <span class="hint">(?)</span>:</b> <span id="object"></span></p>
 </div>
 @endsection
 
