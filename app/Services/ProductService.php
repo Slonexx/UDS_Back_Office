@@ -37,8 +37,9 @@ class ProductService
         $this->uomHookService = $uomHookService;
     }
 
+    //Add products to MS from UDS
 
-    private function getMs($apiKeyMs)
+    private function getMsCheck($apiKeyMs)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
         $client = new MsClient($apiKeyMs);
@@ -61,7 +62,7 @@ class ProductService
             "externals" => $propertyExt,
         ];
     }
-//
+
     private function getUds($companyId, $apiKeyUds)
     {
         $url = "https://api.uds.app/partner/v2/goods";
@@ -71,7 +72,7 @@ class ProductService
 
     private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId)
     {
-        $productsMs = $this->getMs($apiKeyMs);
+        $productsMs = $this->getMsCheck($apiKeyMs);
         $productsUds = $this->getUds($companyId,$apiKeyUds);
 
         //$count = 0;
@@ -121,9 +122,10 @@ class ProductService
                 $currId = "".$row->id;
                 if ($row->data->type == "CATEGORY"){
                     $category = $this->createCategoryMs($apiKeyMs,$row->name,$parentPath,$parentCategoryMeta);
+                   // dd($category->pathName);
                     $this->addProductsByCategoryUds(
                         $productIds,
-                        $category->pathName,
+                        $category->name,
                         $category->meta,
                         $row->id,
                         $companyId,
@@ -163,7 +165,7 @@ class ProductService
 
         $foundedCategory = null;
         foreach ($jsonToCheck->rows as $row){
-            if ($row->name == $nameFolder && $row->pathName == $pathName){
+            if ($row->name == $nameFolder && str_ends_with($row->pathName, $pathName)){
                 $foundedCategory = $row;
                 break;
             }
@@ -172,6 +174,7 @@ class ProductService
         if ($foundedCategory != null){
             return $foundedCategory;
         } else {
+            //dd($nameFolder,$pathName);
             $bodyCategory["name"]= $nameFolder;
             if ($parentFolder != null){
                 $bodyCategory["productFolder"] = [
@@ -369,6 +372,26 @@ class ProductService
                 break;
         }
         return $nameUomMs;
+    }
+
+    //Add products to UDS from MS
+
+    private function createProductUds($product,$companyId,$apiKeyUds){
+        $url = "https://api.uds.app/partner/v2/goods";
+        $client = new UdsClient($companyId,$apiKeyUds);
+        $body = [
+            "name" => $product,
+            "data" => [
+                "type" => "ITEM",
+                "price" => $product->salePrices[0]->value,
+
+            ],
+        ];
+        $client->post($url,$body);
+    }
+
+    private function createCategoryUds(){
+
     }
 
 }
