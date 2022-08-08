@@ -45,18 +45,23 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
+        $uid = $employee->uid;
+        $fio = $employee->shortFio;
+
         $Setting = new getSettingVendorController($accountId);
 
         $entity = 'counterparty';
 
         $getObjectUrl = $cfg->appBaseUrl . "/widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
-        $body = new ClientMC($getObjectUrl, $Setting->TokenMoySklad);
-
-        dd( $body->requestGet() );
 
 
 
-        return view( 'widgets.counterparty', ['accountId' => $accountId] );
+        return view( 'widgets.counterparty', [
+            'accountId' => $accountId,
+            'uid' => $uid,
+            'fio' => $fio,
+            'getObjectUrl' => $getObjectUrl,
+            ] );
     }
 
 }
