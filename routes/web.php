@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\SupportController;
+use App\Http\Controllers\Web\WhatsappController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Web\indexController;
 use \App\Http\Controllers\Config\DeleteVendorApiController;
@@ -26,8 +27,10 @@ Route::post('/setSetting/Add/{accountId}', [SettingController::class, 'postSetti
 
 
 Route::get('/Help/Support/{accountId}', [SupportController::class, 'index'])->name('indexSupport');
+Route::get('/Help/Support/Whatsapp/{accountId}', [WhatsappController::class, 'index'])->name('indexWhatsapp');
 
 Route::post('/Help/Support/Send/{accountId}', [SupportController::class, 'postSendSupport'])->name('indexSendSupport');
+Route::post('/Help/Support/WhatsappSend/{accountId}', [WhatsappController::class, 'postWhatsappSend'])->name('indexSendWhatsapp');
 
 
 

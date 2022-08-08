@@ -32,10 +32,10 @@
                 <button class="dropdown-btn">Помощь
                     <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-container">
-                        <a {{--target="_blank" href="https://smartkaspi.bitrix24.site/">--}} href="/Help/Support/{{$accountId}}">
+                        <a {{--target="_blank"--}} href="/Help/Support/{{$accountId}}">
                             <i class="fa-solid fa-at"></i>
                             Написать на почту</a>
-                        <a  href="" >
+                        <a  href="/Help/Support/Whatsapp/{{$accountId}}" >
                             <i class="fa-brands fa-whatsapp"></i>
                             Написать на WhatsApp </a>
                         <a  href="" >
