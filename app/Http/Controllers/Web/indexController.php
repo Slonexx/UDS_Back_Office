@@ -41,18 +41,11 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        dd($contextKey);
-        return route('CounterpartyShow', [ 'accountId' => $accountId ]);
-    }
 
-    public function counterpartyShow(Request $request, $accountId){
 
-        $contextName = 'COUNTERPARTY-WIDGET';
-        $entity = 'counterparty';
-        $cfg = new cfg();
-        $getObjectUrl = $cfg->appBaseUrl . "/widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
 
 
         return view( 'web.counterparty', ['accountId' => $accountId] );
     }
+
 }
