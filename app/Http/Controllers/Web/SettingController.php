@@ -102,6 +102,7 @@ class SettingController extends Controller
 
 
         $TokenMoySklad = $Setting->TokenMoySklad;
+        $creatDocument = $Setting->creatDocument;
         $Organization = $Setting->Organization;
         $PaymentDocument = $Setting->PaymentDocument;
         $Document = $Setting->Document;
@@ -134,6 +135,7 @@ class SettingController extends Controller
             'Body' => $responses['body']->object()->states,
             "Body_organization" => $responses['body_organization']->object()->rows,
 
+            "creatDocument" => $creatDocument,
             "Organization" => $Organization,
             "PaymentDocument" => $PaymentDocument,
             "Document" => $Document,
@@ -181,18 +183,20 @@ class SettingController extends Controller
             $app->persist();
         }
 
-
-
+        $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
+        $message["message"] = "Настройки сохранились!";
 
         return view('web.Setting.document', [
             'Body' => $responses['body']->object()->states,
             "Body_organization" => $responses['body_organization']->object()->rows,
 
+            "creatDocument" => $request->creatDocument,
             "Organization" => $request->Organization,
             "PaymentDocument" =>  $request->PaymentDocument,
             "Document" =>  $request->Document,
             "PaymentAccount" =>  $request->PaymentAccount,
 
+            "message" => $message,
             "apiKey" => $TokenMoySklad,
 
             'accountId' => $accountId,
@@ -225,13 +229,14 @@ class SettingController extends Controller
         $NEW = $Setting->NEW;
         $COMPLETED = $Setting->COMPLETED;
         $DELETED = $Setting->DELETED;
-        $WAITING_PAYMENT = $Setting->WAITING_PAYMENT;
 
             $TokenMoySklad = $Setting->TokenMoySklad;
+            $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
             $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
             $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
             $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
             [
+                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
                 $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
                 $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
             ]);
@@ -239,6 +244,7 @@ class SettingController extends Controller
 
 
         return view('web.Setting.documentAdd',[
+            "Body_customerorder" => $responses['body_customerorder']->object()->states,
             "Body_saleschannel" => $responses['body_saleschannel']->object()->rows,
             "Body_project" => $responses['body_project']->object()->rows,
 
@@ -248,7 +254,6 @@ class SettingController extends Controller
             "NEW" => $NEW,
             "COMPLETED" => $COMPLETED,
             "DELETED" => $DELETED,
-            "WAITING_PAYMENT" => $WAITING_PAYMENT,
 
             "accountId"=> $accountId
             ]);
@@ -260,30 +265,49 @@ class SettingController extends Controller
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
 
-        $app->Saleschannel = $request->Saleschannel;
-        $app->Project = $request->Project;
+        $Saleschannel = $request->Saleschannel;
+        $Project = $request->Project;
+
+        if ($Saleschannel == "0") $Saleschannel = null;
+        if ($Project == "0") $Project = null;
+
+        $app->Saleschannel = $Saleschannel;
+        $app->Project = $Project;
+
+        $app->NEW = $request->NEW;
+        $app->COMPLETED = $request->COMPLETED;
+        $app->DELETED = $request->DELETED;
+        $app->WAITING_PAYMENT = $request->NEW;
+
         $app->persist();
 
-
-
+        $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
+        $message["message"] = "Настройки сохранились!";
 
             $TokenMoySklad = $app->TokenMoySklad;
+            $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
             $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
             $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
             $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
             [
+                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
                 $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
                 $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
             ]);
 
         return view('web.Setting.documentAdd',[
+            "Body_customerorder" => $responses['body_customerorder']->object()->states,
             "Body_saleschannel" => $responses['body_saleschannel']->object()->rows,
             "Body_project" => $responses['body_project']->object()->rows,
 
             "Saleschannel" => $request->Saleschannel,
             "Project" => $request->Project,
 
+            "NEW" => $request->NEW,
+            "COMPLETED" => $request->COMPLETED,
+            "DELETED" => $request->DELETED,
 
+            "message"=> $message,
             "accountId"=> $accountId
         ]);
 

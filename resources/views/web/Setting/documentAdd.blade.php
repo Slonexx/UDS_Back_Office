@@ -5,10 +5,16 @@
 
 
     <div class="content p-4 mt-2 bg-white text-Black rounded">
-        <h4> <i class="fa-solid fa-gears text-orange"></i> Дополнительные настройки </h4>
-        <h6> Дополнительные настройки при заказе с UDS </h6>
-
+        <h3> <i class="fa-solid fa-gears text-orange"></i> Дополнительные настройки </h3>
         <br>
+
+        @isset($message)
+            <div class="{{$message['alert']}}"> {{ $message['message'] }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endisset
+
+        <h5> <i class="fa-solid fa-list-check text-orange"></i> Дополнительные настройки при заказе с UDS </h5>
 
 
 
@@ -16,8 +22,8 @@
         @csrf <!-- {{ csrf_field() }} -->
 
 
-            <div class="mb-3 row">
-                <P class="col-sm-5 col-form-label"> Выберите проект: </P>
+            <div class="mb-2 row">
+                <P class="col-sm-5 col-form-label"> Выберите канал продаж: </P>
                 <div class="col-sm-7">
                     <select name="Saleschannel" class="form-select text-black " >
                         @if ($Saleschannel == "0")
@@ -35,7 +41,7 @@
             </div>
 
             <div class="mb-3 row">
-                <P class="col-sm-5 col-form-label"> Выберите канал продаж: </P>
+                <P class="col-sm-5 col-form-label"> Выберите проект:  </P>
                 <div class="col-sm-7">
                     <select name="Project" class="form-select text-black " >
                         @if ($Project == "0")
@@ -52,7 +58,64 @@
                 </div>
             </div>
 
+            <div class="mb-1 row pt-3">
+
+                <H5 class="mt-1 from-label"> <i class="fa-solid fa-list-check text-orange"></i> Статусы заказов </H5>
+
+            </div>
+
+                <div class="mb-3 row">
+                    <div class="mb-2 row mx-3">
+                            <label class="col-sm-5 col-form-label"> 1) Новый заказ </label>
+                            <div class="col-sm-7 ">
+                                <select name="NEW" class="form-select text-black">
+                                    @if($NEW == null)
+                                        <option selected> Статус МойСклад </option>
+                                    @else <option value="{{$NEW}}" selected>{{$NEW}}</option>
+                                    @endif
+                                    @foreach($Body_customerorder as $Body_customerorder_item => $dat)
+                                        @if($dat->name != $NEW) <option value="{{ $dat->name }}"> {{ ($dat->name) }} </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                    <div class="mb-2 row mx-3">
+                        <label class="col-sm-5 col-form-label"> 2) Завершенный </label>
+                        <div class="col-sm-7 ">
+                            <select name="COMPLETED" class="form-select text-black">
+                                @if($COMPLETED == null)
+                                    <option selected> Статус МойСклад </option>
+                                @else <option value="{{$COMPLETED}}" selected>{{$COMPLETED}}</option>
+                                @endif
+                                @foreach($Body_customerorder as $Body_customerorder_item => $dat)
+                                    @if($dat->name != $COMPLETED) <option value="{{ $dat->name }}"> {{ ($dat->name) }} </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-2 row mx-3">
+                        <label class="col-sm-5 col-form-label"> 3) Отменный </label>
+                        <div class="col-sm-7 ">
+                            <select name="DELETED" class="form-select text-black">
+                                @if($DELETED == null)
+                                    <option selected> Статус МойСклад </option>
+                                @else <option value="{{$DELETED}}" selected>{{$DELETED}}</option>
+                                @endif
+                                @foreach($Body_customerorder as $Body_customerorder_item => $dat)
+                                    @if($dat->name != $DELETED) <option value="{{ $dat->name }}"> {{ ($dat->name) }} </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
             <hr class="href_padding">
+
             <button class="btn btn-outline-dark textHover" data-bs-toggle="modal" data-bs-target="#modal">
                 <i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить </button>
 
@@ -84,6 +147,10 @@
 
     #hidden_div {
         display: none;
+    }
+
+    #anti_hidden_div {
+        display: block;
     }
 
     #hidden_PaymentAccount {
