@@ -53,7 +53,7 @@ class indexController extends Controller
 
         $entity = 'counterparty';
 
-        $getObjectUrl = $cfg->appBaseUrl . "/widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
+        $getObjectUrl = $cfg->appBaseUrl . "widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
         $body = new Client();
 
         dd($body->get($getObjectUrl));
