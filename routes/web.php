@@ -9,7 +9,8 @@ use \App\Http\Controllers\Config\DeleteVendorApiController;
 
 
 Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
-Route::get('/Counterparty/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
+Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Counterparty');
+Route::get('/Counterparty/{accountId}', [indexController::class, 'CounterpartyShow'])->name('CounterpartyShow');
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
