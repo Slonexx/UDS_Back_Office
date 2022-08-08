@@ -41,7 +41,7 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-
+        dd($contextKey);
         return route('CounterpartyShow', [ 'accountId' => $accountId ]);
     }
 
