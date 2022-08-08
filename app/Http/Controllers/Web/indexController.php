@@ -7,6 +7,7 @@ use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class indexController extends Controller
@@ -53,8 +54,9 @@ class indexController extends Controller
         $entity = 'counterparty';
 
         $getObjectUrl = $cfg->appBaseUrl . "/widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
+        $body = new Client();
 
-
+        dd($body->get($getObjectUrl));
 
         return view( 'widgets.counterparty', [
             'accountId' => $accountId,
