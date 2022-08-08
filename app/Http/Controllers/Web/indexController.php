@@ -45,7 +45,7 @@ class indexController extends Controller
 
 
 
-        return view( 'web.counterparty', ['accountId' => $accountId] );
+        return view( 'widgets.counterparty', ['accountId' => $accountId] );
     }
 
 }
