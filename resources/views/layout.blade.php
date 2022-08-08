@@ -35,7 +35,7 @@
                         <a {{--target="_blank"--}} href="/Help/Support/{{$accountId}}">
                             <i class="fa-solid fa-at"></i>
                             Написать на почту</a>
-                        <a  href="/Help/Support/Whatsapp/{{$accountId}}" >
+                        <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
                             <i class="fa-brands fa-whatsapp"></i>
                             Написать на WhatsApp </a>
                         <a  href="" >

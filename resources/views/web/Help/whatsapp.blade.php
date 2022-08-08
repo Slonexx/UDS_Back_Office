@@ -7,20 +7,11 @@
                 <i class="fa-brands fa-whatsapp text-success"></i>
             </h2>
 
-            @if(Session::has('whatsapp'))
-                <div class="alertheight">
-                    <div class="alert {{ Session::get('alert-class', 'alert-info') }}" role="alert">
-                        {{ Session::get('whatsapp') }}
-                    </div>
-                </div>
-            @endif
-
-
 
             <div class="mt-3">
                 <form action=" {{  route('indexSendWhatsapp', ['accountId' => $accountId] ) }} " method="post">
-
                 @csrf <!-- {{ csrf_field() }} -->
+
                     <div class="form-group mb-3 row ">
                         <label for="TokenKaspi" class="col-form-label">Введите имя</label>
                         <div class="col-sm-12">
