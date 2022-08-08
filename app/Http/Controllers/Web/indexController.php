@@ -42,6 +42,7 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
+        dd($request);
 
 
 
