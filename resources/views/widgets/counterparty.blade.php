@@ -46,7 +46,7 @@
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
-                <label onclick="xRefURL()"> Клиент </label>
+                <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
             </div>
             <div class="mx-2 col-2 p-1">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
@@ -71,7 +71,7 @@
         background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
     }
     .s-min{
-        font-size: 8pt;
+        font-size: 10pt;
     }
     .myButton {
         box-shadow: 0px 4px 5px 0px #5d5d5d !important;
