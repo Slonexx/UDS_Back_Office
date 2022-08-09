@@ -13,9 +13,7 @@
 
 
 <style>
-    html {
-        height: 100%;
-    }
+
     body {
         line-height: 0;
         font-size: 12px;
