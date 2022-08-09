@@ -16,7 +16,7 @@
                     var responseTextPars = JSON.parse(this.responseText);
                     var participant = responseTextPars.participant;
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
-                    window.document.getElementById("object").innerHTML = responseTextPars.email;
+
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
                     window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
                     window.document.getElementById("points").innerHTML = participant.points;
@@ -57,25 +57,24 @@
             </div>
         </div>
 
+        <br>
+
         <div class="row mx-2 text-black">
-            <div class="col-6">
+            <div class="col-8">
                 <div class="s-min">Последняя покупка </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <span id="lastTransactionTime"></span>
             </div>
 
-            <div class="col-6">
+            <div class="col-8">
                 <div class="s-min">Бонусные баллы </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <span id="points"></span>
             </div>
 
         </div>
-
-         <br>
-        <p> email =  <span id="object"></span> </p>
 
     </div>
 @endsection
