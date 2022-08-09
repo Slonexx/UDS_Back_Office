@@ -64,9 +64,7 @@
 
     <br>
     <br>
-    <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">
-            Открыт объект
-            <span class="hint">(?)</span>:</b> <span id="object">{{$getObjectUrl}}</span></p>
+    {{$getObjectUrl}}
 </div>
 @endsection
 
