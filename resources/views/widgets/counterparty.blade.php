@@ -17,7 +17,7 @@
 
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime;
+                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,6);
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -42,14 +42,15 @@
         <div class="row uds-gradient ">
             <div class="p-1 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
-                <label class="s-min"> Клиент </label>
-                <h4 id="displayName" class=""></h4>
-
+                <label> Клиент </label>
             </div>
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-
+            <div class="row mx-2">
+                <h5 id="displayName" class=""></h5>
+                <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
+            </div>
 
         </div>
 
