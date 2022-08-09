@@ -21,7 +21,7 @@
     window.addEventListener('message', function (event){
         var receivedMessage = event.data;
 
-        console.log(receivedMessage);
+        console.log("receivedMessage = "+receivedMessage);
 
     })
 
