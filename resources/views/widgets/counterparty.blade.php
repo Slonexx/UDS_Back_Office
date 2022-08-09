@@ -16,7 +16,7 @@
 
     window.addEventListener('message', function (event){
         var receivedMessage = event.data;
-        window.document.getElementById("object").value = receivedMessage;
+        $("#object").val(receivedMessage);
         console.log("receivedMessage = "+receivedMessage);
 
     })
