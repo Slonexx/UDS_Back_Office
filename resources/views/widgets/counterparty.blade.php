@@ -62,7 +62,8 @@
     }
 
     .myButton {
-        background-color: orange !important;
+        box-shadow: 0px 10px 14px -7px #276873 !important;
+        background-color: #00a6ff !important;
         border-radius:50px !important;
         display:inline-block !important;
         cursor:pointer !important;
@@ -71,6 +72,7 @@
     }
     .myButton:hover {
         background-color: #fffdfd !important;
+        color: #111111;
     }
     .myButton:active {
         position: relative !important;
