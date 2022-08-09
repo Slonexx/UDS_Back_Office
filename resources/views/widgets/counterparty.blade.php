@@ -17,16 +17,6 @@
             // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
             oReq.open("GET", "<?=$getObjectUrl?>" + receivedMessage.objectId);
             oReq.send();
-
-            window.setTimeout(function() {
-                var sendingMessage = {
-                    name: "OpenFeedback",
-                    correlationId: receivedMessage.messageId
-                };
-                logSendingMessage(sendingMessage);
-                hostWindow.postMessage(sendingMessage, '*');
-
-            }, getOpenFeedbackDelay());
         }
     });
 
