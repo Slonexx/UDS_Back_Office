@@ -43,7 +43,7 @@
 
             </div>
 
-            <div class="col-sm-2">
+            <div class="col-sm-3">
 
                 <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
 
