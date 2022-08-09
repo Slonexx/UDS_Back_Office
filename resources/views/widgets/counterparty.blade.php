@@ -14,12 +14,35 @@
 
 <script type="text/javascript">
 
-   /* window.addEventListener('message', function (event){
-        var receivedMessage = event.data;
-        $("#object").val(receivedMessage);
-        console.log("receivedMessage = "+receivedMessage);
+    var getData;
 
-    })*/
+    window.addEventListener('message', function (event){
+        var receivedMessage = event.data;
+
+        if (receivedMessage.name === 'Open') {
+            var oReq = new XMLHttpRequest();
+            oReq.addEventListener("load", function() {
+                window.document.getElementById("object").innerHTML = this.responseText;
+                getData = this.responseText;
+                console.log("getData = " + getData);
+            });
+            // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
+            oReq.open("GET", "<?=$getObjectUrl?>" + receivedMessage.objectId);
+            oReq.send();
+
+            window.setTimeout(function() {
+                var sendingMessage = {
+                    name: "OpenFeedback",
+                    correlationId: receivedMessage.messageId
+                };
+                logSendingMessage(sendingMessage);
+                hostWindow.postMessage(sendingMessage, '*');
+
+            }, getOpenFeedbackDelay());
+        }
+
+
+    })
 
 </script>
 
