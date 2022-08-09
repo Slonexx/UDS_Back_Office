@@ -44,9 +44,9 @@
     <div class="content bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
-            <div class="mx-2 p-1 col-10 text-white">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
-                <label > Клиент </label>
+            <div class="mx-2 p-1 col-9 text-white">
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <label onclick="xRefURL()"> Клиент </label>
             </div>
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
