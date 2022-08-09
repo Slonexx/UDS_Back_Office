@@ -13,14 +13,14 @@
 
 
 <style>
-
-    body {
-        line-height: 0;
-        font-size: 12px;
+    html {
         height: 100%;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        color: #000000;
+        font-size: 12pt;
+        background-color: #FAFAFA;
     }
 </style>
 
