@@ -48,7 +48,7 @@ class indexController extends Controller
 
         $entity = 'counterparty';
 
-        $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject?accountId=$accountId&entity=$entity&objectId=";
+        $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
 
 
         return view( 'widgets.counterparty', [
@@ -58,12 +58,12 @@ class indexController extends Controller
             ] );
     }
 
-    public function CounterpartyObject(Request $request){
+    public function CounterpartyObject(Request $request, $accountId, $entity, $objectId){
 
         $json = [
-            "entity" => $request->entity,
-            "objectId" => $request->objectId,
-            "accountId" => $request->accountId,
+            "entity" => $accountId,
+            "objectId" => $entity,
+            "accountId" => $objectId,
         ];
 
         echo json_encode($json);

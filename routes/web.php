@@ -11,7 +11,7 @@ use \App\Http\Controllers\Config\DeleteVendorApiController;
 Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
 Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Counterparty');
 
-Route::get('/CounterpartyObject', [indexController::class, 'CounterpartyObject'])->name('CounterpartyObject');
+Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [indexController::class, 'CounterpartyObject'])->name('CounterpartyObject');
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
