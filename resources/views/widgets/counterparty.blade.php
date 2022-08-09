@@ -4,8 +4,8 @@
 @section('counterparty')
 <div class="content p-1 mt-2 bg-white text-Black rounded">
     @php
-
-    dd(app('request'));
+        if (isset($_GET['receivedMessage'])) echo $_GET['receivedMessage']
+           /* dd(app('request'));*/
 
     @endphp
     <br>
