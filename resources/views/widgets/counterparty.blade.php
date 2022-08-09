@@ -42,8 +42,7 @@
             <div class=" p-1col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" alt="">
                 <label class="from-label">Клиент </label>
-                <h3 id="displayName" class="mx-5"></h3>
-                <h6> Последняя покупка: <span id="lastTransactionTime"></span></h6>
+
             </div>
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
