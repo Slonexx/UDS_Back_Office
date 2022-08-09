@@ -8,8 +8,6 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
 
-            logReceivedMessage(receivedMessage);
-
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
