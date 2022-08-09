@@ -19,6 +19,7 @@
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
                     window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
+                    window.document.getElementById("points").innerHTML = participant.points;
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -51,13 +52,27 @@
             <div class="mx-2 col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-            <div class=" mx-2 text-black">
+            <div class=" mx-2 text-white">
                 <h5 id="displayName" class=""></h5>
-                <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
+            </div>
+
+            <div class="row mx-2 text-black">
+                <div class="col-6">
+                    <div class="s-min">Последняя покупка </div>
+                </div>
+               <div class="col-6">
+                   <span id="lastTransactionTime"></span>
+               </div>
+
+                <div class="col-6">
+                    <div class="s-min">Бонусные баллы </div>
+                </div>
+                <div class="col-6">
+                    <span id="points"></span>
+                </div>
+
             </div>
         </div>
-
-
 
          <br>
         <p> email =  <span id="object"></span> </p>
