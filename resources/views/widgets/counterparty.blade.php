@@ -44,11 +44,11 @@
     <div class="content bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
-            <div class="mx-2 p-3 col-9 text-white">
+            <div class="mx-2 p-2 col-9 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
                 <label onclick="xRefURL()"> Клиент </label>
             </div>
-            <div class="mx-2 col-2 p-2">
+            <div class="mx-2 col-2 p-3">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
             <div class="row mx-2 text-white">
