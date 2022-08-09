@@ -38,11 +38,11 @@
         <div class="row">
             <div class="col-5">
                 <img src="https://uds.app/img/fav.png" width="30" height="30" class="" alt="">
-                Клиент
-                    <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                <label class="mt-1 from-label">Клиент </label>
+
             </div>
             <div class="col-5">
-                dadwa
+                <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
 
 
