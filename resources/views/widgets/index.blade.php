@@ -13,14 +13,9 @@
 
 
 <style>
-    html {
-        height: 100%;
-    }
     body {
         font-family: 'Helvetica', 'Arial', sans-serif;
-        color: #000000;
         font-size: 12pt;
-        background-color: #FAFAFA;
     }
 </style>
 
