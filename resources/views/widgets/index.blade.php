@@ -23,7 +23,7 @@
     }
 
     .btn-new:focus{
-        border-color: white !important;
+        border-color: rgba(255, 255, 255, 0) !important;
         color: orange !important;
     }
 
