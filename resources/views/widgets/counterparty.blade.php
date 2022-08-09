@@ -14,10 +14,11 @@
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
                     var participant = responseTextPars.participant;
+                    var lastTransactionTime =  participant.lastTransactionTime.substr(0,10);
 
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,6);
+                    window.document.getElementById("lastTransactionTime").innerHTML = reverseString(lastTransactionTime);
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -35,9 +36,12 @@
             xmlHttpRequest.send();
         }
 
+        function reverseString(str) {
+            return str.split("").reverse().join("");
+        }
     </script>
 
-    <div class="content p-1 mt-2 bg-white text-Black rounded">
+    <div class="content bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
             <div class="p-1 col-10 text-white">
@@ -47,7 +51,7 @@
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-            <div class="row mx-2">
+            <div class="row mx-2 text-white">
                 <h5 id="displayName" class=""></h5>
                 <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
             </div>
