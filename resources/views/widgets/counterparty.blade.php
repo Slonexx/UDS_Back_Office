@@ -5,6 +5,7 @@
 
     <script>
         var GlobalobjectId;
+        var ObjectUrl = {{$getObjectUrl}};
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -16,7 +17,7 @@
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                 });
 
-                oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
+                oReq.open("GET", ObjectUrl + receivedMessage.objectId);
                 oReq.send();
             }
         });
@@ -27,7 +28,7 @@
                 window.document.getElementById("object").innerHTML = this.responseText;
             });
 
-            xmlHttpRequest.open("GET", "{{$getObjectUrl}}" + GlobalobjectId);
+            xmlHttpRequest.open("GET", ObjectUrl + GlobalobjectId);
             xmlHttpRequest.send();
         }
 
