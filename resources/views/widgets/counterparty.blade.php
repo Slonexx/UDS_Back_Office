@@ -11,8 +11,9 @@
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
+                    var responseTextPars = this.responseText;
                     window.document.getElementById("object").innerHTML = this.responseText;
-                    console.log("this.responseText = "+this.responseText)
+                    console.log(" this.responseText = " + responseTextPars)
                 });
 
                 oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
