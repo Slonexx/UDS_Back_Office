@@ -36,14 +36,14 @@
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
         <div class="row">
-            <div class="col-sm-9">
+            <div class="col-sm-5">
 
                 <img src="https://uds.app/img/fav.png" width="20" height="20" class="d-inline-block align-top" alt="">
                 Клиент UDS
 
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-sm-5">
 
                 <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
 
