@@ -486,7 +486,7 @@ class ProductService
     private function createProductUds($product,$apiKeyMs,$companyId,$apiKeyUds,$nodeId = 0){
         $url = "https://api.uds.app/partner/v2/goods";
         $client = new UdsClient($companyId,$apiKeyUds);
-xsacx
+
         $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
         $body = [
             "name" => $product->name,
@@ -519,7 +519,7 @@ xsacx
             $body["nodeId"] = intval($nodeId);
         }
 
-        dd($body);
+        //dd($body);
 
        return $client->post($url,$body);
     }
