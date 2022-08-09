@@ -80,8 +80,7 @@ class indexController extends Controller
             "entity" => $entity,
             "objectId" => $objectId,
         ];*/
-        return response()->json(
-            $last,201);
+        var_dump($last);
 
     }
 
