@@ -24,7 +24,7 @@
     </script>
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
-       <button type="submit" id="update" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+       <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
         <br>
         <p> email =  <span id="object"></span> </p>
 
@@ -32,8 +32,6 @@
 @endsection
 
     <script>
-
-        document.getElementById("update").addEventListener("click", update);
 
         function update(){
             window.addEventListener("message", function(event) {
