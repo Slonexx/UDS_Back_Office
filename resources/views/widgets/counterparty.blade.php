@@ -1,6 +1,17 @@
 
 @extends('widgets.index')
 
+<script type="text/javascript">
+    var getData;
+    window.addEventListener('message', function (event){
+        var receivedMessage = event.data;
+        getData = event.data;
+        console.log("receivedMessage = "+receivedMessage);
+
+    })
+
+</script>
+
 @section('counterparty')
 <div class="content p-1 mt-2 bg-white text-Black rounded">
     @php
@@ -16,16 +27,7 @@
 </div>
 @endsection
 
-<script type="text/javascript">
-    var getData;
-    window.addEventListener('message', function (event){
-        var receivedMessage = event.data;
-        getData = event.data;
-        console.log("receivedMessage = "+receivedMessage);
 
-    })
-
-</script>
 
 {{--<script>
     var hostWindow = window.parent;
