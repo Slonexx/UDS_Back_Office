@@ -36,15 +36,15 @@
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
         <div class="row">
-            <div class="col-sm-5">
+            <div class="col-5">
 
-                <img src="https://uds.app/img/fav.png" width="20" height="20" class="d-inline-block align-top" alt="">
-                <label>Клиент </label>
-                <div class="float-right">
+                <img src="https://uds.app/img/fav.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                <span>Клиент</span>
                     <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                </div>
             </div>
-
+            <div class="col-5">
+                dadwa
+            </div>
 
 
         </div>
