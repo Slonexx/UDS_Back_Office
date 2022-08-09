@@ -66,7 +66,7 @@ class indexController extends Controller
             "accountId" => $request->accountId,
         ];
 
-        echo var_dump($json);
+        echo var_dump($request);
     }
 
 
