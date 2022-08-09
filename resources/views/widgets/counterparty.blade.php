@@ -62,7 +62,6 @@
     }
 
     .myButton {
-        box-shadow: 6px 6px 11px 0px #000000 !important;
         background-color: #171717 !important;
         border-radius:50px !important;
         display:inline-block !important;
