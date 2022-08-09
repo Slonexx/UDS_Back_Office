@@ -42,8 +42,8 @@
         <div class="row uds-gradient ">
             <div class="p-1 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
-                <h6 class="s-min"> Клиент </h6>
-                <span id="displayName" class=""></span>
+                <label class="s-min"> Клиент </label>
+                <h4 id="displayName" class=""></h4>
 
             </div>
             <div class="col-2 p-2">
