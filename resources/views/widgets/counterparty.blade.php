@@ -37,9 +37,8 @@
 
         <div class="row">
             <div class="col-5">
-
-                <img src="https://uds.app/img/fav.png" width="30" height="30" class="d-inline-block align-top" alt="">
-                <span>Клиент</span>
+                <img src="https://uds.app/img/fav.png" width="30" height="30" class="" alt="">
+                Клиент
                     <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
             <div class="col-5">
