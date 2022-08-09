@@ -18,6 +18,15 @@
         font-size: 12pt;
     }
 
+    .btn-new:hover{
+        border-color: white !important
+    }
+
+    .btn-new:focus{
+        border-color: white !important;
+        color: orange !important;
+    }
+
     .text-orange{
         color: orange;
     }
