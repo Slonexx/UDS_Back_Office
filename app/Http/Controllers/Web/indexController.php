@@ -61,9 +61,9 @@ class indexController extends Controller
     public function CounterpartyObject(Request $request, $accountId, $entity, $objectId){
 
         $json = [
-            "entity" => $accountId,
-            "objectId" => $entity,
-            "accountId" => $objectId,
+            "accountId" => $accountId,
+            "entity" => $entity,
+            "objectId" => $objectId,
         ];
 
         echo json_encode($json);
