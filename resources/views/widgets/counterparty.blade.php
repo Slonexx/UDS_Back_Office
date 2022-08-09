@@ -42,7 +42,7 @@
                 <label class="from-label">Клиент </label>
             </div>
             <div class="col-2 p-2">
-                <button type="submit" onclick="update()" class="myButton text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                <button type="submit" onclick="update()" class="myButton btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
 
 
@@ -62,21 +62,20 @@
     }
 
     .myButton {
-        box-shadow: 6px 6px 11px 0px #000000;
-        background-color: #171717;
-        border-radius:42px;
-        display:inline-block;
-        cursor:pointer;
-        color:#ffffff;
-        padding:10px 10px;
-        text-decoration:none;
+        box-shadow: 6px 6px 11px 0px #000000 !important;
+        background-color: #171717 !important;
+        border-radius:50px !important;
+        display:inline-block !important;
+        cursor:pointer !important;
+        padding:5px 5px !important;
+        text-decoration:none !important;
     }
     .myButton:hover {
-        background-color: #e59300;
+        background-color: #fffdfd !important;
     }
     .myButton:active {
-        position: relative;
-        top: 1px;
+        position: relative !important;
+        top: 1px !important;
     }
 
 
