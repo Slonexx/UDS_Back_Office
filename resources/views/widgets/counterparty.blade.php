@@ -5,8 +5,6 @@
 
     <script>
 
-        import receivedMessage from "laravel-mix/src/File";
-
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
 
