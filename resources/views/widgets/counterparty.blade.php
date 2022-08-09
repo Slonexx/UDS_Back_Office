@@ -25,9 +25,7 @@
             if (globalReceivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
-                    var responseTextPars = JSON.parse(this.responseText);
-                    window.document.getElementById("object").innerHTML = responseTextPars.email;
-                    console.log(" Pars = " + responseTextPars.email)
+                    window.document.getElementById("object").innerHTML = this.responseText;
                 });
 
                 oReq.open("GET", "{{$getObjectUrl}}" + globalReceivedMessage.objectId);
