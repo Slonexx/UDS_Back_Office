@@ -16,6 +16,7 @@
 
                 oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
                 oReq.send();
+                console.log("oReq = "+oReq)
             }
         });
 
