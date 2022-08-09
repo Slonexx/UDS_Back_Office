@@ -43,7 +43,7 @@
 
     <div class="content bg-white text-Black rounded">
 
-        <div class="row uds-gradient ">
+        <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
                 <label onclick="xRefURL()"> Клиент </label>
