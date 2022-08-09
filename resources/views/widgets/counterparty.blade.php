@@ -5,42 +5,23 @@
 <div class="content p-1 mt-2 bg-white text-Black rounded">
     @php
 
+            dd(app('request'));
+
     @endphp
     <br>
     <br>
-    <p> Объект = <span id="object"></span> </p>
+    <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">
+            Открыт объект
+            <span class="hint">(?)</span>:</b> <span id="object"></span></p>
 </div>
 @endsection
 
 <script type="text/javascript">
-
     var getData;
-
     window.addEventListener('message', function (event){
         var receivedMessage = event.data;
-
-        if (receivedMessage.name === 'Open') {
-            var oReq = new XMLHttpRequest();
-            oReq.addEventListener("load", function() {
-                window.document.getElementById("object").innerHTML = this.responseText;
-                getData = this.responseText;
-                console.log("getData = " + getData);
-            });
-            // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
-            oReq.open("GET", "<?=$getObjectUrl?>" + receivedMessage.objectId);
-            oReq.send();
-
-            window.setTimeout(function() {
-                var sendingMessage = {
-                    name: "OpenFeedback",
-                    correlationId: receivedMessage.messageId
-                };
-                logSendingMessage(sendingMessage);
-                hostWindow.postMessage(sendingMessage, '*');
-
-            }, getOpenFeedbackDelay());
-        }
-
+        getData = event.data;
+        console.log("receivedMessage = "+receivedMessage);
 
     })
 
