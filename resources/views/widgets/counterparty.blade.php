@@ -38,7 +38,7 @@
 
         <div class="row uds-gradient ">
             <div class=" p-2 col-10">
-                <img src="{{public_path()."/Config/UDS.png"}}" width="30" height="30" class="mx-4" alt="">
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-4" alt="">
                 <label class="mt-1 from-label">Клиент </label>
             </div>
             <div class="col-2">
