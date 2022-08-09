@@ -17,6 +17,11 @@
         font-family: 'Helvetica', 'Arial', sans-serif;
         font-size: 12pt;
     }
+
+    .text-orange{
+        color: orange;
+    }
+
 </style>
 
 </body>
