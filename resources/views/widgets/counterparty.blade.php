@@ -12,11 +12,11 @@
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
                     window.document.getElementById("object").innerHTML = this.responseText;
+                    console.log("this.responseText = "+this.responseText)
                 });
 
                 oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
                 oReq.send();
-                console.log("oReq = "+oReq)
             }
         });
 
