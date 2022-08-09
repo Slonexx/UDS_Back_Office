@@ -55,7 +55,7 @@ class indexController extends Controller
 
         $getObjectUrl = $cfg->appBaseUrl . "widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
 
-        dd($request);
+        dd($_SERVER['HTTP_REFERER']);
 
 
 
