@@ -37,8 +37,8 @@
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
-            <div class="col-10">
-                <img src="https://uds.app/img/fav.png" width="30" height="30" class="mx-4" alt="">
+            <div class=" p-2 col-10">
+                <img src="{{public_path()."/Config/UDS.png"}}" width="30" height="30" class="mx-4" alt="">
                 <label class="mt-1 from-label">Клиент </label>
             </div>
             <div class="col-2">
@@ -58,7 +58,7 @@
 
     .uds-gradient{
         background: rgb(145,0,253);
-        background: linear-gradient(40deg, rgba(145,0,253,1) 0%, rgba(255,0,155,1) 100%);
+        background: linear-gradient(85deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
     }
 
 </style>
