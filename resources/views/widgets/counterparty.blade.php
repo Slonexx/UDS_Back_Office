@@ -48,10 +48,10 @@
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
                 <label onclick="xRefURL()"> Клиент </label>
             </div>
-            <div class="mx-2 col-2 p-3">
+            <div class="mx-2 col-2 p-1">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-            <div class="row mx-2 text-white">
+            <div class=" mx-2 text-white">
                 <h5 id="displayName" class=""></h5>
                 <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
             </div>
