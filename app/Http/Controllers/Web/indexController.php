@@ -58,8 +58,8 @@ class indexController extends Controller
         $check = event();
 
 
+        var_dump($check);
 
-        dd($check);
 
         return view( 'widgets.counterparty', [
             'accountId' => $accountId,
