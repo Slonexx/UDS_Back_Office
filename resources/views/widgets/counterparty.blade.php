@@ -36,7 +36,7 @@
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
         <div class="row">
-            <div class="col-sm-10">
+            <div class="col-sm-9">
 
                 <img src="https://uds.app/img/fav.png" width="20" height="20" class="d-inline-block align-top" alt="">
                 Клиент UDS
