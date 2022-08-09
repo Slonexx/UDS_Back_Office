@@ -72,7 +72,7 @@
 <div class="content p-1 mt-2 bg-white text-Black rounded">
     @php
 
-            dd(app('request'));
+           {{-- dd(app('request'));--}}
 
     @endphp
     <br>
