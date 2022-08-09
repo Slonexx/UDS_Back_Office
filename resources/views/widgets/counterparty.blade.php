@@ -20,11 +20,14 @@
 
     window.addEventListener('message', function (event){
         var receivedMessage = event.data;
+
+        console.log(receivedMessage);
+
     })
 
 </script>
 
-<script>
+{{--<script>
     var hostWindow = window.parent;
 
     window.addEventListener("message", function(event) {
@@ -89,4 +92,4 @@
     function body() {
         return window.document.body;
     }
-</script>
+</script>--}}
