@@ -62,7 +62,7 @@
     }
 
     .myButton {
-        box-shadow: 0px 10px 14px -7px #276873 !important;
+        box-shadow: 0px 10px 14px -7px #93e5f3 !important;
         background-color: #00a6ff !important;
         border-radius:50px !important;
         display:inline-block !important;
