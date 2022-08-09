@@ -62,7 +62,7 @@
     }
 
     .myButton {
-        box-shadow: 0px 10px 14px -7px #93e5f3 !important;
+        box-shadow: 0px 0px 5px 0px #93e5f3 !important;
         background-color: #00a6ff !important;
         color: white !important;
         border-radius:50px !important;
