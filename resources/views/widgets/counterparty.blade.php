@@ -1,5 +1,6 @@
 
 @extends('widgets.index')
+{{--
 
 <script>
     var hostWindow = window.parent;
@@ -57,6 +58,7 @@
         return window.document.body;
     }
 </script>
+--}}
 
 @section('counterparty')
 <div class="content p-1 mt-2 bg-white text-Black rounded">
