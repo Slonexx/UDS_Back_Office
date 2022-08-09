@@ -46,11 +46,9 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        $Setting = new getSettingVendorController($accountId);
-
         $entity = 'counterparty';
 
-        $getObjectUrl = $cfg->appBaseUrl . "widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
+        $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject?accountId=$accountId&entity=$entity&objectId=";
 
 
         return view( 'widgets.counterparty', [
@@ -58,6 +56,17 @@ class indexController extends Controller
 
             'getObjectUrl' => $getObjectUrl,
             ] );
+    }
+
+    public function CounterpartyObject(Request $request){
+
+        $json = [
+            "entity" => $request->entity,
+            "objectId" => $request->objectId,
+            "accountId" => $request->accountId,
+        ];
+
+        echo var_dump($json);
     }
 
 
