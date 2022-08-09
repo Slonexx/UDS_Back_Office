@@ -64,14 +64,14 @@
                 <div class="s-min">Последняя покупка </div>
             </div>
             <div class="col-4">
-                <span id="lastTransactionTime"></span>
+                <span id="lastTransactionTime" class="s-min"></span>
             </div>
 
             <div class="col-8">
                 <div class="s-min">Бонусные баллы </div>
             </div>
             <div class="col-4">
-                <span id="points"></span>
+                <span id="points" class="s-min"></span>
             </div>
 
         </div>
