@@ -51,12 +51,13 @@
             <div class="mx-2 col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
+            <div class=" mx-2 text-black">
+                <h5 id="displayName" class=""></h5>
+                <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
+            </div>
         </div>
 
-        <div class=" mx-2 text-black">
-            <h5 id="displayName" class=""></h5>
-            <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
-        </div>
+
 
          <br>
         <p> email =  <span id="object"></span> </p>
