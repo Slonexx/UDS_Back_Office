@@ -17,7 +17,7 @@ use App\Http\Controllers\Controller\V1\InputMcController;
    // Route::post('agentUds',[AgentController::class,'insertUds']);
 
     Route::post('productMs',[ProductController::class,'insertMs']);
-    //Route::post('productUds',[ProductController::class,'insertUds']);
+    Route::post('productUds',[ProductController::class,'insertUds']);
 
 //Route::get('/Goods', [getApi::class, 'index']);
 

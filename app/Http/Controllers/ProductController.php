@@ -41,6 +41,8 @@ class ProductController extends Controller
             "apiKeyUds" => "required|string",
         ]);
 
-        //$this->productService->insertToUds($data);
+       return response(
+           $this->productService->insertToUds($data)
+       );
     }
 }

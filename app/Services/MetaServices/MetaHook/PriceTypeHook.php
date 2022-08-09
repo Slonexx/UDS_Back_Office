@@ -18,8 +18,26 @@ class PriceTypeHook
                 break;
             }
         }
-        return [
-            "meta" => $foundedMeta,
-        ];
+
+        if ($foundedMeta == null){
+            $meta = $this->createPriceType($namePrice,$apiKey)->meta;
+            return [
+                "meta" => $meta,
+            ];
+        } else {
+            return [
+                "meta" => $foundedMeta,
+            ];
+        }
     }
+
+    private function createPriceType($namePrice,$apiKey){
+        $url = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
+        $client = new MsClient($apiKey);
+        $body = [
+            "name" => $namePrice,
+        ];
+        return $client->post($url, $body);
+    }
+
 }

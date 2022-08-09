@@ -37,7 +37,7 @@ class AttributeService
             ],
             4 => [
                 "name" => "Дробное значение товара (UDS)",
-                "type" => "double",
+                "type" => "boolean",
                 "required" => false,
                 "description" => "Дробное значение товара (UDS)",
             ],
