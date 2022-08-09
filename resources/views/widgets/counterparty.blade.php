@@ -5,7 +5,7 @@
 
     <script>
         var GlobalobjectId;
-        var ObjectUrl = {{$getObjectUrl}};
+        var ObjectUrl;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -16,8 +16,8 @@
 
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                 });
-
-                oReq.open("GET", ObjectUrl + receivedMessage.objectId);
+                ObjectUrl = {{$getObjectUrl}};
+                oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
                 oReq.send();
             }
         });
