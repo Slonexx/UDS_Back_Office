@@ -36,7 +36,7 @@
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
-        <div class="row ds-gradient ">
+        <div class="row uds-gradient ">
             <div class="col-10">
                 <img src="https://uds.app/img/fav.png" width="30" height="30" class="mx-4" alt="">
                 <label class="mt-1 from-label">Клиент </label>
