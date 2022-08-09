@@ -52,8 +52,8 @@
             <div class="mx-2 col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-            <div class=" mx-2 text-white">
-                <h5 id="displayName" class=""></h5>
+            <div class=" mx-3 text-white">
+                <h6 id="displayName" class=""></h6>
             </div>
         </div>
 
