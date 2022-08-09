@@ -54,9 +54,12 @@ class indexController extends Controller
         $entity = 'counterparty';
 
         $getObjectUrl = $cfg->appBaseUrl . "widgets/get-object.php?accountId=$accountId&entity=$entity&objectId=";
-        $body = new Client();
 
-        dd($body->get($getObjectUrl));
+        $check = event();
+
+
+
+        dd($check);
 
         return view( 'widgets.counterparty', [
             'accountId' => $accountId,
