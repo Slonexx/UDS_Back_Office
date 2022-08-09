@@ -55,23 +55,23 @@
             <div class=" mx-2 text-white">
                 <h5 id="displayName" class=""></h5>
             </div>
+        </div>
 
-            <div class="row mx-2 text-black">
-                <div class="col-6">
-                    <div class="s-min">Последняя покупка </div>
-                </div>
-               <div class="col-6">
-                   <span id="lastTransactionTime"></span>
-               </div>
-
-                <div class="col-6">
-                    <div class="s-min">Бонусные баллы </div>
-                </div>
-                <div class="col-6">
-                    <span id="points"></span>
-                </div>
-
+        <div class="row mx-2 text-black">
+            <div class="col-6">
+                <div class="s-min">Последняя покупка </div>
             </div>
+            <div class="col-6">
+                <span id="lastTransactionTime"></span>
+            </div>
+
+            <div class="col-6">
+                <div class="s-min">Бонусные баллы </div>
+            </div>
+            <div class="col-6">
+                <span id="points"></span>
+            </div>
+
         </div>
 
          <br>
