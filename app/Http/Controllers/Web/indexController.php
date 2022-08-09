@@ -73,7 +73,7 @@ class indexController extends Controller
 
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $last = $body->get($UDSURL.$externalCode);
+        $last = $body->get($UDSURL.$externalCode)->participant;
 
         /*$json = [
             "accountId" => $accountId,
