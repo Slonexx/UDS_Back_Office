@@ -34,21 +34,19 @@
     <script>
 
         function update(){
-            window.addEventListener("message", function(event) {
-                var receivedMessage = event.data;
+            var receivedMessage = event.data;
 
-                if (receivedMessage.name === 'Open') {
-                    var oReq = new XMLHttpRequest();
-                    oReq.addEventListener("load", function() {
-                        var responseTextPars = JSON.parse(this.responseText);
-                        window.document.getElementById("object").innerHTML = this.responseText;
-                        console.log(" Pars = " + responseTextPars.email)
-                    });
+            if (receivedMessage.name === 'Open') {
+                var oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", function() {
+                    var responseTextPars = JSON.parse(this.responseText);
+                    window.document.getElementById("object").innerHTML = this.responseText;
+                    console.log(" Pars = " + responseTextPars.email)
+                });
 
-                    oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
-                    oReq.send();
-                }
-            });
+                oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
+                oReq.send();
+            }
         }
 
     </script>
