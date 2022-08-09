@@ -4,15 +4,11 @@
 @section('counterparty')
 <div class="content p-1 mt-2 bg-white text-Black rounded">
     @php
-        if (isset($_GET['receivedMessage'])) echo $_GET['receivedMessage']
-           /* dd(app('request'));*/
 
     @endphp
     <br>
     <br>
-    <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">
-            Открыт объект
-            <span class="hint">(?)</span>:</b> <span id="object"></span></p>
+    <p> Объект = <span id="object"></span> </p>
 </div>
 @endsection
 
@@ -20,7 +16,7 @@
 
     window.addEventListener('message', function (event){
         var receivedMessage = event.data;
-
+        window.document.getElementById("object").value = receivedMessage;
         console.log("receivedMessage = "+receivedMessage);
 
     })
