@@ -4,10 +4,10 @@
 @section('counterparty')
 
     <script>
-        var globalReceivedMessage;
+        var GlobalobjectId;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
-            globalReceivedMessage = receivedMessage;
+            GlobalobjectId = receivedMessage.objectId;
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
@@ -22,21 +22,19 @@
         });
 
         function update(){
-            if (globalReceivedMessage.name === 'Open') {
-                var oReq = new XMLHttpRequest();
-                oReq.addEventListener("load", function() {
-                    window.document.getElementById("object").innerHTML = this.responseText;
-                });
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                window.document.getElementById("object").innerHTML = this.responseText;
+            });
 
-                oReq.open("GET", "{{$getObjectUrl}}" + globalReceivedMessage.objectId);
-                oReq.send();
-            }
+            xmlHttpRequest.open("GET", "{{$getObjectUrl}}" + GlobalobjectId);
+            xmlHttpRequest.send();
         }
 
     </script>
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
-       <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+        <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
         <br>
         <p> email =  <span id="object"></span> </p>
 
