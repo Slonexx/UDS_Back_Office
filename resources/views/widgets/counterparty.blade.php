@@ -18,15 +18,13 @@
                 // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
                 oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
                 oReq.send();
-
             }
         });
 
     </script>
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
-        <h1> Объект =  </h1>
-        <p>{{$getObjectUrl}}</p>
+        <h1> Объект =  </h1> <span>{{$getObjectUrl}}</span>
         <p> <span id="object"></span> </p>
 
     </div>
