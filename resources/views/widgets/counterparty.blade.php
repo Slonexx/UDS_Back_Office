@@ -39,10 +39,10 @@
         <div class="row uds-gradient ">
             <div class=" p-2 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-4" alt="">
-                <label class="mt-1 from-label">Клиент </label>
+                <label class="from-label">Клиент </label>
             </div>
-            <div class="col-2">
-                <button type="submit" onclick="update()" class="btn-new btn text-orange from-label"> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+            <div class="col-2 p-2">
+                <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
 
 
