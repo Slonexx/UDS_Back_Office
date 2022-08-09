@@ -16,6 +16,14 @@
 </div>
 @endsection
 
+<script type="text/javascript">
+
+    window.addEventListener('message', function (event){
+        var receivedMessage = event.data;
+    })
+
+</script>
+
 <script>
     var hostWindow = window.parent;
 
