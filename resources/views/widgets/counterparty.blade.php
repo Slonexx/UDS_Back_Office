@@ -14,12 +14,12 @@
 
 <script type="text/javascript">
 
-    window.addEventListener('message', function (event){
+   /* window.addEventListener('message', function (event){
         var receivedMessage = event.data;
         $("#object").val(receivedMessage);
         console.log("receivedMessage = "+receivedMessage);
 
-    })
+    })*/
 
 </script>
 
