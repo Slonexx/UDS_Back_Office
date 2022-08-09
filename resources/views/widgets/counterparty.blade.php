@@ -46,7 +46,7 @@
         <div class="row uds-gradient ">
             <div class="mx-2 p-1 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
-                <label> Клиент <button onclick="xRefURL()" class="btn btn-light"><i class="fa-solid fa-chart-bar"></i></button>
+                <label onclick="xRefURL()" class="btn btn-light"> Клиент <i class="fa-solid fa-chart-bar"></i>
                 </label>
             </div>
             <div class="col-2 p-2">
