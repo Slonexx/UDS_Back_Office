@@ -15,7 +15,7 @@
                 window.document.getElementById("object").innerHTML = this.responseText;
             });
             // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
-            oReq.open("GET", "<?=$getObjectUrl?>" + receivedMessage.objectId);
+            oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
             oReq.send();
         }
     });
