@@ -1,7 +1,6 @@
 
 @extends('widgets.index')
 {{--
-
 <script>
     var hostWindow = window.parent;
 
@@ -67,7 +66,7 @@
     <br>
     <p><b title="Используя objectId, переданный в сообщении Open, можем получить через JSON API открытую пользователем сущность/документ">
             Открыт объект
-            <span class="hint">(?)</span>:</b> <span id="object"></span></p>
+            <span class="hint">(?)</span>:</b> <span id="object">{{$getObjectUrl}}</span></p>
 </div>
 @endsection
 

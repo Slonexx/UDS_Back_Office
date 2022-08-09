@@ -46,9 +46,6 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        $uid = $employee->uid;
-        $fio = $employee->shortFio;
-
         $Setting = new getSettingVendorController($accountId);
 
         $entity = 'counterparty';
