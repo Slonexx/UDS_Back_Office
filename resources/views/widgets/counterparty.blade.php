@@ -26,7 +26,7 @@
     </script>
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
-       <button id="update" class=" btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+       <button type="submit" id="update" class=" btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
         <br>
         <p> email =  <span id="object"></span> </p>
 
