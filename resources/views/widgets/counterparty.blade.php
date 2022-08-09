@@ -40,9 +40,10 @@
     <div class="content p-1 mt-2 bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
-            <div class=" p-1col-10 text-white">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" alt="">
-                <label>Клиент </label>
+            <div class="p-1 col-10 text-white">
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
+                <h6 class="s-min"> Клиент </h6>
+                <span id="displayName" class=""></span>
 
             </div>
             <div class="col-2 p-2">
@@ -64,7 +65,9 @@
         background: rgb(145,0,253);
         background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
     }
-
+    .s-min{
+        font-size: 8pt;
+    }
     .myButton {
         box-shadow: 0px 4px 5px 0px #5d5d5d !important;
         background-color: #00a6ff !important;
