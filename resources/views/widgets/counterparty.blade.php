@@ -42,7 +42,7 @@
                 <label class="from-label">Клиент </label>
             </div>
             <div class="col-2 p-2">
-                <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right" width="30" height="30"></i> </button>
             </div>
 
 
