@@ -1,70 +1,34 @@
+<!doctype html>
+<html lang="en">
+@include('head')
 
-@extends('widgets.index')
-{{--
-<script>
-    var hostWindow = window.parent;
+<body>
 
-    window.addEventListener("message", function(event) {
-        var receivedMessage = event.data;
 
-        logReceivedMessage(receivedMessage);
 
-        if (receivedMessage.name === 'Open') {
-            var oReq = new XMLHttpRequest();
-            oReq.addEventListener("load", function() {
-                window.document.getElementById("object").innerHTML = this.responseText;
-            });
-            // В демо приложении отсутствует авторизация (между виджетом и бэкендом) - в реальных приложениях не делайте так (должна быть авторизация)!
-            oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
-            oReq.send();
-        }
-    });
+    <div class="content p-1 mt-2 bg-white text-Black rounded">
+        {{$getObjectUrl}}
+    </div>
 
-    function logReceivedMessage(msg) {
-        logMessage("→ Received", msg)
+
+
+
+
+<style>
+    html {
+        height: 100%;
     }
-
-    function logSendingMessage(msg) {
-        logMessage("← Sending", msg)
+    body {
+        line-height: 0;
+        font-size: 12px;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
+</style>
 
-    function logMessage(prefix, msg) {
-        var messageAsString = JSON.stringify(msg);
-        console.log(prefix + " message: " + messageAsString);
-        addMessage(prefix.toUpperCase() + " " + messageAsString);
-    }
+</body>
+</html>
 
-    function addMessage(item) {
-        var messages = window.document.getElementById("messages");
-        messages.innerHTML = item + "<br/>" + messages.innerHTML;
-        messages.title += item + "\n";
-    }
-
-    function getOpenFeedbackDelay() {
-        return window.document.getElementById("openFeedbackDelay").value
-    }
-
-    function toggleBorders(value) {
-        body().className = value ? "borders" : "";
-    }
-
-    function showDimensions() {
-        var dimensions = window.document.getElementById("dimensions");
-        dimensions.innerText = body().offsetWidth + " x " + body().offsetHeight
-    }
-
-    function body() {
-        return window.document.body;
-    }
-</script>
---}}
-
-@section('counterparty')
-<div class="content p-1 mt-2 bg-white text-Black rounded">
-
-    <br>
-    <br>
-    {{$getObjectUrl}}
-</div>
-@endsection
 
