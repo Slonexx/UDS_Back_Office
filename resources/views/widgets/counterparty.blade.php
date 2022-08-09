@@ -6,6 +6,7 @@
     <script>
         var GlobalobjectId;
         var GlobalURL;
+        var GlobalxRefURL;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -14,11 +15,10 @@
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
                     var participant = responseTextPars.participant;
-                    var lastTransactionTime =  participant.lastTransactionTime.substr(0,10);
-
+                    GlobalxRefURL = participant.id;
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                    window.document.getElementById("lastTransactionTime").innerHTML = reverseString(lastTransactionTime);
+                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -36,24 +36,25 @@
             xmlHttpRequest.send();
         }
 
-        function reverseString(str) {
-            return str.split("").reverse().join("");
+        function xRefURL(){
+            window.open(GlobalxRefURL);
         }
     </script>
 
     <div class="content bg-white text-Black rounded">
 
         <div class="row uds-gradient ">
-            <div class="p-1 col-10 text-white">
+            <div class="mx-2 p-1 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-2" >
-                <label> Клиент </label>
+                <label> Клиент <button onclick="xRefURL()"><i class="fa-solid fa-chart-bar"></i></button>
+                </label>
             </div>
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
             <div class="row mx-2 text-white">
                 <h5 id="displayName" class=""></h5>
-                <div class="s-min">Последняя покупка <span id="lastTransactionTime"></span> </div>
+                <div class="s-min text-muted">Последняя покупка <span id="lastTransactionTime"></span> </div>
             </div>
 
         </div>
