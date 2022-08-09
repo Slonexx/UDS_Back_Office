@@ -15,7 +15,7 @@
                     var responseTextPars = JSON.parse(this.responseText);
 
                     window.document.getElementById("object").innerHTML = this.responseText;
-                    console.log(" this.responseText = " + responseTextPars)
+                    console.log(" Pars = " + responseTextPars.email)
                 });
 
                 oReq.open("GET", "{{$getObjectUrl}}" + receivedMessage.objectId);
