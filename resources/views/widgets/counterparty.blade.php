@@ -15,6 +15,7 @@
                     var responseTextPars = JSON.parse(this.responseText);
 
                     window.document.getElementById("object").innerHTML = responseTextPars.email;
+                    window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -40,6 +41,7 @@
             <div class=" p-2 col-10 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" class="mx-4" alt="">
                 <label class="from-label">Клиент </label>
+                <h4 id="displayName"></h4>
             </div>
             <div class="col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
