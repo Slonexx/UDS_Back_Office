@@ -40,7 +40,9 @@
 
                 <img src="https://uds.app/img/fav.png" width="20" height="20" class="d-inline-block align-top" alt="">
                 <label>Клиент </label>
-                <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                <div class="float-right">
+                    <button type="submit" onclick="update()" class="btn-new btn text-orange "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                </div>
             </div>
 
 
