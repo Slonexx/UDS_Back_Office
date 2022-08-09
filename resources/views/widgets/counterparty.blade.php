@@ -26,7 +26,8 @@
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
         <h1> Данные с обчекта </h1>
-        {{$getObjectUrl}}
+        <p> <span id="object"></span> </p>
+
     </div>
 @endsection
 
