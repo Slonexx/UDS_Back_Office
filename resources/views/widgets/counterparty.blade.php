@@ -25,7 +25,7 @@
     </script>
 
     <div class="content p-1 mt-2 bg-white text-Black rounded">
-        <h1> Данные с обчекта </h1>
+        <h1> Объект = {{$getObjectUrl}} </h1>
         <p> <span id="object"></span> </p>
 
     </div>
