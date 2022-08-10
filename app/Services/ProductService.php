@@ -424,13 +424,73 @@ class ProductService
         $client->put($url,$body);
     }
 
+    private function updateProduct($createdProductId, $idMs, $apiKeyMs){
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idMs;
+        $client = new MsClient($apiKeyMs);
+
+        $body = [
+            "attributes" => [
+                0 => [
+                    "meta" => $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs),
+                    "name" => "id (UDS)",
+                    "value" => "".$createdProductId,
+                ],
+            ],
+        ];
+
+        $client->put($url,$body);
+    }
+
     private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds);
         //dd($productsUds);
         $categoriesMs = $this->getCategoriesMs($apiKeyMs);
+
         foreach ($categoriesMs->rows as $categoryMs){
+            if ($categoryMs->pathName == "")
             if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
+                //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
+                //echo $categoryMs->externalCode."\r\n";
                $createdCategoryId = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds)->id;
+               $productsUds["categoryIds"][] = "".$createdCategoryId;
+               $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
+            }
+        }
+
+        foreach ($categoriesMs->rows as $categoryMs){
+            if ($categoryMs->pathName != "" && !str_contains($categoryMs->pathName, "/"))
+            if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
+                //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
+                //echo $categoryMs->externalCode."\r\n";
+                $folderHref = $categoryMs->productFolder->meta->href;
+                $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                $createdCategoryId = $this->createCategoryUds(
+                   $categoryMs->name,
+                   $companyId,
+                   $apiKeyUds,
+                   $idNodeCategory)->id;
+               $productsUds["categoryIds"][] = "".$createdCategoryId;
+               $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
+            }
+        }
+
+        foreach ($categoriesMs->rows as $categoryMs){
+            if (
+                $categoryMs->pathName != ""
+                && str_contains($categoryMs->pathName, "/")
+                && count(explode('/',$categoryMs->pathName)) == 2
+            )
+            if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
+                //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
+                //echo $categoryMs->externalCode."\r\n";
+                $folderHref = $categoryMs->productFolder->meta->href;
+                $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                $createdCategoryId = $this->createCategoryUds(
+                   $categoryMs->name,
+                   $companyId,
+                   $apiKeyUds,
+                   $idNodeCategory)->id;
+               $productsUds["categoryIds"][] = "".$createdCategoryId;
                $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
             }
         }
@@ -459,11 +519,15 @@ class ProductService
             if ($isProductNotAdd){
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
-                    $idNodeCategory = $this->getCategoryNameByMetaHref($productFolderHref,$apiKeyMs);
+                    $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
                     //dd($idNodeCategory);
-                    $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$idNodeCategory);
+                    $createdProductId = $this->createProductUds(
+                        $row,$apiKeyMs,$companyId,$apiKeyUds,$idNodeCategory
+                    )->id;
+                    $this->updateProduct($createdProductId,$row->id,$apiKeyMs);
                 } else {
-                    $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
+                    $createdProductId = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
+                    $this->updateProduct($createdProductId,$row->id,$apiKeyMs);
                 }
             }
 
@@ -487,19 +551,32 @@ class ProductService
         $url = "https://api.uds.app/partner/v2/goods";
         $client = new UdsClient($companyId,$apiKeyUds);
 
+        $prices = [];
+
+        foreach ($product->salePrices as $price){
+            if ($price->priceType->name == "Цена продажи"){
+                $prices["salePrice"] = $price->value / 100;
+            } elseif ($price->priceType->name == "Акционный"){
+                $prices["offerPrice"] = $price->value / 100;
+            }
+        }
+
         $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
         $body = [
             "name" => $product->name,
             "data" => [
                 "type" => "ITEM",
-                "price" => $product->salePrices[0]->value,
+                "price" => $prices["salePrice"],
                 "measurement" => $nameOumUds,
             ],
         ];
 
         if (property_exists($product,"attributes")){
             foreach ($product->attributes as $attribute){
-                if ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == 1){
+                if ($attribute->name == "Акционный товар (UDS)" && $attribute->value == 1){
+                    $body["data"]["offer"]["offerPrice"] = $prices["offerPrice"];
+                }
+                elseif ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == 1){
                     $body["data"]["offer"]["skipLoyalty"] = true;
                 } elseif ($attribute->name == "Шаг дробного значения (UDS)"){
                     $body["data"]["increment"] = $attribute->value;
@@ -535,8 +612,11 @@ class ProductService
         ];
 
         if ($nodeId > 0){
-            $body["nodeId"] = $nodeId;
+            $body["nodeId"] = intval($nodeId);
+           // dd($body);
         }
+
+
 
         return $client->post($url, $body);
     }
@@ -581,7 +661,7 @@ class ProductService
         }
     }
 
-    private function getCategoryNameByMetaHref($href, $apiKeyMs){
+    private function getCategoryIdByMetaHref($href, $apiKeyMs){
         $client = new MsClient($apiKeyMs);
         return $client->get($href)->externalCode;
     }
