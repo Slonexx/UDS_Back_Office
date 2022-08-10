@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="col-5">
-                    <div class="row s-min-8 my-bg-gray ">
+                    <div class="s-min-8 my-bg-gray ">
                         <span> Уровень: </span>
                         <span id="membershipTierName"></span>
                         <span id="membershipTierRate"></span>
