@@ -72,19 +72,22 @@
             </div>
         </div>
 
-        <div class="row mx-2 text-black mt-2">
+        <div class="row mx-2 text-black ">
             <div class="col-8">
                 <div class="s-min ">Последняя покупка </div>
             </div>
             <div class="col-4">
                 <span id="lastTransactionTime" class="s-min"></span>
             </div>
+        </div>
+
+        <div class="row text-black mt-1">
 
             <div class="col-8">
-                <div class="s-min">Бонусные баллы </div>
+                <div class="s-normal">Бонусные баллы </div>
             </div>
             <div class="col-4 bg-success my-bg-success text-white p-1">
-                <span id="points" class="s-min mx-2"></span>
+                <span id="points" class="s-normal mx-2"></span>
             </div>
 
         </div>
@@ -103,6 +106,10 @@
     }
     .s-min-8{
         font-size: 8px;
+    }
+
+    .s-normal{
+        font-size: 12px;
     }
 
     .myPM{
