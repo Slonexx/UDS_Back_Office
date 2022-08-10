@@ -60,7 +60,7 @@
                 <h6 id="displayName" class=""></h6>
                 </div>
 
-                <div class="col-7 s-min my-bg-gray text-white">
+                <div class="col-7 s-min my-bg-gray ">
                     <span> Уровень: </span>
                     <span id="membershipTierName"></span>
                     <span id="membershipTierRate"></span>
@@ -120,9 +120,11 @@
         top: 1px !important;
     }
     .my-bg-gray{
-        background-color: gray !important;
-        padding: 2px !important;
-        border-radius: 10% !important;
+        background-color: #ebefff !important;
+        color: #3b3c65;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+
     }
 
 </style>
