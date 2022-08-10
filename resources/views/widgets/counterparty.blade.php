@@ -15,11 +15,14 @@
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
                     var participant = responseTextPars.participant;
+                    var membershipTier = responseTextPars.membershipTier
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
 
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
                     window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
                     window.document.getElementById("points").innerHTML = participant.points;
+                    window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                    window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -52,8 +55,17 @@
             <div class="mx-2 col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
-            <div class=" mx-3 text-white">
+            <div class="row mx-3 text-white">
+                <div class="col-6">
                 <h6 id="displayName" class=""></h6>
+                </div>
+
+                <div class="col-6 s-min">
+                    <span> Уровень: </span>
+                    <span id="membershipTierName"></span>
+                    <span id="membershipTierRate">%</span>
+                </div>
+
             </div>
         </div>
 
