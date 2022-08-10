@@ -86,7 +86,7 @@
                 <div class="s-min">Бонусные баллы </div>
             </div>
             <div class="col-4">
-                <span id="points" class="s-min bg-success "></span>
+                <span id="points" class="s-min bg-success my-bg-success text-white"></span>
             </div>
 
         </div>
@@ -136,7 +136,11 @@
         color: #3b3c65;
         border-radius: 14px !important;
         overflow: hidden !important;
+    }
 
+    .my-bg-success{
+        border-radius: 14px !important;
+        overflow: hidden !important;
     }
 
 </style>
