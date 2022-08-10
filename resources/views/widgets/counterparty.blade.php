@@ -72,16 +72,13 @@
             </div>
         </div>
 
-        <div class="row mx-2 text-black">
+        <div class="row mx-2 text-black mt-2">
             <div class="col-8">
-                <div class="s-min">Последняя покупка </div>
+                <div class="s-min ">Последняя покупка </div>
             </div>
             <div class="col-4">
                 <span id="lastTransactionTime" class="s-min"></span>
             </div>
-        </div>
-        <br>
-        <div class="row mx-2 text-back">
 
             <div class="col-8">
                 <div class="s-min">Бонусные баллы </div>
@@ -89,6 +86,7 @@
             <div class="col-4 bg-success my-bg-success text-white p-1">
                 <span id="points" class="s-min mx-2"></span>
             </div>
+
         </div>
 
     </div>
