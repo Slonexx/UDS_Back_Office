@@ -86,7 +86,7 @@
                 <div class="s-min">Бонусные баллы </div>
             </div>
             <div class="col-4">
-                <span id="points" class="s-min bg-success my-bg-success text-white"></span>
+                <span id="points" class="s-min bg-success my-bg-success text-white p-1"></span>
             </div>
 
         </div>
