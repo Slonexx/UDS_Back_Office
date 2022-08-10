@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="col-5">
-                    <div class="s-min-8 my-bg-gray ">
+                    <div class="s-min-8 my-bg-gray myPM">
                         <span> Уровень: </span>
                         <span id="membershipTierName"></span>
                         <span id="membershipTierRate"></span>
@@ -106,6 +106,13 @@
     .s-min-8{
         font-size: 8px;
     }
+
+    .myPM{
+       padding-left: 4px !important;
+        margin: 2px !important;
+        margin-right: 11px !important;
+    }
+
     .myButton {
         box-shadow: 0px 4px 5px 0px #5d5d5d !important;
         background-color: #00a6ff !important;
