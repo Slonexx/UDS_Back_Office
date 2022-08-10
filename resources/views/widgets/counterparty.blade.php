@@ -72,16 +72,14 @@
             </div>
         </div>
 
-        <br>
-
         <div class="row mx-2 text-black">
             <div class="col-8">
-                <div class="s-min">Последняя покупка </div>
+                <div class="s-min-8">Последняя покупка </div>
             </div>
             <div class="col-4">
-                <span id="lastTransactionTime" class="s-min"></span>
+                <span id="lastTransactionTime" class="s-min-8"></span>
             </div>
-
+            <br>
             <div class="col-8">
                 <div class="s-min">Бонусные баллы </div>
             </div>
