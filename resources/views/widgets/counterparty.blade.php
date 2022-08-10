@@ -56,15 +56,25 @@
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
             </div>
             <div class="row mx-3 text-white">
-                <div class="col-5">
+                <div class="col-7">
                 <h6 id="displayName" class=""></h6>
                 </div>
 
-                <div class="col-7 s-min my-bg-gray ">
-                    <span> Уровень: </span>
-                    <span id="membershipTierName"></span>
-                    <span id="membershipTierRate"></span>
-                    <span>%</span>
+                <div class="col-5 s-min my-bg-gray ">
+                    <div class="">
+
+                        <div class="col-6">
+                            <span> Уровень: </span>
+                        </div>
+                        <div class="col-6">
+                            <span id="membershipTierName"></span>
+                            <span id="membershipTierRate"></span>
+                            <span>%</span>
+                        </div>
+
+                    </div>
+
+
                 </div>
 
             </div>
