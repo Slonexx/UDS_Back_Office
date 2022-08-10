@@ -15,7 +15,7 @@
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
                     var participant = responseTextPars.participant;
-                    var membershipTier = responseTextPars.membershipTier
+                    var membershipTier = participant.membershipTier
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
 
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
