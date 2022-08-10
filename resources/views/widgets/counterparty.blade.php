@@ -60,21 +60,13 @@
                 <h6 id="displayName" class=""></h6>
                 </div>
 
-                <div class="col-5 s-min my-bg-gray ">
-                    <div class="">
-
-                        <div class="col-6">
-                            <span> Уровень: </span>
-                        </div>
-                        <div class="col-6">
-                            <span id="membershipTierName"></span>
-                            <span id="membershipTierRate"></span>
-                            <span>%</span>
-                        </div>
-
+                <div class="col-5">
+                    <div class="row s-min-8 my-bg-gray ">
+                        <span> Уровень: </span>
+                        <span id="membershipTierName"></span>
+                        <span id="membershipTierRate"></span>
+                        <span>%</span>
                     </div>
-
-
                 </div>
 
             </div>
@@ -110,6 +102,9 @@
     }
     .s-min{
         font-size: 10pt;
+    }
+    .s-min-8{
+        font-size: 8px;
     }
     .myButton {
         box-shadow: 0px 4px 5px 0px #5d5d5d !important;
