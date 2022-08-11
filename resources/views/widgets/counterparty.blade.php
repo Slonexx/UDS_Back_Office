@@ -100,8 +100,8 @@
                 </select>
             </div>
             {{--Начисление--}}
-            <div id="Accrue" class="mx-2 mt-2 row bg-light" style="display: none">
-                <div class="row mt-2 ">
+            <div id="Accrue" class="mx-2 mt-2 row" style="display: none">
+                <div class="row mt-2 mb-2 bg-light">
                     <label class="s-min"> Количество баллов </label>
                     <div class="col-8">
                         <input type="text" name="Accrue" id="Accrue" class="form-control"
