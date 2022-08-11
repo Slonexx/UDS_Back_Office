@@ -1,0 +1,151 @@
+
+@extends('widgets.index')
+
+@section('counterparty')
+
+    <script>
+        var GlobalobjectId;
+        var GlobalURL;
+        var GlobalxRefURL;
+        window.addEventListener("message", function(event) {
+            var receivedMessage = event.data;
+            GlobalobjectId = receivedMessage.objectId;
+            if (receivedMessage.name === 'Open') {
+                var oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", function() {
+                    var responseTextPars = JSON.parse(this.responseText);
+                    var participant = responseTextPars.participant;
+                    var membershipTier = participant.membershipTier
+                    GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
+
+                    window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
+                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
+                    window.document.getElementById("points").innerHTML = participant.points;
+                    window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                    window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
+                });
+                GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+                oReq.open("GET", GlobalURL);
+                oReq.send();
+            }
+        });
+
+        function update(){
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                window.document.getElementById("object").innerHTML = this.responseText;
+            });
+
+            xmlHttpRequest.open("GET", GlobalURL);
+            xmlHttpRequest.send();
+        }
+
+        function xRefURL(){
+            window.open(GlobalxRefURL);
+        }
+    </script>
+
+    <div class="content bg-white text-Black rounded">
+
+        <div class="row uds-gradient mx-2">
+            <div class="mx-2 p-2 col-9 text-white">
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
+            </div>
+            <div class="mx-2 col-2 p-2">
+                <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+            </div>
+            <div class="row mx-3 text-white">
+                <div class="col-7">
+                <h6 id="displayName" class=""></h6>
+                </div>
+
+                <div class="col-5">
+                    <div class="s-min-8 my-bg-gray p-1 px-2">
+                        <span> Уровень: </span>
+                        <span id="membershipTierName"></span>
+                        <span id="membershipTierRate"></span>
+                        <span>%</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row mx-2 text-black ">
+            <div class="col-8">
+                <div class="s-min ">Последняя покупка </div>
+            </div>
+            <div class="col-4">
+                <span id="lastTransactionTime" class="s-min"></span>
+            </div>
+        </div>
+
+        <div class="row text-black mt-1">
+
+            <div class="col-8">
+                <div class="s-normal">Бонусные баллы </div>
+            </div>
+            <div class="col-4 bg-success my-bg-success text-white p-1">
+                <span id="points" class="s-normal mx-2"></span>
+            </div>
+
+        </div>
+
+    </div>
+@endsection
+
+<style>
+
+    .uds-gradient{
+        background: rgb(145,0,253);
+        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+    }
+    .s-min{
+        font-size: 10pt;
+    }
+    .s-min-8{
+        font-size: 8px;
+    }
+
+    .s-normal{
+        font-size: 12px;
+    }
+
+    .myPM{
+       padding-left: 4px !important;
+        margin: 2px !important;
+        margin-right: 11px !important;
+    }
+
+    .myButton {
+        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
+        background-color: #00a6ff !important;
+        color: white !important;
+        border-radius:50px !important;
+        display:inline-block !important;
+        cursor:pointer !important;
+        padding:5px 5px !important;
+        text-decoration:none !important;
+    }
+    .myButton:hover {
+        background-color: #fffdfd !important;
+        color: #111111 !important;
+    }
+    .myButton:active {
+        position: relative !important;
+        top: 1px !important;
+    }
+    .my-bg-gray{
+        background-color: #ebefff !important;
+        color: #3b3c65;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+    }
+
+    .my-bg-success{
+        border-radius: 14px !important;
+        overflow: hidden !important;
+    }
+
+</style>

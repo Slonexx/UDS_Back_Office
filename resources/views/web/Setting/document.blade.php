@@ -9,23 +9,56 @@
 
         <br>
 
+        @isset($message)
+
+            <div class="{{$message['alert']}}"> {{ $message['message'] }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+        @endisset
+
+        <div class=" alert alert-warning alert-dismissible fade show in text-center "> Склад на который будет создаваться заказ, это тот же склад который выбирается по остаткам в настройках основная
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
 
-        <form action=" " method="post">
+        <form action=" {{ route('setSettingDocument' , ['accountId' => $accountId] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
 
             <div class="mb-3 row">
                 <div class="col-sm-5">
-                    <label class="mt-1 from-label">Создавать документы при заказе с UDS ? </label>
+                    <label class="mt-1 from-label">Создавать заказы с UDS ? </label>
                 </div>
                 <div class="col-sm-2">
-                  <select name="creatDocument" class="form-select text-black" onchange="showDiv('hidden_div', this)">
-                      <option selected value="0">Нет</option>
-                      <option value="1">Да</option>
+
+
+                        @php
+
+                        if ($creatDocument == "1") {
+                            $creatDocument_data = "anti_hidden_div";
+                            $creatDocument_data_option_0 = "";
+                            $creatDocument_data_option_1 = "selected";
+                        }
+                        else {
+                            $creatDocument_data = "hidden_div";
+                            $creatDocument_data_option_0 = "selected";
+                            $creatDocument_data_option_1 = "";
+                        }
+
+                        @endphp
+
+
+                  <select name="creatDocument" class="form-select text-black" onchange="showDiv('{{$creatDocument_data}}', this)">
+                      <option {{$creatDocument_data_option_0}} value="0">Нет</option>
+                      <option {{$creatDocument_data_option_1}} value="1">Да</option>
                   </select>
+
+
+
                 </div>
-                <div id="hidden_div">
+
+                    <div id="{{$creatDocument_data}}">
                     <br>
                     <div class="mb-3 row" >
                         <P class="col-sm-5 col-form-label"> Выберите на какую организацию создавать заказы: </P>
@@ -85,8 +118,15 @@
                         <div class="row">
                             <P class="col-sm-5 col-form-label"> Выберите расчетный счет: </P>
                             <div class="col-sm-7">
+                                @php
+                                $param = 1;
+                                @endphp
                                 @foreach($Body_organization as $row)
-                                <div class="some"  id="some_{{  $row->id }}"  style="display:none;">
+                                    @if($param == 1)
+                                         <div class="some"  id="some_{{  $row->id }}"  style="display:block;">
+                                    @else
+                                        <div class="some"  id="some_{{  $row->id }}"  style="display:none;">
+                                    @endif
                                     @php
                                         $id = $row->id;
                                         $array_element = [];
@@ -106,7 +146,11 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                @php
+                                    $param = $param+1;
+                                @endphp
                             @endforeach
+
                             </div>
                         </div>
                             <script type="text/javascript">
@@ -117,21 +161,7 @@
                             </script>
                     </div>
                     <br>
-                    <div class="mb-3 row">
 
-                        <P class="col-sm-5 col-form-label"> Выберите на какой склад создавать заказ: </P>
-                        <div class="col-sm-7">
-                            <select name="Store" class="form-select text-black " >
-                                @foreach($Body_store as $Body_store_item)
-                                    @if ( $Store == $Body_store_item->name )
-                                        <option selected value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
-                                    @else
-                                        <option value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
                 </div>
 
 
@@ -139,11 +169,12 @@
 
             </div>
 
-            <hr class="href_padding">
-            <button class="btn btn-outline-dark textHover" data-bs-toggle="modal" data-bs-target="#modal">
-                <i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить </button>
+                <hr class="href_padding">
+                <button class="btn btn-outline-dark textHover" data-bs-toggle="modal" data-bs-target="#modal">
+                    <i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить
+                </button>
 
-
+            </div>
         </form>
     </div>
 
@@ -171,6 +202,10 @@
 
     #hidden_div {
         display: none;
+    }
+
+    #anti_hidden_div {
+        display: block;
     }
 
     #hidden_PaymentAccount {

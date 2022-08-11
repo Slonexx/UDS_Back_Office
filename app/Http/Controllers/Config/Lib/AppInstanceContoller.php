@@ -17,12 +17,13 @@ class AppInstanceContoller
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $Store;
 
+    var $creatDocument;
     var $Organization;
     var $PaymentDocument;
     var $Document;
     var $PaymentAccount;
-    var $Store;
 
     var $Saleschannel;
     var $Project;
@@ -106,12 +107,13 @@ class AppInstanceContoller
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->Store = $json->Store;
 
+        $this->creatDocument = $json->creatDocument;
         $this->Organization = $json->Organization;
         $this->PaymentDocument = $json->PaymentDocument;
         $this->Document = $json->Document;
         $this->PaymentAccount = $json->PaymentAccount;
-        $this->Store = $json->Store;
 
         $this->Saleschannel = $json->Saleschannel;
         $this->Project = $json->Project;
