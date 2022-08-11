@@ -13,6 +13,9 @@
             if (GlobalobjectId === undefined) {
                     document.getElementById("activated").style.display = "none";
                     document.getElementById("undefined").style.display = "block";
+            } else {
+                document.getElementById("activated").style.display = "block";
+                document.getElementById("undefined").style.display = "none";
             }
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
