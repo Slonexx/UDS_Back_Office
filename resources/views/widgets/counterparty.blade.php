@@ -72,25 +72,74 @@
             </div>
         </div>
 
-        <div class="row mx-2 text-black ">
+        <div class="row mx-2 text-black mt-1">
             <div class="col-8">
                 <div class="s-min ">Последняя покупка </div>
             </div>
             <div class="col-4">
                 <span id="lastTransactionTime" class="s-min"></span>
             </div>
-        </div>
 
-        <div class="row text-black mt-1">
-
-            <div class="col-8">
-                <div class="s-normal">Бонусные баллы </div>
+            <div class="col-8 mt-2">
+                <div class="s-min">Бонусные баллы: </div>
             </div>
             <div class="col-4 bg-success my-bg-success text-white p-1">
-                <span id="points" class="s-normal mx-2"></span>
+                <span id="points" class="s-min mx-2"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-1">
+
+            </div>
+            <div class="col-10">
+                <select onclick="Bonus()" class="p-1 form-select" id="Bonus">
+                    <option selected> Действия с баллами </option>
+                    <option value="1"> Начислить баллы </option>
+                    <option value="2"> Списать баллы </option>
+                </select>
+            </div>
+            {{--Начисление--}}
+            <div id="Accrue" class="row" style="display: none">
+                <div class="row mt-2">
+
+                    <div class="col-4">
+                        <label class="form-label"> Количество баллов </label>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="Accrue" id="Accrue" class="form-control"
+                               required maxlength="10" >
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-success">Начислить</button>
+                    </div>
+
+                </div>
+            </div>
+            {{--Списание--}}
+            <div id="Cancellation" class="row" style="display: none">
+                Списание
             </div>
 
         </div>
+
+        <script>
+            function Bonus() {
+                var select = document.getElementById('Bonus');
+                var option = select.options[select.selectedIndex];
+                if (option.value == 1) {
+                    document.getElementById("Accrue").style.display = "block";
+                    document.getElementById("Cancellation").style.display = "none";
+                }else if (option.value == 2) {
+                    document.getElementById("Cancellation").style.display = "block";
+                    document.getElementById("Accrue").style.display = "none";
+                }
+                else {
+                    document.getElementById("Cancellation").style.display = "none";
+                    document.getElementById("Accrue").style.display = "none";
+                }
+            }
+        </script>
 
     </div>
 @endsection
@@ -106,10 +155,6 @@
     }
     .s-min-8{
         font-size: 8px;
-    }
-
-    .s-normal{
-        font-size: 12px;
     }
 
     .myPM{

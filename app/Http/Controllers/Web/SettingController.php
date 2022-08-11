@@ -88,6 +88,7 @@ class SettingController extends Controller
         ]);
     }
 
+
     public function indexDocument(Request $request, $accountId){
         $Setting = new getSettingVendorController($accountId);
 
@@ -147,7 +148,16 @@ class SettingController extends Controller
     }
 
     public function postSettingDocument(Request $request, $accountId){
+
         $creatDocument = $request->creatDocument;
+        $Organization = $request->Organization;
+
+        if ('Нет расчетного счёта' != $request->$Organization){
+            $PaymentAccount = $request->$Organization;
+        } else $PaymentAccount = null;
+
+
+
 
         $cfg = new cfg();
         $appId = $cfg->appId;
@@ -156,11 +166,15 @@ class SettingController extends Controller
             $TokenMoySklad = $app->TokenMoySklad;
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
             $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
-            [
-                $pool->as('body')->withToken($TokenMoySklad)->get($url),
-                $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
-            ]);
+
+                $urlCheck = $url_organization . "/" . $request->Organization;
+                $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+                    $pool->as('body')->withToken($TokenMoySklad)->get($url),
+                    $pool->as('organization')->withToken($TokenMoySklad)->get($urlCheck),
+                    $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
+                ]);
+                $Organization = $responses['organization']->object();
+
 
 
         if ($creatDocument == "1"){
@@ -169,7 +183,7 @@ class SettingController extends Controller
             $app->Organization = $request->Organization;
             $app->Document = $request->Document;
             $app->PaymentDocument = $request->PaymentDocument;
-            $app->PaymentAccount = $request->PaymentAccount;
+            $app->PaymentAccount = $PaymentAccount;
 
             $app->persist();
 
@@ -191,10 +205,10 @@ class SettingController extends Controller
             "Body_organization" => $responses['body_organization']->object()->rows,
 
             "creatDocument" => $request->creatDocument,
-            "Organization" => $request->Organization,
+            "Organization" => $Organization,
             "PaymentDocument" =>  $request->PaymentDocument,
             "Document" =>  $request->Document,
-            "PaymentAccount" =>  $request->PaymentAccount,
+            "PaymentAccount" =>  $PaymentAccount,
 
             "message" => $message,
             "apiKey" => $TokenMoySklad,
