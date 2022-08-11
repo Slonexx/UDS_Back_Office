@@ -11,8 +11,6 @@
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
 
-
-
             if (receivedMessage.name === 'Open') {
 
                 var oReq = new XMLHttpRequest();
@@ -42,11 +40,12 @@
                 oReq.send();
             }
         });
-
+        //Доделать потом обновление кнопка
         function update(){
             var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
-                window.document.getElementById("object").innerHTML = this.responseText;
+
+
             });
 
             xmlHttpRequest.open("GET", GlobalURL);
@@ -56,6 +55,12 @@
         function xRefURL(){
             window.open(GlobalxRefURL);
         }
+
+        function Accrue(){
+          var input = document.getElementById("inputAccrue").value;
+        console.log("input = " + input);
+        }
+
     </script>
 
     <div id="activated" class="content bg-white text-Black rounded">
@@ -121,11 +126,11 @@
                     <div class="row mt-2 mb-2 ">
                         <label class="s-min"> Количество баллов </label>
                         <div class="col-8">
-                            <input type="text" name="Accrue" id="Accrue" class="form-control"
+                            <input type="text" name="Accrue" id="inputAccrue" class="form-control"
                                    required maxlength="10" >
                         </div>
                         <div class="col-4">
-                            <button class="btn btn-success rounded-pill">Начислить</button>
+                            <button onclick="Accrue()" class="btn btn-success rounded-pill">Начислить</button>
                         </div>
 
                     </div>
