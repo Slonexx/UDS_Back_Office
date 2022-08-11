@@ -87,7 +87,7 @@
                 <span id="points" class="s-min mx-2"></span>
             </div>
         </div>
-
+        <br>
         <div class="row">
             <div class="col-1">
 
