@@ -66,6 +66,7 @@ class indexController extends Controller
         $cfg = new cfg();
         $Setting = new getSettingVendorController($accountId);
 
+
         $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
         $BodyCounterparty = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
         $externalCode =  $BodyCounterparty->requestGet()->externalCode;

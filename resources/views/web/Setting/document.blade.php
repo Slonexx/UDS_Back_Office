@@ -65,16 +65,20 @@
                             <div class="col-sm-7">
 
 
-
                                 <select name="Organization"  id="hidden_Organization" class="form-select text-black" onclick="PaymentAccountFun()" >
                                     @if ($Organization != "0")
                                         <option selected value="{{ $Organization->id }}"> {{ ($Organization->name) }} </option>
-                                    @endif
                                         @foreach($Body_organization as $bodyItem)
                                             @if ($Organization->id != $bodyItem->id)
                                                 <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
                                             @endif
                                         @endforeach
+                                    @endif
+                                    @if ($Organization == "0")
+                                        @foreach($Body_organization as $bodyItem)
+                                                <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
+                                        @endforeach
+                                        @endif
                                 </select>
 
                             </div>
@@ -139,11 +143,11 @@
 
                                         <select name="{{$row->id}}" class="form-select text-black">
                                             @if (array_key_exists(0, $Body_accounts))
-
-                                                @if ($Organization->id == $row->id)
-                                                    <option selected value="{{$PaymentAccount}}"> {{ $PaymentAccount }}</option>
+                                                @if ($Organization != "0")
+                                                    @if ($Organization->id == $row->id)
+                                                        <option selected value="{{$PaymentAccount}}"> {{ $PaymentAccount }}</option>
+                                                    @endif
                                                 @endif
-
                                             @foreach ($Body_accounts as $Body_accounts_item)
                                                 @if($PaymentAccount != $Body_accounts_item->accountNumber)
                                                     <option value="{{$Body_accounts_item->accountNumber}}"> {{ $Body_accounts_item->accountNumber }}</option>
