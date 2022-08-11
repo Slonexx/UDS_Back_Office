@@ -10,6 +10,7 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
+
             console.log("objectId = " + receivedMessage.objectId)
             if (receivedMessage.objectId == undefined) {
                     document.getElementById("activated").style.display = "none";
@@ -18,10 +19,14 @@
                 document.getElementById("activated").style.display = "block";
                 document.getElementById("undefined").style.display = "none";
             }
+
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
+
+                    console.log("responseTextPars = " + responseTextPars)
+
                     var participant = responseTextPars.participant;
                     var membershipTier = participant.membershipTier
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
