@@ -88,7 +88,7 @@
             </div>
         </div>
         <br>
-        <div class="row">
+        <div class="row b">
             <div class="col-1">
 
             </div>
@@ -100,12 +100,12 @@
                 </select>
             </div>
             {{--Начисление--}}
-            <div id="Accrue" class="mx-2 mt-2 row" style="display: none">
+            <div id="Accrue" class="mx-2 mt-2 row g-light" style="display: none">
                 <div class="col-1">
 
                 </div>
-                <div class="col-10">
-                    <div class="row mt-2 mb-2 bg-light">
+                <div class="col-11">
+                    <div class="row mt-2 mb-2 ">
                         <label class="s-min"> Количество баллов </label>
                         <div class="col-8">
                             <input type="text" name="Accrue" id="Accrue" class="form-control"
