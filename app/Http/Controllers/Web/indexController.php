@@ -75,11 +75,15 @@ class indexController extends Controller
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $last = $body->getisErrors($UDSURL.$externalCode);
-        dd($last);
-
+        if ($last == 200){
+            $last = $body->get($UDSURL.$externalCode);
+        } else {
+            return response()->json(
+                $last,404);
+        }
 
         return response()->json(
-            $last,201);
+            $last,20);
 
     }
 
