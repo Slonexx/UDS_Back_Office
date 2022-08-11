@@ -101,17 +101,23 @@
             </div>
             {{--Начисление--}}
             <div id="Accrue" class="mx-2 mt-2 row" style="display: none">
-                <div class="row mt-2 mb-2 bg-light">
-                    <label class="s-min"> Количество баллов </label>
-                    <div class="col-8">
-                        <input type="text" name="Accrue" id="Accrue" class="form-control"
-                               required maxlength="10" >
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-success rounded-pill">Начислить</button>
-                    </div>
+                <div class="col-1">
 
                 </div>
+                <div class="col-10">
+                    <div class="row mt-2 mb-2 bg-light">
+                        <label class="s-min"> Количество баллов </label>
+                        <div class="col-8">
+                            <input type="text" name="Accrue" id="Accrue" class="form-control"
+                                   required maxlength="10" >
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-success rounded-pill">Начислить</button>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
             {{--Списание--}}
             <div id="Cancellation" class="row" style="display: none">
