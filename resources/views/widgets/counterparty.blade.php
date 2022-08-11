@@ -10,6 +10,7 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
+            console.log("objectId = " + receivedMessage.objectId)
             if (receivedMessage.objectId == undefined) {
                     document.getElementById("activated").style.display = "none";
                     document.getElementById("undefined").style.display = "block";
