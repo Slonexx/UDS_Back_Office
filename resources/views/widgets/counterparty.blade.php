@@ -23,6 +23,7 @@
                     } catch (error){
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
+                        console.log("responseTextPars = " + this.responseText)
                     }
 
                     /*if (this.responseText == 404) {
@@ -32,7 +33,7 @@
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
                     }*/
-                    console.log("responseTextPars = " + this.responseText)
+
 
                     var participant = responseTextPars.participant;
                     var membershipTier = participant.membershipTier
