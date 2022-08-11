@@ -18,7 +18,13 @@
                 var oReq = new XMLHttpRequest();
 
                 oReq.addEventListener("load", function() {
-                    var responseTextPars = JSON.parse(this.responseText);
+                    try {
+                        var responseTextPars = JSON.parse(this.responseText);
+                    } catch (error){
+                        document.getElementById("activated").style.display = "block";
+                        document.getElementById("undefined").style.display = "none";
+                    }
+
                     /*if (this.responseText == 404) {
                             document.getElementById("activated").style.display = "none";
                             document.getElementById("undefined").style.display = "block";
