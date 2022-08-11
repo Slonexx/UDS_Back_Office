@@ -254,30 +254,92 @@ class ProductService
                 "value" => true,
             ];
             $countAttribute++;
+
+            //up min and main price
+
+            if($productUds->data->measurement == "MILLILITRE" || $productUds->data->measurement == "KILOGRAM"){
+                $bodyProduct["salePrices"][0]["value"] *= 1000;
+                if($productUds->data->offer == null){
+                    $bodyProduct["attributes"][$countAttribute] = [
+                        "meta" => $this->attributeHookService
+                            ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                        "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                        "value" => $productUds->data->price,
+                    ];
+                } else {
+                    $bodyProduct["attributes"][$countAttribute] = [
+                        "meta" => $this->attributeHookService
+                            ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                        "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                        "value" => $productUds->data->offer->offerPrice / 1000.0,
+                    ];
+                }
+                $countAttribute++;
+            }
+            elseif ($productUds->data->measurement == "CENTIMETRE"){
+                $bodyProduct["salePrices"][0]["value"] *= 100;
+                if($productUds->data->offer == null){
+                    $bodyProduct["attributes"][$countAttribute] = [
+                        "meta" => $this->attributeHookService
+                            ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                        "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                        "value" => $productUds->data->price,
+                    ];
+                } else {
+                    $bodyProduct["attributes"][$countAttribute] = [
+                        "meta" => $this->attributeHookService
+                            ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                        "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                        "value" => $productUds->data->offer->offerPrice / 100.0,
+                    ];
+                }
+                $countAttribute++;
+            }
+
         }
 
-        if ($nameUom == "METRE"){
+        if ($productUds->data->measurement == "METRE"){
 
             //if ($countAttribute == 0) $countAttribute++;
+            if ($productUds->data->offer == null){
+                $bodyProduct["attributes"][$countAttribute] = [
+                    "meta" => $this->attributeHookService
+                        ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $productUds->data->price / 100.0,
+                ];
+            } else {
+                $bodyProduct["attributes"][$countAttribute] = [
+                    "meta" => $this->attributeHookService
+                        ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $productUds->data->offer->offerPrice / 100.0,
+                ];
+            }
 
-            $bodyProduct["attributes"][$countAttribute] = [
-                "meta" => $this->attributeHookService
-                    ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $productUds->data->price / 100.0,
-            ];
             $countAttribute++;
         }
-        elseif ($nameUom == "LITRE" || $nameUom == "KILOGRAM"){
+        elseif ($productUds->data->measurement == "LITRE" || $productUds->data->measurement == "KILOGRAM"){
 
            // if ($countAttribute == 0) $countAttribute++;
 
-            $bodyProduct["attributes"][$countAttribute] = [
-                "meta" => $this->attributeHookService
-                    ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $productUds->data->price / 1000.0,
-            ];
+            if($productUds->data->offer == null){
+                $bodyProduct["attributes"][$countAttribute] = [
+                    "meta" => $this->attributeHookService
+                        ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $productUds->data->price / 1000.0,
+                ];
+            } else {
+                $bodyProduct["attributes"][$countAttribute] = [
+                    "meta" => $this->attributeHookService
+                        ->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $productUds->data->offer->offerPrice / 1000.0,
+                ];
+            }
+
+
             $countAttribute++;
         }
 
@@ -424,7 +486,7 @@ class ProductService
         $client->put($url,$body);
     }
 
-    private function updateProduct($createdProductId, $idMs, $apiKeyMs){
+    private function updateProduct($createdProduct, $idMs, $apiKeyMs){
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idMs;
         $client = new MsClient($apiKeyMs);
 
@@ -433,10 +495,27 @@ class ProductService
                 0 => [
                     "meta" => $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs),
                     "name" => "id (UDS)",
-                    "value" => "".$createdProductId,
+                    "value" => "".$createdProduct->id,
                 ],
             ],
         ];
+
+        //dd($createdProduct);
+
+        if ($createdProduct->data->offer == null){
+            $body["attributes"][1]= [
+                "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                "value" => $createdProduct->data->price,
+            ];
+        } else {
+            if ($createdProduct->data->increment != null || $createdProduct->data->minQuantity != null){
+                $nameOumUds = $createdProduct->data->measurement;
+                if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                    // offer price
+                }
+            }
+        }
 
         $client->put($url,$body);
     }
@@ -521,13 +600,13 @@ class ProductService
                     $productFolderHref = $row->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
                     //dd($idNodeCategory);
-                    $createdProductId = $this->createProductUds(
+                    $createdProduct = $this->createProductUds(
                         $row,$apiKeyMs,$companyId,$apiKeyUds,$idNodeCategory
-                    )->id;
-                    $this->updateProduct($createdProductId,$row->id,$apiKeyMs);
+                    );
+                    $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
                 } else {
-                    $createdProductId = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
-                    $this->updateProduct($createdProductId,$row->id,$apiKeyMs);
+                    $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
+                    $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
                 }
             }
 
@@ -582,6 +661,11 @@ class ProductService
                     $body["data"]["increment"] = $attribute->value;
                 } elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)"){
                     $body["data"]["minQuantity"] = $attribute->value;
+                    if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                        $body["data"]["price"] /= 1000.0;
+                    } elseif ($nameOumUds == "CENTIMETRE"){
+                        $body["data"]["price"] /= 100.0;
+                    }
                 } elseif ($attribute->name == "Ограничен товар (UDS)" && $attribute->value == 1){
                     $body["data"]["inventory"]["inStock"] = null;
                 }

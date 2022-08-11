@@ -55,7 +55,7 @@ class AttributeService
             ],
             7 => [
                 "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "type" => "long",
+                "type" => "double",
                 "required" => false,
                 "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
