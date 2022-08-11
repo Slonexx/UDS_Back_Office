@@ -17,14 +17,18 @@
 
                 var oReq = new XMLHttpRequest();
 
+                try {
 
-
-
+                } catch (error){
+                    document.getElementById("activated").style.display = "block";
+                    document.getElementById("undefined").style.display = "none";
+                }
 
                 oReq.addEventListener("load", function() {
+                    console.log("responseTextPars = " + this.responseText)
                     var responseTextPars = JSON.parse(this.responseText);
 
-                    console.log("responseTextPars = " + this.responseText)
+
 
                     var participant = responseTextPars.participant;
                     var membershipTier = participant.membershipTier
@@ -38,15 +42,7 @@
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
-
-                try {
-                    oReq.send();
-                } catch (error){
-                    document.getElementById("activated").style.display = "block";
-                    document.getElementById("undefined").style.display = "none";
-                }
-
-
+                oReq.send();
             }
         });
 
