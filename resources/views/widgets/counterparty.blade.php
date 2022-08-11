@@ -10,7 +10,7 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
-            if (GlobalobjectId === undefined) {
+            if (receivedMessage.objectId === undefined) {
                     document.getElementById("activated").style.display = "none";
                     document.getElementById("undefined").style.display = "block";
             } else {
