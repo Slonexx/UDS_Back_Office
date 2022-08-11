@@ -10,6 +10,7 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
+            console.log("receivedMessage.objectId = "+receivedMessage.objectId)
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
@@ -88,7 +89,7 @@
             </div>
         </div>
         <br>
-        <div class="row b">
+        <div class="row">
             <div class="col-1">
 
             </div>
@@ -100,7 +101,7 @@
                 </select>
             </div>
             {{--Начисление--}}
-            <div id="Accrue" class="mx-2 mt-2 row g-light" style="display: none">
+            <div id="Accrue" class="mx-2 mt-2 row" style="display: none; background-color: #f7f7f7">
                 <div class="col-1">
 
                 </div>
