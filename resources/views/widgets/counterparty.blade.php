@@ -103,14 +103,12 @@
             <div id="Accrue" class="row" style="display: none">
                 <div class="row mt-2">
 
-                    <div class="col-4">
+                    <div class="col-8">
                         <label class="form-label"> Количество баллов </label>
-                    </div>
-                    <div class="col-6">
                         <input type="text" name="Accrue" id="Accrue" class="form-control"
                                required maxlength="10" >
                     </div>
-                    <div class="col-2">
+                    <div class="col-4">
                         <button class="btn btn-success">Начислить</button>
                     </div>
 
