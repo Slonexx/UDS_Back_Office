@@ -10,7 +10,10 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
-            console.log("receivedMessage.objectId = "+receivedMessage.objectId)
+            if (GlobalobjectId === undefined) {
+                    document.getElementById("activated").style.display = "none";
+                    document.getElementById("undefined").style.display = "block";
+            }
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
@@ -46,7 +49,7 @@
         }
     </script>
 
-    <div class="content bg-white text-Black rounded">
+    <div id="activated" class="content bg-white text-Black rounded">
 
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
@@ -146,6 +149,17 @@
         </script>
 
     </div>
+
+    <div id="undefined" class="bg-white text-Black rounded" style="display: none">
+        <div class="text-center">
+            <div class="p-3 mb-2 bg-danger text-white">
+                <i class="fa-solid fa-ban text-danger "></i>
+                Данного контрагента нету в UDS
+                <i class="fa-solid fa-ban text-danger "></i>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 <style>
