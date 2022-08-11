@@ -11,7 +11,6 @@
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
 
-            console.log("objectId = " + receivedMessage.objectId)
             if (receivedMessage.objectId == undefined) {
                     document.getElementById("activated").style.display = "none";
                     document.getElementById("undefined").style.display = "block";
@@ -21,7 +20,9 @@
             }
 
             if (receivedMessage.name === 'Open') {
+
                 var oReq = new XMLHttpRequest();
+
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
 
