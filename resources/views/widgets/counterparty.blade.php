@@ -19,14 +19,14 @@
 
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
-                    if (this.responseText == 404) {
+                    /*if (this.responseText == 404) {
                             document.getElementById("activated").style.display = "none";
                             document.getElementById("undefined").style.display = "block";
                     } else {
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
-                    }
-                    console.log("responseTextPars = " + responseTextPars)
+                    }*/
+                    console.log("responseTextPars = " + this.responseText)
 
                     var participant = responseTextPars.participant;
                     var membershipTier = participant.membershipTier

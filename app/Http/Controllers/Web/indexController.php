@@ -69,21 +69,17 @@ class indexController extends Controller
 
         $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
         $BodyCounterparty = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
+
         $externalCode =  $BodyCounterparty->requestGet()->externalCode;
 
 
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $last = $body->getisErrors($UDSURL.$externalCode);
-        if ($last == 200){
-            $last = $body->get($UDSURL.$externalCode);
-        } else {
-            return response()->json(
-                $last,404);
-        }
+        $last = $body->get($UDSURL.$externalCode);
+
 
         return response()->json(
-            $last,20);
+            $last,201);
 
     }
 
