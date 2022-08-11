@@ -15,34 +15,37 @@
 
             if (receivedMessage.name === 'Open') {
 
-                var oReq = new XMLHttpRequest();
+
 
                 try {
+                    var oReq = new XMLHttpRequest();
 
-                } catch (error){
                     document.getElementById("activated").style.display = "block";
                     document.getElementById("undefined").style.display = "none";
+
+                    oReq.addEventListener("load", function() {
+
+                        var responseTextPars = JSON.parse(this.responseText);
+                        var participant = responseTextPars.participant;
+                        var membershipTier = participant.membershipTier
+                        GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
+
+                        window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
+                        window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
+                        window.document.getElementById("points").innerHTML = participant.points;
+                        window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                        window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
+                    });
+                    GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+                    oReq.open("GET", GlobalURL);
+                    oReq.send();
+
+                } catch (error){
+                    document.getElementById("activated").style.display = "none";
+                    document.getElementById("undefined").style.display = "block";
                 }
 
-                oReq.addEventListener("load", function() {
-                    console.log("responseTextPars = " + this.responseText)
-                    var responseTextPars = JSON.parse(this.responseText);
 
-
-
-                    var participant = responseTextPars.participant;
-                    var membershipTier = participant.membershipTier
-                    GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
-
-                    window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
-                    window.document.getElementById("points").innerHTML = participant.points;
-                    window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
-                    window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
-                });
-                GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
-                oReq.open("GET", GlobalURL);
-                oReq.send();
             }
         });
 
