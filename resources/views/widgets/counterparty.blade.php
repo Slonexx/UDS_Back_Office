@@ -20,6 +20,8 @@
                 oReq.addEventListener("load", function() {
                     try {
                         var responseTextPars = JSON.parse(this.responseText);
+                        document.getElementById("activated").style.display = "block";
+                        document.getElementById("undefined").style.display = "none";
                     } catch (error){
                         document.getElementById("activated").style.display = "none";
                         document.getElementById("undefined").style.display = "block";
