@@ -15,12 +15,9 @@
 
             if (receivedMessage.name === 'Open') {
 
-                try {
-                    var oReq = new XMLHttpRequest();
-                } catch (error){
-                    document.getElementById("activated").style.display = "block";
-                    document.getElementById("undefined").style.display = "none";
-                }
+                var oReq = new XMLHttpRequest();
+
+
 
 
 
@@ -41,7 +38,15 @@
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
-                oReq.send();
+
+                try {
+                    oReq.send();
+                } catch (error){
+                    document.getElementById("activated").style.display = "block";
+                    document.getElementById("undefined").style.display = "none";
+                }
+
+
             }
         });
 
