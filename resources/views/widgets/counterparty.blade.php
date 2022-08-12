@@ -126,8 +126,9 @@
 
     </script>
 
-    <div id="activated" class="content bg-white text-Black rounded">
 
+
+    <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
@@ -138,9 +139,8 @@
             </div>
             <div class="row mx-3 text-white">
                 <div class="col-7">
-                <h6 id="displayName" class=""></h6>
+                    <h6 id="displayName" class=""></h6>
                 </div>
-
                 <div class="col-5">
                     <div class="s-min-8 my-bg-gray p-1 px-2">
                         <span> Уровень: </span>
@@ -149,9 +149,10 @@
                         <span>%</span>
                     </div>
                 </div>
-
             </div>
         </div>
+
+
 
         <div id="success" class="mt-2" style="display: none">
             <div class="row">
@@ -161,7 +162,6 @@
                 </div>
             </div>
         </div>
-
         <div id="NotSuccess" class="mt-2" style="display: none">
             <div class="row">
                 <div class="col-1"></div>
@@ -170,7 +170,6 @@
                 </div>
             </div>
         </div>
-
         <div id="danger" class="mt-2" style="display: none">
             <div class="row">
                 <div class="col-1"></div>
@@ -180,6 +179,8 @@
             </div>
 
         </div>
+
+
 
         <div class="row mx-2 text-black mt-1">
             <div class="col-8">
@@ -196,11 +197,14 @@
                 <span id="points" class="s-min mx-2"></span>
             </div>
         </div>
-        <br>
-        <div class="row">
-            <div class="col-1">
 
-            </div>
+
+        <br>
+
+
+
+        <div class="row">
+            <div class="col-1"> </div>
             <div class="col-10">
                 <select onclick="Bonus()" class="p-1 form-select" id="Bonus">
                     <option selected> Действия с баллами </option>
@@ -210,9 +214,7 @@
             </div>
             {{--Начисление--}}
             <div id="Accrue" class="mx-2 mt-2 row" style="display: none; background-color: #f7f7f7">
-                <div class="col-1">
-
-                </div>
+                <div class="col-1"> </div>
                 <div class="col-11">
                     <div class="row mt-2 mb-2 ">
                         <label class="s-min"> Количество баллов </label>
@@ -223,16 +225,12 @@
                         <div class="col-4">
                             <button onclick="Accrue()" class="btn btn-success rounded-pill">Начислить</button>
                         </div>
-
                     </div>
                 </div>
-
             </div>
             {{--Списание--}}
-            <div id="Cancellation" class="mx-2 mt-2 row" style="display: none">
-                <div class="col-1">
-
-                </div>
+            <div id="Cancellation" class="mx-2 mt-2 row" style="display: none; background-color: #f7f7f7">
+                <div class="col-1"> </div>
                 <div class="col-11">
                     <div class="row mt-2 mb-2 ">
                         <label class="s-min"> Количество баллов </label>
@@ -243,11 +241,12 @@
                         <div class="col-4">
                             <button onclick="Cancellation()" class="btn btn-danger rounded-pill">Списать</button>
                         </div>
-
                     </div>
+                </div>
             </div>
-
         </div>
+
+
 
         <script>
             function Bonus() {
@@ -266,8 +265,8 @@
                 }
             }
         </script>
-
     </div>
+
 
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
         <div class="text-center">
@@ -278,6 +277,8 @@
             </div>
         </div>
     </div>
+
+
 
 @endsection
 
