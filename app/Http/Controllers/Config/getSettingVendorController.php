@@ -15,6 +15,7 @@ class getSettingVendorController extends Controller
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $UpdateProduct;
     var $Store;
 
     var $creatDocument;
@@ -29,7 +30,6 @@ class getSettingVendorController extends Controller
     var $NEW;
     var $COMPLETED;
     var $DELETED;
-    var $WAITING_PAYMENT;
 
     public function __construct($accountId)
     {
@@ -44,6 +44,7 @@ class getSettingVendorController extends Controller
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->UpdateProduct = $json->UpdateProduct;
         $this->Store = $json->Store;
 
         $this->creatDocument = $json->creatDocument;
@@ -58,146 +59,9 @@ class getSettingVendorController extends Controller
         $this->NEW = $json->NEW;
         $this->COMPLETED = $json->COMPLETED;
         $this->DELETED = $json->DELETED;
-        $this->WAITING_PAYMENT = $json->WAITING_PAYMENT;
 
         return $json;
 
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStore()
-    {
-        return $this->Store;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAppId()
-    {
-        return $this->appId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAccountId()
-    {
-        return $this->accountId;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTokenMoySklad()
-    {
-        return $this->TokenMoySklad;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTokenKaspi()
-    {
-        return $this->TokenKaspi;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOrganization()
-    {
-        return $this->Organization;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPaymentDocument()
-    {
-        return $this->PaymentDocument;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDocument()
-    {
-        return $this->Document;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPaymentAccount()
-    {
-        return $this->PaymentAccount;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSaleschannel()
-    {
-        return $this->Saleschannel;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProject()
-    {
-        return $this->Project;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCheckCreatProduct()
-    {
-        return $this->CheckCreatProduct;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAPPROVEDBYBANK()
-    {
-        return $this->APPROVED_BY_BANK;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getACCEPTEDBYMERCHANT()
-    {
-        return $this->ACCEPTED_BY_MERCHANT;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCOMPLETED()
-    {
-        return $this->COMPLETED;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCANCELLED()
-    {
-        return $this->CANCELLED;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getRETURNED()
-    {
-        return $this->RETURNED;
     }
 
 

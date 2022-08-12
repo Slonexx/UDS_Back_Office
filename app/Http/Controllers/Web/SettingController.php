@@ -49,7 +49,6 @@ class SettingController extends Controller
     }
 
     public function postSettingIndex(Request $request, $accountId, $isAdmin){
-
         $cfg = new cfg();
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
@@ -66,6 +65,7 @@ class SettingController extends Controller
             $app->companyId = $request->companyId;
             $app->TokenUDS = $request->TokenUDS;
 
+            $app->UpdateProduct = $request->UpdateProduct;
             $app->Store = $request->Store;
             $app->status = AppInstanceContoller::ACTIVATED;
 
@@ -308,7 +308,6 @@ class SettingController extends Controller
         $app->NEW = $request->NEW;
         $app->COMPLETED = $request->COMPLETED;
         $app->DELETED = $request->DELETED;
-        $app->WAITING_PAYMENT = $request->NEW;
 
         $app->persist();
 

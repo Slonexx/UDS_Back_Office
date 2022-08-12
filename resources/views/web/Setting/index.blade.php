@@ -12,7 +12,6 @@
 
             <div class="{{$message['alert']}}"> {{ $message['message'] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-
             </div>
 
         @endisset
@@ -20,6 +19,9 @@
 
         <form action="  {{ route( 'setSettingIndex' , [ 'accountId' => $accountId,  'isAdmin' => $isAdmin ] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
+            <div class="text-black mx-2 mb-2">
+                UDS данные
+            </div>
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">
                     <div class="row">
@@ -54,15 +56,38 @@
 
             </div>
 
+            <br>
+            <div class="text-black mx-2 mb-2">
+                Товары
+            </div>
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">
                     <label class="mx-1">
                         <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover3"
                                 data-toggle="popover" data-placement="right" data-trigger="focus"
+                                data-content="Выберите откуда будет изменяться товары">
+                        </button>  Изменение товаров:  </label>
+
+                    <script> $('.myPopover3').popover(); </script>
+
+
+                    <div class="col-sm-10">
+                        <select name="UpdateProduct" class="form-select text-black ">
+                           <option value="0">МойСклад</option>
+                           <option value="1">UDS</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mx-1">
+                <div class="col-sm-6">
+                    <label class="mx-1">
+                        <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover4"
+                                data-toggle="popover" data-placement="right" data-trigger="focus"
                                 data-content="По данному складу будут отправляться остатки в UDS и на данный склад будет создаваться заказ">
                         </button>  Выберите склад, для остатков товара:  </label>
 
-                    <script> $('.myPopover3').popover(); </script>
+                    <script> $('.myPopover4').popover(); </script>
 
 
                     <div class="col-sm-10">

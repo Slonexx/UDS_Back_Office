@@ -11,6 +11,7 @@ class AppInstanceContoller {
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $UpdateProduct;
     var $Store;
 
     var $creatDocument;
@@ -25,7 +26,6 @@ class AppInstanceContoller {
     var $NEW;
     var $COMPLETED;
     var $DELETED;
-    var $WAITING_PAYMENT;
 
     var $status = AppInstanceContoller::UNKNOWN;
 
@@ -97,6 +97,7 @@ class AppInstanceContoller {
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->UpdateProduct = $json->UpdateProduct;
         $this->Store = $json->Store;
 
         $this->creatDocument = $json->creatDocument;
@@ -111,7 +112,6 @@ class AppInstanceContoller {
         $this->NEW = $json->NEW;
         $this->COMPLETED = $json->COMPLETED;
         $this->DELETED = $json->DELETED;
-        $this->WAITING_PAYMENT = $json->WAITING_PAYMENT;
     }
 
 }
