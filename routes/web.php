@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\SupportController;
+use App\Http\Controllers\Web\RewardController;
 use App\Http\Controllers\Web\WhatsappController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Web\indexController;
@@ -12,6 +13,7 @@ Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->na
 Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Counterparty');
 
 Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [indexController::class, 'CounterpartyObject'])->name('CounterpartyObject');
+Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue'])->name('Accrue');
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');

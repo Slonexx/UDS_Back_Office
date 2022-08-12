@@ -7,6 +7,7 @@
         var GlobalobjectId;
         var GlobalURL;
         var GlobalxRefURL;
+        var UDSClientID;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -27,6 +28,7 @@
 
                     var participant = responseTextPars.participant;
                     var membershipTier = participant.membershipTier
+                    UDSClientID = participant.id;
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
 
                     window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
@@ -58,6 +60,13 @@
 
         function Accrue(){
           var input = document.getElementById("inputAccrue").value;
+          var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                console.log("responseText = " + this.responseText)
+            });
+            xmlHttpRequest.open("GET", "https://smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.send();
+
         console.log("input = " + input);
         }
 
