@@ -154,34 +154,6 @@
 
 
 
-        <div id="success" class="mt-2" style="display: none">
-            <div class="row">
-                <div class="col-1"></div>
-                <div class="col-10">
-                    <div class=" alert alert-success fade show in text-center "> Начислялись баллы !</div>
-                </div>
-            </div>
-        </div>
-        <div id="NotSuccess" class="mt-2" style="display: none">
-            <div class="row">
-                <div class="col-1"></div>
-                <div class="col-10">
-                    <div class=" alert alert-success fade show in text-center "> Баллы списаны !</div>
-                </div>
-            </div>
-        </div>
-        <div id="danger" class="mt-2" style="display: none">
-            <div class="row">
-                <div class="col-1"></div>
-                <div class="col-10">
-                    <div class=" alert alert-danger alert-danger fade show in text-center "> Ошибка 400 </div>
-                </div>
-            </div>
-
-        </div>
-
-
-
         <div class="row mx-2 text-black mt-1">
             <div class="col-8">
                 <div class="s-min ">Последняя покупка </div>
@@ -244,6 +216,34 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+
+
+        <div id="success" class="mt-2" style="display: none">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class=" alert alert-success fade show in text-center "> Начислялись баллы !</div>
+                </div>
+            </div>
+        </div>
+        <div id="NotSuccess" class="mt-2" style="display: none">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class=" alert alert-success fade show in text-center "> Баллы списаны !</div>
+                </div>
+            </div>
+        </div>
+        <div id="danger" class="mt-2" style="display: none">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class=" alert alert-danger alert-danger fade show in text-center "> Ошибка 400 </div>
+                </div>
+            </div>
+
         </div>
 
 
