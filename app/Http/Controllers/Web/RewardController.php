@@ -25,10 +25,10 @@ class RewardController extends Controller
         try {
             $resultBOdy = $UDSClint->post($url,$body);
             return response()->json(
-                "Баллы начислялись",201);
+                "200",201);
         } catch (Throwable $exception){
             return response()->json(
-                "Ошибка "."400 Bad Request",201);
+                "400",201);
         }
 
     }
