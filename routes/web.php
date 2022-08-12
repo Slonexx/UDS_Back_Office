@@ -14,6 +14,7 @@ Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Cou
 
 Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [indexController::class, 'CounterpartyObject'])->name('CounterpartyObject');
 Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue'])->name('Accrue');
+Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardController::class, 'Cancellation'])->name('Cancellation');
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');

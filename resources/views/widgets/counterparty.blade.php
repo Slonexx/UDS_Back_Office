@@ -100,6 +100,26 @@
             update();
         }
 
+        function Cancellation(){
+            var input = document.getElementById("inputAccrue").value;
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+
+                var statusCode = this.responseText;
+                if (statusCode === "200") {
+                    document.getElementById("success").style.display = "block";
+                    document.getElementById("danger").style.display = "none";
+                } else if (statusCode === "400") {
+                    document.getElementById("success").style.display = "none";
+                    document.getElementById("danger").style.display = "block";
+                }
+
+            });
+            xmlHttpRequest.open("GET", "https://smartuds.kz/Cancellation/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.send();
+            update();
+        }
+
     </script>
 
     <div id="activated" class="content bg-white text-Black rounded">
@@ -198,7 +218,21 @@
             </div>
             {{--Списание--}}
             <div id="Cancellation" class="row" style="display: none">
-                Списание
+                <div class="col-1">
+
+                </div>
+                <div class="col-11">
+                    <div class="row mt-2 mb-2 ">
+                        <label class="s-min"> Количество баллов </label>
+                        <div class="col-8">
+                            <input type="text" name="Cancellation" id="inputCancellation" class="form-control"
+                                   required maxlength="10" >
+                        </div>
+                        <div class="col-4">
+                            <button onclick="Cancellation()" class="btn btn-danger rounded-pill">Списать</button>
+                        </div>
+
+                    </div>
             </div>
 
         </div>
