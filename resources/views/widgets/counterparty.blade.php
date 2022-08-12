@@ -50,6 +50,25 @@
             var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
 
+                try {
+                    var responseTextPars = JSON.parse(this.responseText);
+                    document.getElementById("activated").style.display = "block";
+                    document.getElementById("undefined").style.display = "none";
+                } catch (error){
+                    document.getElementById("activated").style.display = "none";
+                    document.getElementById("undefined").style.display = "block";
+                }
+
+                var participant = responseTextPars.participant;
+                var membershipTier = participant.membershipTier
+                UDSClientID = participant.id;
+                GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
+
+                window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
+                window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
+                window.document.getElementById("points").innerHTML = participant.points;
+                window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
 
             });
 
@@ -65,12 +84,12 @@
           var input = document.getElementById("inputAccrue").value;
           var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
-                console.log("responseText = " + this.responseText)
+
                 var statusCode = this.responseText;
                 if (statusCode === "200") {
                     document.getElementById("success").style.display = "block";
                     document.getElementById("danger").style.display = "none";
-                } else if (statusCode == "400") {
+                } else if (statusCode === "400") {
                     document.getElementById("success").style.display = "none";
                     document.getElementById("danger").style.display = "block";
                 }
@@ -78,8 +97,7 @@
             });
             xmlHttpRequest.open("GET", "https://smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
             xmlHttpRequest.send();
-
-        console.log("input = " + input);
+            update();
         }
 
     </script>
