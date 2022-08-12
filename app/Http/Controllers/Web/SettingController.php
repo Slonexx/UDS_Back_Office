@@ -17,9 +17,8 @@ class SettingController extends Controller
 {
     public function index(Request $request, $accountId, $isAdmin){
         if ($isAdmin == "NO"){
-            return view( "noAdmin" );
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
         }
-
 
         $Setting = new getSettingVendorController($accountId);
         $TokenMoySklad = $Setting->TokenMoySklad;
@@ -42,7 +41,7 @@ class SettingController extends Controller
 
             "Store" => $Store,
             "accountId"=> $accountId,
-            'isAdmin' => $isAdmin,
+            "isAdmin" => $isAdmin,
 
             "companyId"=> $companyId,
             "TokenUDS"=> $TokenUDS,
@@ -98,17 +97,20 @@ class SettingController extends Controller
 
 
     public function indexDocument(Request $request, $accountId, $isAdmin){
-        $Setting = new getSettingVendorController($accountId);
+        if ($isAdmin == "NO"){
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
+        }
 
+        $Setting = new getSettingVendorController($accountId);
         $companyId = $Setting->companyId;
         if ( $companyId == null ) {
             $message = " Основные настройки не были установлены ";
             return redirect()->route('indexError', [
-                "message" => $message,
                 "accountId" => $accountId,
+                "isAdmin" => $isAdmin,
+                "message" => $message,
                 ]);
         }
-
 
         $TokenMoySklad = $Setting->TokenMoySklad;
         $creatDocument = $Setting->creatDocument;
@@ -230,6 +232,9 @@ class SettingController extends Controller
 
 
     public function indexAdd(Request $request, $accountId, $isAdmin){
+        if ($isAdmin == "NO"){
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
+        }
         $Setting = new getSettingVendorController($accountId);
 
         $companyId = $Setting->companyId;
@@ -237,8 +242,9 @@ class SettingController extends Controller
             $message = " Основные настройки не были установлены ";
 
             return redirect()->route('indexError', [
-                "message" => $message,
                 "accountId" => $accountId,
+                "isAdmin" => $isAdmin,
+                "message" => $message,
             ]);
         }
 
@@ -340,13 +346,20 @@ class SettingController extends Controller
     }
 
 
-    public function indexError($accountId, $message, $isAdmin){
+    public function indexError($accountId, $isAdmin, $message){
 
         return view('web.Setting.errorSetting',[
+            "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
             "message"=> $message,
+        ]);
+
+    }
+
+    public function indexNoAdmin($accountId, $isAdmin){
+        return view('web.Setting.noAdmin',[
             "accountId"=> $accountId,
             'isAdmin' => $isAdmin,
         ]);
-
     }
 }
