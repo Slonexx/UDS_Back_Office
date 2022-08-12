@@ -8,16 +8,22 @@ use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\GuzzleClient\ClientMC;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class SettingController extends Controller
 {
-    public function index(Request $request, $accountId){
+    public function index(Request $request, $accountId, $isAdmin){
+        if ($isAdmin == "NO"){
+            return view( "noAdmin" );
+        }
+
 
         $Setting = new getSettingVendorController($accountId);
         $TokenMoySklad = $Setting->TokenMoySklad;
+
         $companyId = $Setting->companyId;
         $TokenUDS = $Setting->TokenUDS;
 
@@ -36,13 +42,14 @@ class SettingController extends Controller
 
             "Store" => $Store,
             "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
 
             "companyId"=> $companyId,
             "TokenUDS"=> $TokenUDS,
         ]);
     }
 
-    public function postSettingIndex(Request $request, $accountId){
+    public function postSettingIndex(Request $request, $accountId, $isAdmin){
 
         $cfg = new cfg();
         $appId = $cfg->appId;
@@ -80,16 +87,17 @@ class SettingController extends Controller
 
             "Store" => $request->Store,
 
-            "accountId"=> $accountId,
             "companyId"=> $request->companyId,
             "TokenUDS"=> $request->TokenUDS,
 
             "message" => $message,
+            "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
         ]);
     }
 
 
-    public function indexDocument(Request $request, $accountId){
+    public function indexDocument(Request $request, $accountId, $isAdmin){
         $Setting = new getSettingVendorController($accountId);
 
         $companyId = $Setting->companyId;
@@ -144,10 +152,11 @@ class SettingController extends Controller
 
             "apiKey" => $TokenMoySklad,
             'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
         ]);
     }
 
-    public function postSettingDocument(Request $request, $accountId){
+    public function postSettingDocument(Request $request, $accountId, $isAdmin){
 
         $creatDocument = $request->creatDocument;
         $Organization = $request->Organization;
@@ -214,12 +223,13 @@ class SettingController extends Controller
             "apiKey" => $TokenMoySklad,
 
             'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
         ]);
 
     }
 
 
-    public function indexAdd(Request $request, $accountId){
+    public function indexAdd(Request $request, $accountId, $isAdmin){
         $Setting = new getSettingVendorController($accountId);
 
         $companyId = $Setting->companyId;
@@ -269,11 +279,12 @@ class SettingController extends Controller
             "COMPLETED" => $COMPLETED,
             "DELETED" => $DELETED,
 
-            "accountId"=> $accountId
+            "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
             ]);
     }
 
-    public function postSettingAdd(Request $request, $accountId){
+    public function postSettingAdd(Request $request, $accountId, $isAdmin){
 
         $cfg = new cfg();
         $appId = $cfg->appId;
@@ -322,17 +333,19 @@ class SettingController extends Controller
             "DELETED" => $request->DELETED,
 
             "message"=> $message,
-            "accountId"=> $accountId
+            "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
         ]);
 
     }
 
 
-    public function indexError($accountId, $message){
+    public function indexError($accountId, $message, $isAdmin){
 
         return view('web.Setting.errorSetting',[
             "message"=> $message,
             "accountId"=> $accountId,
+            'isAdmin' => $isAdmin,
         ]);
 
     }

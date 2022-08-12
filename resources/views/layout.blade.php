@@ -15,14 +15,14 @@
             </nav>
             <br>
             <div class="toc-list-h1">
-                <a href="{{ route('indexMain', ['accountId' => $accountId] ) }}">Главная </a>
+                <a href="{{ route('indexMain', [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ] ) }}">Главная </a>
                 <div>
                     <button class="dropdown-btn">Настройки
                         <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-container">
-                        <a href="/Setting/{{$accountId}}"> Основная </a>
-                        <a href="/Setting/Document/{{$accountId}}"> Документы </a>
-                        <a href="/Setting/Add/{{$accountId}}"> Дополнительные настройки </a>
+                        <a href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
+                        <a href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Документы </a>
+                        <a href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
                     </div>
                 </div>
                 <a href="">Журнал логов</a>
@@ -32,9 +32,9 @@
                 <button class="dropdown-btn">Помощь
                     <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-container">
-                        <a {{--target="_blank"--}} href="/Help/Support/{{$accountId}}">
+                        <a target="_blank" href="https://smartkaspi.bitrix24.site/">
                             <i class="fa-solid fa-at"></i>
-                            Написать на почту</a>
+                            Обратная связь </a>
                         <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
                             <i class="fa-brands fa-whatsapp"></i>
                             Написать на WhatsApp </a>

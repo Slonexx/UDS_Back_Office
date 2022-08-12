@@ -22,15 +22,20 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
+        $isAdmin = $employee->permissions->admin->view;
 
-        dd($employee);
-
-        return redirect()->route('indexMain', ['accountId' => $accountId] );
+        return redirect()->route('indexMain', [
+            'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
+        ] );
 
     }
 
-    public function show($accountId){
-        return view("web.index" , ['accountId' => $accountId] );
+    public function show($accountId, $isAdmin){
+        return view("web.index" , [
+            'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
+            ] );
     }
 
     public function CheckSave(Request $request, $accountId){

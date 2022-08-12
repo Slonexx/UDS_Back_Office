@@ -22,7 +22,7 @@
         </div>
 
 
-        <form action=" {{ route('setSettingDocument' , ['accountId' => $accountId] ) }} " method="post">
+        <form action=" {{ route('setSettingDocument' , [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
 

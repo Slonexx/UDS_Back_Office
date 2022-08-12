@@ -12,7 +12,7 @@
 
             <div class=" alert alert-danger alert-dismissible fade show in text-center "> {{ $message }}
                 <p>
-                <a class="text-muted" href="/Setting/{{$accountId}}"><i class="fa-solid fa-triangle-exclamation"></i>
+                <a class="text-muted" href="/Setting/{{$accountId}}/{{$isAdmin}}"><i class="fa-solid fa-triangle-exclamation"></i>
                     Перейти на основные настройки  <i class="fa-solid fa-triangle-exclamation"></i></a>
                 </p>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

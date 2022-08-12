@@ -18,7 +18,7 @@
         @endisset
 
 
-        <form action="  {{ route( 'setSettingIndex' , ['accountId' => $accountId] ) }} " method="post">
+        <form action="  {{ route( 'setSettingIndex' , [ 'accountId' => $accountId,  'isAdmin' => $isAdmin ] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">

@@ -18,7 +18,7 @@
 
 
 
-        <form action=" {{ route('setSettingAdd' , ['accountId' => $accountId] ) }} " method="post">
+        <form action=" {{ route('setSettingAdd' , [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ]) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
 
