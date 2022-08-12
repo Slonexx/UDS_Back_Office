@@ -25,10 +25,10 @@ class RewardController extends Controller
         try {
             $resultBOdy = $UDSClint->post($url,$body);
             return response()->json(
-                "200",201);
+                200,201);
         } catch (Throwable $exception){
             return response()->json(
-                "400",201);
+                400,201);
         }
 
     }
