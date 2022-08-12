@@ -36,28 +36,28 @@ class AttributeService
                 "description" => "Не применять бонусную программу (UDS)",
             ],
             4 => [
+                "name" => "Товар неограничен (UDS)",
+                "type" => "boolean",
+                "required" => false,
+                "description" => "Товар неограничен (UDS)",
+            ],
+            5 => [
                 "name" => "Дробное значение товара (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Дробное значение товара (UDS)",
             ],
-            5 => [
+            6 => [
                 "name" => "Шаг дробного значения (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Шаг дробного значения (UDS)",
             ],
-            6 => [
+            7 => [
                 "name" => "Минимальный размер заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Минимальный размер заказа дробного товара (UDS)",
-            ],
-            7 => [
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "type" => "double",
-                "required" => false,
-                "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
             8 => [
                 "name" => "id (UDS)",
@@ -66,10 +66,10 @@ class AttributeService
                 "description" => "id (UDS)",
             ],
             9 => [
-                "name" => "Ограничен товар (UDS)",
-                "type" => "boolean",
+                "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                "type" => "double",
                 "required" => false,
-                "description" => "Ограничен товар (UDS)",
+                "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
         ];
 
