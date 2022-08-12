@@ -101,7 +101,7 @@
         }
 
         function Cancellation(){
-            var input = document.getElementById("inputAccrue").value;
+            var input = document.getElementById("inputCancellation").value;
             var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
 
@@ -217,7 +217,7 @@
 
             </div>
             {{--Списание--}}
-            <div id="Cancellation" class="row" style="display: none">
+            <div id="Cancellation" class="mx-2 mt-2 row" style="display: none">
                 <div class="col-1">
 
                 </div>
