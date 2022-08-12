@@ -115,7 +115,7 @@
             <div class="row">
                 <div class="col-1"></div>
                 <div class="col-10">
-                    <div class=" alert alert-danger alert-success fade show in text-center "> Начислялись баллы !</div>
+                    <div class=" alert alert-success fade show in text-center "> Начислялись баллы !</div>
                 </div>
             </div>
 
