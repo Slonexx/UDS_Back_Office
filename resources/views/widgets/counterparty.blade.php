@@ -67,10 +67,10 @@
             xmlHttpRequest.addEventListener("load", function() {
                 console.log("responseText = " + this.responseText)
                 var statusCode = this.responseText;
-                if (statusCode === 200) {
+                if (statusCode === "200") {
                     document.getElementById("success").style.display = "block";
                     document.getElementById("danger").style.display = "none";
-                } else if (statusCode == 400) {
+                } else if (statusCode == "400") {
                     document.getElementById("success").style.display = "none";
                     document.getElementById("danger").style.display = "block";
                 }
