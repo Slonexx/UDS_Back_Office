@@ -23,6 +23,8 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
+        dd($employee);
+
         return redirect()->route('indexMain', ['accountId' => $accountId] );
 
     }
