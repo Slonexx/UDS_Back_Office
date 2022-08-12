@@ -56,6 +56,7 @@ class indexController extends Controller
         if ($isAdmin == "NO"){
             return view( 'widgets.counterparty', [
                 'accountId' => $accountId,
+                'getObjectUrl' => $getObjectUrl,
                 'admin' => "NO",
             ] );
         }
