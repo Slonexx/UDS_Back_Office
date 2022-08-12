@@ -130,29 +130,9 @@
     $View = true;
     @endphp
 
-    @isset($admin)
-
-        <div class="bg-white text-Black rounded" >
-            <div class="text-center">
-                <div class="p-3 mb-2 bg-danger text-white">
-                    <i class="fa-solid fa-ban text-danger "></i>
-                    Вы не являетесь администратором
-                    <i class="fa-brands fa-buysellads"></i>
-                    <i class="fa-solid fa-ban text-danger "></i>
-                </div>
-            </div>
-        </div>
-
-        @php
-
-            $View = false;
-
-        @endphp
-
-    @endisset
 
 
-    @if ($View == true)
+
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
@@ -214,14 +194,28 @@
                 <div class="col-1"> </div>
                 <div class="col-11">
                     <div class="row mt-2 mb-2 ">
-                        <label class="s-min"> Количество баллов </label>
-                        <div class="col-8">
-                            <input type="text" name="Accrue" id="inputAccrue" class="form-control"
-                                   required maxlength="10" >
-                        </div>
-                        <div class="col-4">
-                            <button onclick="Accrue()" class="btn btn-success rounded-pill">Начислить</button>
-                        </div>
+
+                        @isset($admin)
+                            <div class="bg-white text-Black rounded" >
+                                <div class="text-center">
+                                    <div class="p-3 mb-2 bg-danger text-white">
+                                        <i class="fa-brands fa-buysellads"></i> Вы не являетесь администратором
+                                    </div>
+                                </div>
+                            </div>
+                            @php $View = false; @endphp
+                        @endisset
+
+                        @if ($View == true)
+                            <label class="s-min"> Количество баллов </label>
+                            <div class="col-8">
+                                <input type="text" name="Accrue" id="inputAccrue" class="form-control"
+                                       required maxlength="10" >
+                            </div>
+                            <div class="col-4">
+                                <button onclick="Accrue()" class="btn btn-success rounded-pill">Начислить</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -230,14 +224,27 @@
                 <div class="col-1"> </div>
                 <div class="col-11">
                     <div class="row mt-2 mb-2 ">
-                        <label class="s-min"> Количество баллов </label>
-                        <div class="col-8">
-                            <input type="text" name="Cancellation" id="inputCancellation" class="form-control"
-                                   required maxlength="10" >
-                        </div>
-                        <div class="col-4">
-                            <button onclick="Cancellation()" class="btn btn-danger rounded-pill">Списать</button>
-                        </div>
+
+                        @isset($admin)
+                            <div class="bg-white text-Black rounded" >
+                                <div class="text-center">
+                                    <div class="p-3 mb-2 bg-danger text-white">
+                                        <i class="fa-brands fa-buysellads"></i> Вы не являетесь администратором
+                                    </div>
+                                </div>
+                            </div>
+                            @php $View = false; @endphp
+                        @endisset
+                        @if ($View == true)
+                            <label class="s-min"> Количество баллов </label>
+                            <div class="col-8">
+                                <input type="text" name="Cancellation" id="inputCancellation" class="form-control"
+                                       required maxlength="10" >
+                            </div>
+                            <div class="col-4">
+                                <button onclick="Cancellation()" class="btn btn-danger rounded-pill">Списать</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -301,7 +308,7 @@
             </div>
         </div>
     </div>
-    @endif
+
 
 
 @endsection
