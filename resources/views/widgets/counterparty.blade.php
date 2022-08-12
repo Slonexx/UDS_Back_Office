@@ -199,7 +199,7 @@
                             <div class="bg-white text-Black rounded" >
                                 <div class="text-center">
                                     <div class="p-3 mb-2 bg-danger text-white">
-                                        <i class="fa-brands fa-buysellads"></i> Вы не являетесь администратором
+                                        <i class="fa-solid fa-user-shield"></i> Вы не являетесь администратором
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +229,7 @@
                             <div class="bg-white text-Black rounded" >
                                 <div class="text-center">
                                     <div class="p-3 mb-2 bg-danger text-white">
-                                        <i class="fa-brands fa-buysellads"></i> Вы не являетесь администратором
+                                        <i class="fa-solid fa-user-shield"></i> Вы не являетесь администратором
                                     </div>
                                 </div>
                             </div>
