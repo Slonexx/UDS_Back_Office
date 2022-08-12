@@ -89,8 +89,10 @@
                 if (statusCode === "200") {
                     document.getElementById("success").style.display = "block";
                     document.getElementById("danger").style.display = "none";
+                    document.getElementById("NotSuccess").style.display = "none";
                 } else if (statusCode === "400") {
                     document.getElementById("success").style.display = "none";
+                    document.getElementById("NotSuccess").style.display = "none";
                     document.getElementById("danger").style.display = "block";
                 }
 
@@ -107,9 +109,11 @@
 
                 var statusCode = this.responseText;
                 if (statusCode === "200") {
-                    document.getElementById("success").style.display = "block";
+                    document.getElementById("NotSuccess").style.display = "block";
+                    document.getElementById("success").style.display = "none";
                     document.getElementById("danger").style.display = "none";
                 } else if (statusCode === "400") {
+                    document.getElementById("NotSuccess").style.display = "none";
                     document.getElementById("success").style.display = "none";
                     document.getElementById("danger").style.display = "block";
                 }
@@ -156,7 +160,15 @@
                     <div class=" alert alert-success fade show in text-center "> Начислялись баллы !</div>
                 </div>
             </div>
+        </div>
 
+        <div id="NotSuccess" class="mt-2" style="display: none">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class=" alert alert-success fade show in text-center "> Баллы списаны !</div>
+                </div>
+            </div>
         </div>
 
         <div id="danger" class="mt-2" style="display: none">
