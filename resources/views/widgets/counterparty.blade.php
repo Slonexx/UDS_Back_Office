@@ -126,8 +126,32 @@
 
     </script>
 
+    @php
+    $View = true;
+    @endphp
+
+    @isset($admin)
+
+        <div class="bg-white text-Black rounded" >
+            <div class="text-center">
+                <div class="p-3 mb-2 bg-danger text-white">
+                    <i class="fa-solid fa-ban text-danger "></i>
+                    Данного контрагента нету в UDS
+                    <i class="fa-solid fa-ban text-danger "></i>
+                </div>
+            </div>
+        </div>
+
+        @php
+
+            $View = false;
+
+        @endphp
+
+    @endisset
 
 
+    @if ($View == true)
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
@@ -267,7 +291,6 @@
         </script>
     </div>
 
-
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
         <div class="text-center">
             <div class="p-3 mb-2 bg-danger text-white">
@@ -277,7 +300,7 @@
             </div>
         </div>
     </div>
-
+    @endif
 
 
 @endsection

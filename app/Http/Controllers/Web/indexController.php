@@ -23,8 +23,6 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        dd($employee);
-
         return redirect()->route('indexMain', ['accountId' => $accountId] );
 
     }
@@ -49,10 +47,18 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
+        $isAdmin = $employee->permissions->admin->view;
+
         $entity = 'counterparty';
 
         $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
 
+        if ($isAdmin == "NO"){
+            return view( 'widgets.counterparty', [
+                'accountId' => $accountId,
+                'admin' => "NO",
+            ] );
+        }
 
         return view( 'widgets.counterparty', [
             'accountId' => $accountId,
