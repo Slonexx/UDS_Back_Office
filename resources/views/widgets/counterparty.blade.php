@@ -136,7 +136,8 @@
             <div class="text-center">
                 <div class="p-3 mb-2 bg-danger text-white">
                     <i class="fa-solid fa-ban text-danger "></i>
-                    Данного контрагента нету в UDS
+                    Вы не являетесь администратором
+                    <i class="fa-brands fa-buysellads"></i>
                     <i class="fa-solid fa-ban text-danger "></i>
                 </div>
             </div>
