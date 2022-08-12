@@ -67,7 +67,7 @@
             xmlHttpRequest.addEventListener("load", function() {
                 console.log("responseText = " + this.responseText)
 
-                if (this.responseText == "200") {
+                if (this.responseText === "200") {
                     document.getElementById("success").style.display = "block";
                     document.getElementById("danger").style.display = "none";
                 } else {
@@ -113,13 +113,11 @@
 
         <div id="success" style="display: none">
             <div class=" alert alert-danger alert-success fade show in text-center "> Начислялись баллы !
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
         <div id="danger" style="display: none">
             <div class=" alert alert-danger alert-danger fade show in text-center "> Ошибка 400
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
