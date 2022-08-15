@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AgentService;
+use App\Services\agent\AgentService;
 use Illuminate\Http\Request;
 
 class AgentController extends Controller
