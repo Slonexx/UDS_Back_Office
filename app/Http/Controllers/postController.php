@@ -18,13 +18,16 @@ class postController extends Controller
 
         $fields = $request->validate([
             'displayName' => 'required|string',
-            'id' => 'required|string',
+            'participant' => 'required|string',
             'phone' => 'required|string',
             'email' => 'required|string',
         ]);
 
         $body = [
-            "name" => $request->displayName,
+            "name" => $fields["displayName"],
+            "phone" => $fields["phone"],
+            "email" => $fields["email"],
+            "externalCode" => $fields["participant"],
         ];
 
 
