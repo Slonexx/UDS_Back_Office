@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ProductService;
+use App\Services\product\ProductCreateMsService;
+use App\Services\product\ProductCreateUdsService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    private ProductService $productService;
+    private ProductCreateMsService $productCreateMsService;
+    private ProductCreateUdsService $productCreateUdsService;
 
     /**
-     * @param ProductService $productService
+     * @param ProductCreateMsService $productCreateMsService
+     * @param ProductCreateUdsService $productCreateUdsService
      */
-    public function __construct(ProductService $productService)
+    public function __construct(
+        ProductCreateMsService $productCreateMsService,
+        ProductCreateUdsService $productCreateUdsService
+    )
     {
-        $this->productService = $productService;
+        $this->productCreateMsService = $productCreateMsService;
+        $this->productCreateUdsService = $productCreateUdsService;
     }
 
 
@@ -29,7 +36,7 @@ class ProductController extends Controller
        // dd(100/10.0);
 
         return response(
-            $this->productService->insertToMs($data)
+            $this->productCreateMsService->insertToMs($data)
         );
     }
 
@@ -42,7 +49,7 @@ class ProductController extends Controller
         ]);
 
        return response(
-           $this->productService->insertToUds($data)
+           $this->productCreateUdsService->insertToUds($data)
        );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\order;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
