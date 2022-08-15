@@ -6,6 +6,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use Faker\Provider\File;
 use Illuminate\Http\Request;
+use Throwable;
 
 class postController extends Controller
 {
@@ -17,34 +18,33 @@ class postController extends Controller
 
         $Clint = new ClientMC($url, $TokenMC);
 
-       $this->loginfo("request", $request);
+        $participant = $request->participant;
 
-        $fields = $request->validate([
-            'displayName' => 'required|string',
-            'participant' => 'required',
-            'phone' => 'required|string',
-            'email' => 'required|string',
-        ]);
+        $email = $this->ClintNullable($request->email);
+        //dd($email);
+
 
         $body = [
-            "name" => $fields["displayName"],
-            "phone" => $fields["phone"],
-            "email" => $fields["email"],
-            "externalCode" => $fields["participant"]->id,
+            "name" => $request->displayName,
+            "phone" => $request->phone,
+            "email" => $email,
+            "externalCode" => (string) $participant['id'],
         ];
+        try {
+            $Clint->requestPost($body);
+        } catch (Throwable $exception){
+            dd($exception);
+        }
 
-
-
-        $Clint->requestPost($body);
 
 
     }
 
-    function loginfo($name, $msg) {
-        global $dirRoot;
-        $logDir =  public_path();
-        @mkdir($logDir);
-        file_put_contents($logDir . '/log.txt', date(DATE_W3C) . ' [' . $name . '] '. $msg . "\n", FILE_APPEND);
+    public function ClintNullable($item){
+        if ($item == null){
+            return '';
+        } else {
+            return $item;
+        }
     }
-
 }
