@@ -16,12 +16,12 @@ class postController extends Controller
 
         $Clint = new ClientMC($url, $TokenMC);
 
-        /*$tmp = json_decode($request);
-
-        dd($tmp);*/
+        $fields = $request->validate([
+            'displayName' => 'required|string',
+        ]);
 
         $body = [
-            "name" => $request->displayName,
+            "name" => $fields["displayName"],
         ];
 
 
