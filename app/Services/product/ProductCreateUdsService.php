@@ -266,7 +266,13 @@ class ProductCreateUdsService
                 }
             }
 
-
+            if ($isFractionProduct && (
+                    $nameOumUds == "KILOGRAM"
+                    || $nameOumUds == "LITRE"
+                    || $nameOumUds == "METRE")
+            ){
+                return null;
+            }
 
             if (
                 $isOfferProduct &&
@@ -337,7 +343,15 @@ class ProductCreateUdsService
                 }
             }
 
-
+            if ($isFractionProduct){
+                //if ($body["name"] == "Мешок с негром"){
+                $dPrice = explode('.',"".$body["data"]["price"]);
+                //dd($dPrice);
+                if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
+                    return null;
+                }
+                // }
+            }
 
         }
 

@@ -19,6 +19,10 @@ use App\Http\Controllers\Controller\V1\InputMcController;
     Route::post('productMs',[ProductController::class,'insertMs']);
     Route::post('productUds',[ProductController::class,'insertUds']);
 
+    Route::post('updateProductUds',[ProductController::class,'updateUds']);
+    Route::post('updateProductMs',[ProductController::class,'updateMs']);
+
+
 
     Route::post('/webhook/{accountId}/client',[ProductController::class,'insertUds']);
 
