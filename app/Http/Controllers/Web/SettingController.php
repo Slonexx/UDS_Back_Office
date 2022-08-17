@@ -27,7 +27,7 @@ class SettingController extends Controller
         $TokenUDS = $Setting->TokenUDS;
 
         $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
-
+        $ProductFolder = $Setting->ProductFolder;
         if ($Setting->ProductFolder != null) {
             $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$Setting->ProductFolder;
             $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
