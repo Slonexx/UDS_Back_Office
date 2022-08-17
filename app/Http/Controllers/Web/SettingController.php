@@ -191,8 +191,6 @@ class SettingController extends Controller
         } else $PaymentAccount = null;
 
 
-
-
         $cfg = new cfg();
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
@@ -216,7 +214,8 @@ class SettingController extends Controller
             $app->creatDocument = $request->creatDocument;
             $app->Organization = $request->Organization;
             $app->Document = $request->Document;
-            $app->PaymentDocument = $request->PaymentDocument;
+            if ($request->Document == "2") $app->PaymentDocument = $request->PaymentDocument;
+            else $app->PaymentDocument = null;
             $app->PaymentAccount = $PaymentAccount;
 
             $app->persist();
