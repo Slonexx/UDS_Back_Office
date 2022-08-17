@@ -326,9 +326,10 @@ class postController extends Controller
             $body = $body[$bodyIndex];
             foreach ($body->attributes as $attributesItem){
                 if ('Не применять бонусную программу (UDS)' == $attributesItem->name){
-                    if ($attributesItem->value == false) $discount = $pointsPercent;
+                    if ($attributesItem->value == true) $discount = 0;
+                    else $discount = $pointsPercent;
                     break;
-                } else $discount = 0;
+                } else $discount = $pointsPercent;
             }
 
             $assortment = [ 'meta' => [
@@ -346,15 +347,6 @@ class postController extends Controller
             ];
             $Result[] = $ArrayItem;
         }
-
-        $ArrayItem = [
-            'quantity' => $item['qty'],
-            'price' => $item['price']*100,
-            'assortment' => $assortment,
-            'discount' => $discount,
-            'reserve' => $item['qty'],
-        ];
-
 
 
         $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
