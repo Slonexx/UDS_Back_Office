@@ -90,7 +90,7 @@ class postController extends Controller
             $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
             $project = $this->metaProject($TokenMC, $Setting->Project);
 
-            $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase);
+            $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
             $shipmentAddress = $this->ShipmentAddress($request->delivery);
             $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
 
@@ -294,7 +294,7 @@ class postController extends Controller
         ];
     }
 
-    public function metaPositions($apiKey, $UDSitem, $purchase){
+    public function metaPositions($apiKey, $UDSitem, $purchase, $delivery){
         $urlMeta = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
         $Client = new ClientMC($urlMeta, $apiKey);
         $BodyMeta = $Client->requestGet()->rows;
@@ -308,7 +308,6 @@ class postController extends Controller
         $pointsPercent = $purchase["points"] * 100 / $total;
 
         $Result = [];
-        $priceResult = 0;
         foreach ($UDSitem as $id=>$item){
             $urlProduct = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter='.$BodyMeta.'='.$item['id'];
             $Client = new ClientMC($urlProduct, $apiKey);
@@ -346,9 +345,26 @@ class postController extends Controller
                 'reserve' => $item['qty'],
             ];
             $Result[] = $ArrayItem;
-
         }
 
+        $ArrayItem = [
+            'quantity' => $item['qty'],
+            'price' => $item['price']*100,
+            'assortment' => $assortment,
+            'discount' => $discount,
+            'reserve' => $item['qty'],
+        ];
+
+
+
+        $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
+
+        $ArrayItem = [
+            'price' => $deliveryCase['price'],
+            'assortment' => $deliveryCase['assortment'],
+        ];
+
+        $Result[] = $ArrayItem;
 
        return $Result;
     }
@@ -375,4 +391,31 @@ class postController extends Controller
         else return null;
     }
 
+    public function delivery($apiKey, $deliveryCase){
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/assortment?filter=externalCode=Доставка(UDS)";
+        $Client = new ClientMC($url, $apiKey);
+        $body = $Client->requestGet()->rows;
+
+        if (array_key_exists(0, $body)) $body = $body[0];
+        else {
+            $urlService = "https://online.moysklad.ru/api/remap/1.2/entity/service";
+            $ClientService = new ClientMC($urlService, $apiKey);
+            $bodyService = [
+                'name' => 'Доставка (UDS)',
+                'externalCode' => 'Доставка(UDS)'
+            ];
+            $body = $ClientService->requestPost($bodyService);
+        }
+
+        return [
+            'assortment' => [
+                'meta' => [
+                    'href' => $body->meta->href,
+                    'type' => $body->meta->type,
+                    'mediaType' => $body->meta->mediaType,
+                ]
+            ],
+            'price' => $deliveryCase['value'],
+        ];
+    }
 }
