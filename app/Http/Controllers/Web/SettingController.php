@@ -214,9 +214,12 @@ class SettingController extends Controller
             $app->creatDocument = $request->creatDocument;
             $app->Organization = $request->Organization;
             $app->Document = $request->Document;
-            if ($request->PaymentDocument == "2") $app->PaymentDocument = $request->PaymentDocument;
-            else $app->PaymentDocument = null;
-            $app->PaymentAccount = $PaymentAccount;
+            $app->PaymentDocument = $request->PaymentDocument;
+            if ($request->PaymentDocument == "2") $app->PaymentAccount = $PaymentAccount;
+            else {
+                $app->PaymentAccount = null;
+                $PaymentAccount = null;
+            }
 
             $app->persist();
 
