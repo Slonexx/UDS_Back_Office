@@ -57,49 +57,59 @@ class postController extends Controller
         $TokenMC = $Setting->TokenMoySklad;
         $companyId = $Setting->companyId;
 
-        if ($Setting->creatDocument == "1"){
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
-            $Clint = new ClientMC($url, $TokenMC);
+        try {
+            if ($Setting->creatDocument == "1"){
+                $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
+                $Clint = new ClientMC($url, $TokenMC);
 
-            $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
-            $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
-            $agent = $this->metaAgent($TokenMC, $request->customer['id']);
-            $state = $this->metaState($TokenMC, $Setting->NEW);
-            $store = $this->metaStore($TokenMC, $Setting->Store);
-            $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
-            $project = $this->metaProject($TokenMC, $Setting->Project);
+                $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
+                $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
+                $agent = $this->metaAgent($TokenMC, $request->customer['id']);
+                $state = $this->metaState($TokenMC, $Setting->NEW);
+                $store = $this->metaStore($TokenMC, $Setting->Store);
+                $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
+                $project = $this->metaProject($TokenMC, $Setting->Project);
 
-            $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->customer['membershipTier']['maxScoresDiscount']);
-            $shipmentAddress = $this->ShipmentAddress($request->delivery);
-            $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
+                $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->customer['membershipTier']['maxScoresDiscount']);
+                $shipmentAddress = $this->ShipmentAddress($request->delivery);
+                $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
 
-            //dd($organization);
+                //dd($organization);
 
-            $body = [
-                "organization" => $organization,
-                "organizationAccount" => $organizationAccount,
-                "agent" => $agent,//Создавать АГЕНТА НАДО
-                "state" => $state,
-                "store" => $store,
-                "salesChannel" => $salesChannel,
-                "project" => $project,
+                $body = [
+                    "organization" => $organization,
+                    "organizationAccount" => $organizationAccount,
+                    "agent" => $agent,//Создавать АГЕНТА НАДО
+                    "state" => $state,
+                    "store" => $store,
+                    "salesChannel" => $salesChannel,
+                    "project" => $project,
 
-                "positions" => $positions,
-                "shipmentAddress" => $shipmentAddress,
-                "externalCode" => $externalCode,
-            ];
-            //dd(($body));
-            try {
-                if ($externalCode != null) $Clint->requestPost($body);
-            } catch (Throwable $exception){
-                webhookOrderLog::create([
-                    'accountId' => $accountId,
-                    'message' => $exception,
-                    'companyId' => $companyId,
-                ]);
+                    "positions" => $positions,
+                    "shipmentAddress" => $shipmentAddress,
+                    "externalCode" => $externalCode,
+                ];
+                //dd(($body));
+                try {
+                    if ($externalCode != null) $Clint->requestPost($body);
+                } catch (Throwable $exception){
+                    webhookOrderLog::create([
+                        'accountId' => $accountId,
+                        'message' => $exception,
+                        'companyId' => $companyId,
+                    ]);
+                }
+
             }
-
+        } catch (Throwable $exception) {
+            webhookOrderLog::create([
+                'accountId' => $accountId,
+                'message' => $exception,
+                'companyId' => $companyId,
+            ]);
         }
+
+
 
 
 
