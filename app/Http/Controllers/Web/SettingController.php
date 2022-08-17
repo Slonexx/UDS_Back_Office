@@ -26,6 +26,16 @@ class SettingController extends Controller
         $companyId = $Setting->companyId;
         $TokenUDS = $Setting->TokenUDS;
 
+        $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
+
+        if ($Setting->ProductFolder != null) {
+            $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$Setting->ProductFolder;
+            $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
+            $FolderName = $ClientFolder->requestGet()->name;
+
+            $ProductFolder = ['value' => $Setting->ProductFolder, 'name'=>$FolderName ];
+        }
+
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
         $Store = $Setting->Store;
         if ($Store == null) $Store = "0";
@@ -33,12 +43,15 @@ class SettingController extends Controller
 
         $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
+            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
 
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
+            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
 
+            "ProductFolder" => $ProductFolder,
             "Store" => $Store,
             "accountId"=> $accountId,
             "isAdmin" => $isAdmin,
@@ -55,9 +68,16 @@ class SettingController extends Controller
 
         $TokenMoySklad = $app->TokenMoySklad;
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
+        $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
         $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
+            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
+
+        $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
+        $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
+        $FolderName = $ClientFolder->requestGet()->name;
+        $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
 
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
@@ -65,6 +85,7 @@ class SettingController extends Controller
             $app->companyId = $request->companyId;
             $app->TokenUDS = $request->TokenUDS;
 
+            $app->ProductFolder = $request->ProductFolder;
             $app->UpdateProduct = $request->UpdateProduct;
             $app->Store = $request->Store;
             $app->status = AppInstanceContoller::ACTIVATED;
@@ -83,7 +104,9 @@ class SettingController extends Controller
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
+            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
 
+            "ProductFolder" => $ProductFolder,
             "Store" => $request->Store,
 
             "companyId"=> $request->companyId,

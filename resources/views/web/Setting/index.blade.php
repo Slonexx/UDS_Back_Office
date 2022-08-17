@@ -60,6 +60,38 @@
             <div class="text-black mx-2 mb-2">
                 Товары
             </div>
+
+            <div class="mb-3 row mx-1">
+                <div class="col-sm-6">
+                    <label class="mx-1">
+                        <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover5"
+                                data-toggle="popover" data-placement="right" data-trigger="focus"
+                                data-content="Выберите откуда будет изменяться товары">
+                        </button>  Выберите категории:  </label>
+
+                    <script> $('.myPopover5').popover(); </script>
+
+
+                    <div class="col-sm-10">
+                        <select name="ProductFolder" class="form-select text-black ">
+
+                            @if($ProductFolder != null)
+                                <option selected value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
+                                @foreach ($Body_productFolder as $productFolderItem)
+                                    @if ($productFolderItem->id != $ProductFolder['value'])
+                                    <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                    @endif
+                                @endforeach
+                            @else
+                                @foreach ($Body_productFolder as $productFolderItem)
+                                        <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <div class="mb-3 row mx-1">
                 <div class="col-sm-6">
                     <label class="mx-1">
@@ -73,8 +105,8 @@
 
                     <div class="col-sm-10">
                         <select name="UpdateProduct" class="form-select text-black ">
-                           <option value="0">МойСклад</option>
-                           <option value="1">UDS</option>
+                            <option value="0">МойСклад</option>
+                            <option value="1">UDS</option>
                         </select>
                     </div>
                 </div>
