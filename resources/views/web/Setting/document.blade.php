@@ -173,7 +173,7 @@
                             <script> $('.myPopover1').popover(); </script>
 
                             <div class="col-5">
-                                <label class="mt-2"> Получение новых заказов </label>
+                                <label class="mt-2"> Получение новых клиентах </label>
                             </div>
                             <div class="col-7">
                                 <div  class=" row mb-2 mx-2 bg-myBlue rounded">
@@ -181,12 +181,12 @@
                                        <i onclick="myWebXyk1()" class="text-orange btn fa-solid fa-link p-2 "></i>
                                     </div>
                                     <div id="myWebXyk1" class="mt-1 col-11 myWebXyk1 s-min-16">
-                                        https://smartuds.kz/api/webhook/{{$accountId}}/orders
+                                        https://smartuds.kz/api/webhook/{{$accountId}}/client
                                     </div>
                                     </div>
                             </div>
                             <div class="col-5 mt-2">
-                                <label class="mt-2"> Получение новых клиентах </label>
+                                <label class="mt-2"> Получение новых заказов  </label>
                             </div>
                             <div class="col-7 mt-2">
                                 <div  class=" row mb-2 mx-2 bg-myBlue rounded">
@@ -194,7 +194,7 @@
                                         <i onclick="myWebXyk2()" class="text-orange btn fa-solid fa-link p-2"></i>
                                     </div>
                                     <div id="myWebXyk2" class="mt-1 col-11 myWebXyk2 s-min-16">
-                                        https://smartuds.kz/api/webhook/{{$accountId}}/client
+                                        https://smartuds.kz/api/webhook/{{$accountId}}/order
                                     </div>
                                 </div>
                             </div>
