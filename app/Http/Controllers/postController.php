@@ -361,7 +361,7 @@ class postController extends Controller
 
         $ArrayItem = [
             'quantity' => 1,
-            'price' => $deliveryCase['price'],
+            'price' => $deliveryCase['price']*100,
             'assortment' => $deliveryCase['assortment'],
         ];
 
