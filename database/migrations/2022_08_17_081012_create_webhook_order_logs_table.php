@@ -12,7 +12,7 @@ class CreateWebhookOrderLogsTable extends Migration
         Schema::create('webhook_order_logs', function (Blueprint $table) {
             $table->id();
             $table->string('accountId');
-            $table->string('message');
+            $table->longText('message');
             $table->string('companyId');
             $table->timestamps();
         });

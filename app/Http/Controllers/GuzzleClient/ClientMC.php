@@ -49,6 +49,7 @@ class ClientMC extends Controller
 
         $client = new Client([
             'headers' => $headers,
+            'http_errors' => false,
         ]);
 
         $res = $client->post($this->uri,[
