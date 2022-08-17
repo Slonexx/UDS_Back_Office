@@ -22,6 +22,7 @@ use App\Http\Controllers\Controller\V1\InputMcController;
 
 
     Route::post('/webhook/{accountId}/client',[postController::class, 'postClint']);
+    Route::post('/webhook/{accountId}/order',[postController::class, 'postOrder']);
 
 //Route::get('/Goods', [getApi::class, 'index']);
 
