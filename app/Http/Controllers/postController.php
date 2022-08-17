@@ -360,6 +360,7 @@ class postController extends Controller
         $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
 
         $ArrayItem = [
+            'quantity' => 1,
             'price' => $deliveryCase['price'],
             'assortment' => $deliveryCase['assortment'],
         ];
