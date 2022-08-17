@@ -75,7 +75,7 @@ class ProductController extends Controller
        // dd(100/10.0);
 
         return response(
-            //$this->
+            $this->productUpdateMsService->updateProductsMs($data)
         );
     }
 

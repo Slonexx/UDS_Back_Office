@@ -48,6 +48,7 @@ class ProductCreateUdsService
 
     private function getUdsCheck($companyId, $apiKeyUds){
         $this->findNodesUds($nodeIds,$companyId,$apiKeyUds);
+        //dd($nodeIds);
         return $nodeIds;
     }
 
@@ -189,36 +190,39 @@ class ProductCreateUdsService
 
         $nameOumUds = $createdProduct->data->measurement;
 
-        if ($createdProduct->data->offer == null){
-            $priceDefault = $createdProduct->data->price;
+        if ($nameOumUds != "PIECE"){
+            if ($createdProduct->data->offer == null){
+                $priceDefault = $createdProduct->data->price;
 
-            if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
-                $priceDefault /= 1000.0;
-            } elseif ($nameOumUds == ""){
-                $priceDefault /= 100.0;
-            }
-
-            $body["attributes"][1]= [
-                "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $priceDefault,
-            ];
-        } else {
-            $offerPrice = $createdProduct->data->offer->offerPrice;
-            if ($createdProduct->data->increment != null || $createdProduct->data->minQuantity != null){
-                if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                    // offer price 1000
-                    $offerPrice /= 1000.0;
-                } elseif($nameOumUds == "CENTIMETRE"){
-                    //offer price 100
-                    $offerPrice /= 100.0;
+                if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
+                    $priceDefault /= 1000.0;
+                } elseif ($nameOumUds == "METRE"){
+                    $priceDefault /= 100.0;
                 }
+
+                $body["attributes"][1]= [
+                    "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $priceDefault,
+                ];
             }
-            $body["attributes"][1]= [
-                "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $offerPrice,
-            ];
+            else {
+                $offerPrice = $createdProduct->data->offer->offerPrice;
+                if ($createdProduct->data->increment != null || $createdProduct->data->minQuantity != null){
+                    if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                        // offer price 1000
+                        $offerPrice /= 1000.0;
+                    } elseif($nameOumUds == "CENTIMETRE"){
+                        //offer price 100
+                        $offerPrice /= 100.0;
+                    }
+                }
+                $body["attributes"][1]= [
+                    "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $offerPrice,
+                ];
+            }
         }
 
         $client->put($url,$body);
@@ -243,6 +247,8 @@ class ProductCreateUdsService
         }
 
         $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
+        if ($nameOumUds) return null;
+
         $body = [
             "name" => $product->name,
             "data" => [
@@ -289,7 +295,7 @@ class ProductCreateUdsService
                     $body["data"]["offer"]["skipLoyalty"] = true;
                 }
                 elseif ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
-                    if ($attribute->value <= 0 || $attribute->value == null) return null;
+                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
                     $body["data"]["increment"] = intval($attribute->value);
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         $body["data"]["increment"] *= 1000.0;
@@ -306,7 +312,7 @@ class ProductCreateUdsService
                     }
                 }
                 elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
-                    if ($attribute->value <= 0 || $attribute->value == null) return null;
+                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
                     $body["data"]["minQuantity"] = intval($attribute->value);
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         $body["data"]["price"] /= 1000;
@@ -353,6 +359,11 @@ class ProductCreateUdsService
                 // }
             }
 
+            if ($nameOumUds == "PIECE"){
+                $body["data"]["minQuantity"] = null;
+                $body["data"]["increment"] = null;
+            }
+
         }
 
         if (property_exists($product, "article")){
@@ -393,44 +404,50 @@ class ProductCreateUdsService
         return $client->post($url, $body);
     }
 
-    private function findNodesUds(&$result,$companyId, $apiKeyUds,$nodeId = 0, $path=""): void
+    private function haveRowsInResponse(&$url,$offset,$companyId,$apiKeyUds,$nodeId=0): bool
     {
-        if ($nodeId > 0 ){
-            $url = "https://api.uds.app/partner/v2/goods?nodeId=".$nodeId;
-            //dd($url);
+        $url = "https://api.uds.app/partner/v2/goods?max=50&offset=".$offset;
+        if ($nodeId > 0){
+            $url = $url."&nodeId=".$nodeId;
         }
-        else {
-            $url = "https://api.uds.app/partner/v2/goods";
-        }
-
         $client = new UdsClient($companyId,$apiKeyUds);
         $json = $client->get($url);
+        return count($json->rows) > 0;
+    }
 
-        if (count($json->rows) == 0) {
-            return;
+    private function findNodesUds(&$result,$companyId, $apiKeyUds,$nodeId = 0, $path=""): void
+    {
+//        if ($nodeId > 0 ){
+//            $url = "https://api.uds.app/partner/v2/goods?nodeId=".$nodeId;
+//        }
+//        else {
+//            $url = "https://api.uds.app/partner/v2/goods";
+//        }
+
+//        $client = new UdsClient($companyId,$apiKeyUds);
+//        $json = $client->get($url);
+//
+//        if (count($json->rows) == 0) {
+//            return;
+//        }
+        $offset = 0;
+        while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds,$nodeId)){
+            $client = new UdsClient($companyId,$apiKeyUds);
+            $json = $client->get($url);
+            foreach ($json->rows as $row) {
+                $currId = "".$row->id;
+                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM"){
+                    $result["productIds"][] = $currId;
+                }
+                elseif ($row->data->type == "CATEGORY"){
+                    $result["categoryIds"][] = $currId;
+                    $newPath = $path."/".$row->name;
+                    $this->findNodesUds($result,$companyId,$apiKeyUds,$currId,$newPath);
+                }
+            }
+            $offset += 50;
         }
 
-        foreach ($json->rows as $row) {
-            $currId = "".$row->id;
-            if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM"){
-                /*                $result["products"][] = [
-                                    "id" => $currId,
-                                    "name" => $row->name,
-                                    "path" => $path,
-                                ];*/
-                $result["productIds"][] = $currId;
-            }
-            elseif ($row->data->type == "CATEGORY"){
-                /*                $result ["categories"][] = [
-                                    "id" => $currId,
-                                    "name" => $row->name,
-                                    "path" => $path,
-                                ];*/
-                $result["categoryIds"][] = $currId;
-                $newPath = $path."/".$row->name;
-                $this->findNodesUds($result,$companyId,$apiKeyUds,$currId,$newPath);
-            }
-        }
     }
 
     private function getCategoryIdByMetaHref($href, $apiKeyMs){

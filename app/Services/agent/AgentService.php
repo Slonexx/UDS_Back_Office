@@ -20,26 +20,34 @@ class AgentService
         return $customerIds;
     }
 
-    private function getUds($companyId, $apiKeyUds)
+    private function getUds($url,$companyId, $apiKeyUds)
     {
-        $url = "https://api.uds.app/partner/v2/customers";
+         //= "https://api.uds.app/partner/v2/customers";
         $client = new UdsClient($companyId,$apiKeyUds);
         return $client->get($url);
     }
 
     private function notAddedInMs($apiKeyMs,$apiKeyUds, $companyId)
     {
-        $customersFromUds = $this->getUds($companyId,$apiKeyUds);
-        $customersFromMs = $this->getMs($apiKeyMs);
+
+       // $customersFromMs = $this->getMs($apiKeyMs);
 
         $count = 0;
-        foreach ($customersFromUds->rows as $customerFromUds){
-            $currId = $customerFromUds->participant->id;
-            if (!in_array($currId,$customersFromMs)){
-                $this->createAgent($apiKeyMs,$customerFromUds);
-                $count++;
+        $offset = 0;
+        set_time_limit(3600);
+        while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
+            $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
+            foreach ($customersFromUds->rows as $customerFromUds){
+                //dd($customerFromUds);
+                $currId = $customerFromUds->participant->id;
+                if (!$this->isAgentExistsMs($currId,$apiKeyMs)){
+                    $this->createAgent($apiKeyMs,$customerFromUds);
+                    $count++;
+                }
             }
+            $offset += 50;
         }
+
 
         return [
             "message" => "Inserted customers: ".$count,
@@ -80,6 +88,26 @@ class AgentService
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
         $client = new MsClient($apiKeyMs);
         $client->post($url,$agent);
+    }
+
+    private function haveRowsInResponse(&$url,$offset,$companyId,$apiKeyUds,$nodeId=0): bool
+    {
+        $url = "https://api.uds.app/partner/v2/customers?max=50&offset=".$offset;
+        if ($nodeId > 0){
+            $url = $url."&nodeId=".$nodeId;
+        }
+        $client = new UdsClient($companyId,$apiKeyUds);
+        $json = $client->get($url);
+        return count($json->rows) > 0;
+    }
+
+    private function isAgentExistsMs($nodeId, $apiKeyMs): bool
+    {
+        $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId;
+        //dd($urlToFind);
+        $client = new MsClient($apiKeyMs);
+        $json = $client->get($urlToFind);
+        return ($json->meta->size > 0);
     }
 
 }

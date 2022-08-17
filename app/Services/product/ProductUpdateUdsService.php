@@ -31,21 +31,31 @@ class ProductUpdateUdsService
         $msProducts = $this->getMs($apiKeyMs);
 
         foreach ($msProducts->rows as $row){
-            $productNodeId = null;
+            $productId = null;
             if (property_exists($row, 'attributes')){
                 foreach ($row->attributes as $attribute){
                     if ($attribute->name == "id (UDS)"){
-                        $productNodeId = $attribute->value;
+                        $productId = $attribute->value;
                         break;
                     }
                 }
             }
 
-            if ($productNodeId != null){
-               $updatedProduct = $this->updateProductInUds($row,$productNodeId,$apiKeyMs,$companyId, $apiKeyUds);
-               if ($updatedProduct != null){
-                   $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
-               }
+            if ($productId != null){
+                if (property_exists($row,"productFolder")){
+                    $productFolderHref = $row->productFolder->meta->href;
+                    $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
+                    $updatedProduct = $this->updateProductInUds($row,$productId,$apiKeyMs,$companyId, $apiKeyUds,$idNodeCategory);
+                    if ($updatedProduct != null){
+                        $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
+                    }
+                }
+                else {
+                    $updatedProduct = $this->updateProductInUds($row,$productId,$apiKeyMs,$companyId, $apiKeyUds);
+                    if ($updatedProduct != null){
+                        $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
+                    }
+                }
             }
 
         }
@@ -56,9 +66,9 @@ class ProductUpdateUdsService
 
     }
 
-    private function updateProductInUds($msProduct, $nodeId, $apiKeyMs, $companyId, $apiKeyUds)
+    private function updateProductInUds($msProduct, $goodId, $apiKeyMs, $companyId, $apiKeyUds, $nodeId = 0)
     {
-        $url = "https://api.uds.app/partner/v2/goods/".$nodeId;
+        $url = "https://api.uds.app/partner/v2/goods/".$goodId;
         $client = new UdsClient($companyId,$apiKeyUds);
 
         $json = $client->get($url);
@@ -80,6 +90,8 @@ class ProductUpdateUdsService
         }
 
         $nameOumUds = $this->getUomUdsByMs($msProduct->uom->meta->href,$apiKeyMs);
+        if ($nameOumUds) return null;
+
         $body = [
             "name" => $msProduct->name,
             "data" => [
@@ -116,7 +128,7 @@ class ProductUpdateUdsService
 
             foreach ($msProduct->attributes as $attribute){
                 if ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
-                    if ($attribute->value <= 0 || $attribute->value == null) return null;
+                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
                     $body["data"]["increment"] = intval($attribute->value);
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         $body["data"]["increment"] *= 1000.0;
@@ -133,7 +145,7 @@ class ProductUpdateUdsService
                     }
                 }
                 elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
-                    if ($attribute->value <= 0 || $attribute->value == null) return null;
+                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
                     $body["data"]["minQuantity"] = intval($attribute->value);
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         $body["data"]["price"] /= 1000;
@@ -181,6 +193,11 @@ class ProductUpdateUdsService
                 // }
             }
 
+            if ($nameOumUds == "PIECE"){
+                $body["data"]["minQuantity"] = null;
+                $body["data"]["increment"] = null;
+            }
+
         }
 
         /*if ($isFractionProduct){
@@ -189,6 +206,10 @@ class ProductUpdateUdsService
 
         if (property_exists($msProduct, "article")){
             $body["data"]["sku"] = $msProduct->article;
+        }
+
+        if ($nodeId > 0){
+            $body["nodeId"] = intval($nodeId);
         }
 
         //if ($body["name"] == "Мешок с негром")
@@ -257,39 +278,47 @@ class ProductUpdateUdsService
 
         $nameOumUds = $updatedProduct->data->measurement;
 
-        if ($updatedProduct->data->offer == null){
-            $priceDefault = $updatedProduct->data->price;
+        if ($nameOumUds != "PIECE") {
+            if ($updatedProduct->data->offer == null){
+                $priceDefault = $updatedProduct->data->price;
 
-            if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
-                $priceDefault /= 1000.0;
-            } elseif ($nameOumUds == ""){
-                $priceDefault /= 100.0;
-            }
-
-            $body["attributes"][1]= [
-                "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $priceDefault,
-            ];
-        } else {
-            $offerPrice = $updatedProduct->data->offer->offerPrice;
-            if ($updatedProduct->data->increment != null || $updatedProduct->data->minQuantity != null){
-                if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                    // offer price 1000
-                    $offerPrice /= 1000.0;
-                } elseif($nameOumUds == "CENTIMETRE"){
-                    //offer price 100
-                    $offerPrice /= 100.0;
+                if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
+                    $priceDefault /= 1000.0;
+                } elseif ($nameOumUds == "METRE"){
+                    $priceDefault /= 100.0;
                 }
+
+                $body["attributes"][1]= [
+                    "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $priceDefault,
+                ];
             }
-            $body["attributes"][1]= [
-                "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
-                "name" => "Цена минимального размера заказа дробного товара (UDS)",
-                "value" => $offerPrice,
-            ];
+            else {
+                $offerPrice = $updatedProduct->data->offer->offerPrice;
+                if ($updatedProduct->data->increment != null || $updatedProduct->data->minQuantity != null){
+                    if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                        // offer price 1000
+                        $offerPrice /= 1000.0;
+                    } elseif($nameOumUds == "CENTIMETRE"){
+                        //offer price 100
+                        $offerPrice /= 100.0;
+                    }
+                }
+                $body["attributes"][1]= [
+                    "meta" => $this->attributeHookService->getProductAttribute("Цена минимального размера заказа дробного товара (UDS)",$apiKeyMs),
+                    "name" => "Цена минимального размера заказа дробного товара (UDS)",
+                    "value" => $offerPrice,
+                ];
+            }
         }
 
         $client->put($url,$body);
+    }
+
+    private function getCategoryIdByMetaHref($href, $apiKeyMs){
+        $client = new MsClient($apiKeyMs);
+        return $client->get($href)->externalCode;
     }
 
 }

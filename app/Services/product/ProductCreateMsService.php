@@ -53,10 +53,8 @@ class ProductCreateMsService
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
         $propertyIds = [];
-        $propertyExt = [];
 
         foreach ($json->rows as $row){
-            $propertyExt[] = $row->externalCode;
             if (property_exists($row, 'attributes')){
                 foreach ($row->attributes as $attribute){
                     if ($attribute->name == "id (UDS)"){
@@ -65,73 +63,100 @@ class ProductCreateMsService
                 }
             }
         }
-        return [
-            "ids" => $propertyIds,
-            "externals" => $propertyExt,
-        ];
+        return $propertyIds;
     }
 
-    private function getUds($companyId, $apiKeyUds)
+    private function getUds($url,$companyId, $apiKeyUds)
     {
-        $url = "https://api.uds.app/partner/v2/goods";
+        //$url = "https://api.uds.app/partner/v2/goods?max=50";
         $client = new UdsClient($companyId,$apiKeyUds);
         return $client->get($url);
     }
 
     private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId)
     {
-        $productsMs = $this->getMsCheck($apiKeyMs);
-        $productsUds = $this->getUds($companyId,$apiKeyUds);
-
-        //$count = 0;
-        foreach ($productsUds->rows as $productUds){
-            $currId = "".$productUds->id;
-            if (!in_array($currId, $productsMs["ids"])){
+        //$productsMs = $this->getMsCheck($apiKeyMs);
+        $hrefAttrib = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs)->href;
+        $offset = 0;
+        while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
+            $productsUds = $this->getUds($url,$companyId,$apiKeyUds);
+            foreach ($productsUds->rows as $productUds){
+                $currId = "".$productUds->id;
+                //echo $productUds->name."<br>";
+                //if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                 if ($productUds->data->type == "ITEM"){
-                    $this->createProductMs($apiKeyMs,$productUds);
-                   // $count++;
+                    if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
+                        $this->createProductMs($apiKeyMs,$productUds);
+                    }
+                    // $count++;
                 }
                 elseif ($productUds->data->type == "VARYING_ITEM"){
-                    $this->createVariantProduct($apiKeyMs,$productUds);
-                   // $count++;
+                    if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
+                        $this->createVariantProduct($apiKeyMs,$productUds);
+                    }
+                    // $count++;
                 }
                 elseif ($productUds->data->type == "CATEGORY"){
-                  $category = $this->createCategoryMs($apiKeyMs,$productUds->name,$productUds->id);
-                  set_time_limit(3600);
-                  $this->addProductsByCategoryUds(
-                      $productsMs["ids"],
-                      $category->meta,
-                      $productUds->id,
-                      $companyId,
-                      $apiKeyUds,
-                      $apiKeyMs
-                  );
+                    $category = $this->createCategoryMs($apiKeyMs,$productUds->name,$productUds->id);
+                    //dd($category);
+                    set_time_limit(3600);
+                    $this->addProductsByCategoryUds(
+                        $hrefAttrib,
+                        $category->meta,
+                        $productUds->id,
+                        $companyId,
+                        $apiKeyUds,
+                        $apiKeyMs
+                    );
                 }
+                // }
             }
+            $offset += 50;
         }
-
         return [
             "message" => "Successful export products to MS",
         ];
+    }
 
+    private function haveRowsInResponse(&$url,$offset,$companyId,$apiKeyUds,$nodeId=0): bool
+    {
+        $url = "https://api.uds.app/partner/v2/goods?max=50&offset=".$offset;
+        if ($nodeId > 0){
+            $url = $url."&nodeId=".$nodeId;
+        }
+        $client = new UdsClient($companyId,$apiKeyUds);
+        $json = $client->get($url);
+        return count($json->rows) > 0;
+    }
+
+    private function isProductExistsMs($nodeId, $hrefMsAttribProduct, $apiKeyMs): bool
+    {
+        $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter="
+            .$hrefMsAttribProduct."=".$nodeId;
+        //dd($urlToFind);
+        $client = new MsClient($apiKeyMs);
+        $json = $client->get($urlToFind);
+        return ($json->meta->size > 0);
     }
 
     private function addProductsByCategoryUds(
-        $productIds,$parentCategoryMeta,$nodeId, $companyId, $apiKeyUds,$apiKeyMs
+        $hrefProductId,$parentCategoryMeta,$nodeId, $companyId, $apiKeyUds,$apiKeyMs
     ){
-        $url = "https://api.uds.app/partner/v2/goods?nodeId=".$nodeId;
-        $client = new UdsClient($companyId,$apiKeyUds);
-        $json = $client->get($url);
-
-        if (count($json->rows) == 0) return;
-
+        //$url = "https://api.uds.app/partner/v2/goods?max=50&nodeId=".$nodeId;
+        //$client = new UdsClient($companyId,$apiKeyUds);
+        //$json = $client->get($url);
+        //if (count($json->rows) == 0) return;
+        $offset = 0;
+        while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds,$nodeId)){
+            $client = new UdsClient($companyId,$apiKeyUds);
+            $json = $client->get($url);
             foreach ($json->rows as $row){
                 $currId = "".$row->id;
                 if ($row->data->type == "CATEGORY"){
                     $category = $this->createCategoryMs($apiKeyMs,$row->name,$row->id,$parentCategoryMeta);
-                   // dd($category->pathName);
+                    // dd($category->pathName);
                     $this->addProductsByCategoryUds(
-                        $productIds,
+                        $hrefProductId,
                         $category->meta,
                         $row->id,
                         $companyId,
@@ -140,17 +165,18 @@ class ProductCreateMsService
                     );
                 }
                 elseif ($row->data->type == "ITEM"){
-                    if (!in_array($currId,$productIds)){
+                    if (!$this->isProductExistsMs($currId,$hrefProductId,$apiKeyMs)){
                         $this->createProductMs($apiKeyMs,$row,$parentCategoryMeta);
                     }
                 }
                 elseif ($row->data->type == "VARYING_ITEM"){
-                    if (!in_array($currId,$productIds)){
+                    if (!$this->isProductExistsMs($currId,$hrefProductId,$apiKeyMs)){
                         $this->createVariantProduct($apiKeyMs,$row,$parentCategoryMeta);
                     }
                 }
             }
-
+            $offset += 50;
+        }
     }
 
     private function createCategoryMs($apiKeyMs, $nameFolder,$externalCode,$parentFolder = null)
