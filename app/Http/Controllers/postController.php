@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Models\webhookClintLog;
 use App\Models\webhookOrderLog;
 use Faker\Provider\File;
 use GuzzleHttp\Exception\ClientException;
@@ -17,31 +18,39 @@ class postController extends Controller
     public function postClint(Request $request, $accountId){
         $Setting = new getSettingVendorController($accountId);
         $TokenMC = $Setting->TokenMoySklad;
+        $companyId = $Setting->companyId;
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
-
         $Clint = new ClientMC($url, $TokenMC);
 
         $participant = $request->participant;
-
         $email = $this->ClintNullable($request->email);
-        //dd($email);
-
+        $externalCode = $this->postClintId($TokenMC, $participant['id']);
 
         $body = [
             "name" => $request->displayName,
             "phone" => $request->phone,
             "email" => $email,
-            "externalCode" => (string) $participant['id'],
+            "externalCode" => (string) $externalCode,
         ];
-        try {
-            $Clint->requestPost($body);
-        } catch (Throwable $exception){
-            dd($exception);
-        }
 
-
-
+        if ($externalCode != null) {
+            $result = $Clint->requestPost($body);
+            if (isset($result->errors)){
+                webhookClintLog::create([
+                    'accountId' => $accountId,
+                    'message' => "error = ".$result->errors[0]->error."\n"."code = ".$result->errors[0]->code,
+                    'companyId' => $companyId,
+                ]);
+            } else {
+                $message = "Новый клиент = ". $request->displayName;
+                webhookClintLog::create([
+                    'accountId' => $accountId,
+                    'message' => $message,
+                    'companyId' => $companyId,
+                ]);
+            }
+        }  $result = null;
     }
 
     public function ClintNullable($item){
@@ -51,6 +60,17 @@ class postController extends Controller
             return $item;
         }
     }
+
+    public function postClintId($apiKei, $externalCode){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode='.$externalCode;
+        $Client = new ClientMC($url, $apiKei);
+        $body = $Client->requestGet()->rows;
+        if (array_key_exists(1,$body)) return null;
+        else return $externalCode;
+    }
+
+
+
 
 
     public function postOrder(Request $request, $accountId){
@@ -111,7 +131,7 @@ class postController extends Controller
                             'companyId' => $companyId,
                         ]);
                     } else {
-                        $message = "Покупатель = ".$request->delivery["receiverName"] . "\n" . "Заказал = ". count($request->items). " Товара "
+                        $message = "Покупатель = ".$request->delivery["receiverName"] . "\n" . "Заказал = ". count($request->items). " Товар(а) "
                             . "\n" . "Сумма = " . $request->total;
                         webhookOrderLog::create([
                             'accountId' => $accountId,
@@ -124,8 +144,6 @@ class postController extends Controller
             }
 
     }
-
-
 
 
     public function metaOrganization($apiKey, $Organization){
