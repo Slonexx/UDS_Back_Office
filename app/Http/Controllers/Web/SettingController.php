@@ -330,9 +330,12 @@ class SettingController extends Controller
         $app->Saleschannel = $Saleschannel;
         $app->Project = $Project;
 
-        $app->NEW = $request->NEW;
-        $app->COMPLETED = $request->COMPLETED;
-        $app->DELETED = $request->DELETED;
+        if ($request->NEW != 'Статус МойСклад') $app->NEW = $request->NEW;
+        else $app->NEW = null;
+        if ($request->COMPLETED != 'Статус МойСклад') $app->COMPLETED = $request->COMPLETED;
+        else $app->COMPLETED = null;
+        if ($request->DELETED != 'Статус МойСклад') $app->DELETED = $request->DELETED;
+        else $request->DELETED = null;
 
         $app->persist();
 
