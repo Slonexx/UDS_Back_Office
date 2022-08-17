@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Models\webhookOrderLog;
 use Faker\Provider\File;
 use Illuminate\Http\Request;
 use Throwable;
@@ -54,6 +55,7 @@ class postController extends Controller
     public function postOrder(Request $request, $accountId){
         $Setting = new getSettingVendorController($accountId);
         $TokenMC = $Setting->TokenMoySklad;
+        $companyId = $Setting->companyId;
 
         if ($Setting->creatDocument == "1"){
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
@@ -90,7 +92,11 @@ class postController extends Controller
             try {
                 if ($externalCode != null) $Clint->requestPost($body);
             } catch (Throwable $exception){
-                dd($exception);
+                webhookOrderLog::create([
+                    'accountId' => $accountId,
+                    'message' => $exception,
+                    'companyId' => $companyId,
+                ]);
             }
 
         }
