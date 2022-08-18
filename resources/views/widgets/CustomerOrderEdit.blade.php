@@ -69,8 +69,10 @@
             </div>
             <div class="col-3">
                 <div class="row bg-light rounded-pill text-black s-min mt-1 ">
-                    <span id="icon"></span>
-                    <span id="state"></span>
+                    <div class="col-12">
+                        <span id="icon"></span>
+                        <span id="state"></span>
+                    </div>
                 </div>
             </div>
 
