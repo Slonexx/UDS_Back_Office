@@ -363,15 +363,17 @@ class postController extends Controller
             $Result[] = $ArrayItem;
         }
 
-        if ($delivery['deliveryCase'] != null) $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
+        if ($delivery['deliveryCase'] != null) {
+            $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
+            $ArrayItem = [
+                'quantity' => 1,
+                'price' => $deliveryCase['price']*100,
+                'assortment' => $deliveryCase['assortment'],
+            ];
 
-        $ArrayItem = [
-            'quantity' => 1,
-            'price' => $deliveryCase['price']*100,
-            'assortment' => $deliveryCase['assortment'],
-        ];
+            $Result[] = $ArrayItem;
+        }
 
-        $Result[] = $ArrayItem;
 
        return $Result;
     }
