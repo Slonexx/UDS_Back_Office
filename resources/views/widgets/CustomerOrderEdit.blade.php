@@ -20,14 +20,17 @@
                     var responseTextPars = JSON.parse(this.responseText);
                     var StatusCode = responseTextPars.StatusCode;
                     var message = responseTextPars.message;
+                    var BonusPoint = message.BonusPoint;
+                    var points = message.points;
+
                     if (StatusCode == 200) {
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var icon = message.icon.replace(/\\/g, '');
                         window.document.getElementById("icon").innerHTML = icon;
 
-                        window.document.getElementById("cashBack").innerHTML = message.cashBack;
-                        window.document.getElementById("points").innerHTML = message.points;
+                        window.document.getElementById("cashBack").innerHTML = BonusPoint;
+                        window.document.getElementById("points").innerHTML = points;
 
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
@@ -43,7 +46,6 @@
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
-                oReq.responseType = 'json';
                 oReq.send();
             }
         });

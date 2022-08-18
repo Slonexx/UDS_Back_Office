@@ -65,7 +65,7 @@ class ObjectController extends Controller
 
             $message = [
                 'id'=> $id,
-                'cashBack'=> (float) $cashBack,
+                'BonusPoint'=> (float) $cashBack,
                 'points'=>(float) $points,
                 'state'=> $state,
                 'icon'=> $icon,
