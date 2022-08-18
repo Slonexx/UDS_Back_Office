@@ -69,13 +69,14 @@
                         <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square"></i>
                     </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-8">
 
-            </div>
-            <div class="col-4">
-                <span id="icon"></span>
+            <div class="row bg-light rounded-pill text-black s-min mt-1 ">
+                <div class="col-6">
+
+                </div>
+                <div class="col-6">
+                    <span id="icon"></span>
+                </div>
             </div>
         </div>
 
