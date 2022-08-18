@@ -14,6 +14,9 @@
                 var oReq = new XMLHttpRequest();
 
                 oReq.addEventListener("load", function() {
+
+                    console.log("responseText = " + responseText);
+
                     var responseTextPars = JSON.parse(this.responseText);
                     var StatusCode = responseTextPars.StatusCode;
                     var message = responseTextPars.message;
