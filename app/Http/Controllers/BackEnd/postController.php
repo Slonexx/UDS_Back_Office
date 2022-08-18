@@ -80,14 +80,23 @@ class postController extends Controller
                 $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
                 $Clint = new ClientMC($url, $TokenMC);
 
-                $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
-                $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
-                $agent = $this->metaAgent($TokenMC, $request->customer['id']);
-                $state = $this->metaState($TokenMC, $Setting->NEW);
-                $store = $this->metaStore($TokenMC, $Setting->Store);
-                $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
-                $project = $this->metaProject($TokenMC, $Setting->Project);
-                $shipmentAddress = $this->ShipmentAddress($request->delivery);
+                try {
+                    $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
+                    $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
+                    $agent = $this->metaAgent($TokenMC, $request->customer['id']);
+                    $state = $this->metaState($TokenMC, $Setting->NEW);
+                    $store = $this->metaStore($TokenMC, $Setting->Store);
+                    $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
+                    $project = $this->metaProject($TokenMC, $Setting->Project);
+                    $shipmentAddress = $this->ShipmentAddress($request->delivery);
+                } catch (ClientException $exception) {
+                    $message = $exception->getMessage();
+                    webhookOrderLog::create([
+                        'accountId' => $accountId,
+                        'message' => $message,
+                        'companyId' => $companyId,
+                    ]);
+                }
 
 
                 $description = $request->delivery['userComment'];
