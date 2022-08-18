@@ -7,25 +7,26 @@
         var GlobalobjectId;
         var GlobalURL;
         var GlobalxRefURL;
-        var UDSClientID;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
-
             if (receivedMessage.name === 'Open') {
-
                 var oReq = new XMLHttpRequest();
 
-
                 oReq.addEventListener("load", function() {
-                        var responseTextPars = JSON.parse(this.responseText);
+                    var responseTextPars = JSON.parse(this.responseText);
+                    var StatusCode = responseTextPars.StatusCode;
+                    var message = responseTextPars.message;
+                    if (StatusCode == 200) {
+                        GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
+                        window.document.getElementById("OrderID").innerHTML = message.id;
+                    } else {
 
-                    var participant = responseTextPars.participant;
+                    }
 
-                    UDSClientID = participant.id;
-                    GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
 
-                    window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
+
+
 
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
@@ -33,36 +34,6 @@
                 oReq.send();
             }
         });
-        //Доделать потом обновление кнопка
-        /*function update(){
-            var xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function() {
-
-                try {
-                    var responseTextPars = JSON.parse(this.responseText);
-                    document.getElementById("activated").style.display = "block";
-                    document.getElementById("undefined").style.display = "none";
-                } catch (error){
-                    document.getElementById("activated").style.display = "none";
-                    document.getElementById("undefined").style.display = "block";
-                }
-
-                var participant = responseTextPars.participant;
-                var membershipTier = participant.membershipTier
-                UDSClientID = participant.id;
-                GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
-
-                window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
-                window.document.getElementById("points").innerHTML = participant.points;
-                window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
-                window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
-
-            });
-
-            xmlHttpRequest.open("GET", GlobalURL);
-            xmlHttpRequest.send();
-        }*/
 
         function xRefURL(){
             window.open(GlobalxRefURL);
@@ -79,40 +50,19 @@
 
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
-            <div class="mx-2 p-2 col-9 text-white">
+            <div class="mx-2 p-2 col-12 text-white">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
-                <label onclick="xRefURL()" style="cursor: pointer"> Заказ </label>
-            </div>
-            <div class="mx-2 col-2 p-2">
-                <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-            </div>
-            <div class="row mx-3 text-white">
-                <div class="col-7">
-                    <h6 id="displayName" class=""></h6>
-                </div>
-                <div class="col-5">
-                    <div class="s-min-8 my-bg-gray p-1 px-2">
-                        <span> Уровень: </span>
-                        <span id="membershipTierName"></span>
-                        <span id="membershipTierRate"></span>
-                        <span>%</span>
-                    </div>
-                </div>
+                <label onclick="xRefURL()" style="cursor: pointer">
+                    Заказ № <span id="OrderID"></span> </label>
             </div>
         </div>
-
-
-
-
-        <br>
-
-
-        </div>
-
-
 
 
     </div>
+
+
+
+
 
 
 
