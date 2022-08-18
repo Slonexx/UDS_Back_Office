@@ -45,9 +45,9 @@ class ObjectController extends Controller
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
         $externalCode = $BodyMC->requestGet()->externalCode;
         $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $body = $Clint->get($UDSURL.$externalCode);
-        $purchase = $body->purchase;
         try {
+            $body = $Clint->get($UDSURL.$externalCode);
+            $purchase = $body->purchase;
             $StatusCode = "200";
             $id = $body->id;
             $state = $body->state;
@@ -63,9 +63,15 @@ class ObjectController extends Controller
 
             $message = [
                 'id'=> $id,
-                'purchase'=> $purchase,
                 'state'=> $state,
                 'icon'=> $icon,
+            ];
+            $body = $Clint->get($UDSURL.$externalCode);
+            $purchase = $body->purchase;
+            return [
+                'StatusCode' => $StatusCode,
+                'message' => $message,
+                'purchase' => $purchase,
             ];
         } catch (ClientException $exception) {
             $StatusCode = "404";
