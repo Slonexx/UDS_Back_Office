@@ -26,8 +26,8 @@
                         var icon = message.icon.replace(/\\/g, '');
                         window.document.getElementById("icon").innerHTML = icon;
 
-                        window.document.getElementById("cashBack").innerHTML = message.cashBack;
-                        window.document.getElementById("points").innerHTML = message.points;
+                        window.document.getElementById("cashBack").innerHTML = message.cashBack/100;
+                        window.document.getElementById("points").innerHTML = message.points/100;
 
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
@@ -94,20 +94,20 @@
                     <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
                 </div>
                 <div id="Complete" class="row" style="display: none;">
-                    <div class="row">
-                        <div class="col-8">
+                    <div class="row mt-2">
+                        <div class="col-10">
                             Бонусов потрачено:
                         </div>
-                        <div class="col-3">
-                            <span class="p-1 bg-primary rounded-pill" id="points"></span>
+                        <div class="col-1">
+                            <span class="p-1 text-white bg-primary rounded-pill" id="points"></span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-8">
+                    <div class="row mt-2">
+                        <div class="col-10">
                             Бонусов начислено:
                         </div>
-                        <div class="col-3">
-                            <span class="p-1 bg-primary rounded-pill" id="cashBack"></span>
+                        <div class="col-1">
+                            <span class="p-1 text-white bg-success rounded-pill" id="cashBack"></span>
                         </div>
                     </div>
 
