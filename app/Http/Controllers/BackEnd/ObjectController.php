@@ -48,11 +48,16 @@ class ObjectController extends Controller
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         try {
             $StatusCode = "200";
-            $state = $body->get($UDSURL.$externalCode)->state;
             $id = $body->get($UDSURL.$externalCode)->id;
+            $state = $body->get($UDSURL.$externalCode)->state;
+            $icon = "";
+            if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+            if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check"></i>';
+            if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark"></i>';
             $message = [
                 'id'=> $id,
                 'state'=> $state,
+                'icon'=> $icon,
             ];
         } catch (ClientException $exception) {
             $StatusCode = "404";

@@ -23,6 +23,10 @@
                     if (StatusCode == 200) {
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
+                        var state = message.state;
+                        var icon = message.state;
+                        window.document.getElementById("state").innerHTML = message.state;
+                        window.document.getElementById("icon").innerHTML = message.state;
                     } else {
 
                     }
@@ -56,12 +60,15 @@
             <div class="col-2">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
             </div>
-            <div class="col-9 text-white mt-1">
+            <div class="col-5 text-white mt-1">
                 <label onclick="xRefURL()" style="cursor: pointer">
                     Заказ № <span id="OrderID"></span>
                     <span class="mx-1"></span>
-                    <i class="fa-arrow-up-right-from-square"></i>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </label>
+            </div>
+            <div class="col-4 bg-light rounded-pill">
+                <span id="state"> <span id="icon"></span> </span>
             </div>
 
         </div>
