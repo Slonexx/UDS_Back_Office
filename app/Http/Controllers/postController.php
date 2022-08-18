@@ -90,9 +90,13 @@ class postController extends Controller
                 $store = $this->metaStore($TokenMC, $Setting->Store);
                 $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
                 $project = $this->metaProject($TokenMC, $Setting->Project);
+                $shipmentAddress = $this->ShipmentAddress($request->delivery);
+
+
+                $description = $request->delivery['userComment'];
+                if ($description == null)  $description = "";
 
                 $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
-                $shipmentAddress = $this->ShipmentAddress($request->delivery);
                 $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
 
                 if ($organizationAccount != null)
@@ -104,9 +108,10 @@ class postController extends Controller
                         "store" => $store,
                         "salesChannel" => $salesChannel,
                         "project" => $project,
+                        "shipmentAddress" => $shipmentAddress,
+                        "description" => $description,
 
                         "positions" => $positions,
-                        "shipmentAddress" => $shipmentAddress,
                         "externalCode" => $externalCode,
                     ];
                 else
@@ -117,9 +122,10 @@ class postController extends Controller
                         "store" => $store,
                         "salesChannel" => $salesChannel,
                         "project" => $project,
-
-                        "positions" => $positions,
                         "shipmentAddress" => $shipmentAddress,
+
+                        "description" => $description,
+                        "positions" => $positions,
                         "externalCode" => $externalCode,
                     ];
 
