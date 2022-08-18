@@ -97,14 +97,14 @@
                     <div class="col-8">
                         Бонусов потрачено:
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <span class="p-1 bg-primary rounded-pill" id="points"></span>
                     </div>
 
                     <div class="col-8">
                         Бонусов начислено:
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <span class="p-1 bg-primary rounded-pill" id="cashBack"></span>
                     </div>
 
