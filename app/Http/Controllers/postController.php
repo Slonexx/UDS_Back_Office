@@ -74,53 +74,54 @@ class postController extends Controller
 
 
     public function postOrder(Request $request, $accountId){
-        $Setting = new getSettingVendorController($accountId);
-        $TokenMC = $Setting->TokenMoySklad;
-        $companyId = $Setting->companyId;
+        try {
+            $Setting = new getSettingVendorController($accountId);
+            $TokenMC = $Setting->TokenMoySklad;
+            $companyId = $Setting->companyId;
 
-        if ($Setting->creatDocument == "1"){
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
-            $Clint = new ClientMC($url, $TokenMC);
+            if ($Setting->creatDocument == "1"){
+                $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
+                $Clint = new ClientMC($url, $TokenMC);
 
-            $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
-            $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
-            $agent = $this->metaAgent($TokenMC, $request->customer['id']);
-            $state = $this->metaState($TokenMC, $Setting->NEW);
-            $store = $this->metaStore($TokenMC, $Setting->Store);
-            $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
-            $project = $this->metaProject($TokenMC, $Setting->Project);
+                $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
+                $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
+                $agent = $this->metaAgent($TokenMC, $request->customer['id']);
+                $state = $this->metaState($TokenMC, $Setting->NEW);
+                $store = $this->metaStore($TokenMC, $Setting->Store);
+                $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
+                $project = $this->metaProject($TokenMC, $Setting->Project);
 
-            $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
-            $shipmentAddress = $this->ShipmentAddress($request->delivery);
-            $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
+                $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
+                $shipmentAddress = $this->ShipmentAddress($request->delivery);
+                $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
 
-            if ($organizationAccount != null)
-            $body = [
-                "organization" => $organization,
-                "organizationAccount" => $organizationAccount,
-                "agent" => $agent,//Создавать АГЕНТА НАДО
-                "state" => $state,
-                "store" => $store,
-                "salesChannel" => $salesChannel,
-                "project" => $project,
+                if ($organizationAccount != null)
+                    $body = [
+                        "organization" => $organization,
+                        "organizationAccount" => $organizationAccount,
+                        "agent" => $agent,//Создавать АГЕНТА НАДО
+                        "state" => $state,
+                        "store" => $store,
+                        "salesChannel" => $salesChannel,
+                        "project" => $project,
 
-                "positions" => $positions,
-                "shipmentAddress" => $shipmentAddress,
-                "externalCode" => $externalCode,
-            ];
-            else
-                $body = [
-                    "organization" => $organization,
-                    "agent" => $agent,//Создавать АГЕНТА НАДО
-                    "state" => $state,
-                    "store" => $store,
-                    "salesChannel" => $salesChannel,
-                    "project" => $project,
+                        "positions" => $positions,
+                        "shipmentAddress" => $shipmentAddress,
+                        "externalCode" => $externalCode,
+                    ];
+                else
+                    $body = [
+                        "organization" => $organization,
+                        "agent" => $agent,//Создавать АГЕНТА НАДО
+                        "state" => $state,
+                        "store" => $store,
+                        "salesChannel" => $salesChannel,
+                        "project" => $project,
 
-                    "positions" => $positions,
-                    "shipmentAddress" => $shipmentAddress,
-                    "externalCode" => $externalCode,
-                ];
+                        "positions" => $positions,
+                        "shipmentAddress" => $shipmentAddress,
+                        "externalCode" => $externalCode,
+                    ];
 
                 if ($externalCode != null) {
                     $result = $Clint->requestPost($body);
@@ -142,6 +143,14 @@ class postController extends Controller
                 }  $result = null;
 
             }
+        } catch (ClientException $exception){
+            $message = $exception->getMessage();
+            webhookOrderLog::create([
+                'accountId' => $accountId,
+                'message' => $message,
+                'companyId' => $companyId,
+            ]);
+        }
 
     }
 
