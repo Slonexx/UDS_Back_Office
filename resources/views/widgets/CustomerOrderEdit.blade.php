@@ -139,7 +139,7 @@
                                 <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
                             </div>
                         </div>
-
+                    </div>
                 </div>
                 <div id="Complete" class="row" style="display: none;">
                     <div class="row mt-2">
