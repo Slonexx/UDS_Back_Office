@@ -31,8 +31,10 @@
 
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
+                            document.getElementById("Complete").style.display = "none";
                         } else {
                             document.getElementById("ButtonComplete").style.display = "none";
+                            document.getElementById("Complete").style.display = "block";
                         }
 
                     } else {
