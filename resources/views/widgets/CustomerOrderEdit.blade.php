@@ -94,18 +94,21 @@
                     <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
                 </div>
                 <div id="Complete" class="row" style="display: none;">
-                    <div class="col-8">
-                        Бонусов потрачено:
+                    <div class="row">
+                        <div class="col-8">
+                            Бонусов потрачено:
+                        </div>
+                        <div class="col-3">
+                            <span class="p-1 bg-primary rounded-pill" id="points"></span>
+                        </div>
                     </div>
-                    <div class="col-3">
-                        <span class="p-1 bg-primary rounded-pill" id="points"></span>
-                    </div>
-
-                    <div class="col-8">
-                        Бонусов начислено:
-                    </div>
-                    <div class="col-3">
-                        <span class="p-1 bg-primary rounded-pill" id="cashBack"></span>
+                    <div class="row">
+                        <div class="col-8">
+                            Бонусов начислено:
+                        </div>
+                        <div class="col-3">
+                            <span class="p-1 bg-primary rounded-pill" id="cashBack"></span>
+                        </div>
                     </div>
 
                 </div>
