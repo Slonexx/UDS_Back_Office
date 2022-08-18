@@ -50,8 +50,8 @@ class ObjectController extends Controller
             $purchase = $body->purchase;
             $StatusCode = "200";
             $id = $body->id;
-            $cashBack = $purchase->cashBack * 100;
-            $points = $purchase->points * 100;
+            $cashBack = $purchase->cashBack;
+            $points = $purchase->points;
             $state = $body->state;
             $icon = "";
             if ($state == "NEW")
