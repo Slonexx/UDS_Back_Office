@@ -80,7 +80,6 @@
             });
             xmlHttpRequest.open("GET", "https://smartuds.kz/CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
             xmlHttpRequest.send();
-            update();
         }
 
         function update(){
@@ -159,6 +158,9 @@
 
             <div class="row">
                 <div class="col-8">
+                    <div class="mx-2 p-2">
+                        <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                    </div>
                 </div>
                 <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
                     <span class="mx-1" id="icon"></span>
@@ -253,6 +255,25 @@
         padding-left: 4px !important;
         margin: 2px !important;
         margin-right: 11px !important;
+    }
+
+    .myButton {
+        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
+        background-color: #00a6ff !important;
+        color: white !important;
+        border-radius:50px !important;
+        display:inline-block !important;
+        cursor:pointer !important;
+        padding:5px 5px !important;
+        text-decoration:none !important;
+    }
+    .myButton:hover {
+        background-color: #fffdfd !important;
+        color: #111111 !important;
+    }
+    .myButton:active {
+        position: relative !important;
+        top: 1px !important;
     }
 
     .myButton {
