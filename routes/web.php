@@ -11,12 +11,18 @@ use \App\Http\Controllers\Config\DeleteVendorApiController;
 
 
 Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
-Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Counterparty');
-Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit'])->name('CustomerOrderEdit');
 
-Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject'])->name('CounterpartyObject');
-Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue'])->name('Accrue');
-Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardController::class, 'Cancellation'])->name('Cancellation');
+
+Route::get('/Counterparty', [indexController::class, 'counterparty']);
+Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
+
+
+Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject']);
+Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue']);
+Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardController::class, 'Cancellation']);
+
+
+Route::get('/CustomerOrderEditObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CustomerOrderEditObject']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
