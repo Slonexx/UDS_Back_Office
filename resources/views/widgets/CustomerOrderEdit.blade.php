@@ -80,6 +80,56 @@
             });
             xmlHttpRequest.open("GET", "https://smartuds.kz/CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
             xmlHttpRequest.send();
+            update();
+        }
+
+        function update(){
+            var oReq = new XMLHttpRequest();
+
+            oReq.addEventListener("load", function() {
+                var responseTextPars = JSON.parse(this.responseText);
+                var StatusCode = responseTextPars.StatusCode;
+                var message = responseTextPars.message;
+                GlobalUDSOrderID = message.id;
+                var BonusPoint = message.BonusPoint;
+                var points = message.points;
+
+                if (StatusCode == 200) {
+
+                    GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
+                    window.document.getElementById("OrderID").innerHTML = message.id;
+                    var icon = message.icon.replace(/\\/g, '');
+                    window.document.getElementById("icon").innerHTML = icon;
+
+                    window.document.getElementById("cashBack").innerHTML = BonusPoint;
+                    window.document.getElementById("points").innerHTML = points;
+
+                    if (message.state == "NEW") {
+                        document.getElementById("ButtonComplete").style.display = "block";
+                        document.getElementById("Complete").style.display = "none";
+                        document.getElementById("Deleted").style.display = "none";
+                    }
+
+                    if (message.state == "COMPLETED") {
+                        document.getElementById("Complete").style.display = "block";
+                        document.getElementById("ButtonComplete").style.display = "none";
+                        document.getElementById("Deleted").style.display = "none";
+                    }
+
+                    if (message.state == "DELETED") {
+                        document.getElementById("Deleted").style.display = "block";
+                        document.getElementById("Complete").style.display = "none";
+                        document.getElementById("Complete").style.display = "none";
+                    }
+
+
+                } else {
+
+                }
+            });
+            GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+            oReq.open("GET", GlobalURL);
+            oReq.send();
         }
 
     </script>
