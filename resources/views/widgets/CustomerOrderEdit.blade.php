@@ -25,7 +25,6 @@
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var icon = message.icon.replace(/\\/g, '');
                         console.log('icon = ' + icon);
-                        window.document.getElementById("state").innerHTML = message.state;
                         window.document.getElementById("icon").innerHTML = icon;
                     } else {
 
@@ -69,9 +68,7 @@
             </div>
             <div class="col-12">
                 <div class="row bg-light rounded-pill text-black s-min mt-1 ">
-                        <span id="icon"> <span id="state"></span></span>
-
-
+                        <span id="icon"></span>
                 </div>
             </div>
 

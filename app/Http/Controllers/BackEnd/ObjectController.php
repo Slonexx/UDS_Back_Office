@@ -51,20 +51,15 @@ class ObjectController extends Controller
             $id = $body->get($UDSURL.$externalCode)->id;
             $state = $body->get($UDSURL.$externalCode)->state;
             $icon = "";
-            if ($state == "NEW") {
-                $icon = '<i class="fa-solid fa-circle-exclamation text-primary"></i>';
-                $state = 'НОВЫЙ';
-            }
+            if ($state == "NEW")
+                $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-black">НОВЫЙ</span> </i>';
 
-            if ($state == "COMPLETED") {
-                $icon = '<i class="fa-solid fa-circle-check text-success"></i>';
-                $state = 'Завершённый';
-            }
+            if ($state == "COMPLETED")
+                $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-black">Завершённый</span> </i>';
 
-            if ($state == "DELETED") {
-                $icon = '<i class="fa-solid fa-circle-xmark text-danger"></i>';
-                $state = 'Отменённый';
-            }
+            if ($state == "DELETED")
+                $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-black">Отменённый</span> </i>';
+
             $message = [
                 'id'=> $id,
                 'state'=> $state,
