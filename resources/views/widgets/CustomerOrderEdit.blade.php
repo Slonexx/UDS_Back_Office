@@ -92,7 +92,7 @@
             <div class="col-1">
 
             </div>
-            <div class="col-10 row">
+            <div class="col-11 row">
                 <div id="ButtonComplete" class="row text-center" style="display: none;">
                     <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
                 </div>
