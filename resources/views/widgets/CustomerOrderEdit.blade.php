@@ -61,15 +61,16 @@
             <div class="col-2">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
             </div>
-            <div class="col-5 text-white mt-1">
+            <div class="col-6 text-white mt-1">
                 <label onclick="xRefURL()" style="cursor: pointer">
                     Заказ № <span id="OrderID"></span>
                     <span class="mx-1"></span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </label>
             </div>
-            <div class="col-4 bg-light rounded-pill text-black s-min">
-                <span id="state"> <span id="icon"></span> </span>
+            <div class="col-3 bg-light rounded-pill text-black s-min">
+                <span id="state"> </span>
+                <span id="icon"></span>
             </div>
 
         </div>
