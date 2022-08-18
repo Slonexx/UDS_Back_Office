@@ -101,16 +101,16 @@
                         <div class="col-10">
                             Бонусов потрачено:
                         </div>
-                        <div class="col-1 p-1 text-white bg-primary rounded-pill">
-                            <span id="points"></span>
+                        <div class="col-1">
+                            <span class="p-1 px-3 text-white bg-primary rounded-pill" id="points"></span>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <div class="col-10">
                             Бонусов начислено:
                         </div>
-                        <div class="col-1 p-1 text-white bg-success rounded-pill">
-                            <span id="cashBack"></span>
+                        <div class="col-1">
+                            <span class="p-1 px-3 text-white bg-success rounded-pill" id="cashBack"></span>
                         </div>
                     </div>
 
