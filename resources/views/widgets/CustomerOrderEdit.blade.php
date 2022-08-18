@@ -35,24 +35,18 @@
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
                             document.getElementById("Complete").style.display = "none";
-                        } else {
-                            document.getElementById("ButtonComplete").style.display = "none";
-                            document.getElementById("Complete").style.display = "none";
+                            document.getElementById("Deleted").style.display = "none";
                         }
 
                         if (message.state == "COMPLETED") {
-                            document.getElementById("ButtonComplete").style.display = "none";
                             document.getElementById("Complete").style.display = "block";
-                        } else {
                             document.getElementById("ButtonComplete").style.display = "none";
-                            document.getElementById("Complete").style.display = "none";
+                            document.getElementById("Deleted").style.display = "none";
                         }
 
                         if (message.state == "DELETED") {
-                            document.getElementById("ButtonComplete").style.display = "block";
+                            document.getElementById("Deleted").style.display = "block";
                             document.getElementById("Complete").style.display = "none";
-                        } else {
-                            document.getElementById("ButtonComplete").style.display = "none";
                             document.getElementById("Complete").style.display = "none";
                         }
 
