@@ -9,6 +9,7 @@ use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
 use App\Services\MetaServices\MetaHook\UomHook;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Log;
 
 class ProductCreateUdsService
 {
@@ -42,77 +43,37 @@ class ProductCreateUdsService
         return $this->notAddedInUds(
             $data['tokenMs'],
             $data['apiKeyUds'],
-            $data['companyId']
+            $data['companyId'],
+            $data['folder_id'],
         );
     }
 
     private function getUdsCheck($companyId, $apiKeyUds){
         $this->findNodesUds($nodeIds,$companyId,$apiKeyUds);
+        if ($nodeIds == null){
+            $nodeIds = [
+                "productIds" => [],
+                "categoryIds" => [],
+            ];
+        }
         //dd($nodeIds);
         return $nodeIds;
     }
 
-    private function getMs($apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+    private function getMs($folderName, $apiKeyMs){
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
         $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
 
-    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId){
+    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds);
         //dd($productsUds);
-        $categoriesMs = $this->getCategoriesMs($apiKeyMs);
-
-        foreach ($categoriesMs->rows as $categoryMs){
-            if ($categoryMs->pathName == "")
-                if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
-                    //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
-                    //echo $categoryMs->externalCode."\r\n";
-                    $createdCategoryId = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds)->id;
-                    $productsUds["categoryIds"][] = "".$createdCategoryId;
-                    $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
-                }
-        }
-
-        foreach ($categoriesMs->rows as $categoryMs){
-            if ($categoryMs->pathName != "" && !str_contains($categoryMs->pathName, "/"))
-                if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
-                    //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
-                    //echo $categoryMs->externalCode."\r\n";
-                    $folderHref = $categoryMs->productFolder->meta->href;
-                    $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
-                    $createdCategoryId = $this->createCategoryUds(
-                        $categoryMs->name,
-                        $companyId,
-                        $apiKeyUds,
-                        $idNodeCategory)->id;
-                    $productsUds["categoryIds"][] = "".$createdCategoryId;
-                    $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
-                }
-        }
-
-        foreach ($categoriesMs->rows as $categoryMs){
-            if (
-                $categoryMs->pathName != ""
-                && str_contains($categoryMs->pathName, "/")
-                && count(explode('/',$categoryMs->pathName)) == 2
-            )
-                if (!in_array($categoryMs->externalCode,$productsUds["categoryIds"])){
-                    //dd($categoryMs->externalCode,$productsUds["categoryIds"]);
-                    //echo $categoryMs->externalCode."\r\n";
-                    $folderHref = $categoryMs->productFolder->meta->href;
-                    $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
-                    $createdCategoryId = $this->createCategoryUds(
-                        $categoryMs->name,
-                        $companyId,
-                        $apiKeyUds,
-                        $idNodeCategory)->id;
-                    $productsUds["categoryIds"][] = "".$createdCategoryId;
-                    $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
-                }
-        }
-
-        $productsMs = $this->getMs($apiKeyMs);
+        $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
+        //dd($folderName);
+        set_time_limit(3600);
+        $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds);
+        $productsMs = $this->getMs($folderName,$apiKeyMs);
 
         foreach ($productsMs->rows as $row){
 
@@ -141,12 +102,14 @@ class ProductCreateUdsService
                     $createdProduct = $this->createProductUds(
                         $row,$apiKeyMs,$companyId,$apiKeyUds,$idNodeCategory
                     );
-                    if ($createdProduct != null)
+                    if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
+                    }
                 } else {
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
-                    if ($createdProduct != null)
+                    if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
+                    }
                 }
             }
 
@@ -157,10 +120,63 @@ class ProductCreateUdsService
         ];
     }
 
-    private function getCategoriesMs($apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+    private function addCategoriesToUds($check, $pathName, $apiKeyMs, $companyId, $apiKeyUds, $nodeId = ""){
+        $categoriesMs = null;
+        if (!$this->getCategoriesMs($categoriesMs,$pathName,$apiKeyMs)) return;
+
+            foreach ($categoriesMs as $categoryMs){
+                $nameCategory = $categoryMs->name;
+                if (!in_array($categoryMs->externalCode,$check)){
+                    if ($nodeId == ""){
+                        $createdCategoryId = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds)->id;
+                    } else {
+                        $folderHref = $categoryMs->productFolder->meta->href;
+                        $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                        //dd($idNodeCategory);
+                        $createdCategoryId = $this->createCategoryUds(
+                            $nameCategory,
+                            $companyId,
+                            $apiKeyUds,
+                            $idNodeCategory)->id;
+                    }
+                    //dd($newPath);
+                    $newNodeId = "".$createdCategoryId;
+                    $check[] = "".$createdCategoryId;
+                    $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
+                } else {
+                    $newNodeId = $categoryMs->externalCode;
+                }
+
+                $newPath = $pathName."/".$nameCategory;
+                $this->addCategoriesToUds(
+                    $check,
+                    $newPath,
+                    $apiKeyMs,
+                    $companyId,
+                    $apiKeyUds,
+                    $newNodeId
+                );
+            }
+    }
+
+    private function getFolderNameById($folderId, $apiKeyMs)
+    {
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
         $client = new MsClient($apiKeyMs);
-        return $client->get($url);
+        return $client->get($url)->name;
+    }
+
+    private function getCategoriesMs(&$rows,$folderName,$apiKeyMs): bool
+    {
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=".$folderName;
+        $client = new MsClient($apiKeyMs);
+        try {
+            $json = $client->get($url);
+        }catch (ClientException $e){
+            dd($url,$e->getMessage());
+        }
+        $rows = $json->rows;
+        return ($json->meta->size > 0 );
     }
 
     private function updateCategory($createdCategoryId,$idMs,$apiKeyMs){
@@ -208,12 +224,19 @@ class ProductCreateUdsService
             }
             else {
                 $offerPrice = $createdProduct->data->offer->offerPrice;
-                if ($createdProduct->data->increment != null || $createdProduct->data->minQuantity != null){
+                if ($createdProduct->data->increment != null && $createdProduct->data->minQuantity != null){
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         // offer price 1000
                         $offerPrice /= 1000.0;
                     } elseif($nameOumUds == "CENTIMETRE"){
                         //offer price 100
+                        $offerPrice /= 100.0;
+                    }
+                }
+                elseif($createdProduct->data->increment == null && $createdProduct->data->minQuantity == null) {
+                    if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
+                        $offerPrice /= 1000.0;
+                    } elseif ($nameOumUds == "METRE"){
                         $offerPrice /= 100.0;
                     }
                 }
@@ -247,10 +270,16 @@ class ProductCreateUdsService
         }
 
         $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
-        if ($nameOumUds) return null;
+        if ($nameOumUds == "") return null;
+
+        if (strlen($product->name) > 100){
+            $name = mb_substr($product->name,0,100);
+        } else {
+            $name = $product->name;
+        }
 
         $body = [
-            "name" => $product->name,
+            "name" => $name,
             "data" => [
                 "type" => "ITEM",
                 "price" => $prices["salePrice"],
@@ -384,7 +413,7 @@ class ProductCreateUdsService
 
     }
 
-    private function createCategoryUds($nameCategory,$companyId,$apiKeyUds,$nodeId = 0){
+    private function createCategoryUds($nameCategory,$companyId,$apiKeyUds,$nodeId = ""){
         $url = "https://api.uds.app/partner/v2/goods";
         $client = new UdsClient($companyId,$apiKeyUds);
         $body = [
@@ -393,14 +422,10 @@ class ProductCreateUdsService
                 "type" => "CATEGORY",
             ],
         ];
-
-        if ($nodeId > 0){
+        if (intval($nodeId) > 0 || $nodeId != ""){
             $body["nodeId"] = intval($nodeId);
             // dd($body);
         }
-
-
-
         return $client->post($url, $body);
     }
 

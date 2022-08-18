@@ -42,6 +42,7 @@ class ProductController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+            "folder_id" => "required|string",
         ]);
 
        // dd(100/10.0);
@@ -57,6 +58,7 @@ class ProductController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+            "folder_id" => "required|string",
         ]);
 
        return response(
@@ -70,6 +72,7 @@ class ProductController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+
         ]);
 
        // dd(100/10.0);
@@ -85,6 +88,7 @@ class ProductController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+            "folder_id" => "required|string",
         ]);
 
        return response(

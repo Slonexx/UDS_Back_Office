@@ -40,10 +40,14 @@ class ProductCreateMsService
     //Add products to MS from UDS
     public function insertToMs($data)
     {
+
+        $folderMeta = $this->getFolderMetaById($data['folder_id'],$data['tokenMs']);
+
         return $this->notAddedInMs(
             $data['tokenMs'],
             $data['apiKeyUds'],
-            $data['companyId']
+            $data['companyId'],
+            $folderMeta
         );
     }
 
@@ -73,7 +77,7 @@ class ProductCreateMsService
         return $client->get($url);
     }
 
-    private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId)
+    private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId, $parentFolder)
     {
         //$productsMs = $this->getMsCheck($apiKeyMs);
         $hrefAttrib = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs)->href;
@@ -86,18 +90,23 @@ class ProductCreateMsService
                 //if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                 if ($productUds->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
-                        $this->createProductMs($apiKeyMs,$productUds);
+                        $this->createProductMs($apiKeyMs,$productUds,$parentFolder);
                     }
                     // $count++;
                 }
                 elseif ($productUds->data->type == "VARYING_ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
-                        $this->createVariantProduct($apiKeyMs,$productUds);
+                        $this->createVariantProduct($apiKeyMs,$productUds,$parentFolder);
                     }
                     // $count++;
                 }
                 elseif ($productUds->data->type == "CATEGORY"){
-                    $category = $this->createCategoryMs($apiKeyMs,$productUds->name,$productUds->id);
+                    $category = $this->createCategoryMs(
+                        $apiKeyMs,
+                        $productUds->name,
+                        $productUds->id,
+                        $parentFolder
+                    );
                     //dd($category);
                     set_time_limit(3600);
                     $this->addProductsByCategoryUds(
@@ -502,6 +511,14 @@ class ProductCreateMsService
                 break;
         }
         return $nameUomMs;
+    }
+
+    private function getFolderMetaById($folderId, $apiKeyMs)
+    {
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
+        $client = new MsClient($apiKeyMs);
+        $json = $client->get($url);
+        return $json->meta;
     }
 
 }

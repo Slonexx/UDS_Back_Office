@@ -25,10 +25,13 @@ class ProductUpdateUdsService
         $apiKeyMs = $data['tokenMs'];
         $companyId = $data['companyId'];
         $apiKeyUds = $data['apiKeyUds'];
+        $folderId = $data['folder_id'];
+
+        $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
 
         set_time_limit(3600);
 
-        $msProducts = $this->getMs($apiKeyMs);
+        $msProducts = $this->getMs($folderName,$apiKeyMs);
 
         foreach ($msProducts->rows as $row){
             $productId = null;
@@ -90,10 +93,16 @@ class ProductUpdateUdsService
         }
 
         $nameOumUds = $this->getUomUdsByMs($msProduct->uom->meta->href,$apiKeyMs);
-        if ($nameOumUds) return null;
+        if ($nameOumUds == "") return null;
+
+        if (strlen($msProduct->name) > 100){
+            $name = mb_substr($msProduct->name,0,100);
+        } else {
+            $name = $msProduct->name;
+        }
 
         $body = [
-            "name" => $msProduct->name,
+            "name" => $name,
             "data" => [
                 "type" => "ITEM",
                 "price" => $prices["salePrice"],
@@ -222,8 +231,8 @@ class ProductUpdateUdsService
 
     }
 
-    private function getMs($apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+    private function getMs($folderName,$apiKeyMs){
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
         $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
@@ -296,12 +305,19 @@ class ProductUpdateUdsService
             }
             else {
                 $offerPrice = $updatedProduct->data->offer->offerPrice;
-                if ($updatedProduct->data->increment != null || $updatedProduct->data->minQuantity != null){
+                if ($updatedProduct->data->increment != null && $updatedProduct->data->minQuantity != null){
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                         // offer price 1000
                         $offerPrice /= 1000.0;
                     } elseif($nameOumUds == "CENTIMETRE"){
                         //offer price 100
+                        $offerPrice /= 100.0;
+                    }
+                }
+                elseif($updatedProduct->data->increment == null && $updatedProduct->data->minQuantity == null) {
+                    if ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE"){
+                        $offerPrice /= 1000.0;
+                    } elseif ($nameOumUds == "METRE"){
                         $offerPrice /= 100.0;
                     }
                 }
@@ -319,6 +335,13 @@ class ProductUpdateUdsService
     private function getCategoryIdByMetaHref($href, $apiKeyMs){
         $client = new MsClient($apiKeyMs);
         return $client->get($href)->externalCode;
+    }
+
+    private function getFolderNameById($folderId, $apiKeyMs)
+    {
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
+        $client = new MsClient($apiKeyMs);
+        return $client->get($url)->name;
     }
 
 }

@@ -7,18 +7,6 @@ use App\Components\MsClient;
 class DocumentService
 {
 
-    # APPROVED_BY_BANK – одобрен банком
-    #ACCEPTED_BY_MERCHANT– принят на обработку продавцом
-
-    #CANCELLED – отменён
-    #CANCELLING – ожидает отмены
-
-    #COMPLETED – завершён
-
-    #KASPI_DELIVERY_RETURN_REQUESTED – ожидает возврата
-    #RETURN_ACCEPTED_BY_MERCHANT – ожидает решения по возврату
-    #RETURNED – возвращён
-
     public function initDocuments($orderEntries,$statusOrder,$metaOrder,$paymentOption,$demandOption,$formattedOrder, $apiKey)
     {
 
