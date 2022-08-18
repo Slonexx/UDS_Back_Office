@@ -129,9 +129,9 @@
                 <div id="Deleted" class="row" style="display: none;">
                     <div class="bg-white text-Black rounded">
                         <div class="text-center">
-                            <div class="p-3 mb-2 bg-danger text-white">
-                                <i class="fa-solid fa-circle-xmark text-danger"></i>
+                            <div class="p-3 mb-2 bg-danger rounded text-white">
                                 Заказ был отменён в UDS
+                                <i class="fa-solid fa-delete-left"></i>
                             </div>
                         </div>
                     </div>
