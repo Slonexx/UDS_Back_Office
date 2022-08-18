@@ -67,7 +67,7 @@
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </label>
             </div>
-            <div class="col-4 bg-light rounded-pill text-black">
+            <div class="col-4 bg-light rounded-pill text-black s-min">
                 <span id="state"> <span id="icon"></span> </span>
             </div>
 
