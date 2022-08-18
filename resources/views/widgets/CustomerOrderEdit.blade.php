@@ -66,17 +66,18 @@
                         </label>
                     </div>
                     <div class="col-1">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square"></i>
                     </div>
             </div>
-           {{-- <div class="col-4">
-                <div class="row bg-light rounded-pill text-black s-min mt-1 ">
-                        <span id="icon"></span>
-                </div>
-            </div>--}}
-
         </div>
+        <div class="row">
+            <div class="col-8">
 
+            </div>
+            <div class="col-4">
+                <span id="icon"></span>
+            </div>
+        </div>
 
     </div>
 
