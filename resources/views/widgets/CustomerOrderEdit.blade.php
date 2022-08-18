@@ -72,12 +72,15 @@
 
             <div class="row">
                 <div class="col-8">
-
                 </div>
                 <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
                     <span class="mx-1" id="icon"></span>
                 </div>
             </div>
+        </div>
+
+        <div class="row text-center">
+            <button class="btn-primary rounded">Завершить заказ</button>
         </div>
 
     </div>
