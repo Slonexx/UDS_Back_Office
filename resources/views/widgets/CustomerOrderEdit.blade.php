@@ -26,6 +26,9 @@
                         var icon = message.icon.replace(/\\/g, '');
                         window.document.getElementById("icon").innerHTML = icon;
 
+                        window.document.getElementById("cashBack").innerHTML = message.cashBack;
+                        window.document.getElementById("points").innerHTML = message.points;
+
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
                         } else {
@@ -80,15 +83,30 @@
             </div>
         </div>
 
-        <div class="row text-center mt-3">
+        <div class="row text-center mt-3 s-min">
             <div class="col-1">
 
             </div>
             <div class="col-10">
-                <div id="ButtonComplete" class="row">
+                <div id="ButtonComplete" class="row" style="display: none;">
                     <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
                 </div>
+                <div id="Complete" class="row" style="display: none;">
+                    <div class="col-8">
+                        Бонусов потрачено:
+                    </div>
+                    <div class="col-4">
+                        <span class="p-1 bg-primary rounded-pill" id="points"></span>
+                    </div>
 
+                    <div class="col-8">
+                        Бонусов начислено:
+                    </div>
+                    <div class="col-4">
+                        <span class="p-1 bg-primary rounded-pill" id="cashBack"></span>
+                    </div>
+
+                </div>
             </div>
 
         </div>
