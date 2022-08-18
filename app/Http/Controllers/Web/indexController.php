@@ -88,7 +88,7 @@ class indexController extends Controller
 
         $entity = 'customerorder';
 
-        $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
+        $getObjectUrl = $cfg->appBaseUrl . "CustomerOrderEditObject/$accountId/$entity/";
 
 
         return view( 'widgets.CustomerOrderEdit', [
