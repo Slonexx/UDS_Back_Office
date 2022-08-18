@@ -24,7 +24,7 @@
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var state = message.state;
-                        var icon = message.state;
+                        var icon = message.state.replace(/\\/g, '');
                         window.document.getElementById("state").innerHTML = message.state;
                         window.document.getElementById("icon").innerHTML = message.state;
                     } else {
