@@ -71,10 +71,10 @@
             </div>
 
             <div class="row">
-                <div class="col-6">
+                <div class="col-8">
 
                 </div>
-                <div class="col-6 text-light bg-dark rounded-pill s-min mt-1">
+                <div class="col-4 text-light bg-dark rounded-pill s-min mt-1">
                     <span id="icon"></span>
                 </div>
             </div>
