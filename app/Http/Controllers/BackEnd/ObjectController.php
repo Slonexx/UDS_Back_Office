@@ -75,10 +75,10 @@ class ObjectController extends Controller
             $message = "В UDS Заказ не найден";
         }
 
-        return response()->json([
+        return [
             'StatusCode' => $StatusCode,
             'message' => $message,
-        ] ,201);
+            ];
 
     }
 }
