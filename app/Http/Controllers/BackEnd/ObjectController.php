@@ -19,9 +19,9 @@ class ObjectController extends Controller
         $Setting = new getSettingVendorController($accountId);
 
         $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
-        $BodyCounterparty = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
+        $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
 
-        $externalCode =  $BodyCounterparty->requestGet()->externalCode;
+        $externalCode =  $BodyMC->requestGet()->externalCode;
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $last = $body->get($UDSURL.$externalCode);

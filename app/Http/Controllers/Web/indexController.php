@@ -84,19 +84,12 @@ class indexController extends Controller
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        $isAdmin = $employee->permissions->admin->view;
+        //$isAdmin = $employee->permissions->admin->view;
 
         $entity = 'customerorder';
 
         $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
 
-        if ($isAdmin == "NO"){
-            return view( 'widgets.counterparty', [
-                'accountId' => $accountId,
-                'getObjectUrl' => $getObjectUrl,
-                'admin' => "NO",
-            ] );
-        }
 
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
