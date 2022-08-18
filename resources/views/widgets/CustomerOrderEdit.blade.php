@@ -25,6 +25,7 @@
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var state = message.state;
                         var icon = message.state.replace(/\\/g, '');
+                        console.log('icon = ' + icon);
                         window.document.getElementById("state").innerHTML = message.state;
                         window.document.getElementById("icon").innerHTML = message.state;
                     } else {
