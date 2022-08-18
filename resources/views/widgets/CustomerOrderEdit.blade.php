@@ -60,7 +60,7 @@
                 <label onclick="xRefURL()" style="cursor: pointer">
                     Заказ № <span id="OrderID"></span>
                     <span class="mx-1"></span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <i class="fa-arrow-up-right-from-square"></i>
                 </label>
             </div>
 
