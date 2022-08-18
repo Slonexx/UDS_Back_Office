@@ -59,6 +59,7 @@
             <div class="col-9 text-white mt-1">
                 <label onclick="xRefURL()" style="cursor: pointer">
                     Заказ № <span id="OrderID"></span>
+                    <span> </span>
                     <i class="fa-solid fa-up-right-from-square"></i>
                 </label>
             </div>
