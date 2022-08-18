@@ -66,7 +66,7 @@
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient p-2">
             <div class="col-2">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" >
             </div>
             <div class="col-10 text-white mt-1 row">
                     <div class="col-11">
