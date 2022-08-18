@@ -86,7 +86,7 @@ class indexController extends Controller
 
         $isAdmin = $employee->permissions->admin->view;
 
-        $entity = 'counterparty';
+        $entity = 'customerorder';
 
         $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
 
