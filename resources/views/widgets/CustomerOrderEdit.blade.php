@@ -52,11 +52,11 @@
 
 
     <div id="activated" class="content bg-white text-Black rounded">
-        <div class="row uds-gradient mx-2">
+        <div class="row uds-gradient mx-2 p-2">
             <div class="col-2">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
             </div>
-            <div class="col-9 text-white">
+            <div class="col-9 text-white mt-1">
                 <label onclick="xRefURL()" style="cursor: pointer">
                     <i class="fa-solid fa-up-right-from-square"></i>
                     Заказ № <span id="OrderID"></span>
