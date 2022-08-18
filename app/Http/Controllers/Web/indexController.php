@@ -98,7 +98,7 @@ class indexController extends Controller
             ] );
         }
 
-        return view( 'widgets.counterparty', [
+        return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
 
             'getObjectUrl' => $getObjectUrl,
