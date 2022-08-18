@@ -37,8 +37,25 @@
                             document.getElementById("Complete").style.display = "none";
                         } else {
                             document.getElementById("ButtonComplete").style.display = "none";
-                            document.getElementById("Complete").style.display = "block";
+                            document.getElementById("Complete").style.display = "none";
                         }
+
+                        if (message.state == "COMPLETED") {
+                            document.getElementById("ButtonComplete").style.display = "none";
+                            document.getElementById("Complete").style.display = "block";
+                        } else {
+                            document.getElementById("ButtonComplete").style.display = "none";
+                            document.getElementById("Complete").style.display = "none";
+                        }
+
+                        if (message.state == "DELETED") {
+                            document.getElementById("ButtonComplete").style.display = "block";
+                            document.getElementById("Complete").style.display = "none";
+                        } else {
+                            document.getElementById("ButtonComplete").style.display = "none";
+                            document.getElementById("Complete").style.display = "none";
+                        }
+
 
                     } else {
 
@@ -114,6 +131,16 @@
                         </div>
                     </div>
 
+                </div>
+                <div id="Deleted" class="row" style="display: none;">
+                    <div class="bg-white text-Black rounded" style="display: none">
+                        <div class="text-center">
+                            <div class="p-3 mb-2 bg-danger text-white">
+                                <i class="fa-solid fa-circle-xmark text-danger"></i>
+                                Заказ был отменён в UDS
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
