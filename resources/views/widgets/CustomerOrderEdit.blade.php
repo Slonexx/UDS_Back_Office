@@ -70,11 +70,11 @@
                     </div>
             </div>
 
-            <div class="row bg-light rounded-pill text-black s-min mt-1 ">
+            <div class="row">
                 <div class="col-6">
 
                 </div>
-                <div class="col-6">
+                <div class="col-6 bg-light rounded-pill text-black s-min mt-1">
                     <span id="icon"></span>
                 </div>
             </div>
