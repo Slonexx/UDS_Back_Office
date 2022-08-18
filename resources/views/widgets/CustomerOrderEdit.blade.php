@@ -43,6 +43,7 @@
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
+                oReq.responseType = 'json';
                 oReq.send();
             }
         });
