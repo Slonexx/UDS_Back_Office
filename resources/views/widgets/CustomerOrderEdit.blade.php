@@ -60,7 +60,7 @@
             <div class="col-1">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
             </div>
-            <div class="col-7 text-white mt-1 mx-2">
+            <div class="col-6 text-white mt-1 mx-2">
                 <label onclick="xRefURL()" style="cursor: pointer">
                     Заказ № <span id="OrderID"></span>
                     <span class="mx-1"></span>
