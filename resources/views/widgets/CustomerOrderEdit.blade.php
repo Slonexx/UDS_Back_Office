@@ -71,9 +71,8 @@
                 <div class="row bg-light rounded-pill text-black s-min mt-1 ">
                     <div class="col-1">
                         <span id="icon"></span>
-
                     </div>
-                    <div class="col-11">
+                    <div class="col-11 s-min-8">
                         <span id="state"></span>
                     </div>
                 </div>
