@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\BackEnd;
 
-use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\webhookClintLog;
 use App\Models\webhookOrderLog;
-use Faker\Provider\File;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
-use Throwable;
-use function Symfony\Component\Translation\t;
 
 class postController extends Controller
 {

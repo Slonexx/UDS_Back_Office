@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackEnd\ObjectController;
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\SupportController;
 use App\Http\Controllers\Web\RewardController;
@@ -11,8 +12,9 @@ use \App\Http\Controllers\Config\DeleteVendorApiController;
 
 Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
 Route::get('/Counterparty', [indexController::class, 'counterparty'])->name('Counterparty');
+Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit'])->name('CustomerOrderEdit');
 
-Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [indexController::class, 'CounterpartyObject'])->name('CounterpartyObject');
+Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject'])->name('CounterpartyObject');
 Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue'])->name('Accrue');
 Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardController::class, 'Cancellation'])->name('Cancellation');
 

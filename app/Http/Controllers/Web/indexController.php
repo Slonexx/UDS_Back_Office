@@ -76,28 +76,33 @@ class indexController extends Controller
             ] );
     }
 
-    public function CounterpartyObject(Request $request, $accountId, $entity, $objectId){
-
-        $UDSURL = "https://api.uds.app/partner/v2/customers/";
-
+    public function CustomerOrderEdit(Request $request){
         $cfg = new cfg();
-        $Setting = new getSettingVendorController($accountId);
 
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
 
-        $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
-        $BodyCounterparty = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
+        $isAdmin = $employee->permissions->admin->view;
 
-        $externalCode =  $BodyCounterparty->requestGet()->externalCode;
+        $entity = 'counterparty';
 
+        $getObjectUrl = $cfg->appBaseUrl . "CounterpartyObject/$accountId/$entity/";
 
+        if ($isAdmin == "NO"){
+            return view( 'widgets.counterparty', [
+                'accountId' => $accountId,
+                'getObjectUrl' => $getObjectUrl,
+                'admin' => "NO",
+            ] );
+        }
 
-        $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $last = $body->get($UDSURL.$externalCode);
+        return view( 'widgets.counterparty', [
+            'accountId' => $accountId,
 
-
-        return response()->json(
-            $last,201);
-
+            'getObjectUrl' => $getObjectUrl,
+        ] );
     }
 
 
