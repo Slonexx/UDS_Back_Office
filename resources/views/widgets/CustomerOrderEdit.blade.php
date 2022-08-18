@@ -85,12 +85,12 @@
             </div>
         </div>
 
-        <div class="row text-center mt-3 s-min">
+        <div class="row mt-3 s-min">
             <div class="col-1">
 
             </div>
-            <div class="col-10">
-                <div id="ButtonComplete" class="row" style="display: none;">
+            <div class="col-10 row">
+                <div id="ButtonComplete" class="row text-center" style="display: none;">
                     <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
                 </div>
                 <div id="Complete" class="row" style="display: none;">
