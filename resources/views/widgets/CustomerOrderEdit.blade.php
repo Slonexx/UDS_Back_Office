@@ -74,8 +74,8 @@
                 <div class="col-8">
 
                 </div>
-                <div class="col-4 bg-dark rounded-pill s-min mt-1 p-1">
-                    <span id="icon"></span>
+                <div class="col-4 bg-secondary rounded-pill s-min mt-1 p-1">
+                    <span class="mx-1" id="icon"></span>
                 </div>
             </div>
         </div>
