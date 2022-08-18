@@ -314,7 +314,17 @@ class postController extends Controller
         }
 
         $total = $purchase["total"] - $purchase["skipLoyaltyTotal"];
-        $pointsPercent = $purchase["points"] * 100 / $total;
+        try {
+            $pointsPercent = $purchase["points"] * 100 / $total;
+        } catch (ClientException $exception){
+            $message = $exception->getMessage();
+            webhookOrderLog::create([
+                'accountId' => $accountId,
+                'message' => $message,
+                'companyId' => $companyId,
+            ]);
+        }
+
 
         $Result = [];
         foreach ($UDSitem as $id=>$item){
