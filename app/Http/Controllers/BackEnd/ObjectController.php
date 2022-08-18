@@ -81,4 +81,25 @@ class ObjectController extends Controller
             ];
 
     }
+
+    public function CompletesOrder($accountId, $objectId){
+        $Setting = new getSettingVendorController($accountId);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        try {
+            $url = 'https://api.uds.app/partner/v2/goods-orders/'.$objectId.'/complete';
+            $body = $Client->post($url, null);
+            $StatusCode = "200";
+            $message = "Заказ завершён";
+            return [
+                'StatusCode' => $StatusCode,
+                'message' => $message,
+            ];
+        } catch (ClientException $exception){
+            return [
+                'StatusCode' => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ];
+        }
+    }
+
 }

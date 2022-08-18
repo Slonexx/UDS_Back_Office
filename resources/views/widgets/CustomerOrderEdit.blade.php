@@ -7,6 +7,7 @@
         var GlobalobjectId;
         var GlobalURL;
         var GlobalxRefURL;
+        var GlobalUDSOrderID;
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -14,16 +15,15 @@
                 var oReq = new XMLHttpRequest();
 
                 oReq.addEventListener("load", function() {
-
-                    console.log("responseText = " + this.responseText);
-
                     var responseTextPars = JSON.parse(this.responseText);
                     var StatusCode = responseTextPars.StatusCode;
                     var message = responseTextPars.message;
+                    GlobalUDSOrderID = message.id;
                     var BonusPoint = message.BonusPoint;
                     var points = message.points;
 
                     if (StatusCode == 200) {
+
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var icon = message.icon.replace(/\\/g, '');
@@ -63,6 +63,23 @@
 
         function xRefURL(){
             window.open(GlobalxRefURL);
+        }
+
+        function ButtonComplete(){
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                var responseTextPars = JSON.parse(this.responseText);
+                var StatusCode = responseTextPars.StatusCode;
+                if (StatusCode == 200) {
+                    document.getElementById("success").style.display = "block";
+                    document.getElementById("danger").style.display = "none";
+                } else {
+                    document.getElementById("success").style.display = "none";
+                    document.getElementById("danger").style.display = "block";
+                }
+            });
+            xmlHttpRequest.open("GET", "https://smartuds.kz/CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
+            xmlHttpRequest.send();
         }
 
     </script>
@@ -105,7 +122,24 @@
             </div>
             <div class="col-11 row">
                 <div id="ButtonComplete" class="row text-center" style="display: none;">
-                    <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
+                    <button onclick="ButtonComplete()" class="btn btn-success rounded-pill">Завершить заказ</button>
+
+                    <div id="success" class="mt-2" style="display: none">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <div class=" alert alert-success fade show in text-center "> Заказ завершён </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="danger" class="mt-2" style="display: none">
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
+                            </div>
+                        </div>
+
                 </div>
                 <div id="Complete" class="row" style="display: none;">
                     <div class="row mt-2">
