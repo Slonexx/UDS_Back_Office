@@ -158,12 +158,12 @@
 
             <div class="row">
                 <div class="col-8">
-                    <div class="mx-2 p-2">
+                    <div class="p-2">
                         <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
                     </div>
                 </div>
                 <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
-                    <span class="mx-1" id="icon"></span>
+                    <span class="mx-1 mt-2" id="icon"></span>
                 </div>
             </div>
         </div>
