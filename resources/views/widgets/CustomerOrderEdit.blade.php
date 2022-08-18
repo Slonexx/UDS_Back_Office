@@ -80,7 +80,13 @@
         </div>
 
         <div class="row text-center">
-            <button class="btn-primary rounded">Завершить заказ</button>
+            <div class="col-1">
+
+            </div>
+            <div class="col-10">
+                <button onclick="" class="btn btn-danger rounded-pill">Завершить заказ</button>
+            </div>
+
         </div>
 
     </div>
