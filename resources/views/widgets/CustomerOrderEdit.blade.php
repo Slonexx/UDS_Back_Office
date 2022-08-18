@@ -24,16 +24,17 @@
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
                         var icon = message.icon.replace(/\\/g, '');
-                        console.log('icon = ' + icon);
                         window.document.getElementById("icon").innerHTML = icon;
+
+                        if (message.state == "NEW") {
+                            document.getElementById("ButtonComplete").style.display = "block";
+                        } else {
+                            document.getElementById("ButtonComplete").style.display = "none";
+                        }
+
                     } else {
 
                     }
-
-
-
-
-
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 oReq.open("GET", GlobalURL);
@@ -66,7 +67,7 @@
                         </label>
                     </div>
                     <div class="col-1">
-                        <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square" style="cursor: pointer"></i>
                     </div>
             </div>
 
@@ -84,7 +85,10 @@
 
             </div>
             <div class="col-10">
-                <button onclick="" class="btn btn-primary rounded-pill">Завершить заказ</button>
+                <div id="ButtonComplete" class="row">
+                    <button onclick="" class="btn btn-success rounded-pill">Завершить заказ</button>
+                </div>
+
             </div>
 
         </div>

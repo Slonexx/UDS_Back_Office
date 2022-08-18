@@ -44,12 +44,15 @@ class ObjectController extends Controller
         $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
         $externalCode = $BodyMC->requestGet()->externalCode;
-
-        $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $body = $Clint->get($UDSURL.$externalCode);
+        $purchase = $body->purchase;
         try {
             $StatusCode = "200";
-            $id = $body->get($UDSURL.$externalCode)->id;
-            $state = $body->get($UDSURL.$externalCode)->state;
+            $id = $body->id;
+            $cashBack = $purchase->cashBack;
+            $points = $purchase->points;
+            $state = $body->state;
             $icon = "";
             if ($state == "NEW")
                 $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
@@ -62,6 +65,8 @@ class ObjectController extends Controller
 
             $message = [
                 'id'=> $id,
+                'cashBack'=> $cashBack,
+                'points'=> $points,
                 'state'=> $state,
                 'icon'=> $icon,
             ];
