@@ -59,18 +59,25 @@
             <div class="col-1">
                 <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
             </div>
-            <div class="col-6 text-white mt-1 mx-2">
-                <label onclick="xRefURL()" style="cursor: pointer">
-                    Заказ № <span id="OrderID"></span>
-                    <span class="mx-1"></span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </label>
+            <div class="col-10 text-white mt-1 mx-2">
+                <div class="row">
+                    <div class="col-10">
+                        <label onclick="xRefURL()" style="cursor: pointer">
+                            Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
+
+                        </label>
+                        <div class="col-1">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            <div class="col-4">
+           {{-- <div class="col-4">
                 <div class="row bg-light rounded-pill text-black s-min mt-1 ">
                         <span id="icon"></span>
                 </div>
-            </div>
+            </div>--}}
 
         </div>
 
