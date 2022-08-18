@@ -15,7 +15,7 @@
 
                 oReq.addEventListener("load", function() {
 
-                    console.log("responseText = " + responseText);
+                    console.log("responseText = " + this.responseText);
 
                     var responseTextPars = JSON.parse(this.responseText);
                     var StatusCode = responseTextPars.StatusCode;
