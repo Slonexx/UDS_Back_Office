@@ -79,12 +79,12 @@
             </div>
         </div>
 
-        <div class="row text-center">
+        <div class="row text-center mt-3">
             <div class="col-1">
 
             </div>
             <div class="col-10">
-                <button onclick="" class="btn btn-danger rounded-pill">Завершить заказ</button>
+                <button onclick="" class="btn btn-primary rounded-pill">Завершить заказ</button>
             </div>
 
         </div>
