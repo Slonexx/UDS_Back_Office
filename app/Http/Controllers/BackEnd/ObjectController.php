@@ -50,8 +50,8 @@ class ObjectController extends Controller
         try {
             $StatusCode = "200";
             $id = $body->id;
-            $cashBack = $purchase->cashBack*100;
-            $points = $purchase->points*100;
+            $cashBack = $purchase->cashBack;
+            $points = $purchase->points;
             $state = $body->state;
             $icon = "";
             if ($state == "NEW")
@@ -65,8 +65,8 @@ class ObjectController extends Controller
 
             $message = [
                 'id'=> $id,
-                'cashBack'=> $cashBack,
-                'points'=> $points,
+                'cashBack'=> (string) $cashBack,
+                'points'=>(string) $points,
                 'state'=> $state,
                 'icon'=> $icon,
             ];

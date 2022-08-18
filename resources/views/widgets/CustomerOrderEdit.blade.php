@@ -26,8 +26,8 @@
                         var icon = message.icon.replace(/\\/g, '');
                         window.document.getElementById("icon").innerHTML = icon;
 
-                        window.document.getElementById("cashBack").innerHTML = message.cashBack/100;
-                        window.document.getElementById("points").innerHTML = message.points/100;
+                        window.document.getElementById("cashBack").innerHTML = message.cashBack;
+                        window.document.getElementById("points").innerHTML = message.points;
 
                         if (message.state == "NEW") {
                             document.getElementById("ButtonComplete").style.display = "block";
