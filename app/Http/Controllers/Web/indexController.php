@@ -24,6 +24,8 @@ class indexController extends Controller
         $accountId = $employee->accountId;
         $isAdmin = $employee->permissions->admin->view;
 
+        dd($employee);
+
         return redirect()->route('indexMain', [
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
