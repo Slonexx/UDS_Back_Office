@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-7 mt-2">
                             Товаров в категории:
-                            <span id="CountProduct" class="p-1 px-3 text-white bg-primary rounded-pill">  </span>
+                            <span id="CountProduct" class="mx-1 p-1 px-3 text-white bg-primary rounded-pill">  </span>
                         </div>
                         <div class="col-2 mt-2">
                             <i onclick="Visible()" class="fa-solid fa-circle-xmark text-danger" style="cursor: pointer"></i>
