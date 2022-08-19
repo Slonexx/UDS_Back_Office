@@ -9,6 +9,8 @@ class counterparty_add extends Model
 {
     protected $fillable = [
         'tokenMC',
+        'companyId',
+        'tokenUDS',
     ];
 
     use HasFactory;
