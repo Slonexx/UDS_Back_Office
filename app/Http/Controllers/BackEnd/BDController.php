@@ -39,10 +39,12 @@ class BDController extends Controller
     }
 
 
-    public function createCounterparty($accountId,$tokenMC){
+    public function createCounterparty($accountId, $tokenMC, $companyId, $tokenUDS){
         try {
             counterparty_add::create([
                 'tokenMC' => $tokenMC,
+                'companyId' => $companyId,
+                'tokenUDS' => $tokenUDS,
             ]);
         } catch (ClientException $exception){
             errorLog::create([

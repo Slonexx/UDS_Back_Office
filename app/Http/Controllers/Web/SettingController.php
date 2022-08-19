@@ -107,7 +107,7 @@ class SettingController extends Controller
             $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
 
             $BD = new BDController();
-            $BD->createCounterparty($accountId, $TokenMoySklad);
+            $BD->createCounterparty($accountId, $TokenMoySklad, $request->companyId,  $request->TokenUDS);
 
             $app->persist();
 
