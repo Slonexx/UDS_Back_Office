@@ -2,21 +2,22 @@
 
 namespace App\Observers;
 
-use App\Models\order_id;
+use App\Models\webhookClintLog;
 use Illuminate\Support\Facades\DB;
 
-class orderIDModelObserver
+class webhookClientModelObserver
 {
 
-    public function created(order_id $infoLogModel)
+
+    public function created(webhookClintLog $infoLogModel)
     {
 
 
-        $accountIds = order_id::all('accountId');
+        $accountIds = webhookClintLog::all('accountId');
 
         foreach($accountIds as $accountId){
 
-            $query = order_id::query();
+            $query = webhookClintLog::query();
             $logs = $query->where('accountId',$accountId->accountId)->get();
             if(count($logs) > 100){
                 DB::table('order_ids')
@@ -31,22 +32,22 @@ class orderIDModelObserver
     }
 
 
-    public function updated(order_id $infoLogModel)
+    public function updated(webhookClintLog $infoLogModel)
     {
         //
     }
 
-    public function deleted(order_id $infoLogModel)
+    public function deleted(webhookClintLog $infoLogModel)
     {
         //
     }
 
-    public function restored(order_id $infoLogModel)
+    public function restored(webhookClintLog $infoLogModel)
     {
         //
     }
 
-    public function forceDeleted(order_id $infoLogModel)
+    public function forceDeleted(webhookClintLog $infoLogModel)
     {
         //
     }
