@@ -154,7 +154,7 @@ class AttributeService
     private function createInvoiceOutAttributes($apiKeyMs):void
     {
         $bodyAttributes = $this->getDocAttributes();
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/invoiceout/metadata/attributes";
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/factureout/metadata/attributes";
         $client = new MsClient($apiKeyMs);
         $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
@@ -193,26 +193,28 @@ class AttributeService
                 "description" => "Начисление баллов (UDS)",
             ],
             2 => [
-                "name" => "Покупка сертификата (UDS)",
-                "type" => "boolean",
-                "required" => false,
-                "description" => "Покупка сертификата (UDS)",
-            ],
-            3 => [
                 "name" => "Использование сертификата (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Использование сертификата (UDS)",
             ],
-
         ];
 
-       /* 4 => [
+       /*
+       2 => [
+                "name" => "Покупка сертификата (UDS)",
+                "type" => "boolean",
+                "required" => false,
+                "description" => "Покупка сертификата (UDS)",
+            ],
+       4 => [
         "name" => "Ссылка на операцию (UDS)",
         "type" => "link",
         "required" => false,
         "description" => "Ссылка на операцию (UDS)",
-        ],*/
+        ],
+
+       */
 
     }
 

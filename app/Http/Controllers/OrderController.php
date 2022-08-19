@@ -2,37 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\order\OrderService;
+use App\Services\order\OrderUpdateMsService;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    private OrderService $orderService;
+    private OrderUpdateMsService $orderService;
 
     /**
-     * @param OrderService $orderService
+     * @param OrderUpdateMsService $orderService
      */
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderUpdateMsService $orderService)
     {
         $this->orderService = $orderService;
     }
 
-    public function insertMs(Request $request)
+    public function updateMs(Request $request)
     {
-        $request->validate([
+       $data = $request->validate([
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+            "accountId" => "required|string",
+            "paymentOpt" => "required|integer",
+            "demandOpt" => "required|integer",
         ]);
-    }
 
-    public function insertUds(Request $request)
-    {
-        $request->validate([
-            "tokenMs" => 'required|string',
-            "companyId" => "required|string",
-            "apiKeyUds" => "required|string",
-        ]);
+       $this->orderService->updateOrdersMs($data);
+
     }
 
 }

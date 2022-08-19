@@ -5,6 +5,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\BackEnd\postController;
 use App\Http\Controllers\Controller\V1\InputMcController;
 use App\Http\Controllers\Controller\V1\UploadController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,8 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
 
     Route::post('updateProductUds',[ProductController::class,'updateUds']);
     Route::post('updateProductMs',[ProductController::class,'updateMs']);
+
+    Route::post('updateOrdersMs',[OrderController::class,'updateMs']);
 
 
 

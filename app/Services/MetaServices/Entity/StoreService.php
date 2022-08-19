@@ -13,15 +13,7 @@ class StoreService
         $json = $client->get($uri);
         $foundedMeta = null;
         foreach($json->rows as $row){
-            $foundedMeta = [
-                "meta" => [
-                    "href" => $row->meta->href,
-                    "metadataHref" =>$row->meta->metadataHref,
-                    "type" => $row->meta->type,
-                    "mediaType" => $row->meta->mediaType,
-                    "uuidHref" => $row->meta->uuidHref,
-                ],
-            ];
+            $foundedMeta = $row->meta;
             break;
         }
         if (is_null($foundedMeta)){
@@ -38,14 +30,6 @@ class StoreService
         ];
         $createdMeta = $client->post($uri,$store)->meta;
 
-        return [
-            "meta" => [
-                "href" => $createdMeta->href,
-                "metadataHref" =>$createdMeta->metadataHref,
-                "type" => $createdMeta->type,
-                "mediaType" => $createdMeta->mediaType,
-                "uuidHref" => $createdMeta->uuidHref,
-            ],
-        ];
+        return $createdMeta;
     }
 }
