@@ -9,6 +9,7 @@ use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -29,11 +30,19 @@ class SettingController extends Controller
         $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
         $ProductFolder = $Setting->ProductFolder;
         if ($Setting->ProductFolder != null) {
-            $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$Setting->ProductFolder;
-            $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
-            $FolderName = $ClientFolder->requestGet()->name;
+            try {
+                $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$Setting->ProductFolder;
+                $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
+                $FolderName = $ClientFolder->requestGet()->name;
 
-            $ProductFolder = ['value' => $Setting->ProductFolder, 'name'=>$FolderName ];
+                $ProductFolder = ['value' => $Setting->ProductFolder, 'name'=>$FolderName ];
+            } catch (ClientException $exception) {
+                $ProductFolder == null;
+                $cfg = new cfg();
+                $app = AppInstanceContoller::loadApp($cfg->appId, $accountId);
+                $app->ProductFolder = $ProductFolder;
+                $app->persist();
+            }
         }
 
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
