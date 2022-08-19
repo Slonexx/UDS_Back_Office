@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Web;
 
 use App\Components\UdsClient;
+use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Models\counterparty_add;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class SettingController extends Controller
@@ -102,6 +105,9 @@ class SettingController extends Controller
 
             $vendorAPI = new VendorApiController();
             $vendorAPI->updateAppStatus($appId, $accountId, $app->getStatusName());
+
+            $BD = new BDController();
+            $BD->createCounterparty($accountId, $TokenMoySklad);
 
             $app->persist();
 

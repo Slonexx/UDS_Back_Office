@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\BackEnd;
 
 use App\Http\Controllers\Controller;
+use App\Models\counterparty_add;
+use App\Models\errorLog;
 use App\Models\order_id;
+use App\Models\order_update;
 use App\Models\webhookOrderLog;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
@@ -34,4 +37,42 @@ class BDController extends Controller
             ->limit(1)
             ->delete();
     }
+
+
+    public function createCounterparty($accountId,$tokenMC){
+        try {
+            counterparty_add::create([
+                'tokenMC' => $tokenMC,
+            ]);
+        } catch (ClientException $exception){
+            errorLog::create([
+                'accountId' => $accountId,
+                'ErrorMessage' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    public function deleteCounterparty($tokenMC){
+        DB::table('counterparty_adds')
+            ->where('tokenMC','=', $tokenMC)
+            ->orderBy('created_at', 'ASC')
+            ->limit(1)
+            ->delete();
+    }
+
+
+    public function createUpdateOrder($accountId, $message){
+        try {
+            order_update::create([
+                'accountId' => $accountId,
+                'message' => $message,
+            ]);
+        } catch (ClientException $exception){
+            errorLog::create([
+                'accountId' => $accountId,
+                'ErrorMessage' => $exception->getMessage(),
+            ]);
+        }
+    }
+
 }
