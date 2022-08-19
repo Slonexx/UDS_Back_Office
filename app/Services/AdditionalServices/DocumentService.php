@@ -3,16 +3,46 @@
 namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
+use App\Http\Controllers\BackEnd\postController;
+use App\Services\MetaServices\MetaHook\AttributeHook;
 
 class DocumentService
 {
 
-    public function initDocuments($orderEntries,$statusOrder,$metaOrder,$paymentOption,$demandOption,$formattedOrder, $apiKey)
+    private AttributeHook $attributeHook;
+
+    /**
+     * @param AttributeHook $attributeHook
+     */
+    public function __construct(AttributeHook $attributeHook)
     {
+        $this->attributeHook = $attributeHook;
+    }
+
+
+    public function initDocuments(
+        $items,$purchase,$delivery,$paymentOption,
+        $demandOption,$formattedOrder,$apiKey
+    )
+    {
+
+        $sum = $formattedOrder->sum;
+        $metaOrder = $formattedOrder->meta;
+
+        if($paymentOption > 0){
+            $this->createPayInDocument($apiKey,$metaOrder,$paymentOption,$formattedOrder,$sum);
+        }
+
+        if($demandOption > 0){
+            $metaDemand = $this->createDenamd($apiKey,$metaOrder,$formattedOrder,$items,$purchase,$delivery);
+            if($demandOption == 2){
+                $this->createFactureout($apiKey,$metaDemand,$formattedOrder);
+            }
+        }
 
     }
 
-    private function createFactureout($apiKey,$metaDemand)
+    private function createFactureout($apiKey,$metaDemand, $formattedOrder)
     {
         $uri = "https://online.moysklad.ru/api/remap/1.2/entity/factureout";
         $client = new MsClient($apiKey);
@@ -23,6 +53,14 @@ class DocumentService
                 ],
             ],
         ];
+
+        foreach ($formattedOrder->attributes as $attribute){
+            $docBody["attributes"][] = [
+                "meta" => $this->attributeHook->getFactureOutAttribute($attribute->name,$apiKey),
+                "value" => $attribute->value,
+            ];
+        }
+
         $client->post($uri,$docBody);
     }
 
@@ -40,10 +78,10 @@ class DocumentService
 
         $client = new MsClient($apiKey);
         $docBody = [
-            "agent" => $formattedOrder['agent'],
-            "organization" => $formattedOrder['organization'],
-            "rate" => $formattedOrder['rate'],
-            "sum" => $sum*100,
+            "agent" => $formattedOrder->agent,
+            "organization" => $formattedOrder->organization,
+            "rate" => $formattedOrder->rate,
+            "sum" => $sum,
             "operations" => [
                 0=> [
                     "meta" => $meta,
@@ -51,63 +89,78 @@ class DocumentService
             ],
         ];
 
-        if(array_key_exists("salesChannel",$formattedOrder)){
-            $docBody["salesChannel"] = $formattedOrder['salesChannel'];
+        foreach ($formattedOrder->attributes as $attribute){
+            if ($isPayment == 1){
+                $docBody["attributes"][] = [
+                    "meta" => $this->attributeHook->getCashInAttribute($attribute->name,$apiKey),
+                    "value" => $attribute->value,
+                ];
+            }elseif ($isPayment ==2){
+                $docBody["attributes"][] = [
+                    "meta" => $this->attributeHook->getPaymentInAttribute($attribute->name,$apiKey),
+                    "value" => $attribute->value,
+                ];
+            }
         }
 
-        if(array_key_exists("project",$formattedOrder)){
-            $docBody["project"] = $formattedOrder['project'];
+        //dd($docBody);
+
+        if(property_exists($formattedOrder,"salesChannel")){
+            $docBody["salesChannel"] = $formattedOrder->salesChannel;
         }
 
-        if(array_key_exists("organizationAccount",$formattedOrder)){
-            $docBody["organizationAccount"] = $formattedOrder['organizationAccount'];
+        if(property_exists($formattedOrder,"project")){
+            $docBody["project"] = $formattedOrder->project;
         }
 
-
+        if(property_exists($formattedOrder,"organizationAccount")){
+            $docBody["organizationAccount"] = $formattedOrder->organizationAccount;
+        }
         $client->post($uri,$docBody);
     }
 
-    private function createDenamd($apiKey, $meta, $formattedOrder, $entries)
+    private function createDenamd($apiKey, $meta, $formattedOrder,$entries,$purchase,$delivery)
     {
         $uri = "https://online.moysklad.ru/api/remap/1.2/entity/demand";
         $client = new MsClient($apiKey);
         $docBodyDemand = [
-            "agent" => $formattedOrder['agent'],
-            "organization" => $formattedOrder['organization'],
-            "rate" => $formattedOrder['rate'],
-            "store" => $formattedOrder['store'],
-            "addInfo" => $formattedOrder['shipmentAddressFull']['addInfo'],
+            "agent" => $formattedOrder->agent,
+            "organization" => $formattedOrder->organization,
+            "rate" => $formattedOrder->rate,
+            "store" => $formattedOrder->store,
+            "addInfo" => $formattedOrder->shipmentAddressFull->addInfo,
         ];
 
-
-        if(array_key_exists("salesChannel",$formattedOrder)){
-            $docBodyDemand["salesChannel"] = $formattedOrder['salesChannel'];
+        foreach ($formattedOrder->attributes as $attribute){
+            $docBodyDemand["attributes"][] = [
+                "meta" => $this->attributeHook->getDemandAttribute($attribute->name,$apiKey),
+                "value" => $attribute->value,
+            ];
         }
 
-        if(array_key_exists("project",$formattedOrder)){
-            $docBodyDemand["project"] = $formattedOrder['project'];
+        if(property_exists($formattedOrder,"salesChannel")){
+            $docBodyDemand["salesChannel"] = $formattedOrder->salesChannel;
         }
 
-        if(array_key_exists("organizationAccount",$formattedOrder)){
-            $docBodyDemand["organizationAccount"] = $formattedOrder['organizationAccount'];
+        if(property_exists($formattedOrder,"project")){
+            $docBodyDemand["project"] = $formattedOrder->project;
         }
 
-
+        if(property_exists($formattedOrder,"organizationAccount")){
+            $docBodyDemand["organizationAccount"] = $formattedOrder->organizationAccount;
+        }
 
         $createdDemand = $client->post($uri,$docBodyDemand);
 
         $uri = "https://online.moysklad.ru/api/remap/1.2/entity/demand"."/".$createdDemand->id."/positions";
         //$client->setRequestUrl($uri);
-        foreach($entries as $entry) {
-            $bodyDemandPositions = [
-                "quantity" => $entry['quantity'],
-                "price" => $entry['basePrice']* 100,
-                "assortment" => [
-                    "meta" => app(PositionController::class)->searchProduct($entry['product'],$apiKey)
-                ],
-            ];
-            $client->post($uri,$bodyDemandPositions);
-        }
+        $entries = json_decode(json_encode($entries),true);
+        $purchase = json_decode(json_encode($purchase),true);
+        $delivery = json_decode(json_encode($delivery),true);
+        $bodyDemandPositions = app(postController::class)
+            ->metaPositions($apiKey,$entries,$purchase,$delivery);
+
+        $client->post($uri,$bodyDemandPositions);
 
         $uri = 'https://online.moysklad.ru/api/remap/1.2/entity/demand'.'/'.$createdDemand->id;
         //$client->setRequestUrl($uri);
@@ -120,7 +173,7 @@ class DocumentService
         return $client->put($uri,$bodyOrder)->meta;
     }
 
-    private function createReturn($apiKey,$metaDemand,$formattedOrder,$entries)
+    /*private function createReturn($apiKey,$metaDemand,$formattedOrder,$entries)
     {
         $uri = "https://online.moysklad.ru/api/remap/1.2/entity/salesreturn";
         $client = new MsClient($apiKey);
@@ -164,9 +217,9 @@ class DocumentService
             $client->post($uri,$bodyReturnPositions);
         }
         return $createdReturn->meta;
-    }
+    }*/
 
-    private function createPayOutDocument($apiKey,$metaReturn,$isPayment,$formattedOrder,$sum)
+    /*private function createPayOutDocument($apiKey,$metaReturn,$isPayment,$formattedOrder,$sum)
     {
         $uri = null;
         if ($isPayment == 2) {
@@ -204,16 +257,16 @@ class DocumentService
         }
 
         $client->post($uri,$docBody);
-    }
+    }*/
 
-    public function createDocuments($payments,$demands,$orderEntries,$statusOrder,$metaOrder,$paymentOption,$demandOption,$formattedOrder, $apiKey)
+    /*    public function createDocuments($payments,$demands,$orderEntries,$statusOrder,$metaOrder,$paymentOption,$demandOption,$formattedOrder, $apiKey)
     {
 
-    }
+    }*/
 
-    private function deletePayments($payments,$apiKey)
+    /*    private function deletePayments($payments,$apiKey)
     {
 
-    }
+    }*/
 
 }

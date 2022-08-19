@@ -406,6 +406,8 @@ class ProductCreateMsService
             "value" => "".$productUds->id,
         ];
 
+        $bodyProduct["externalCode"] = "".$productUds->id;
+
         if ($productFolderMeta != null){
             $bodyProduct["productFolder"] = [
                 "meta" => $productFolderMeta,

@@ -320,6 +320,7 @@ class ProductUpdateMsService
             "value" => "".$productUds->id,
         ];
 
+        $bodyProduct["externalCode"] = "".$productUds->id;
         //dd($bodyProduct);
 
         $client = new MsClient($apiKeyMs);

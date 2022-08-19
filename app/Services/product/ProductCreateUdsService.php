@@ -4,6 +4,8 @@ namespace App\Services\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Services\AdditionalServices\StockProductService;
+use App\Services\MetaServices\Entity\StoreService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
@@ -17,27 +19,31 @@ class ProductCreateUdsService
     private CurrencyHook $currencyHookService;
     private PriceTypeHook $priceTypeHookService;
     private UomHook $uomHookService;
+    private StockProductService $stockProductService;
+    private StoreService $storeService;
+
+
+
+    //Add products to UDS from MS
 
     /**
      * @param AttributeHook $attributeHookService
      * @param CurrencyHook $currencyHookService
      * @param PriceTypeHook $priceTypeHookService
      * @param UomHook $uomHookService
+     * @param StockProductService $stockProductService
+     * @param StoreService $storeService
      */
-    public function __construct(
-        AttributeHook $attributeHookService,
-        CurrencyHook $currencyHookService,
-        PriceTypeHook $priceTypeHookService,
-        UomHook $uomHookService
-    )
+    public function __construct(AttributeHook $attributeHookService, CurrencyHook $currencyHookService, PriceTypeHook $priceTypeHookService, UomHook $uomHookService, StockProductService $stockProductService, StoreService $storeService)
     {
         $this->attributeHookService = $attributeHookService;
         $this->currencyHookService = $currencyHookService;
         $this->priceTypeHookService = $priceTypeHookService;
         $this->uomHookService = $uomHookService;
+        $this->stockProductService = $stockProductService;
+        $this->storeService = $storeService;
     }
 
-    //Add products to UDS from MS
     public function insertToUds($data)
     {
         return $this->notAddedInUds(
@@ -45,6 +51,7 @@ class ProductCreateUdsService
             $data['apiKeyUds'],
             $data['companyId'],
             $data['folder_id'],
+            $data['store']
         );
     }
 
@@ -66,10 +73,11 @@ class ProductCreateUdsService
         return $client->get($url);
     }
 
-    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId){
+    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds);
         //dd($productsUds);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
+        $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         //dd($folderName);
         set_time_limit(3600);
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds);
@@ -100,13 +108,13 @@ class ProductCreateUdsService
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
                     //dd($idNodeCategory);
                     $createdProduct = $this->createProductUds(
-                        $row,$apiKeyMs,$companyId,$apiKeyUds,$idNodeCategory
+                        $row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$idNodeCategory
                     );
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
                     }
                 } else {
-                    $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds);
+                    $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref);
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
                     }
@@ -251,7 +259,7 @@ class ProductCreateUdsService
         $client->put($url,$body);
     }
 
-    private function createProductUds($product,$apiKeyMs,$companyId,$apiKeyUds,$nodeId = 0){
+    private function createProductUds($product,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$nodeId = 0){
         $url = "https://api.uds.app/partner/v2/goods";
         $client = new UdsClient($companyId,$apiKeyUds);
 
@@ -357,9 +365,26 @@ class ProductCreateUdsService
                         }
                     }
                 }
-                elseif ($attribute->name == "Товар неограничен (UDS)" && $attribute->value == 1){
-                    $body["data"]["inventory"]["inStock"] = null;
+                elseif ($attribute->name == "Товар неограничен (UDS)"){
+                    if ($attribute->value == 1){
+                        $stock = null;
+                    } else {
+                        $stock = $this->stockProductService->getProductStockMs(
+                            $product->externalCode,
+                            $storeHref,
+                            $apiKeyMs
+                        );
+                    }
+                    $body["data"]["inventory"]["inStock"] = $stock;
                 }
+            }
+
+            if (!array_key_exists("inventory",$body["data"])){
+                $body["data"]["inventory"]["inStock"] = $this->stockProductService
+                    ->getProductStockMs($product->externalCode,
+                    $storeHref,
+                    $apiKeyMs
+                );
             }
 
             if (
