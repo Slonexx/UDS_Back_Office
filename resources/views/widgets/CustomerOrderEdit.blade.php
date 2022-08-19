@@ -178,7 +178,7 @@
                 <div id="ButtonComplete" class="row text-center" style="display: none;">
                     <div class="row">
                         <div class="col-6">
-                            <button onclick="ButtonComplete()" class="btn btn-success rounded-pill">Завершить заказ</button>
+                            <button onclick="ButtonComplete()" class="btn btn-success rounded-pill">Завершить </button>
                             <div id="success" class="mt-2" style="display: none">
                                 <div class="row">
                                     <div class="col-1"></div>
@@ -197,7 +197,7 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <button onclick="xRefURL()" class="btn btn-danger rounded-pill">Завершить заказ</button>
+                            <button onclick="xRefURL()" class="btn btn-danger rounded-pill">Отменить </button>
                         </div>
                     </div>
 
