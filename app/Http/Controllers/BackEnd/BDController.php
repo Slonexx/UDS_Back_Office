@@ -61,6 +61,21 @@ class BDController extends Controller
     }
 
 
+    public function errorLog($accountId, $message){
+        try {
+            errorLog::create([
+                'accountId' => $accountId,
+                'ErrorMessage' => $message,
+            ]);
+        } catch (ClientException $exception){
+            errorLog::create([
+                'accountId' => $accountId,
+                'ErrorMessage' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+
     public function createUpdateOrder($accountId, $message){
         try {
             order_update::create([
