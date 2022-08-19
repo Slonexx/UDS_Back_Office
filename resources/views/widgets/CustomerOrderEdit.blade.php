@@ -177,7 +177,7 @@
             <div class="col-11 row">
                 <div id="ButtonComplete" class="row text-center" style="display: none;">
                     <div class="row mx-1">
-                        <div class="col-6 rounded-pill bg-success">
+                        <div class="col-5 mx-1 rounded-pill bg-success">
                             <button onclick="ButtonComplete()" class="btn btn-success ">Завершить </button>
                             <div id="success" class="mt-2" style="display: none">
                                 <div class="row">
@@ -196,7 +196,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-6 rounded-pill bg-danger">
+                        <div class="col-5 mx-3 rounded-pill bg-danger">
                             <button onclick="xRefURL()" class="btn btn-danger ">Отменить </button>
                         </div>
                     </div>
