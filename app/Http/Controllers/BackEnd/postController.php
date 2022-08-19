@@ -80,6 +80,10 @@ class postController extends Controller
                 $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
                 $Clint = new ClientMC($url, $TokenMC);
 
+                $BD = new BDController();
+                $BD->createOrderID($accountId, $request->id, $companyId);
+                //$BD->deleteOrderID($accountId, $request->id);
+
                 try {
                     $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
                     $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
