@@ -161,7 +161,7 @@
 
 
     <script>
-        var GlobalURL = "https://uds.smart/CountProduct/{{$accountId}}/";
+        var GlobalURL = "https://smartuds.kz/CountProduct/{{$accountId}}/";
         CountProduct();
 
         function Visible(){
