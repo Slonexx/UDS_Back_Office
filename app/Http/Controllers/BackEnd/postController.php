@@ -103,8 +103,15 @@ class postController extends Controller
                     $state = $this->metaState($TokenMC, $Setting->NEW);
                     $store = $this->metaStore($TokenMC, $Setting->Store);
                     $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
+                    $attributes = $this->metaAttributes($TokenMC, $request->purchase);
                     $project = $this->metaProject($TokenMC, $Setting->Project);
                     $shipmentAddress = $this->ShipmentAddress($request->delivery);
+
+                    $description = $request->delivery['userComment'];
+                    if ($description == null)  $description = "";
+
+                    $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
+                    $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
                 } catch (ClientException $exception) {
                     $message = $exception->getMessage();
                     webhookOrderLog::create([
@@ -113,13 +120,6 @@ class postController extends Controller
                         'companyId' => $companyId,
                     ]);
                 }
-
-
-                $description = $request->delivery['userComment'];
-                if ($description == null)  $description = "";
-
-                $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
-                $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
 
                 if ($organizationAccount != null)
                     $body = [
@@ -133,6 +133,7 @@ class postController extends Controller
                         "shipmentAddress" => $shipmentAddress,
                         "description" => $description,
 
+                        "attributes" => $attributes,
                         "positions" => $positions,
                         "externalCode" => $externalCode,
                     ];
@@ -145,8 +146,9 @@ class postController extends Controller
                         "salesChannel" => $salesChannel,
                         "project" => $project,
                         "shipmentAddress" => $shipmentAddress,
-
                         "description" => $description,
+
+                        "attributes" => $attributes,
                         "positions" => $positions,
                         "externalCode" => $externalCode,
                     ];
@@ -329,6 +331,43 @@ class postController extends Controller
                 'mediaType'=> $mediaType,
             ]
         ];
+    }
+
+    public function metaAttributes($apiKey, $purchase){
+        if ($purchase['points'] > 0 )
+            $DeductionOfPoints = [
+                'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)', $apiKey),
+                'value' => true,
+        ];
+        else  $DeductionOfPoints = [
+            'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)', $apiKey),
+            'value' => false,
+        ];
+
+        if ($purchase['cashBack'] > 0 )
+            $AccrualOfPoints = [
+                'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)', $apiKey),
+                'value' => true,
+            ];
+        else  $AccrualOfPoints = [
+            'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)', $apiKey),
+            'value' => false,
+        ];
+
+        if ($purchase['certificatePoints'] > 0 )
+            $UsingCertificate = [
+                'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)', $apiKey),
+                'value' => true,
+            ];
+        else  $UsingCertificate = [
+            'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)', $apiKey),
+            'value' => false,
+        ];
+
+        $array = [$DeductionOfPoints, $AccrualOfPoints, $UsingCertificate];
+
+        return $array;
+
     }
 
     public function metaPositions($apiKey, $UDSitem, $purchase, $delivery){
