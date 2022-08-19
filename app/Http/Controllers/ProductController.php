@@ -59,6 +59,7 @@ class ProductController extends Controller
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
             "folder_id" => "required|string",
+            "store" => "required|string",
         ]);
 
        return response(
@@ -89,6 +90,7 @@ class ProductController extends Controller
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
             "folder_id" => "required|string",
+            "store" => "required|string",
         ]);
 
        return response(

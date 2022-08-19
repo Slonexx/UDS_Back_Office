@@ -7,6 +7,14 @@ use App\Components\UdsClient;
 
 class AgentService
 {
+    public function insertToMs($data)
+    {
+        return $this->notAddedInMs(
+            $data['tokenMs'],
+            $data['apiKeyUds'],
+            $data['companyId']
+        );
+    }
 
     private function getMs($apiKeyMs): array
     {
@@ -40,7 +48,7 @@ class AgentService
             foreach ($customersFromUds->rows as $customerFromUds){
                 //dd($customerFromUds);
                 $currId = $customerFromUds->participant->id;
-                if (!$this->isAgentExistsMs($currId,$apiKeyMs)){
+                if (!$this->isAgentExistsMs($currId,$customerFromUds->phone,$apiKeyMs)){
                     $this->createAgent($apiKeyMs,$customerFromUds);
                     $count++;
                 }
@@ -52,15 +60,6 @@ class AgentService
         return [
             "message" => "Inserted customers: ".$count,
         ];
-    }
-
-    public function insertToMs($data)
-    {
-       return $this->notAddedInMs(
-           $data['tokenMs'],
-           $data['apiKeyUds'],
-           $data['companyId']
-       );
     }
 
     private function createAgent($apiKeyMs,$customer)
@@ -101,13 +100,36 @@ class AgentService
         return count($json->rows) > 0;
     }
 
-    private function isAgentExistsMs($nodeId, $apiKeyMs): bool
+    private function isAgentExistsMs($nodeId,$phone,$apiKeyMs): bool
     {
         $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId;
         //dd($urlToFind);
         $client = new MsClient($apiKeyMs);
         $json = $client->get($urlToFind);
-        return ($json->meta->size > 0);
+
+        if ($json->meta->size == 0){
+            if ($phone != null){
+                $urlCheckPhone = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone=".$phone;
+                $json = $client->get($urlCheckPhone);
+                if ($json->meta->size > 0){
+                    $this->updateAgent($json->rows[0],$nodeId,$apiKeyMs);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return false;
+        } else return true;
+    }
+
+    private function updateAgent($agent,$newNodeId, $apiKeyMs)
+    {
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$agent->id;
+        $client = new MsClient($apiKeyMs);
+        $body = [
+            "externalCode" => $newNodeId
+        ];
+        $client->put($url,$body);
     }
 
 }

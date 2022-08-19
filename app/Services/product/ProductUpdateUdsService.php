@@ -4,6 +4,8 @@ namespace App\Services\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Services\AdditionalServices\StockProductService;
+use App\Services\MetaServices\Entity\StoreService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\ClientException;
 
@@ -11,13 +13,19 @@ class ProductUpdateUdsService
 {
 
     private AttributeHook $attributeHookService;
+    private StockProductService $stockProductService;
+    private StoreService $storeService;
 
     /**
      * @param AttributeHook $attributeHookService
+     * @param StockProductService $stockProductService
+     * @param StoreService $storeService
      */
-    public function __construct(AttributeHook $attributeHookService)
+    public function __construct(AttributeHook $attributeHookService, StockProductService $stockProductService, StoreService $storeService)
     {
         $this->attributeHookService = $attributeHookService;
+        $this->stockProductService = $stockProductService;
+        $this->storeService = $storeService;
     }
 
 
@@ -26,6 +34,9 @@ class ProductUpdateUdsService
         $companyId = $data['companyId'];
         $apiKeyUds = $data['apiKeyUds'];
         $folderId = $data['folder_id'];
+        $storeName = $data['store'];
+
+        $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
 
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
 
@@ -48,13 +59,13 @@ class ProductUpdateUdsService
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
-                    $updatedProduct = $this->updateProductInUds($row,$productId,$apiKeyMs,$companyId, $apiKeyUds,$idNodeCategory);
+                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds,$idNodeCategory);
                     if ($updatedProduct != null){
                         $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
                     }
                 }
                 else {
-                    $updatedProduct = $this->updateProductInUds($row,$productId,$apiKeyMs,$companyId, $apiKeyUds);
+                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds);
                     if ($updatedProduct != null){
                         $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
                     }
@@ -69,7 +80,7 @@ class ProductUpdateUdsService
 
     }
 
-    private function updateProductInUds($msProduct, $goodId, $apiKeyMs, $companyId, $apiKeyUds, $nodeId = 0)
+    private function updateProductInUds($msProduct,$storeHref,$goodId, $apiKeyMs, $companyId, $apiKeyUds, $nodeId = 0)
     {
         $url = "https://api.uds.app/partner/v2/goods/".$goodId;
         $client = new UdsClient($companyId,$apiKeyUds);
@@ -170,9 +181,24 @@ class ProductUpdateUdsService
                         }
                     }
                 }
-                elseif ($attribute->name == "Товар неограничен (UDS)" && $attribute->value == 1){
-                    $body["data"]["inventory"]["inStock"] = null;
+                elseif ($attribute->name == "Товар неограничен (UDS)"){
+                    if ($attribute->value == 1){
+                        $stock = null;
+                    }else {
+                        $stock = $this->stockProductService->getProductStockMs(
+                            $msProduct->externalCode,$storeHref,$apiKeyMs
+                        );
+                    }
+                    $body["data"]["inventory"]["inStock"] = $stock;
                 }
+            }
+
+            if (!array_key_exists("inventory",$body["data"])){
+                $body["data"]["inventory"]["inStock"] = $this->stockProductService
+                    ->getProductStockMs($msProduct->externalCode,
+                        $storeHref,
+                        $apiKeyMs
+                    );
             }
 
             if (
@@ -221,8 +247,9 @@ class ProductUpdateUdsService
             $body["nodeId"] = intval($nodeId);
         }
 
-        //if ($body["name"] == "Мешок с негром")
+        //if ($body["name"] == "Зелье единорога")
         //dd($body);
+
         try {
             return $client->put($url,$body);
         } catch (ClientException $e){
