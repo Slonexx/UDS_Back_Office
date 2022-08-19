@@ -11,6 +11,7 @@ class AppInstanceContoller {
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $ProductFolder;
     var $UpdateProduct;
     var $Store;
 
@@ -97,6 +98,7 @@ class AppInstanceContoller {
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->ProductFolder = $json->ProductFolder;
         $this->UpdateProduct = $json->UpdateProduct;
         $this->Store = $json->Store;
 

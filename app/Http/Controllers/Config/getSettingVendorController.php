@@ -15,6 +15,7 @@ class getSettingVendorController extends Controller
     var $TokenMoySklad;
     var $companyId;
     var $TokenUDS;
+    var $ProductFolder;
     var $UpdateProduct;
     var $Store;
 
@@ -44,6 +45,7 @@ class getSettingVendorController extends Controller
         $this->TokenMoySklad = $json->TokenMoySklad;
         $this->companyId = $json->companyId;
         $this->TokenUDS = $json->TokenUDS;
+        $this->ProductFolder = $json->ProductFolder;
         $this->UpdateProduct = $json->UpdateProduct;
         $this->Store = $json->Store;
 
