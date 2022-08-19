@@ -72,7 +72,7 @@
 
 
                     <div class="col-sm-10">
-                        <select id="ProductFolder" name="ProductFolder" class="form-select text-black ">
+                        <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
 
                             @if($ProductFolder != null)
                                 <option selected value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
@@ -95,7 +95,7 @@
                         </div>
                         <div class="col-7 mt-2">
                             Товаров в категории:
-                            <span id="CountProduct" class="p-1 px-3 text-white bg-primary rounded-pill"> 321312 </span>
+                            <span id="CountProduct" class="p-1 px-3 text-white bg-primary rounded-pill">  </span>
                         </div>
                         <div class="col-2 mt-2">
                             <i onclick="Visible()" class="fa-solid fa-circle-xmark text-danger" style="cursor: pointer"></i>
@@ -161,7 +161,7 @@
 
 
     <script>
-        var GlobalURL = "https://smartuds.kz/CountProduct/{{$accountId}}/";
+        var GlobalURL = "https://uds.smart/CountProduct/{{$accountId}}/";
         CountProduct();
 
         function Visible(){
@@ -172,16 +172,22 @@
             var select = document.getElementById('ProductFolder');
             var option = select.options[select.selectedIndex];
             var folderName = option.text;
-
-            console.log('folderName = '+ folderName);
-            console.log('GlobalURL = '+ GlobalURL);
             var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
-                console.log('this.text = ' + this.responseText)
+                var responseTextPars = JSON.parse(this.responseText);
+                var StatusCode = responseTextPars.StatusCode;
+
+                if (StatusCode == 200) {
+                    var Body = responseTextPars.Body;
+                    window.document.getElementById("CountProduct").innerHTML = Body;
+                    document.getElementById("VisibleCountProduct").style.display = "block";
+                } else {
+                    Visible();
+                }
+
             });
             xmlHttpRequest.open("GET", GlobalURL + folderName);
             xmlHttpRequest.send();
-
         }
 
     </script>
