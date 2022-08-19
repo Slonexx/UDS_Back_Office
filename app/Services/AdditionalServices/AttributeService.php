@@ -12,66 +12,67 @@ class AttributeService
     {
         $bodyAttributes = [
             0 => [
-                "name" => "% списания (UDS)",
-                "type" => "double",
-                "required" => false,
-                "description" => "Процент списания (UDS)",
-            ],
-            1 => [
-                "name" => "% начисления (UDS)",
-                "type" => "double",
-                "required" => false,
-                "description" => "Процент начисления (UDS)",
-            ],
-            2 => [
                 "name" => "Акционный товар (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Акционный товар (UDS)",
             ],
-            3 => [
+            1 => [
                 "name" => "Не применять бонусную программу (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Не применять бонусную программу (UDS)",
             ],
-            4 => [
+            2 => [
                 "name" => "Товар неограничен (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Товар неограничен (UDS)",
             ],
-            5 => [
+            3 => [
                 "name" => "Дробное значение товара (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Дробное значение товара (UDS)",
             ],
-            6 => [
+            4 => [
                 "name" => "Шаг дробного значения (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Шаг дробного значения (UDS)",
             ],
-            7 => [
+            5 => [
                 "name" => "Минимальный размер заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Минимальный размер заказа дробного товара (UDS)",
             ],
-            8 => [
-                "name" => "id (UDS)",
-                "type" => "string",
-                "required" => false,
-                "description" => "id (UDS)",
-            ],
-            9 => [
+            6 => [
                 "name" => "Цена минимального размера заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
+            7 => [
+                "name" => "id (UDS)",
+                "type" => "string",
+                "required" => false,
+                "description" => "id (UDS)",
+            ],
         ];
+
+     /*           0 => [
+                "name" => "% списания (UDS)",
+                "type" => "double",
+                "required" => false,
+                "description" => "Процент списания (UDS)",
+            ],
+                    1 => [
+                "name" => "% начисления (UDS)",
+                "type" => "double",
+                "required" => false,
+                "description" => "Процент начисления (UDS)",
+            ],*/
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
         $client = new MsClient($apiKeyMs);
@@ -98,12 +99,12 @@ class AttributeService
     private function createOrderAttributes($apiKeyMs): void
     {
         $bodyAttributes = $this->getDocAttributes();
-        $bodyAttributes[5] = [
+/*        $bodyAttributes[5] = [
             "name" => "Ссылка на заказ (UDS)",
             "type" => "link",
             "required" => false,
             "description" => "Ссылка на заказ (UDS)",
-        ];
+        ];*/
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes";
         $client = new MsClient($apiKeyMs);
@@ -126,10 +127,26 @@ class AttributeService
         $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
 
+    private function createPaymentOutAttributes($apiKeyMs):void
+    {
+        $bodyAttributes = $this->getDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/paymentout/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
     private function createCashInAttributes($apiKeyMs):void
     {
         $bodyAttributes = $this->getDocAttributes();
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/cashin/metadata/attributes";
+        $client = new MsClient($apiKeyMs);
+        $this->getBodyToAdd($client, $url, $bodyAttributes);
+    }
+
+    public function createCashOutAttributes($apiKeyMs)
+    {
+        $bodyAttributes = $this->getDocAttributes();
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/cashout/metadata/attributes";
         $client = new MsClient($apiKeyMs);
         $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
@@ -144,13 +161,19 @@ class AttributeService
 
     public function setAllAttributesMs($apiKeyMs): void
     {
-        $this->createProductAttributes($apiKeyMs);
+        //$this->createProductAttributes($apiKeyMs);
         //$this->createAgentAttributes($apiKeyMs);
-        //$this->createOrderAttributes($apiKeyMs);
-       // $this->createDemandAttributes($apiKeyMs);
-       // $this->createPaymentInAttributes($apiKeyMs);
-      //  $this->createCashInAttributes($apiKeyMs);
-       // $this->createInvoiceOutAttributes($apiKeyMs);
+        $this->createOrderAttributes($apiKeyMs);
+
+        $this->createDemandAttributes($apiKeyMs);
+
+        $this->createPaymentInAttributes($apiKeyMs);
+        //$this->createPaymentOutAttributes($apiKeyMs);
+
+        $this->createCashInAttributes($apiKeyMs);
+        //$this->createCashOutAttributes($apiKeyMs);
+
+        $this->createInvoiceOutAttributes($apiKeyMs);
     }
 
     //returns doc attribute values
@@ -181,13 +204,16 @@ class AttributeService
                 "required" => false,
                 "description" => "Использование сертификата (UDS)",
             ],
-            4 => [
-                "name" => "Ссылка на операцию (UDS)",
-                "type" => "link",
-                "required" => false,
-                "description" => "Ссылка на операцию (UDS)",
-            ],
+
         ];
+
+       /* 4 => [
+        "name" => "Ссылка на операцию (UDS)",
+        "type" => "link",
+        "required" => false,
+        "description" => "Ссылка на операцию (UDS)",
+        ],*/
+
     }
 
     /**

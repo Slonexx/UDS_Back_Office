@@ -7,11 +7,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\webhookClintLog;
 use App\Models\webhookOrderLog;
+use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
 class postController extends Controller
 {
+    private AttributeHook $attributeHook;
+
+    /**
+     * @param AttributeHook $attributeHook
+     */
+    public function __construct(AttributeHook $attributeHook)
+    {
+        $this->attributeHook = $attributeHook;
+    }
+
+
     public function postClint(Request $request, $accountId){
         $Setting = new getSettingVendorController($accountId);
         $TokenMC = $Setting->TokenMoySklad;
