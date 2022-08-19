@@ -12,7 +12,7 @@
                         <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35"  alt="">
                     </div>
                     <div class="mt-1 col-10">
-                        <label class="mx-2 s-min-18"> Интеграция с UDS </label>
+                        <label class="s-min-16"> UDS интернет магазин </label>
                     </div>
 
                 </div>
@@ -72,8 +72,8 @@
         background-color: #FAFAFA;
     }
 
-    .s-min-18 {
-        font-size: 18px;
+    .s-min-16 {
+        font-size: 16px;
     }
 
     .uds-gradient{
