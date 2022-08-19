@@ -24,6 +24,8 @@
                     var points = message.points;
 
                     if (StatusCode == 200) {
+                        document.getElementById("activated").style.display = "block";
+                        document.getElementById("undefined").style.display = "none";
 
                         GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                         window.document.getElementById("OrderID").innerHTML = message.id;
@@ -53,7 +55,8 @@
 
 
                     } else {
-
+                        document.getElementById("activated").style.display = "none";
+                        document.getElementById("undefined").style.display = "block";
                     }
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
@@ -142,7 +145,7 @@
 
 
 
-    <div id="activated" class="content bg-white text-Black rounded">
+    <div id="activated" class="content bg-white text-Black rounded" style="display: none">
         <div class="row uds-gradient p-2">
             <div class="col-2">
                 <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" >
@@ -236,7 +239,15 @@
 
     </div>
 
-
+    <div id="undefined" class="bg-white text-Black rounded" style="display: none">
+        <div class="text-center">
+            <div class="p-3 mb-2 bg-danger text-white">
+                <i class="fa-solid fa-ban text-danger "></i>
+                Данного заказа нету в UDS
+                <i class="fa-solid fa-ban text-danger "></i>
+            </div>
+        </div>
+    </div>
 
 
 
