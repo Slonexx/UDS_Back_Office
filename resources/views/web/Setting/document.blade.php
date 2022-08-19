@@ -17,7 +17,7 @@
 
         @endisset
 
-        <div class=" alert alert-warning alert-dismissible fade show in text-center "> Склад на который будет создаваться заказ, это тот же склад который выбирается по остаткам в настройках основная
+        <div class=" alert alert-warning alert-dismissible fade show in text-center "> Склад на который будет создаваться заказ, это тот же склад который выбирается по остаткам в настройках &#8594; основная
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 

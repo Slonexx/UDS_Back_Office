@@ -330,7 +330,7 @@ class postController extends Controller
         }
 
         $total = $purchase["total"] - $purchase["skipLoyaltyTotal"];
-        if ($purchase["points"] > 0) $pointsPercent = $purchase["points"] * 100 / $total;
+        if ($purchase["points"]+$purchase["certificatePoints"] > 0) $pointsPercent = ($purchase["certificatePoints"] + $purchase["points"])  * 100 / $total;
         else $pointsPercent = 0;
 
         $Result = [];
