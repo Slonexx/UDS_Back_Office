@@ -23,6 +23,7 @@ class AgentController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
+            "accountId" => "required|string"
         ]);
         //dd($data);
         return response(

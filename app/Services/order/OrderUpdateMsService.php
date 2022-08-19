@@ -50,6 +50,8 @@ class OrderUpdateMsService
         $paymentOption = $data["paymentOpt"];
         $demandOption = $data["demandOpt"];
 
+        //$ACCOUNT_ID = $data["accountId"];
+
         //$query = order_id::query();
         //$ids = $query->where('accountId',"=",$accountId)->;
         $results = DB::select('SELECT * FROM `order_ids` WHERE accountId = :accountId',
@@ -64,7 +66,7 @@ class OrderUpdateMsService
             else {
                $orderInMs = $orderInMs->rows[0];
             }
-            $orderInUds = $this->getUds($orderId,$companyId,$apiKeyUds);
+            $orderInUds = $this->getUds($orderId,$companyId,$apiKeyUds,$accountId);
             if ($orderInUds == null) continue;
 
             //dd($orderInMs);
@@ -76,15 +78,20 @@ class OrderUpdateMsService
 
             if ($orderStateNameInMs != $orderStateNameInUds){
                 if ($orderInUds->state == "COMPLETED"){
-                   $this->documentService->initDocuments(
-                       $orderInUds->items,
-                       $orderInUds->purchase,
-                       $orderInUds->delivery,
-                       $paymentOption,
-                       $demandOption,
-                       $orderInMs,
-                       $apiKeyMs
-                   );
+                    try {
+                        $this->documentService->initDocuments(
+                            $orderInUds->items,
+                            $orderInUds->purchase,
+                            $orderInUds->delivery,
+                            $paymentOption,
+                            $demandOption,
+                            $orderInMs,
+                            $apiKeyMs
+                        );
+                    } catch (ClientException $e){
+                        $bd = new BDController();
+                        $bd->createUpdateOrder($accountId,$e->getMessage());
+                    }
                 }
 
                 if ($orderInUds->state == "DELETED" || $orderInUds->state == "COMPLETED"){
@@ -107,6 +114,11 @@ class OrderUpdateMsService
 
                 $newMeta = $this->orderStateService->getState($accountId,$stateUds,$apiKeyMs);
                 $this->changeOrderStatusMs($orderInMs->id,$newMeta,$apiKeyMs);
+
+                $bd = new BDController();
+                $bd->createUpdateOrder(
+                    $accountId,"Все заказы в MS обновлены успешно! Обновлено заказов:".count($results)
+                );
             }
 
         }
@@ -121,7 +133,7 @@ class OrderUpdateMsService
         return $json;
     }
 
-    private function getUds($orderIdUds,$companyId, $apiKey)
+    private function getUds($orderIdUds,$companyId, $apiKey,$accountId)
     {
         $url = "https://api.uds.app/partner/v2/goods-orders/".$orderIdUds;
         $client = new UdsClient($companyId,$apiKey);
@@ -129,6 +141,8 @@ class OrderUpdateMsService
             return $client->get($url);
         } catch (ClientException $e){
             //dd($e->getMessage());
+            $bd = new BDController();
+            $bd->createUpdateOrder($accountId,$e->getMessage());
             return null;
         }
     }

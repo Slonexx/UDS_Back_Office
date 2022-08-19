@@ -47,7 +47,8 @@ class ProductCreateMsService
             $data['tokenMs'],
             $data['apiKeyUds'],
             $data['companyId'],
-            $folderMeta
+            $folderMeta,
+            $data['accountId']
         );
     }
 
@@ -77,7 +78,7 @@ class ProductCreateMsService
         return $client->get($url);
     }
 
-    private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId, $parentFolder)
+    private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId, $parentFolder, $accountId)
     {
         //$productsMs = $this->getMsCheck($apiKeyMs);
         $hrefAttrib = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs)->href;

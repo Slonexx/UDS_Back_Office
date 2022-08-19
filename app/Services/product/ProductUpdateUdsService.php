@@ -35,6 +35,7 @@ class ProductUpdateUdsService
         $apiKeyUds = $data['apiKeyUds'];
         $folderId = $data['folder_id'];
         $storeName = $data['store'];
+        $accountId = $data['accountId'];
 
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
 

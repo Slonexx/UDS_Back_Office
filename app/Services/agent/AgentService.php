@@ -4,6 +4,9 @@ namespace App\Services\agent;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BackEnd\BDController;
+use App\Models\errorLog;
+use GuzzleHttp\Exception\ClientException;
 
 class AgentService
 {
@@ -12,7 +15,8 @@ class AgentService
         return $this->notAddedInMs(
             $data['tokenMs'],
             $data['apiKeyUds'],
-            $data['companyId']
+            $data['companyId'],
+            $data['accountId']
         );
     }
 
@@ -35,7 +39,7 @@ class AgentService
         return $client->get($url);
     }
 
-    private function notAddedInMs($apiKeyMs,$apiKeyUds, $companyId)
+    private function notAddedInMs($apiKeyMs,$apiKeyUds, $companyId, $accountId)
     {
 
        // $customersFromMs = $this->getMs($apiKeyMs);
@@ -49,8 +53,14 @@ class AgentService
                 //dd($customerFromUds);
                 $currId = $customerFromUds->participant->id;
                 if (!$this->isAgentExistsMs($currId,$customerFromUds->phone,$apiKeyMs)){
-                    $this->createAgent($apiKeyMs,$customerFromUds);
-                    $count++;
+                    try {
+                        $this->createAgent($apiKeyMs,$customerFromUds);
+                        $count++;
+                    }catch (ClientException $e){
+                        $bd = new BDController();
+                        $bd->errorLog($accountId,$e->getMessage());
+                    }
+
                 }
             }
             $offset += 50;

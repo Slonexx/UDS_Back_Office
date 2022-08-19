@@ -51,7 +51,8 @@ class ProductCreateUdsService
             $data['apiKeyUds'],
             $data['companyId'],
             $data['folder_id'],
-            $data['store']
+            $data['store'],
+            $data['accountId']
         );
     }
 
@@ -73,7 +74,7 @@ class ProductCreateUdsService
         return $client->get($url);
     }
 
-    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName){
+    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds);
         //dd($productsUds);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
