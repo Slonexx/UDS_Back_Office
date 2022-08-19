@@ -3,7 +3,6 @@
 
 @section('content')
 
-
     <div class="content p-4 mt-2 bg-white text-Black rounded">
         <h4> <i class="fa-solid fa-gears text-orange"></i> Данные для интеграции</h4>
 
@@ -73,7 +72,7 @@
 
 
                     <div class="col-sm-10">
-                        <select name="ProductFolder" class="form-select text-black ">
+                        <select id="ProductFolder" name="ProductFolder" class="form-select text-black ">
 
                             @if($ProductFolder != null)
                                 <option selected value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
@@ -88,6 +87,19 @@
                                 @endforeach
                             @endif
                         </select>
+                    </div>
+                </div>
+                <div id="VisibleCountProduct" class="col-sm-6 row mt-4" style="display: block">
+                    <div class="row">
+                        <div class="col-3 mt-2">
+                        </div>
+                        <div class="col-7 mt-2">
+                            Товаров в категории:
+                            <span id="CountProduct" class="p-1 px-3 text-white bg-primary rounded-pill"> 321312 </span>
+                        </div>
+                        <div class="col-2 mt-2">
+                            <i onclick="Visible()" class="fa-solid fa-circle-xmark text-danger" style="cursor: pointer"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,7 +160,31 @@
     </div>
 
 
+    <script>
+        var GlobalURL = "https://smartuds.kz/CountProduct/{{$accountId}}/";
+        CountProduct();
 
+        function Visible(){
+            document.getElementById("VisibleCountProduct").style.display = "none";
+        }
+
+        function CountProduct(){
+            var select = document.getElementById('ProductFolder');
+            var option = select.options[select.selectedIndex];
+            var folderName = option.text;
+
+            console.log('folderName = '+ folderName);
+            console.log('GlobalURL = '+ GlobalURL);
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                console.log('this.text = ' + this.responseText)
+            });
+            xmlHttpRequest.open("GET", GlobalURL + folderName);
+            xmlHttpRequest.send();
+
+        }
+
+    </script>
 
 
 @endsection

@@ -410,4 +410,14 @@ class SettingController extends Controller
             'isAdmin' => $isAdmin,
         ]);
     }
+
+    public function CountProduct($accountId, $folderName){
+        $Setting = new getSettingVendorController($accountId);
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+
+        $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
+        $Body = $Client->requestGet()->meta;
+
+        return $Body;
+    }
 }

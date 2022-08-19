@@ -41,6 +41,8 @@ Route::post('/setSetting/{accountId}/{isAdmin}', [SettingController::class, 'pos
 Route::post('/setSetting/Document/{accountId}/{isAdmin}', [SettingController::class, 'postSettingDocument'])->name('setSettingDocument');
 Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
 
+Route::get('/CountProduct/{accountId}/{folderName}', [SettingController::class, 'CountProduct']);
+
 
 //Route::get('/Help/Support/{accountId}', [SupportController::class, 'index'])->name('indexSupport');
 //Route::get('/Help/Support/Whatsapp/{accountId}', [WhatsappController::class, 'index'])->name('indexWhatsapp');
