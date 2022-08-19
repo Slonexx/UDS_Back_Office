@@ -20,6 +20,10 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
     Route::post('productMs',[ProductController::class,'insertMs']);
     Route::post('productUds',[ProductController::class,'insertUds']);
 
+    Route::post('updateProductUds',[ProductController::class,'updateUds']);
+    Route::post('updateProductMs',[ProductController::class,'updateMs']);
+
+
 
     Route::post('/webhook/{accountId}/client',[postController::class, 'postClint']);
     Route::post('/webhook/{accountId}/order',[postController::class, 'postOrder']);
