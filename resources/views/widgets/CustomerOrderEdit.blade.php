@@ -13,7 +13,8 @@
             GlobalobjectId = receivedMessage.objectId;
             if (receivedMessage.name === 'Open') {
                 var oReq = new XMLHttpRequest();
-
+                document.getElementById("success").style.display = "none";
+                document.getElementById("danger").style.display = "none";
                 oReq.addEventListener("load", function() {
                     var responseTextPars = JSON.parse(this.responseText);
                     var StatusCode = responseTextPars.StatusCode;
@@ -84,7 +85,8 @@
 
         function update(){
             var oReq = new XMLHttpRequest();
-
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
             oReq.addEventListener("load", function() {
                 var responseTextPars = JSON.parse(this.responseText);
                 var StatusCode = responseTextPars.StatusCode;
@@ -117,7 +119,7 @@
 
                     if (message.state == "DELETED") {
                         document.getElementById("Deleted").style.display = "block";
-                        document.getElementById("Complete").style.display = "none";
+                        document.getElementById("ButtonComplete").style.display = "none";
                         document.getElementById("Complete").style.display = "none";
                     }
 
@@ -157,7 +159,7 @@
             </div>
 
             <div class="row">
-                <div class="col-8">
+                <div class="col-8 row">
                     <div class="mx-1 mt-1">
                         <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
                     </div>
@@ -174,24 +176,31 @@
             </div>
             <div class="col-11 row">
                 <div id="ButtonComplete" class="row text-center" style="display: none;">
-                    <button onclick="ButtonComplete()" class="btn btn-success rounded-pill">Завершить заказ</button>
+                    <div class="row">
+                        <div class="col-6">
+                            <button onclick="ButtonComplete()" class="btn btn-success rounded-pill">Завершить заказ</button>
+                            <div id="success" class="mt-2" style="display: none">
+                                <div class="row">
+                                    <div class="col-1"></div>
+                                    <div class="col-10">
+                                        <div class=" alert alert-success fade show in text-center "> Заказ завершён </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="danger" class="mt-2" style="display: none">
+                                <div class="row">
+                                    <div class="col-1"></div>
+                                    <div class="col-10">
+                                        <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <button onclick="xRefURL()" class="btn btn-danger rounded-pill">Завершить заказ</button>
+                        </div>
+                    </div>
 
-                    <div id="success" class="mt-2" style="display: none">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <div class=" alert alert-success fade show in text-center "> Заказ завершён </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="danger" class="mt-2" style="display: none">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div id="Complete" class="row" style="display: none;">
                     <div class="row mt-2">
