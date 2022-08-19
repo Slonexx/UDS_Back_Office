@@ -37,12 +37,13 @@ class SettingController extends Controller
 
                 $ProductFolder = ['value' => $Setting->ProductFolder, 'name'=>$FolderName ];
             } catch (ClientException $exception) {
-                $ProductFolder == null;
+                $ProductFolder = null;
                 $cfg = new cfg();
                 $app = AppInstanceContoller::loadApp($cfg->appId, $accountId);
-                $app->ProductFolder = $ProductFolder;
+                $app->ProductFolder = null;
                 $app->persist();
             }
+
         }
 
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
