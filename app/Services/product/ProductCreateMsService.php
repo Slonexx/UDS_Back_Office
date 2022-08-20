@@ -4,6 +4,7 @@ namespace App\Services\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BackEnd\BDController;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
@@ -40,7 +41,7 @@ class ProductCreateMsService
     //Add products to MS from UDS
     public function insertToMs($data)
     {
-
+        //dd($data);
         $folderMeta = $this->getFolderMetaById($data['folder_id'],$data['tokenMs']);
 
         return $this->notAddedInMs(
@@ -91,13 +92,13 @@ class ProductCreateMsService
                 //if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                 if ($productUds->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
-                        $this->createProductMs($apiKeyMs,$productUds,$parentFolder);
+                        $this->createProductMs($apiKeyMs,$productUds,$accountId,$parentFolder);
                     }
                     // $count++;
                 }
                 elseif ($productUds->data->type == "VARYING_ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
-                        $this->createVariantProduct($apiKeyMs,$productUds,$parentFolder);
+                        $this->createVariantProduct($apiKeyMs,$productUds,$accountId,$parentFolder);
                     }
                     // $count++;
                 }
@@ -106,6 +107,7 @@ class ProductCreateMsService
                         $apiKeyMs,
                         $productUds->name,
                         $productUds->id,
+                        $accountId,
                         $parentFolder
                     );
                     //dd($category);
@@ -116,7 +118,8 @@ class ProductCreateMsService
                         $productUds->id,
                         $companyId,
                         $apiKeyUds,
-                        $apiKeyMs
+                        $apiKeyMs,
+                        $accountId
                     );
                 }
                 // }
@@ -150,7 +153,7 @@ class ProductCreateMsService
     }
 
     private function addProductsByCategoryUds(
-        $hrefProductId,$parentCategoryMeta,$nodeId, $companyId, $apiKeyUds,$apiKeyMs
+        $hrefProductId,$parentCategoryMeta,$nodeId, $companyId, $apiKeyUds,$apiKeyMs,$accountId
     ){
         //$url = "https://api.uds.app/partner/v2/goods?max=50&nodeId=".$nodeId;
         //$client = new UdsClient($companyId,$apiKeyUds);
@@ -163,25 +166,27 @@ class ProductCreateMsService
             foreach ($json->rows as $row){
                 $currId = "".$row->id;
                 if ($row->data->type == "CATEGORY"){
-                    $category = $this->createCategoryMs($apiKeyMs,$row->name,$row->id,$parentCategoryMeta);
+                    $category = $this->createCategoryMs($apiKeyMs,$row->name,$row->id,$accountId,$parentCategoryMeta);
                     // dd($category->pathName);
+                    if ($category != null)
                     $this->addProductsByCategoryUds(
                         $hrefProductId,
                         $category->meta,
                         $row->id,
                         $companyId,
                         $apiKeyUds,
-                        $apiKeyMs
+                        $apiKeyMs,
+                        $accountId
                     );
                 }
                 elseif ($row->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefProductId,$apiKeyMs)){
-                        $this->createProductMs($apiKeyMs,$row,$parentCategoryMeta);
+                        $this->createProductMs($apiKeyMs,$row,$accountId,$parentCategoryMeta);
                     }
                 }
                 elseif ($row->data->type == "VARYING_ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefProductId,$apiKeyMs)){
-                        $this->createVariantProduct($apiKeyMs,$row,$parentCategoryMeta);
+                        $this->createVariantProduct($apiKeyMs,$row,$accountId,$parentCategoryMeta);
                     }
                 }
             }
@@ -189,7 +194,7 @@ class ProductCreateMsService
         }
     }
 
-    private function createCategoryMs($apiKeyMs, $nameFolder,$externalCode,$parentFolder = null)
+    private function createCategoryMs($apiKeyMs, $nameFolder,$externalCode,$accountId,$parentFolder = null)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
         $client = new MsClient($apiKeyMs);
@@ -215,11 +220,17 @@ class ProductCreateMsService
                     "meta" => $parentFolder,
                 ];
             }
-            return $client->post($url,$bodyCategory);
+            try {
+                return $client->post($url,$bodyCategory);
+            }catch (ClientException $e){
+                $bd = new BDController();
+                $bd->errorProductLog($accountId,$e->getMessage());
+                return null;
+            }
         }
     }
 
-    private function createProductMs($apiKeyMs, $productUds, $productFolderMeta = null)
+    private function createProductMs($apiKeyMs, $productUds,$accountId, $productFolderMeta = null)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
         $bodyProduct["name"] = $productUds->name;
@@ -420,13 +431,14 @@ class ProductCreateMsService
         $client = new MsClient($apiKeyMs);
         try {
             $client->post($url,$bodyProduct);
-        } catch (ClientException $e){
-            dd($e);
+        }catch (ClientException $e){
+            $bd = new BDController();
+            $bd->errorProductLog($accountId,$e->getMessage());
         }
 
     }
 
-    private function createVariantProduct($apiKeyMs, $productVar, $productFolderMeta = null){
+    private function createVariantProduct($apiKeyMs, $productVar,$accountId, $productFolderMeta = null){
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
         $client = new MsClient($apiKeyMs);
         foreach ($productVar->data->variants as $variant){
@@ -479,10 +491,11 @@ class ProductCreateMsService
                 ];
             }
 
-            try{
+            try {
                 $client->post($url,$bodyProductVar);
-            } catch (ClientException $e){
-                dd($e);
+            }catch (ClientException $e){
+                $bd = new BDController();
+                $bd->errorProductLog($accountId,$e->getMessage());
             }
         }
     }

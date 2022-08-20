@@ -4,6 +4,7 @@ namespace App\Services\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BackEnd\BDController;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
@@ -43,17 +44,19 @@ class ProductUpdateMsService
         $apiKeyUds = $data['apiKeyUds'];
         $accountId = $data['accountId'];
 
+        //dd($data);
+
         set_time_limit(3600);
 
         $hrefAttrib = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs)->href;
-        $this->findNodesUds($apiKeyMs,$companyId,$apiKeyUds,$hrefAttrib);
+        $this->findNodesUds($apiKeyMs,$companyId,$apiKeyUds,$hrefAttrib,$accountId);
 
         return [
             "message" => "Updated products in MS"
         ];
     }
 
-    private function findNodesUds($apiKeyMs, $companyId, $apiKeyUds, $hrefMsAttribProduct, $nodeId = 0): void
+    private function findNodesUds($apiKeyMs, $companyId, $apiKeyUds, $hrefMsAttribProduct, $accountId, $nodeId = 0): void
     {
         if ($nodeId > 0 ){
             $url = "https://api.uds.app/partner/v2/goods?max=50&nodeId=".$nodeId;
@@ -77,16 +80,16 @@ class ProductUpdateMsService
                 $clientMs = new MsClient($apiKeyMs);
                 $json = $clientMs->get($urlToFind);
                 if ($json->meta->size > 0){
-                    $this->updateProductInMs($row,$json->rows[0]->id,$apiKeyMs);
+                    $this->updateProductInMs($row,$json->rows[0]->id,$accountId,$apiKeyMs);
                 }
             }
             elseif ($row->data->type == "CATEGORY"){
-                $this->findNodesUds($apiKeyMs,$companyId,$apiKeyUds,$hrefMsAttribProduct,$currId);
+                $this->findNodesUds($apiKeyMs,$companyId,$apiKeyUds,$hrefMsAttribProduct,$accountId,$currId);
             }
         }
     }
 
-    private function updateProductInMs($productUds, $idProductMs,$apiKeyMs)
+    private function updateProductInMs($productUds,$idProductMs,$accountId,$apiKeyMs)
     {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idProductMs;
         $bodyProduct["name"] = $productUds->name;
@@ -327,8 +330,9 @@ class ProductUpdateMsService
         $client = new MsClient($apiKeyMs);
         try {
             $client->put($url,$bodyProduct);
-        } catch (ClientException $e){
-            dd($e);
+        }catch (ClientException $e){
+            $bd = new BDController();
+            $bd->errorProductLog($accountId,$e->getMessage());
         }
     }
 
