@@ -24,7 +24,7 @@ class AttributeController extends Controller
             "accountId" => "required|string"
         ]);
 
-        $this->attributeService->setAllAttributesMs($data["tokenMs"]);
+        $this->attributeService->setAllAttributesMs($data);
 
     }
 
