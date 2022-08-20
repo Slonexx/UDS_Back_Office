@@ -3,6 +3,8 @@
 namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
+use App\Http\Controllers\BackEnd\BDController;
+use GuzzleHttp\Exception\ClientException;
 
 class AttributeService
 {
@@ -159,21 +161,27 @@ class AttributeService
         $this->getBodyToAdd($client, $url, $bodyAttributes);
     }
 
-    public function setAllAttributesMs($apiKeyMs): void
+    public function setAllAttributesMs($data): void
     {
-        //$this->createProductAttributes($apiKeyMs);
-        //$this->createAgentAttributes($apiKeyMs);
-        $this->createOrderAttributes($apiKeyMs);
+        $apiKeyMs = $data['tokenMs'];
+        $accountId = $data['accountId'];
 
-        $this->createDemandAttributes($apiKeyMs);
+        try {
+            //$this->createProductAttributes($apiKeyMs);
+            //$this->createAgentAttributes($apiKeyMs);
+            $this->createOrderAttributes($apiKeyMs);
 
-        $this->createPaymentInAttributes($apiKeyMs);
-        //$this->createPaymentOutAttributes($apiKeyMs);
+            $this->createDemandAttributes($apiKeyMs);
 
-        $this->createCashInAttributes($apiKeyMs);
-        //$this->createCashOutAttributes($apiKeyMs);
-
-        $this->createInvoiceOutAttributes($apiKeyMs);
+            $this->createPaymentInAttributes($apiKeyMs);
+            //$this->createPaymentOutAttributes($apiKeyMs);
+            $this->createCashInAttributes($apiKeyMs);
+            //$this->createCashOutAttributes($apiKeyMs);
+            $this->createInvoiceOutAttributes($apiKeyMs);
+        } catch (ClientException $e){
+            $bd = new BDController();
+            $bd->errorLog($accountId,$e->getMessage());
+        }
     }
 
     //returns doc attribute values

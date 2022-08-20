@@ -2,6 +2,8 @@
 
 namespace App\Services\Settings;
 
+use App\Http\Controllers\Config\getSettingVendorController;
+
 class StateOrderSettings
 {
 
@@ -30,22 +32,22 @@ class StateOrderSettings
                 $currSetting = $setting;
                 break;
             }
-        }
-
-        if($currSetting != null){
-
-            switch ($statusFrom) {
-                case 'COMPLETED':
-                    $status = "";
-                    break;
-                case 'DELETED':
-                    $status = "";
-                    break;
-            }
-
         }*/
 
-        switch ($statusFrom) {
+        $currSetting = new getSettingVendorController($accountId);
+
+        if($currSetting != null){
+            switch ($statusFrom) {
+                case 'COMPLETED':
+                    $status = $currSetting->COMPLETED;
+                    break;
+                case 'DELETED':
+                    $status = $currSetting->DELETED;
+                    break;
+            }
+        }
+
+        /*switch ($statusFrom) {
             case 'NEW':
                 $status = "Подтвержден";
                 break;
@@ -55,7 +57,7 @@ class StateOrderSettings
             case 'DELETED':
                 $status = "Отменен";
                 break;
-        }
+        }*/
 
         return $status;
     }
