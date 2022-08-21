@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class counterparty_add extends Model
 {
     protected $fillable = [
+        'accountId',
         'tokenMC',
         'companyId',
         'tokenUDS',
