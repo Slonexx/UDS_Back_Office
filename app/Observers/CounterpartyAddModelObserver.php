@@ -2,8 +2,11 @@
 
 namespace App\Observers;
 
+use App\Http\Controllers\BackEnd\BDController;
 use App\Models\counterparty_add;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Promise\Utils;
 
 class CounterpartyAddModelObserver
 {
@@ -27,6 +30,29 @@ class CounterpartyAddModelObserver
 
         }
 
+        //agent add
+        //set Attributes
+        $client = new Client(['base_uri' => 'http://uds/api/']);
+
+        $promises = [
+            'agents' => $client->postAsync('agentMs',[
+                "tokenMs" => '',
+                "companyId" => "",
+                "apiKeyUds" => "",
+                "accountId" => ""
+            ]),
+            'attributes' => $client->postAsync('attributes',[
+                "tokenMs" => 'required|string',
+                "accountId" => "required|string"
+            ])
+        ];
+
+/*        try {
+            //$responses = Utils::unwrap($promises);
+        } catch ()*/
+
+
+        $infoLogModel->delete();
     }
 
 
