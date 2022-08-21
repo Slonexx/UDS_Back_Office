@@ -42,6 +42,7 @@ class BDController extends Controller
     public function createCounterparty($accountId, $tokenMC, $companyId, $tokenUDS){
         try {
             counterparty_add::create([
+                'accountId' => $accountId,
                 'tokenMC' => $tokenMC,
                 'companyId' => $companyId,
                 'tokenUDS' => $tokenUDS,

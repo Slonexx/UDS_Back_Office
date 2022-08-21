@@ -11,6 +11,7 @@ class CreateCounterpartyAddsTable extends Migration
     {
         Schema::create('counterparty_adds', function (Blueprint $table) {
             $table->id();
+            $table->string('accountId');
             $table->string('tokenMC');
             $table->string('companyId');
             $table->string('tokenUDS');
