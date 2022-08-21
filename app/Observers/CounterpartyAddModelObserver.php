@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Http\Controllers\BackEnd\BDController;
 use App\Models\counterparty_add;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Promise\Utils;
 
@@ -36,21 +37,23 @@ class CounterpartyAddModelObserver
 
         $promises = [
             'agents' => $client->postAsync('agentMs',[
-                "tokenMs" => '',
-                "companyId" => "",
-                "apiKeyUds" => "",
-                "accountId" => ""
+                "tokenMs" => $infoLogModel->tokenMC,
+                "companyId" => $infoLogModel->companyId,
+                "apiKeyUds" => $infoLogModel->tokenUDS,
+                "accountId" => $infoLogModel->accountId
             ]),
             'attributes' => $client->postAsync('attributes',[
-                "tokenMs" => 'required|string',
-                "accountId" => "required|string"
+                "tokenMs" => $infoLogModel->tokenMC,
+                "accountId" => $infoLogModel->accountId
             ])
         ];
 
-/*        try {
-            //$responses = Utils::unwrap($promises);
-        } catch ()*/
-
+        try {
+            Utils::unwrap($promises);
+        } catch (\Throwable $e) {
+            $bd = new BDController();
+            $bd->errorLog($infoLogModel->accountId,$e->getMessage());
+        }
 
         $infoLogModel->delete();
     }
