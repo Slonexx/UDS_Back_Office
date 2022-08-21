@@ -167,12 +167,10 @@ class AttributeService
         $accountId = $data['accountId'];
 
         try {
-            //$this->createProductAttributes($apiKeyMs);
+            $this->createProductAttributes($apiKeyMs);
             //$this->createAgentAttributes($apiKeyMs);
             $this->createOrderAttributes($apiKeyMs);
-
             $this->createDemandAttributes($apiKeyMs);
-
             $this->createPaymentInAttributes($apiKeyMs);
             //$this->createPaymentOutAttributes($apiKeyMs);
             $this->createCashInAttributes($apiKeyMs);
