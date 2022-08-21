@@ -7,6 +7,7 @@ use App\Models\counterparty_add;
 use App\Models\errorLog;
 use App\Models\order_id;
 use App\Models\order_update;
+use App\Models\ProductModel;
 use App\Models\webhookOrderLog;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
@@ -74,6 +75,21 @@ class BDController extends Controller
             errorLog::create([
                 'accountId' => $accountId,
                 'ErrorMessage' => $exception->getMessage(),
+            ]);
+        }
+    }
+
+    public function errorProductLog($accountId, $message)
+    {
+        try {
+            ProductModel::create([
+                "accountId" => $accountId,
+                "message" => $message,
+            ]);
+        } catch (ClientException $e) {
+            ProductModel::create([
+                "accountId" => $accountId,
+                "message" => $e->getMessage(),
             ]);
         }
     }

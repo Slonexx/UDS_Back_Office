@@ -21,9 +21,10 @@ class AttributeController extends Controller
     {
         $data = $request->validate([
             "tokenMs" => 'required|string',
+            "accountId" => "required|string"
         ]);
 
-        $this->attributeService->setAllAttributesMs($data["tokenMs"]);
+        $this->attributeService->setAllAttributesMs($data);
 
     }
 

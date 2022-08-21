@@ -4,6 +4,7 @@ namespace App\Services\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BackEnd\BDController;
 use App\Services\AdditionalServices\StockProductService;
 use App\Services\MetaServices\Entity\StoreService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
@@ -35,6 +36,7 @@ class ProductUpdateUdsService
         $apiKeyUds = $data['apiKeyUds'];
         $folderId = $data['folder_id'];
         $storeName = $data['store'];
+        $accountId = $data['accountId'];
 
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
 
@@ -59,13 +61,13 @@ class ProductUpdateUdsService
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
-                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds,$idNodeCategory);
+                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds,$accountId,$idNodeCategory);
                     if ($updatedProduct != null){
                         $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
                     }
                 }
                 else {
-                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds);
+                    $updatedProduct = $this->updateProductInUds($row,$storeHref,$productId,$apiKeyMs,$companyId, $apiKeyUds,$accountId);
                     if ($updatedProduct != null){
                         $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
                     }
@@ -80,10 +82,11 @@ class ProductUpdateUdsService
 
     }
 
-    private function updateProductInUds($msProduct,$storeHref,$goodId, $apiKeyMs, $companyId, $apiKeyUds, $nodeId = 0)
+    private function updateProductInUds($msProduct,$storeHref,$goodId, $apiKeyMs, $companyId, $apiKeyUds,$accountId, $nodeId = 0)
     {
         $url = "https://api.uds.app/partner/v2/goods/".$goodId;
         $client = new UdsClient($companyId,$apiKeyUds);
+        $error_log = "Не удалось обновить товар ".$msProduct->name." в UDS.";
 
         $json = $client->get($url);
 
@@ -100,11 +103,17 @@ class ProductUpdateUdsService
         }
 
         if ($prices["salePrice"] <= 0){
+            $bd = new BDController();
+            $bd->errorProductLog($accountId,$error_log." Не была указана цена товара в MS");
             return null;
         }
 
         $nameOumUds = $this->getUomUdsByMs($msProduct->uom->meta->href,$apiKeyMs);
-        if ($nameOumUds == "") return null;
+        if ($nameOumUds == ""){
+            $bd = new BDController();
+            $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
+            return null;
+        }
 
         if (strlen($msProduct->name) > 100){
             $name = mb_substr($msProduct->name,0,100);
@@ -143,6 +152,8 @@ class ProductUpdateUdsService
                     || $nameOumUds == "LITRE"
                 || $nameOumUds == "METRE")
             ){
+                $bd = new BDController();
+                $bd->errorProductLog($accountId,$error_log." Выбранная ед.изм товара в MS, не может быть дробным товаром в UDS.");
                 return null;
             }
 
@@ -154,12 +165,16 @@ class ProductUpdateUdsService
                         $body["data"]["increment"] *= 1000.0;
                         if ($body["data"]["increment"] >= 10000000){
                             //dd($body["data"]["increment"]);
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                             return null;
                         }
                     } elseif ($nameOumUds == "CENTIMETRE"){
                         $body["data"]["increment"] *= 100.0;
                         if ($body["data"]["increment"] >= 1000000){
                             //dd($body["data"]["increment"]);
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                             return null;
                         }
                     }
@@ -171,12 +186,16 @@ class ProductUpdateUdsService
                         $body["data"]["price"] /= 1000;
                         $body["data"]["minQuantity"] *= 1000.0;
                         if ($body["data"]["minQuantity"] >= 10000000){
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
                             return null;
                         }
                     } elseif ($nameOumUds == "CENTIMETRE"){
                         $body["data"]["price"] /= 100;
                         $body["data"]["minQuantity"] *= 100.0;
                         if ($body["data"]["minQuantity"] >= 1000000){
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
                             return null;
                         }
                     }
@@ -209,11 +228,15 @@ class ProductUpdateUdsService
                 )
             ){
                 //dd(($body));
+                $bd = new BDController();
+                $bd->errorProductLog($accountId,$error_log." У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
                 return null;
             }
 
             if($isFractionProduct) {
                 if ($body["data"]["minQuantity"] < $body["data"]["increment"]){
+                    $bd = new BDController();
+                    $bd->errorProductLog($accountId,$error_log." У дробного товара Шаг дробного значения, не может быть больше Минимального размера заказа");
                     return null;
                 }
             }
@@ -223,6 +246,8 @@ class ProductUpdateUdsService
                 $dPrice = explode('.',"".$body["data"]["price"]);
                 //dd($dPrice);
                 if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
+                    $bd = new BDController();
+                    $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
                     return null;
                 }
                 // }
@@ -252,10 +277,11 @@ class ProductUpdateUdsService
 
         try {
             return $client->put($url,$body);
-        } catch (ClientException $e){
-            dd(json_encode($body),$e->getMessage());
+        }catch (ClientException $e){
+            $bd = new BDController();
+            $bd->errorProductLog($accountId,$e->getMessage());
+            return null;
         }
-
     }
 
     private function getMs($folderName,$apiKeyMs){
