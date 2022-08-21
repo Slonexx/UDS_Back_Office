@@ -23,7 +23,7 @@ class SettingsService
                 $data = file_get_contents($directory.'/'.$file->getFilename());
                 $unser = json_encode( unserialize($data) );
                 $setting = json_decode($unser);
-                array_push($usersSettings,$setting);
+                $usersSettings[] = $setting;
             }
         }
 
