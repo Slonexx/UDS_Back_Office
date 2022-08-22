@@ -28,7 +28,7 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
     Route::post('updateOrdersMs',[OrderController::class,'updateMs']);
 
 
-    Route::post('install',[installContoller::class,'install']);
+    Route::get('install',[installContoller::class,'install']);
 
     Route::post('/webhook/{accountId}/client',[postController::class, 'postClint']);
     Route::post('/webhook/{accountId}/order',[postController::class, 'postOrder']);
