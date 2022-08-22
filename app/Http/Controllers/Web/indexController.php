@@ -24,6 +24,16 @@ class indexController extends Controller
         $accountId = $employee->accountId;
         $isAdmin = $employee->permissions->admin->view;
 
+        $Setting = new getSettingVendorController($accountId);
+
+        $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
+        $client->post('attributes',[
+            'headers'=> ['Accept' => 'application/json'],
+            'form_params' => [
+                "tokenMs" => $Setting->TokenMoySklad,
+                "accountId" => $accountId
+            ]
+        ]);
 
         return redirect()->route('indexMain', [
             'accountId' => $accountId,
