@@ -22,8 +22,8 @@ switch ($method) {
 
         $appUid = $data->appUid;
         $accessToken = $data->access[0]->access_token;
-
-        $install = file_get_contents('https://smartuds.kz/api/install');
+        $url = 'https://smartuds.kz/api/install/'.$accountId;
+        $install = file_get_contents($url);
 
         if (!$app->getStatusName()) {
             $app->TokenMoySklad = $accessToken;
