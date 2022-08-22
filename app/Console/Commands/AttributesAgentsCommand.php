@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Models\counterparty_add;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Promise\Utils;
 use Illuminate\Console\Command;
 
@@ -15,7 +17,7 @@ class AttributesAgentsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'attributes:start {accountId}';
+    protected $signature = 'attributes:start';
 
     /**
      * The console command description.
@@ -38,36 +40,38 @@ class AttributesAgentsCommand extends Command
     {
         //agent add
         //set Attributes
-        $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
 
-        $settings = new getSettingVendorController($this->argument('accountId'));
+        $accountSavedSettings = counterparty_add::all();
+        //dd($accountSavedSettings);
+        foreach ($accountSavedSettings as $savedSetting){
+                $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
+                $settings = new getSettingVendorController($savedSetting->accountId);
+                //dd($settings);
+                $promises = [
+                    'agents' => $client->postAsync('agentMs',[
+                        'headers'=> ['Accept' => 'application/json'],
+                        'form_params' => [
+                            "tokenMs" => $settings->TokenMoySklad,
+                            "companyId" => $settings->companyId,
+                            "apiKeyUds" => $settings->TokenUDS,
+                            "accountId" => $settings->accountId
+                        ]
+                    ]),
+                    'attributes' => $client->postAsync('attributes',[
+                        'headers'=> ['Accept' => 'application/json'],
+                        'form_params' => [
+                            "tokenMs" => $settings->TokenMoySklad,
+                            "accountId" => $settings->accountId
+                        ]
+                    ])
+                ];
 
-        //dd($settings);
-
-        $promises = [
-            'agents' => $client->postAsync('agentMs',[
-                'headers'=> ['Accept' => 'application/json'],
-                'form_params' => [
-                    "tokenMs" => $settings->TokenMoySklad,
-                    "companyId" => $settings->companyId,
-                    "apiKeyUds" => $settings->TokenUDS,
-                    "accountId" => $settings->accountId
-                ]
-            ]),
-            'attributes' => $client->postAsync('attributes',[
-                'headers'=> ['Accept' => 'application/json'],
-                'form_params' => [
-                    "tokenMs" => $settings->TokenMoySklad,
-                    "accountId" => $settings->accountId
-                ]
-            ])
-        ];
-
-        try {
-            Utils::unwrap($promises);
-        } catch (\Throwable $e) {
-            $bd = new BDController();
-            $bd->errorLog($settings->accountId,$e->getMessage());
-        }
+                try {
+                    Utils::unwrap($promises);
+                } catch (ClientException $e) {
+                    $bd = new BDController();
+                    $bd->errorLog($settings->accountId,$e->getMessage());
+                }
+            }
     }
 }

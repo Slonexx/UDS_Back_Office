@@ -32,11 +32,20 @@ class CounterpartyAddModelObserver
 
         }
 
-        Artisan::call('attributes:start',[
-             'accountId' => $infoLogModel->accountId
-        ]);
+        /*$client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
+        $client->post('attributes',[
+            'headers'=> ['Accept' => 'application/json'],
+            'form_params' => [
+                "tokenMs" => $infoLogModel->tokenMC,
+                "accountId" => $infoLogModel->accountId
+            ]
+        ]);*/
 
-        $infoLogModel->delete();
+        /*Artisan::queue('attributes:start',[
+             'accountId' => $infoLogModel->accountId
+        ])->onQueue("attributes");*/
+        //exec('php artisan queue:work --queue=attributes --once > storage/logs/process.log &');
+        //$infoLogModel->delete();
     }
 
 
