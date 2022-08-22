@@ -36,13 +36,13 @@
                 <button class="dropdown-btn">Помощь
                     <i class="fa fa-caret-down"></i></button>
                     <div class="dropdown-container">
-                        <a target="_blank" href="https://smartkaspi.bitrix24.site/contact/">
+                        <a target="_blank" href="https://smartuds.bitrix24.site/contact/">
                             <i class="fa-solid fa-address-book"></i>
                             Контакты </a>
                         <a target="_blank" href="https://api.whatsapp.com/send/?phone=77232400545&text=" >
                             <i class="fa-brands fa-whatsapp"></i>
                             Написать на WhatsApp </a>
-                        <a  href="" >
+                        <a target="_blank" href="https://smartuds.bitrix24.site/instruktsiiponastroyke/" >
                             <i class="fa-solid fa-chalkboard-user"></i>
                              Инструкция </a>
                     </div>
