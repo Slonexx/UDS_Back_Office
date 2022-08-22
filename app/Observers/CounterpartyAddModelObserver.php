@@ -33,18 +33,24 @@ class CounterpartyAddModelObserver
 
         //agent add
         //set Attributes
-        $client = new Client(['base_uri' => 'http://uds/api/']);
+        $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
 
         $promises = [
             'agents' => $client->postAsync('agentMs',[
-                "tokenMs" => $infoLogModel->tokenMC,
-                "companyId" => $infoLogModel->companyId,
-                "apiKeyUds" => $infoLogModel->tokenUDS,
-                "accountId" => $infoLogModel->accountId
+                'headers'=> ['Accept' => 'application/json'],
+                'form_params' => [
+                   "tokenMs" => $infoLogModel->tokenMC,
+                   "companyId" => $infoLogModel->companyId,
+                   "apiKeyUds" => $infoLogModel->tokenUDS,
+                   "accountId" => $infoLogModel->accountId
+               ]
             ]),
             'attributes' => $client->postAsync('attributes',[
-                "tokenMs" => $infoLogModel->tokenMC,
-                "accountId" => $infoLogModel->accountId
+                'headers'=> ['Accept' => 'application/json'],
+                'form_params' => [
+                    "tokenMs" => $infoLogModel->tokenMC,
+                    "accountId" => $infoLogModel->accountId
+                ]
             ])
         ];
 

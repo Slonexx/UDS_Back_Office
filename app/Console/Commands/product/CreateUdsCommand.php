@@ -66,7 +66,7 @@ class CreateUdsCommand extends Command
 
         $client = new Client();
         //Из Моего склада создание товаров в UDS
-        $url = "http://uds/api/productUds";
+        $url = "https://smartuds.kz/api/productUds";
 
         $promises = (function () use ($accountIds, $client, $url){
             foreach ($accountIds as $accountId){
