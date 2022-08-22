@@ -27,7 +27,11 @@ switch ($method) {
             $app->TokenMoySklad = $accessToken;
             $app->status = AppInstanceContoller::SETTINGS_REQUIRED;
             $app->persist();
+
+            $url = 'https://smartuds.kz/api/install/'.$accountId;
+            $install = file_get_contents($url);
         }
+
         break;
     case 'GET':
         break;

@@ -38,7 +38,7 @@ class postController extends Controller
 
         $body = [
             "name" => $request->displayName,
-            "phone" => $request->phone,
+            "phone" => (string) $request->phone,
             "email" => $email,
             "externalCode" => (string) $externalCode,
         ];
