@@ -6,6 +6,7 @@ use App\Http\Controllers\BackEnd\BDController;
 use App\Models\counterparty_add;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Promise\Utils;
 
@@ -31,35 +32,9 @@ class CounterpartyAddModelObserver
 
         }
 
-        //agent add
-        //set Attributes
-        $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
-
-        $promises = [
-            'agents' => $client->postAsync('agentMs',[
-                'headers'=> ['Accept' => 'application/json'],
-                'form_params' => [
-                   "tokenMs" => $infoLogModel->tokenMC,
-                   "companyId" => $infoLogModel->companyId,
-                   "apiKeyUds" => $infoLogModel->tokenUDS,
-                   "accountId" => $infoLogModel->accountId
-               ]
-            ]),
-            'attributes' => $client->postAsync('attributes',[
-                'headers'=> ['Accept' => 'application/json'],
-                'form_params' => [
-                    "tokenMs" => $infoLogModel->tokenMC,
-                    "accountId" => $infoLogModel->accountId
-                ]
-            ])
-        ];
-
-        try {
-            Utils::unwrap($promises);
-        } catch (\Throwable $e) {
-            $bd = new BDController();
-            $bd->errorLog($infoLogModel->accountId,$e->getMessage());
-        }
+        Artisan::call('attributes:start',[
+             'accountId' => $infoLogModel->accountId
+        ]);
 
         $infoLogModel->delete();
     }
