@@ -44,6 +44,7 @@ class UpdateUdsCommand extends Command
         foreach ($accountIds as $accountId){
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null || $settings->companyId != null){
+                if ($settings->UpdateProduct != "1")
                 $countSettings++;
             }
         }
@@ -70,7 +71,7 @@ class UpdateUdsCommand extends Command
                 $settings = new getSettingVendorController($accountId);
                 //dd($settings);
                 if (
-                    $settings->TokenUDS == null || $settings->companyId == null
+                    $settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"
                 ){
                     continue;
                 }

@@ -44,7 +44,8 @@ class CreateMsCommand extends Command
         $countSettings = 0;
         foreach ($accountIds as $accountId){
             $settings = new getSettingVendorController($accountId);
-            if ($settings->TokenUDS != null || $settings->companyId != null){
+            if ($settings->TokenUDS != null && $settings->companyId != null){
+                if ($settings->UpdateProduct != "0")
                 $countSettings++;
             }
         }
@@ -70,7 +71,7 @@ class CreateMsCommand extends Command
             foreach ($accountIds as $accountId){
                 $settings = new getSettingVendorController($accountId);
                 if (
-                    $settings->TokenUDS == null || $settings->companyId == null
+                    $settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"
                 ){
                     continue;
                 }
