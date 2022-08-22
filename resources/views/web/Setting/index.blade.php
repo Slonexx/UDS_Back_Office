@@ -65,8 +65,8 @@
                     <label class="mx-1">
                         <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover5"
                                 data-toggle="popover" data-placement="right" data-trigger="focus"
-                                data-content="Выберите откуда будет изменяться товары">
-                        </button>  Выберите категории:  </label>
+                                data-content="Выберите откуда будет браться товары">
+                        </button>  Выберите категорию:  </label>
 
                     <script> $('.myPopover5').popover(); </script>
 
