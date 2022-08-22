@@ -23,6 +23,8 @@ switch ($method) {
         $appUid = $data->appUid;
         $accessToken = $data->access[0]->access_token;
 
+        $install = file_get_contents('https://smartuds.kz/api/install');
+
         if (!$app->getStatusName()) {
             $app->TokenMoySklad = $accessToken;
             $app->status = AppInstanceContoller::SETTINGS_REQUIRED;
