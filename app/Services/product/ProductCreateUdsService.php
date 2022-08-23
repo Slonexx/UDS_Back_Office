@@ -57,8 +57,8 @@ class ProductCreateUdsService
         );
     }
 
-    private function getUdsCheck($companyId, $apiKeyUds){
-        $this->findNodesUds($nodeIds,$companyId,$apiKeyUds);
+    private function getUdsCheck($companyId, $apiKeyUds,$accountId){
+        $this->findNodesUds($nodeIds,$companyId,$apiKeyUds,$accountId);
         if ($nodeIds == null){
             $nodeIds = [
                 "productIds" => [],
@@ -76,7 +76,7 @@ class ProductCreateUdsService
     }
 
     private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
-        $productsUds = $this->getUdsCheck($companyId,$apiKeyUds);
+        $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
         //dd($productsUds);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
