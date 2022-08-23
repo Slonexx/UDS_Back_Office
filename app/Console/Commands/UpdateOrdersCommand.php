@@ -55,7 +55,7 @@ class UpdateOrdersCommand extends Command
         if (count($accountIds) == 0) return;
 
         $client = new Client();
-        $url = "http://uds/api/updateOrdersMs";
+        $url = "https://smartuds.kz/api/updateOrdersMs";
         //$url = "https://online.moysklad.ru/api/remap/1.2/entity/currency";
         $countFailSettings = 0;
         $promises = (function () use ($accountIds, $client, $url, &$countFailSettings){
