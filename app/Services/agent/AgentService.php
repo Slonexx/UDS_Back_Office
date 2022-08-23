@@ -49,6 +49,8 @@ class AgentService
         $count = 0;
         $offset = 0;
 
+        $bd = new BDController();
+
         $check = DB::table('agent_503s')
             ->where('accountId',$accountId)->first();
 
@@ -58,7 +60,7 @@ class AgentService
 
         set_time_limit(3600);
 
-        try {
+       // try {
             while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
                 $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
                 foreach ($customersFromUds->rows as $customerFromUds){
@@ -69,7 +71,6 @@ class AgentService
                             $this->createAgent($apiKeyMs,$customerFromUds);
                             $count++;
                         }catch (ClientException $e){
-                            $bd = new BDController();
                             $bd->throwToRetryAgent($accountId,$url, $offset);
                             $bd->errorLog($accountId,$e->getMessage());
                         }
@@ -77,12 +78,13 @@ class AgentService
                     }
                 }
                 $offset += 50;
+                $bd->throwToRetryAgent($accountId,$url, $offset);
             }
-        } catch (\Throwable $exception){
-            $bd = new BDController();
-            $bd->errorLog($accountId,$exception->getMessage());
-            $bd->throwToRetryAgent($accountId,$url, $offset);
-        }
+       // } catch (\Throwable $exception){
+            //$bd = new BDController();
+           // $bd->errorLog($accountId,$exception->getMessage());
+
+       // }
 
 
 
