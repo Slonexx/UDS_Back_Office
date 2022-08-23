@@ -5,8 +5,10 @@ namespace App\Services\agent;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Models\Agent_503;
 use App\Models\errorLog;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\DB;
 
 class AgentService
 {
@@ -46,6 +48,14 @@ class AgentService
 
         $count = 0;
         $offset = 0;
+
+        $check = DB::table('agent_503s')
+            ->where('accountId',$accountId)->first();
+
+        if (!is_null($check)){
+            $offset = $check->offset;
+        }
+
         set_time_limit(3600);
         while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
             $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
@@ -58,6 +68,7 @@ class AgentService
                         $count++;
                     }catch (ClientException $e){
                         $bd = new BDController();
+                        $bd->throwToRetryAgent($accountId,$url, $offset);
                         $bd->errorLog($accountId,$e->getMessage());
                     }
 

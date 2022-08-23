@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\BackEnd;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agent_503;
 use App\Models\counterparty_add;
 use App\Models\errorLog;
 use App\Models\order_id;
@@ -90,6 +91,32 @@ class BDController extends Controller
             ProductModel::create([
                 "accountId" => $accountId,
                 "message" => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function throwToRetryAgent($accountId, $url, $offset){
+        try {
+            $results = DB::table('agent_503s')->where('accountId',$accountId)->get();
+
+            if (count($results) > 0 ){
+                DB::table('agent_503s')->where('accountId',$accountId)->update([
+                    'url' => $url,
+                    'offset' => $offset,
+                ]);
+            } else {
+                Agent_503::create([
+                    'accountId' => $accountId,
+                    'url' => $url,
+                    'offset' => $offset,
+                ]);
+            }
+
+        } catch (ClientException $e) {
+            Agent_503::create([
+                'accountId' => $accountId,
+                'url' => $e->getMessage(),
+                'offset' => 0,
             ]);
         }
     }
