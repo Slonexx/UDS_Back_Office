@@ -57,25 +57,34 @@ class AgentService
         }
 
         set_time_limit(3600);
-        while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
-            $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
-            foreach ($customersFromUds->rows as $customerFromUds){
-                //dd($customerFromUds);
-                $currId = $customerFromUds->participant->id;
-                if (!$this->isAgentExistsMs($currId,$customerFromUds->phone,$apiKeyMs)){
-                    try {
-                        $this->createAgent($apiKeyMs,$customerFromUds);
-                        $count++;
-                    }catch (ClientException $e){
-                        $bd = new BDController();
-                        $bd->throwToRetryAgent($accountId,$url, $offset);
-                        $bd->errorLog($accountId,$e->getMessage());
-                    }
 
+        try {
+            while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
+                $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
+                foreach ($customersFromUds->rows as $customerFromUds){
+                    //dd($customerFromUds);
+                    $currId = $customerFromUds->participant->id;
+                    if (!$this->isAgentExistsMs($currId,$customerFromUds->phone,$apiKeyMs)){
+                        try {
+                            $this->createAgent($apiKeyMs,$customerFromUds);
+                            $count++;
+                        }catch (ClientException $e){
+                            $bd = new BDController();
+                            $bd->throwToRetryAgent($accountId,$url, $offset);
+                            $bd->errorLog($accountId,$e->getMessage());
+                        }
+
+                    }
                 }
+                $offset += 50;
             }
-            $offset += 50;
+        } catch (ClientException $exception){
+            $bd = new BDController();
+            $bd->errorLog($accountId,$exception->getMessage());
+            $bd->throwToRetryAgent($accountId,$url, $offset);
         }
+
+
 
 
         return [
