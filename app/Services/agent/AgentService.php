@@ -78,7 +78,7 @@ class AgentService
                 }
                 $offset += 50;
             }
-        } catch (ClientException $exception){
+        } catch (\Throwable $exception){
             $bd = new BDController();
             $bd->errorLog($accountId,$exception->getMessage());
             $bd->throwToRetryAgent($accountId,$url, $offset);
