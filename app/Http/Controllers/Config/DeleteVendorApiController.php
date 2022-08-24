@@ -14,9 +14,14 @@ class DeleteVendorApiController extends Controller
         $Setting = new getSettingVendorController($accountId);
         $cfg = new cfg();
         $bd = new BDController();
-        $bd->deleteCounterparty($Setting->TokenMoySklad);
-        $path = public_path().'/Config/data/'.$cfg->appId.".".$accountId.'.json';
-        unlink($path);
+        try {
+            $bd->deleteCounterparty($Setting->TokenMoySklad);
+            $path = public_path().'/Config/data/'.$cfg->appId.".".$accountId.'.json';
+            unlink($path);
+        } catch (\Exception $e) {
+            $bd->errorLog($accountId, $e->getMessage());
+        }
+
 
     }
 }
