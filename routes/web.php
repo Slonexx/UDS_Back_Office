@@ -56,4 +56,4 @@ Route::get('/CountProduct/{accountId}/{folderName}', [SettingController::class, 
 
 
 
-Route::get('DeleteVendorApi/{appId}/{accountId}', [DeleteVendorApiController::class, 'Delete'])->name('Delete');
+Route::get('DeleteVendorApi/{accountId}', [DeleteVendorApiController::class, 'Delete']);

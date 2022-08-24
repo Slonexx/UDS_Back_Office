@@ -36,7 +36,8 @@ switch ($method) {
     case 'GET':
         break;
     case 'DELETE':
-        $app->deleteAnyway();
+        $url = 'https://smartuds.kz/DeleteVendorApi/'.$accountId;
+        $install = file_get_contents($url);
         $replyStatus = false;
         break;
 }
