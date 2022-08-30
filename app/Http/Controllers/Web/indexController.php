@@ -19,6 +19,9 @@ class indexController extends Controller
         session_start();
 
         $contextKey = $request->contextKey;
+        if ($contextKey == null) {
+            return view("main.dump");
+        }
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
@@ -50,9 +53,6 @@ class indexController extends Controller
         $cfg = new cfg();
 
         $contextKey = $request->contextKey;
-        if ($contextKey == null) {
-            return view("main.dump");
-        }
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
