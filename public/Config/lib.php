@@ -69,8 +69,7 @@ class AppInstanceContoller {
     }
 
     private static function buildFilename($appId, $accountId) {
-        $dirRoot = public_path().'/Config/';
-        return $dirRoot . "data/$appId.$accountId.json";
+        return $GLOBALS['dirRoot'] . "data/$appId.$accountId.json";
     }
 
     static function loadApp($accountId): AppInstanceContoller {
