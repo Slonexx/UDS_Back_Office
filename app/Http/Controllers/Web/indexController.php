@@ -50,6 +50,9 @@ class indexController extends Controller
         $cfg = new cfg();
 
         $contextKey = $request->contextKey;
+        if ($contextKey == null) {
+            return view("main.dump");
+        }
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
