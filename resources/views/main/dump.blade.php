@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-@include('reKassa.resources.views.head')
+@include('head')
 <style>
     html {
         background: url('https://colorlib.com/wp/wp-content/uploads/sites/2/404-error-template-18.png') ;
