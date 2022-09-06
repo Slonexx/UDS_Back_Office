@@ -303,7 +303,7 @@
         <div class="text-center">
             <div class="p-3 mb-2 bg-danger text-white">
                 <i class="fa-solid fa-ban text-danger "></i>
-                Данного контрагента нету в UDS
+                Данного контрагента нет в UDS
                 <i class="fa-solid fa-ban text-danger "></i>
             </div>
         </div>
