@@ -1,7 +1,12 @@
 @extends('layout')
 
 @section('content')
-
+    <script>
+        const url = 'https://office.uds.app/register/trial?ref=3942050';
+        function clickref(){
+            window.open(url);
+        }
+    </script>
     {{--<form action="  {{ route( 'CheckSave' , ['accountId' => $accountId] ) }} " method="post">
     @csrf <!-- {{ csrf_field() }} -->
         <button class="btn btn-outline-dark textHover"> check </button>
@@ -59,7 +64,10 @@
                 </div>
             </div>
         </div>
-
+        <div class="row mt-5">
+            <button onclick="clickref()" id="click" class="btn btn-success">Зарегистрируйтесь в системе лояльности UDS бесплатно!
+            </button>
+        </div>
     </div>
 
 @endsection
