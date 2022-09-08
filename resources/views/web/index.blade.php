@@ -65,8 +65,12 @@
             </div>
         </div>
         <div class="row mt-5">
-            <button onclick="clickref()" id="click" class="btn uds-gradient text-white">Зарегистрируйтесь в системе лояльности UDS бесплатно!
-            </button>
+            <div class="col-3"></div>
+            <div class="col-6 text-center">
+                <button onclick="clickref()" id="click" class="btn uds-gradient text-white">Зарегистрируйтесь в системе лояльности UDS бесплатно!
+                </button>
+            </div>
+            <div class="col-3"></div>
         </div>
     </div>
 
