@@ -420,7 +420,7 @@ class SettingController extends Controller
     public function CountProduct($accountId, $folderName){
         try {
             $Setting = new getSettingVendorController($accountId);
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName=';
 
             $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
             $Body = $Client->requestGet()->meta;
