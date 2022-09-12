@@ -5,6 +5,7 @@ namespace App\Services\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Services\AdditionalServices\ImgService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
@@ -18,27 +19,28 @@ class ProductCreateMsService
     private CurrencyHook $currencyHookService;
     private PriceTypeHook $priceTypeHookService;
     private UomHook $uomHookService;
+    private ImgService $imgService;
+
+
+
+    //Add products to MS from UDS
 
     /**
      * @param AttributeHook $attributeHookService
      * @param CurrencyHook $currencyHookService
      * @param PriceTypeHook $priceTypeHookService
      * @param UomHook $uomHookService
+     * @param ImgService $imgService
      */
-    public function __construct(
-        AttributeHook $attributeHookService,
-        CurrencyHook $currencyHookService,
-        PriceTypeHook $priceTypeHookService,
-        UomHook $uomHookService
-    )
+    public function __construct(AttributeHook $attributeHookService, CurrencyHook $currencyHookService, PriceTypeHook $priceTypeHookService, UomHook $uomHookService, ImgService $imgService)
     {
         $this->attributeHookService = $attributeHookService;
         $this->currencyHookService = $currencyHookService;
         $this->priceTypeHookService = $priceTypeHookService;
         $this->uomHookService = $uomHookService;
+        $this->imgService = $imgService;
     }
 
-    //Add products to MS from UDS
     public function insertToMs($data)
     {
         //dd($data);
@@ -92,7 +94,10 @@ class ProductCreateMsService
                 //if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                 if ($productUds->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
-                        $this->createProductMs($apiKeyMs,$productUds,$accountId,$parentFolder);
+                       $createdProduct = $this->createProductMs($apiKeyMs,$productUds,$accountId,$parentFolder);
+                       if ($createdProduct != null && count($productUds->imageUrls) > 0 ){
+                           $this->imgService->setImgMS($createdProduct,$productUds->imageUrls,$apiKeyMs);
+                       }
                     }
                     // $count++;
                 }
@@ -181,7 +186,10 @@ class ProductCreateMsService
                 }
                 elseif ($row->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefProductId,$apiKeyMs)){
-                        $this->createProductMs($apiKeyMs,$row,$accountId,$parentCategoryMeta);
+                        $createdProduct = $this->createProductMs($apiKeyMs,$row,$accountId,$parentCategoryMeta);
+                        if ($createdProduct != null && count($row->imageUrls) > 0 ){
+                            $this->imgService->setImgMS($createdProduct,$row->imageUrls,$apiKeyMs);
+                        }
                     }
                 }
                 elseif ($row->data->type == "VARYING_ITEM"){
@@ -430,10 +438,11 @@ class ProductCreateMsService
 
         $client = new MsClient($apiKeyMs);
         try {
-            $client->post($url,$bodyProduct);
+           return $client->post($url,$bodyProduct);
         }catch (ClientException $e){
             $bd = new BDController();
             $bd->errorProductLog($accountId,$e->getMessage());
+            return null;
         }
 
     }

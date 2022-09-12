@@ -5,6 +5,7 @@ namespace App\Services\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Services\AdditionalServices\ImgService;
 use App\Services\AdditionalServices\StockProductService;
 use App\Services\MetaServices\Entity\StoreService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
@@ -16,17 +17,20 @@ class ProductUpdateUdsService
     private AttributeHook $attributeHookService;
     private StockProductService $stockProductService;
     private StoreService $storeService;
+    private ImgService $imgService;
 
     /**
      * @param AttributeHook $attributeHookService
      * @param StockProductService $stockProductService
      * @param StoreService $storeService
+     * @param ImgService $imgService
      */
-    public function __construct(AttributeHook $attributeHookService, StockProductService $stockProductService, StoreService $storeService)
+    public function __construct(AttributeHook $attributeHookService, StockProductService $stockProductService, StoreService $storeService, ImgService $imgService)
     {
         $this->attributeHookService = $attributeHookService;
         $this->stockProductService = $stockProductService;
         $this->storeService = $storeService;
+        $this->imgService = $imgService;
     }
 
 
@@ -274,6 +278,10 @@ class ProductUpdateUdsService
 
         //if ($body["name"] == "Зелье единорога")
         //dd($body);
+        if (property_exists($msProduct,"images")){
+            $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+            $body["data"]["photos"] = $imgIds;
+        }
 
         try {
             return $client->put($url,$body);
