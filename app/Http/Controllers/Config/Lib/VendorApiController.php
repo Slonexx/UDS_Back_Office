@@ -34,7 +34,6 @@ class VendorApiController extends Controller
 
 }
 function makeHttpRequest(string $method, string $url, string $bearerToken, $body = null) {
-    dd(['url'=>$url, 'body'=>$body]);
     $opts = $body
         ? array('http' =>
             array(
