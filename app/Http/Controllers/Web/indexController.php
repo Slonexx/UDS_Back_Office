@@ -16,8 +16,6 @@ class indexController extends Controller
 
     public function index(Request $request){
 
-        session_start();
-
         $contextKey = $request->contextKey;
         if ($contextKey == null) {
             return view("main.dump");
