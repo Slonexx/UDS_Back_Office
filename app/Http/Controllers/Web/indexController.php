@@ -20,6 +20,7 @@ class indexController extends Controller
         if ($contextKey == null) {
             return view("main.dump");
         }
+        dd($request);
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
