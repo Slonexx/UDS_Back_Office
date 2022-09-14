@@ -49,7 +49,6 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
             )
         );
     $context = stream_context_create($opts);
-    dd(['url'=>$url, 'context'=>$context]);
     $result = file_get_contents($url, false, $context);
     return json_decode($result);
 }
