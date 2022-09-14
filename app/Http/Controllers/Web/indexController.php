@@ -15,12 +15,12 @@ class indexController extends Controller
 {
 
     public function index(Request $request){
-
+        dd($request);
         $contextKey = $request->contextKey;
         if ($contextKey == null) {
             return view("main.dump");
         }
-        dd($request);
+
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
