@@ -34,6 +34,7 @@ class VendorApiController extends Controller
 
 }
 function makeHttpRequest(string $method, string $url, string $bearerToken, $body = null) {
+    dd(['url'=>$url, 'body'=>$body]);
     $opts = $body
         ? array('http' =>
             array(
@@ -49,7 +50,6 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
             )
         );
     $context = stream_context_create($opts);
-    dd(['url'=>$url, 'context'=>$context]);
     $result = file_get_contents($url, false, $context);
     return json_decode($result);
 }
