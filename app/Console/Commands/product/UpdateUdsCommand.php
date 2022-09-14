@@ -64,7 +64,7 @@ class UpdateUdsCommand extends Command
 
         $client = new Client();
         //Из Моего склада обновление товаров в UDS
-        $url = "https://smartuds.kz/api/updateProductUds";
+        $url = "https://dev.smartuds.kz/api/updateProductUds";
 
         $promises = (function () use ($accountIds, $client, $url){
             foreach ($accountIds as $accountId){

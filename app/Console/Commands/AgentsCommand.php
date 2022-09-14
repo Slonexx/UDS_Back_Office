@@ -52,7 +52,7 @@ class AgentsCommand extends Command
 
         $client = new Client();
         //Из UDS создание товаров в Моем Складе
-        $url = "https://smartuds.kz/api/agentMs";
+        $url = "https://dev.smartuds.kz/api/agentMs";
 
         $promises = (function () use ($accountIds, $client, $url){
             foreach ($accountIds as $accountId){

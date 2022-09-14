@@ -9,7 +9,7 @@
             <div class="p-2 uds-gradient">
                 <div class="row text-white">
                     <div class="col-2">
-                        <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35"  alt="">
+                        <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35"  alt="">
                     </div>
                     <div class="mt-1 col-10">
                         <label class="s-min-16"> UDS интернет магазин </label>
