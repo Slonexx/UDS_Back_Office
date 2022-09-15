@@ -33,27 +33,14 @@ Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("in
 Route::get('/Setting/{accountId}/{isAdmin}', [SettingController::class, 'index'])->name('indexSetting');
 Route::get('/Setting/Document/{accountId}/{isAdmin}', [SettingController::class, 'indexDocument'])->name('indexDocument');
 Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'indexAdd'])->name('indexAdd');
-
 Route::get('/Setting/Error/{accountId}/{isAdmin}/{message}', [SettingController::class, 'indexError'])->name('indexError');
 Route::get('/Setting/noAdmin/{accountId}/{isAdmin}/', [SettingController::class, 'indexNoAdmin'])->name('indexNoAdmin');
+
 
 Route::post('/setSetting/{accountId}/{isAdmin}', [SettingController::class, 'postSettingIndex'])->name('setSettingIndex');
 Route::post('/setSetting/Document/{accountId}/{isAdmin}', [SettingController::class, 'postSettingDocument'])->name('setSettingDocument');
 Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
 
+
 Route::get('/CountProduct/{accountId}/{folderName}', [SettingController::class, 'CountProduct']);
-
-
-//Route::get('/Help/Support/{accountId}', [SupportController::class, 'index'])->name('indexSupport');
-//Route::get('/Help/Support/Whatsapp/{accountId}', [WhatsappController::class, 'index'])->name('indexWhatsapp');
-
-//Route::post('/Help/Support/Send/{accountId}', [SupportController::class, 'postSendSupport'])->name('indexSendSupport');
-//Route::post('/Help/Support/WhatsappSend/{accountId}', [WhatsappController::class, 'postWhatsappSend'])->name('indexSendWhatsapp');
-
-
-
-
-
-
-
 Route::get('DeleteVendorApi/{accountId}', [DeleteVendorApiController::class, 'Delete']);

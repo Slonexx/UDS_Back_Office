@@ -65,7 +65,9 @@ class ProductCreateUdsService
                 "categoryIds" => [],
             ];
         }
-        //dd($nodeIds);
+        if (!array_key_exists('categoryIds', $nodeIds)){
+            $nodeIds['categoryIds'] = [];
+        }
         return $nodeIds;
     }
 
