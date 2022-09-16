@@ -11,15 +11,18 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
+
+
 
             if (receivedMessage.name === 'Open') {
 
                 var oReq = new XMLHttpRequest();
 
-                document.getElementById("success").style.display = "none";
-                document.getElementById("danger").style.display = "none";
-
                 oReq.addEventListener("load", function() {
+                    clr()
+
                     try {
                         var responseTextPars = JSON.parse(this.responseText);
                         document.getElementById("activated").style.display = "block";
@@ -81,8 +84,8 @@
         }
 
         function Accrue(){
-          var input = document.getElementById("inputAccrue").value;
-          var xmlHttpRequest = new XMLHttpRequest();
+            var input = document.getElementById("inputAccrue").value;
+            var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
 
                 var statusCode = this.responseText;
@@ -124,10 +127,52 @@
             update();
         }
 
+        function Bonus() {
+            var select = document.getElementById('Bonus');
+            var option = select.options[select.selectedIndex];
+            if (option.value == 1) {
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
+            }else if (option.value == 2) {
+                document.getElementById("Cancellation").style.display = "block";
+                document.getElementById("Accrue").style.display = "none";
+            }
+            else {
+                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("Accrue").style.display = "none";
+            }
+        }
+
+
+        function clr(){
+            var select = document.getElementById('Bonus');
+            select.value = 0;
+            Bonus()
+
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
+        }
+
+        function Bonus() {
+            var select = document.getElementById('Bonus');
+            var option = select.options[select.selectedIndex];
+            if (option.value == 1) {
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
+            }else if (option.value == 2) {
+                document.getElementById("Cancellation").style.display = "block";
+                document.getElementById("Accrue").style.display = "none";
+            }
+            else {
+                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("Accrue").style.display = "none";
+            }
+        }
+
     </script>
 
     @php
-    $View = true;
+        $View = true;
     @endphp
 
 
@@ -136,7 +181,7 @@
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
-                <img src="https://dev.smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
                 <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
             </div>
             <div class="mx-2 col-2 p-2">
@@ -158,7 +203,6 @@
         </div>
 
 
-
         <div class="row mx-2 text-black mt-1">
             <div class="col-8">
                 <div class="s-min ">Последняя покупка </div>
@@ -175,16 +219,14 @@
             </div>
         </div>
 
-
         <br>
-
 
 
         <div class="row">
             <div class="col-1"> </div>
             <div class="col-10">
                 <select onclick="Bonus()" class="p-1 form-select" id="Bonus">
-                    <option selected> Действия с баллами </option>
+                    <option value="0" selected> Действия с баллами </option>
                     <option value="1"> Начислить баллы </option>
                     <option value="2"> Списать баллы </option>
                 </select>
@@ -249,9 +291,6 @@
                 </div>
             </div>
         </div>
-
-
-
         <div id="success" class="mt-2" style="display: none">
             <div class="row">
                 <div class="col-1"></div>
@@ -279,27 +318,31 @@
         </div>
 
 
-
-        <script>
-            function Bonus() {
-                var select = document.getElementById('Bonus');
-                var option = select.options[select.selectedIndex];
-                if (option.value == 1) {
-                    document.getElementById("Accrue").style.display = "block";
-                    document.getElementById("Cancellation").style.display = "none";
-                }else if (option.value == 2) {
-                    document.getElementById("Cancellation").style.display = "block";
-                    document.getElementById("Accrue").style.display = "none";
-                }
-                else {
-                    document.getElementById("Cancellation").style.display = "none";
-                    document.getElementById("Accrue").style.display = "none";
-                }
-            }
-        </script>
     </div>
 
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
+        <div class="row uds-gradient mx-2">
+            <div class="mx-2 p-2 col-9 text-white">
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
+            </div>
+            <div class="mx-2 col-2 p-2">
+                <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+            </div>
+            <div class="row mx-3 text-white">
+                <div class="col-7">
+                    <h6 id="displayName" class=""></h6>
+                </div>
+                <div class="col-5">
+                    <div class="s-min-8 my-bg-gray p-1 px-2">
+                        <span> Уровень: </span>
+                        <span id="membershipTierName"></span>
+                        <span id="membershipTierRate"></span>
+                        <span>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="text-center">
             <div class="p-3 mb-2 bg-danger text-white">
                 <i class="fa-solid fa-ban text-danger "></i>
@@ -327,7 +370,7 @@
     }
 
     .myPM{
-       padding-left: 4px !important;
+        padding-left: 4px !important;
         margin: 2px !important;
         margin-right: 11px !important;
     }
