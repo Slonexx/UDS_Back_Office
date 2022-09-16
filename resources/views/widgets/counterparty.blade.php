@@ -321,28 +321,6 @@
     </div>
 
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
-        <div class="row uds-gradient mx-2">
-            <div class="mx-2 p-2 col-9 text-white">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
-                <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
-            </div>
-            <div class="mx-2 col-2 p-2">
-                <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-            </div>
-            <div class="row mx-3 text-white">
-                <div class="col-7">
-                    <h6 id="displayName" class=""></h6>
-                </div>
-                <div class="col-5">
-                    <div class="s-min-8 my-bg-gray p-1 px-2">
-                        <span> Уровень: </span>
-                        <span id="membershipTierName"></span>
-                        <span id="membershipTierRate"></span>
-                        <span>%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="text-center">
             <div class="p-3 mb-2 bg-danger text-white">
                 <i class="fa-solid fa-ban text-danger "></i>

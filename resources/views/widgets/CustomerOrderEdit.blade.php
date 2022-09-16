@@ -240,6 +240,33 @@
     </div>
 
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
+        <div class="row uds-gradient p-2">
+            <div class="col-2">
+                <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
+            </div>
+            <div class="col-10 text-white mt-1 row">
+                <div class="col-11">
+                    <label onclick="xRefURL()" style="cursor: pointer">
+                        Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
+                    </label>
+                </div>
+                <div class="col-1">
+                    <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square" style="cursor: pointer"></i>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8 row">
+                    <div class="mx-1 mt-1">
+                        <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
+                    </div>
+                </div>
+                <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
+                    <span class="mx-1 mt-2" id="icon"></span>
+                </div>
+            </div>
+        </div>
+
         <div class="text-center">
             <div class="p-3 mb-2 bg-danger text-white">
                 <i class="fa-solid fa-ban text-danger "></i>
