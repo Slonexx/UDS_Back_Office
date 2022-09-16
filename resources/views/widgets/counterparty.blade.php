@@ -11,15 +11,15 @@
         window.addEventListener("message", function(event) {
             var receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
-
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
             if (receivedMessage.name === 'Open') {
 
                 var oReq = new XMLHttpRequest();
 
-                document.getElementById("success").style.display = "none";
-                document.getElementById("danger").style.display = "none";
-
                 oReq.addEventListener("load", function() {
+                    document.getElementById("success").style.display = "none";
+                    document.getElementById("danger").style.display = "none";
                     try {
                         var responseTextPars = JSON.parse(this.responseText);
                         document.getElementById("activated").style.display = "block";
@@ -124,6 +124,21 @@
             update();
         }
 
+        function Bonus() {
+            var select = document.getElementById('Bonus');
+            var option = select.options[select.selectedIndex];
+            if (option.value == 1) {
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
+            }else if (option.value == 2) {
+                document.getElementById("Cancellation").style.display = "block";
+                document.getElementById("Accrue").style.display = "none";
+            }
+            else {
+                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("Accrue").style.display = "none";
+            }
+        }
     </script>
 
     @php
@@ -281,21 +296,7 @@
 
 
         <script>
-            function Bonus() {
-                var select = document.getElementById('Bonus');
-                var option = select.options[select.selectedIndex];
-                if (option.value == 1) {
-                    document.getElementById("Accrue").style.display = "block";
-                    document.getElementById("Cancellation").style.display = "none";
-                }else if (option.value == 2) {
-                    document.getElementById("Cancellation").style.display = "block";
-                    document.getElementById("Accrue").style.display = "none";
-                }
-                else {
-                    document.getElementById("Cancellation").style.display = "none";
-                    document.getElementById("Accrue").style.display = "none";
-                }
-            }
+
         </script>
     </div>
 
