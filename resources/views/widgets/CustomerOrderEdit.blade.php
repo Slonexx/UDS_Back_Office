@@ -248,19 +248,25 @@
                 Провести операцию
             </div>
         </div>
-        <div class="row">
+        <div class="mt-2 row">
             <div class="col-1"> </div>
             <div class="col-10">
                 <select onclick="" id="" class="p-1 form-select">
-                    <option value="0" selected> Провести операцию </option>
-                    <option value="1"> Начислить баллы </option>
-                    <option value="2"> Списать баллы </option>
+                    <option value="0" selected> по номеру телефона </option>
+                    <option value="1"> по QR-коду </option>
                 </select>
             </div>
+        </div>
+        <div class="mt-2 row">
+            <div class="col-1"> </div>
+            <div class="col-10">
+                <select onclick="" id="" class="p-1 form-select">
+                    <option value="0" selected> начислить баллы </option>
+                    <option value="1"> списать баллы </option>
+                </select>
+            </div>
+        </div>
     </div>
-
-
-
 
 
 
