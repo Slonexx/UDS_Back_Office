@@ -13,13 +13,16 @@
             GlobalobjectId = receivedMessage.objectId;
             document.getElementById("success").style.display = "none";
             document.getElementById("danger").style.display = "none";
+
+
+
             if (receivedMessage.name === 'Open') {
 
                 var oReq = new XMLHttpRequest();
 
                 oReq.addEventListener("load", function() {
-                    document.getElementById("success").style.display = "none";
-                    document.getElementById("danger").style.display = "none";
+                    clr()
+
                     try {
                         var responseTextPars = JSON.parse(this.responseText);
                         document.getElementById("activated").style.display = "block";
@@ -139,6 +142,17 @@
                 document.getElementById("Accrue").style.display = "none";
             }
         }
+
+
+        function clr(){
+            var select = document.getElementById('Bonus');
+            select.value = 0;
+            Bonus()
+
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
+        }
+
     </script>
 
     @php
@@ -199,7 +213,7 @@
             <div class="col-1"> </div>
             <div class="col-10">
                 <select onclick="Bonus()" class="p-1 form-select" id="Bonus">
-                    <option selected> Действия с баллами </option>
+                    <option value="0" selected> Действия с баллами </option>
                     <option value="1"> Начислить баллы </option>
                     <option value="2"> Списать баллы </option>
                 </select>
