@@ -19,7 +19,7 @@ class productModelObserver
             $query = ProductModel::query();
             $logs = $query->where('accountId',$accountId->accountId)->get();
             if(count($logs) > 100){
-                DB::table('order_updates')
+                DB::table('product_models')
                     ->where('accountId','=',$accountId->accountId)
                     ->orderBy('created_at', 'ASC')
                     ->limit(1)
