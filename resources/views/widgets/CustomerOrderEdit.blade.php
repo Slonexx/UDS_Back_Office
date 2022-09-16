@@ -245,17 +245,7 @@
                 <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
             </div>
             <div class="col-10 text-white mt-1 row">
-            </div>
-
-            <div class="row">
-                <div class="col-8 row">
-                    <div class="mx-1 mt-1">
-                        <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                    </div>
-                </div>
-                <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
-                    <span class="mx-1 mt-2" id="icon"></span>
-                </div>
+                Провести операцию
             </div>
         </div>
         <div class="row">
