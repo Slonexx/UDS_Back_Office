@@ -245,7 +245,7 @@
                 <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
             </div>
             <div class="col-10 text-white mt-1 row">
-                <div class="col-8">
+                <div class="mt-1 col-8">
                     Провести операцию
                 </div>
                 <div class="col-4">
