@@ -245,7 +245,12 @@
                 <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
             </div>
             <div class="col-10 text-white mt-1 row">
-                Провести операцию
+                <div class="col-8">
+                    Провести операцию
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-success"> начислить </button>
+                </div>
             </div>
         </div>
         <div class="mt-2 row">
