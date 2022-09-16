@@ -245,14 +245,6 @@
                 <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
             </div>
             <div class="col-10 text-white mt-1 row">
-                <div class="col-11">
-                    <label onclick="xRefURL()" style="cursor: pointer">
-                        Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
-                    </label>
-                </div>
-                <div class="col-1">
-                    <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square" style="cursor: pointer"></i>
-                </div>
             </div>
 
             <div class="row">
@@ -266,14 +258,15 @@
                 </div>
             </div>
         </div>
-
-        <div class="text-center">
-            <div class="p-3 mb-2 bg-danger text-white">
-                <i class="fa-solid fa-ban text-danger "></i>
-                Данного заказа нет в UDS
-                <i class="fa-solid fa-ban text-danger "></i>
+        <div class="row">
+            <div class="col-1"> </div>
+            <div class="col-10">
+                <select onclick="" id="" class="p-1 form-select">
+                    <option value="0" selected> Провести операцию </option>
+                    <option value="1"> Начислить баллы </option>
+                    <option value="2"> Списать баллы </option>
+                </select>
             </div>
-        </div>
     </div>
 
 
