@@ -1,9 +1,10 @@
+<!doctype html>
+<html lang="en">
+@include('head')
 
-@extends('widgets.index')
+<body>
 
-@section('counterparty')
-
-    <script>
+<script>
         var GlobalobjectId;
         var GlobalURL;
         var GlobalxRefURL;
@@ -143,143 +144,198 @@
     @endphp
 
 
-
-
-    <div id="activated" class="content bg-white text-Black rounded" style="display: none">
-        <div class="row uds-gradient p-2">
-            <div class="col-2">
-                <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
-            </div>
-            <div class="col-10 text-white mt-1 row">
-                    <div class="col-11">
-                        <label onclick="xRefURL()" style="cursor: pointer">
-                            Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
-                        </label>
-                    </div>
-                    <div class="col-1">
-                        <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square" style="cursor: pointer"></i>
-                    </div>
-            </div>
-
-            <div class="row">
-                <div class="col-8 row">
-                    <div class="mx-1 mt-1">
-                        <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                    </div>
+    <div class="main-container">
+        <div id="activated" class="content bg-white text-Black rounded" style="display: none">
+            <div class="row uds-gradient p-2">
+                <div class="col-2">
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
                 </div>
-                <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
-                    <span class="mx-1 mt-2" id="icon"></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-3 s-min">
-            <div class="col-1">
-
-            </div>
-            <div class="col-11 row">
-                <div id="ButtonComplete" class="row text-center" style="display: none;">
-                    <div class="row mx-1">
-                        <div class="col-5 mx-1 rounded-pill bg-success">
-                            <button onclick="ButtonComplete()" class="btn btn-success ">Завершить </button>
-                        </div>
-                        <div class="col-5 mx-3 rounded-pill bg-danger">
-                            <button onclick="xRefURL()" class="btn btn-danger ">Отменить </button>
-                        </div>
-                    </div>
-                    <div id="success" class="mt-2" style="display: none">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <div class=" alert alert-success fade show in text-center "> Заказ завершён </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="danger" class="mt-2" style="display: none">
-                        <div class="row">
-                            <div class="col-1"></div>
-                            <div class="col-10">
-                                <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="Complete" class="row" style="display: none;">
-                    <div class="row mt-2">
-                        <div class="col-10">
-                            Бонусов потрачено:
+                <div class="col-10 text-white mt-1 row">
+                        <div class="col-11">
+                            <label onclick="xRefURL()" style="cursor: pointer">
+                                Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
+                            </label>
                         </div>
                         <div class="col-1">
-                            <span class="p-1 px-3 text-white bg-primary rounded-pill" id="points"></span>
+                            <i onclick="xRefURL()" class="fa-solid fa-arrow-up-right-from-square" style="cursor: pointer"></i>
+                        </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-8 row">
+                        <div class="mx-1 mt-1">
+                            <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
                         </div>
                     </div>
-                    <div class="row mt-2">
-                        <div class="col-10">
-                            Бонусов начислено:
-                        </div>
-                        <div class="col-1">
-                            <span class="p-1 px-3 text-white bg-success rounded-pill" id="cashBack"></span>
-                        </div>
+                    <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
+                        <span class="mx-1 mt-2" id="icon"></span>
                     </div>
+                </div>
+            </div>
+
+            <div class="row mt-3 s-min">
+                <div class="col-1">
 
                 </div>
-                <div id="Deleted" class="row" style="display: none;">
-                    <div class="bg-white text-Black rounded">
-                        <div class="text-center">
-                            <div class="p-3 mb-2 bg-danger rounded text-white">
-                                Заказ был отменён в UDS
-                                <i class="fa-solid fa-delete-left"></i>
+                <div class="col-11 row">
+                    <div id="ButtonComplete" class="row text-center" style="display: none;">
+                        <div class="row mx-1">
+                            <div class="col-5 mx-1 rounded-pill bg-success">
+                                <button onclick="ButtonComplete()" class="btn btn-success ">Завершить </button>
+                            </div>
+                            <div class="col-5 mx-3 rounded-pill bg-danger">
+                                <button onclick="xRefURL()" class="btn btn-danger ">Отменить </button>
+                            </div>
+                        </div>
+                        <div id="success" class="mt-2" style="display: none">
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                    <div class=" alert alert-success fade show in text-center "> Заказ завершён </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="danger" class="mt-2" style="display: none">
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-10">
+                                    <div id="error" class=" alert alert-danger alert-danger fade show in text-center ">  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Complete" class="row" style="display: none;">
+                        <div class="row mt-2">
+                            <div class="col-10">
+                                Бонусов потрачено:
+                            </div>
+                            <div class="col-1">
+                                <span class="p-1 px-3 text-white bg-primary rounded-pill" id="points"></span>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-10">
+                                Бонусов начислено:
+                            </div>
+                            <div class="col-1">
+                                <span class="p-1 px-3 text-white bg-success rounded-pill" id="cashBack"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="Deleted" class="row" style="display: none;">
+                        <div class="bg-white text-Black rounded">
+                            <div class="text-center">
+                                <div class="p-3 mb-2 bg-danger rounded text-white">
+                                    Заказ был отменён в UDS
+                                    <i class="fa-solid fa-delete-left"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
+        <div id="undefined" class="bg-white text-Black rounded content-container" style="display: none">
+            <div class="row uds-gradient p-2">
+                <div class="col-2">
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
+                </div>
+                <div class="col-10 text-white mt-1 row">
+                    <div class="mt-1 col-8">
+                        Провести операцию
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-success"> начислить </button>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-2 row">
+                <div class="col-1"> </div>
+                <div class="col-10">
+                    <select onclick="" id="" class="p-1 form-select">
+                        <option value="0" selected> по номеру телефона </option>
+                        <option value="1"> по QR-коду </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-2 row">
+                <div class="col-1"> </div>
+                <div class="col-10">
+                    <select onclick="" id="" class="p-1 form-select">
+                        <option value="0" selected> начислить баллы </option>
+                        <option value="1"> списать баллы </option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-2 row">
+                <div class="col-1"> </div>
+                <div class="col-10">
+                    <select onclick="" id="" class="p-1 form-select">
+                        <option value="0" selected> начислить баллы </option>
+                        <option value="1"> списать баллы </option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-2 row">
+                <div class="col-1"> </div>
+                <div class="col-10">
+                    <select onclick="" id="" class="p-1 form-select">
+                        <option value="0" selected> начислить баллы </option>
+                        <option value="1"> списать баллы </option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-2 row">
+                <div class="col-1"> </div>
+                <div class="col-10">
+                    <select onclick="" id="" class="p-1 form-select">
+                        <option value="0" selected> начислить баллы </option>
+                        <option value="1"> списать баллы </option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="undefined" class="bg-white text-Black rounded" style="display: none">
-        <div class="row uds-gradient p-2">
-            <div class="col-2">
-                <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
-            </div>
-            <div class="col-10 text-white mt-1 row">
-                <div class="mt-1 col-8">
-                    Провести операцию
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-success"> начислить </button>
-                </div>
-            </div>
-        </div>
-        <div class="mt-2 row">
-            <div class="col-1"> </div>
-            <div class="col-10">
-                <select onclick="" id="" class="p-1 form-select">
-                    <option value="0" selected> по номеру телефона </option>
-                    <option value="1"> по QR-коду </option>
-                </select>
-            </div>
-        </div>
-        <div class="mt-2 row">
-            <div class="col-1"> </div>
-            <div class="col-10">
-                <select onclick="" id="" class="p-1 form-select">
-                    <option value="0" selected> начислить баллы </option>
-                    <option value="1"> списать баллы </option>
-                </select>
-            </div>
-        </div>
-    </div>
 
 
-
-
-@endsection
 
 <style>
+    body {
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        font-size: 12pt;
+    }
+    body {
+        overflow: hidden;
+    }
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .content-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-grow: 1;
+    }
+    .buttons-container-head{
+        background-color: rgba(12, 125, 112, 0.27);
+        padding-top: 3px;
+        min-height: 3px;
+    }
+    .buttons-container {
+        padding-top: 10px;
+        min-height: 100px;
+    }
 
+    .text-orange{
+        color: orange;
+    }
     .uds-gradient{
         background: rgb(145,0,253);
         background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
@@ -347,3 +403,8 @@
     }
 
 </style>
+</body>
+</html>
+
+
+
