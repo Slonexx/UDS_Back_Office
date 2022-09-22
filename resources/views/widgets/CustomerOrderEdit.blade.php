@@ -250,7 +250,7 @@
             </div>
 
 
-                <div class="mt-2 row">
+                <div class="mt-2 row mx-2">
                     <div class="col-4"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
