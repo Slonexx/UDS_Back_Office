@@ -248,28 +248,17 @@
                     <div class="mt-1 col-8">
                         Провести операцию
                     </div>
-                    <div class="col-4">
-                        <button class="btn btn-success"> начислить </button>
-                    </div>
+
                 </div>
             </div>
-            <div class="mt-2 row">
-                <div class="col-1"> </div>
-                <div class="col-10">
-                    <select onclick="" id="" class="p-1 form-select">
-                        <option value="0" selected> по номеру телефона </option>
-                        <option value="1"> по QR-коду </option>
-                    </select>
-                </div>
-            </div>
+
             <div class="content-container">
-
                 <div class="mt-2 row">
                     <div class="col-1"> </div>
                     <div class="col-10">
                         <select onclick="" id="" class="p-1 form-select">
-                            <option value="0" selected> начислить баллы </option>
-                            <option value="1"> списать баллы </option>
+                            <option value="0" selected> по номеру телефона </option>
+                            <option value="1"> по QR-коду </option>
                         </select>
                     </div>
                 </div>
@@ -300,7 +289,18 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="mt-2 row">
+                    <div class="col-1"> </div>
+                    <div class="col-10">
+                        <select onclick="" id="" class="p-1 form-select">
+                            <option value="0" selected> начислить баллы </option>
+                            <option value="1"> списать баллы </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-success"> начислить </button>
+                </div>
             </div>
 
         </div>
