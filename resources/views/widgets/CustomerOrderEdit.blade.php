@@ -239,7 +239,7 @@
 
         </div>
 
-        <div id="undefined" class="bg-white text-Black rounded content-container" style="display: none">
+        <div id="undefined" class="bg-white text-Black rounded " style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
                     <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
@@ -262,43 +262,47 @@
                     </select>
                 </div>
             </div>
+            <div class="content-container">
 
-            <div class="mt-2 row">
-                <div class="col-1"> </div>
-                <div class="col-10">
-                    <select onclick="" id="" class="p-1 form-select">
-                        <option value="0" selected> начислить баллы </option>
-                        <option value="1"> списать баллы </option>
-                    </select>
+                <div class="mt-2 row">
+                    <div class="col-1"> </div>
+                    <div class="col-10">
+                        <select onclick="" id="" class="p-1 form-select">
+                            <option value="0" selected> начислить баллы </option>
+                            <option value="1"> списать баллы </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-2 row">
-                <div class="col-1"> </div>
-                <div class="col-10">
-                    <select onclick="" id="" class="p-1 form-select">
-                        <option value="0" selected> начислить баллы </option>
-                        <option value="1"> списать баллы </option>
-                    </select>
+                <div class="mt-2 row">
+                    <div class="col-1"> </div>
+                    <div class="col-10">
+                        <select onclick="" id="" class="p-1 form-select">
+                            <option value="0" selected> начислить баллы </option>
+                            <option value="1"> списать баллы </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-2 row">
-                <div class="col-1"> </div>
-                <div class="col-10">
-                    <select onclick="" id="" class="p-1 form-select">
-                        <option value="0" selected> начислить баллы </option>
-                        <option value="1"> списать баллы </option>
-                    </select>
+                <div class="mt-2 row">
+                    <div class="col-1"> </div>
+                    <div class="col-10">
+                        <select onclick="" id="" class="p-1 form-select">
+                            <option value="0" selected> начислить баллы </option>
+                            <option value="1"> списать баллы </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-2 row">
-                <div class="col-1"> </div>
-                <div class="col-10">
-                    <select onclick="" id="" class="p-1 form-select">
-                        <option value="0" selected> начислить баллы </option>
-                        <option value="1"> списать баллы </option>
-                    </select>
+                <div class="mt-2 row">
+                    <div class="col-1"> </div>
+                    <div class="col-10">
+                        <select onclick="" id="" class="p-1 form-select">
+                            <option value="0" selected> начислить баллы </option>
+                            <option value="1"> списать баллы </option>
+                        </select>
+                    </div>
                 </div>
+
             </div>
+
         </div>
     </div>
 
