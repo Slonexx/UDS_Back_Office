@@ -260,7 +260,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="mt-2 row">
+                <div class="mt-2 row mx-2">
                     <div class="col-6">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
