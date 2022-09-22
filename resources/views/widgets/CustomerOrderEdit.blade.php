@@ -239,23 +239,21 @@
 
         </div>
 
-        <div id="undefined" class="bg-white text-Black rounded " style="display: none">
+        <div id="undefined" class="bg-white text-Black rounded content-container" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
                     <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
                 </div>
                 <div class="col-10 text-white mt-1 row">
-                    <div class="mt-1 col-8">
                         Провести операцию
-                    </div>
-
                 </div>
             </div>
 
-            <div class="content-container">
+
                 <div class="mt-2 row">
-                    <div class="col-1"> </div>
-                    <div class="col-10">
+                    <div class="col-4"> <i class="fa-solid fa-circle-info"></i>
+                        Тип </div>
+                    <div class="col-7">
                         <select onclick="" id="" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>
                             <option value="1"> по QR-коду </option>
@@ -263,46 +261,22 @@
                     </div>
                 </div>
                 <div class="mt-2 row">
-                    <div class="col-1"> </div>
-                    <div class="col-10">
-                        <select onclick="" id="" class="p-1 form-select">
-                            <option value="0" selected> начислить баллы </option>
-                            <option value="1"> списать баллы </option>
-                        </select>
+                    <div class="col-6">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                            <label class="form-check-label" for="inlineRadio1">Начислить</label>
+                        </div>
                     </div>
-                </div>
-                <div class="mt-2 row">
-                    <div class="col-1"> </div>
-                    <div class="col-10">
-                        <select onclick="" id="" class="p-1 form-select">
-                            <option value="0" selected> начислить баллы </option>
-                            <option value="1"> списать баллы </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-2 row">
-                    <div class="col-1"> </div>
-                    <div class="col-10">
-                        <select onclick="" id="" class="p-1 form-select">
-                            <option value="0" selected> начислить баллы </option>
-                            <option value="1"> списать баллы </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-2 row">
-                    <div class="col-1"> </div>
-                    <div class="col-10">
-                        <select onclick="" id="" class="p-1 form-select">
-                            <option value="0" selected> начислить баллы </option>
-                            <option value="1"> списать баллы </option>
-                        </select>
+                    <div class="col-6">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                            <label class="form-check-label" for="inlineRadio2">Списать</label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-4">
-                    <button class="btn btn-success"> начислить </button>
+                    <button class="btn btn-success"> Кнопка </button>
                 </div>
-            </div>
-
         </div>
     </div>
 
