@@ -73,7 +73,7 @@
 
                     <div class="col-sm-10">
                         <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
-                                <option selected value="0"> Корневая папка </option>
+
                             @if($ProductFolder != null)
                                 <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
                                 @foreach ($Body_productFolder as $productFolderItem)
