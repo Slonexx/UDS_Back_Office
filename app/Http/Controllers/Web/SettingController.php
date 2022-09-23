@@ -58,6 +58,7 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
+        dd($ProductFolder);
 
 
         return view('web.Setting.index', [
