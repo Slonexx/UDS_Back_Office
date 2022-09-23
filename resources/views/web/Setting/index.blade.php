@@ -73,11 +73,9 @@
 
                     <div class="col-sm-10">
                         <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
-                            @if ( isset($ProductFolder) )
                                 <option selected value="0"> Корневая папка </option>
-                            @else
                             @if($ProductFolder != null)
-                                <option selected value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
+                                <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
                                 @foreach ($Body_productFolder as $productFolderItem)
                                     @if ($productFolderItem->id != $ProductFolder['value'])
                                     <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
@@ -88,7 +86,7 @@
                                         <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
                                 @endforeach
                             @endif
-                            @endif
+
                         </select>
                     </div>
                 </div>
