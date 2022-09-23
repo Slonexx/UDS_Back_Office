@@ -81,16 +81,21 @@ class SettingController extends Controller
 
         $TokenMoySklad = $app->TokenMoySklad;
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
+
         $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
         $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
+        if ($request->ProductFolder == '0') {
+            $ProductFolder = ['value' => $request->ProductFolder, 'name'=>'Корневая папка' ];
+        } else {
+            $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
+            $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
+            $FolderName = $ClientFolder->requestGet()->name;
+            $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
+        }
 
-        $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
-        $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
-        $FolderName = $ClientFolder->requestGet()->name;
-        $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
 
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
