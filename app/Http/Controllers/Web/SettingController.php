@@ -428,9 +428,14 @@ class SettingController extends Controller
     public function CountProduct($accountId, $folderName){
         try {
             $Setting = new getSettingVendorController($accountId);
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+            if ($folderName == 'Корневая папка'){
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product';
+                $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
+            } else {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+                $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
+            }
 
-            $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
             $Body = $Client->requestGet()->meta;
             $result = [
                 'StatusCode' => "200",
