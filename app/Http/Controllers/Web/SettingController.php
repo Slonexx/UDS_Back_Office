@@ -430,7 +430,7 @@ class SettingController extends Controller
             $Setting = new getSettingVendorController($accountId);
             if ($folderName == 'Корневая папка'){
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product';
-                $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
+                $Client = new ClientMC($url, $Setting->TokenMoySklad);
             } else {
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
                 $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
