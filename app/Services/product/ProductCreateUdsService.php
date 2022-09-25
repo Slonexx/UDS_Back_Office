@@ -65,33 +65,20 @@ class ProductCreateUdsService
                 "categoryIds" => [],
             ];
         }
-        if (!array_key_exists('categoryIds', $nodeIds)){
-            $nodeIds['categoryIds'] = [];
-        }
+        //dd($nodeIds);
         return $nodeIds;
     }
 
     private function getMs($folderName, $apiKeyMs){
-        if ($folderName == null) {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
-            $client = new MsClient($apiKeyMs);
-        } else {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
-            $client = new MsClient($apiKeyMs);
-        }
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+        $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
 
     private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
-        if ($folderId == '0'){
-            $folderName = null;
-        }
-        else {
-            $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
-        }
-
-
+        //dd($productsUds);
+        $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         //dd($folderName);
         set_time_limit(3600);
@@ -147,47 +134,47 @@ class ProductCreateUdsService
         $categoriesMs = null;
         if (!$this->getCategoriesMs($categoriesMs,$pathName,$apiKeyMs)) return;
 
-            foreach ($categoriesMs as $categoryMs){
-                $nameCategory = $categoryMs->name;
-                if (!in_array($categoryMs->externalCode,$check)){
-                    if ($nodeId == ""){
-                        $createdCategory = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds,$accountId);
-                    } else {
-                        $folderHref = $categoryMs->productFolder->meta->href;
-                        $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
-                        //dd($idNodeCategory);
-                        $createdCategory = $this->createCategoryUds(
-                            $nameCategory,
-                            $companyId,
-                            $apiKeyUds,
-                            $accountId,
-                            $idNodeCategory);
-                    }
-                    //dd($newPath);
-                    if ($createdCategory != null){
-                        $createdCategoryId = $createdCategory->id;
-                        $newNodeId = "".$createdCategoryId;
-                        $check[] = "".$createdCategoryId;
-                        $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
-                    } else {
-                        $newNodeId = $categoryMs->externalCode;
-                    }
-
+        foreach ($categoriesMs as $categoryMs){
+            $nameCategory = $categoryMs->name;
+            if (!in_array($categoryMs->externalCode,$check)){
+                if ($nodeId == ""){
+                    $createdCategory = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds,$accountId);
+                } else {
+                    $folderHref = $categoryMs->productFolder->meta->href;
+                    $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                    //dd($idNodeCategory);
+                    $createdCategory = $this->createCategoryUds(
+                        $nameCategory,
+                        $companyId,
+                        $apiKeyUds,
+                        $accountId,
+                        $idNodeCategory);
+                }
+                //dd($newPath);
+                if ($createdCategory != null){
+                    $createdCategoryId = $createdCategory->id;
+                    $newNodeId = "".$createdCategoryId;
+                    $check[] = "".$createdCategoryId;
+                    $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
                 } else {
                     $newNodeId = $categoryMs->externalCode;
                 }
 
-                $newPath = $pathName."/".$nameCategory;
-                $this->addCategoriesToUds(
-                    $check,
-                    $newPath,
-                    $apiKeyMs,
-                    $companyId,
-                    $apiKeyUds,
-                    $accountId,
-                    $newNodeId
-                );
+            } else {
+                $newNodeId = $categoryMs->externalCode;
             }
+
+            $newPath = $pathName."/".$nameCategory;
+            $this->addCategoriesToUds(
+                $check,
+                $newPath,
+                $apiKeyMs,
+                $companyId,
+                $apiKeyUds,
+                $accountId,
+                $newNodeId
+            );
+        }
     }
 
     private function getFolderNameById($folderId, $apiKeyMs)
@@ -424,9 +411,9 @@ class ProductCreateUdsService
             if (!array_key_exists("inventory",$body["data"])){
                 $body["data"]["inventory"]["inStock"] = $this->stockProductService
                     ->getProductStockMs($product->externalCode,
-                    $storeHref,
-                    $apiKeyMs
-                );
+                        $storeHref,
+                        $apiKeyMs
+                    );
             }
 
             if (
