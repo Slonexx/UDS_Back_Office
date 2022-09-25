@@ -58,6 +58,12 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
+        if ($ProductFolder == null) {
+            $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
+        } else {
+            $ProductFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
+        }
+        dd($ProductFolder);
 
 
         return view('web.Setting.index', [
@@ -81,16 +87,21 @@ class SettingController extends Controller
 
         $TokenMoySklad = $app->TokenMoySklad;
         $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
+
         $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
         $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
+        if ($request->ProductFolder == '0') {
+            $ProductFolder = ['value' => $request->ProductFolder, 'name'=>'Корневая папка' ];
+        } else {
+            $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
+            $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
+            $FolderName = $ClientFolder->requestGet()->name;
+            $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
+        }
 
-        $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
-        $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
-        $FolderName = $ClientFolder->requestGet()->name;
-        $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
 
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
@@ -148,7 +159,7 @@ class SettingController extends Controller
                 "accountId" => $accountId,
                 "isAdmin" => $isAdmin,
                 "message" => $message,
-                ]);
+            ]);
         }
 
         $TokenMoySklad = $Setting->TokenMoySklad;
@@ -211,17 +222,17 @@ class SettingController extends Controller
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
 
-            $TokenMoySklad = $app->TokenMoySklad;
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-            $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
+        $TokenMoySklad = $app->TokenMoySklad;
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
 
-                $urlCheck = $url_organization . "/" . $request->Organization;
-                $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
-                    $pool->as('body')->withToken($TokenMoySklad)->get($url),
-                    $pool->as('organization')->withToken($TokenMoySklad)->get($urlCheck),
-                    $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
-                ]);
-                $Organization = $responses['organization']->object();
+        $urlCheck = $url_organization . "/" . $request->Organization;
+        $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+            $pool->as('body')->withToken($TokenMoySklad)->get($url),
+            $pool->as('organization')->withToken($TokenMoySklad)->get($urlCheck),
+            $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
+        ]);
+        $Organization = $responses['organization']->object();
 
 
 
@@ -301,16 +312,16 @@ class SettingController extends Controller
         $COMPLETED = $Setting->COMPLETED;
         $DELETED = $Setting->DELETED;
 
-            $TokenMoySklad = $Setting->TokenMoySklad;
-            $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-            $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
-            $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
-            [
-                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
-                $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
-                $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
-            ]);
+        $TokenMoySklad = $Setting->TokenMoySklad;
+        $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+        $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
+        $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
+        $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
+        [
+            $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
+            $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
+            $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
+        ]);
 
 
 
@@ -328,7 +339,7 @@ class SettingController extends Controller
 
             "accountId"=> $accountId,
             'isAdmin' => $isAdmin,
-            ]);
+        ]);
     }
 
     public function postSettingAdd(Request $request, $accountId, $isAdmin){
@@ -369,16 +380,16 @@ class SettingController extends Controller
         $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
         $message["message"] = "Настройки сохранились!";
 
-            $TokenMoySklad = $app->TokenMoySklad;
-            $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-            $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
-            $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
-            [
-                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
-                $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
-                $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
-            ]);
+        $TokenMoySklad = $app->TokenMoySklad;
+        $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+        $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
+        $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
+        $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) =>
+        [
+            $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
+            $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
+            $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
+        ]);
 
         return view('web.Setting.documentAdd',[
             "Body_customerorder" => $responses['body_customerorder']->object()->states,
@@ -396,7 +407,6 @@ class SettingController extends Controller
             "accountId"=> $accountId,
             'isAdmin' => $isAdmin,
         ]);
-
 
     }
 
@@ -421,9 +431,14 @@ class SettingController extends Controller
     public function CountProduct($accountId, $folderName){
         try {
             $Setting = new getSettingVendorController($accountId);
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+            if ($folderName == 'Корневая папка'){
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product';
+                $Client = new ClientMC($url, $Setting->TokenMoySklad);
+            } else {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~';
+                $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
+            }
 
-            $Client = new ClientMC($url.$folderName, $Setting->TokenMoySklad);
             $Body = $Client->requestGet()->meta;
             $result = [
                 'StatusCode' => "200",
