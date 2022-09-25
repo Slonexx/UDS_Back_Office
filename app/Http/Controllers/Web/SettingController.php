@@ -67,7 +67,7 @@ class SettingController extends Controller
         } else {
             $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
-        dd( $body_productFolder );
+
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
