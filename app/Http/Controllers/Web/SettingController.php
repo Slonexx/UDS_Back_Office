@@ -98,11 +98,18 @@ class SettingController extends Controller
         ]);
         if ($request->ProductFolder == '0') {
             $ProductFolder = ['value' => $request->ProductFolder, 'name'=>'Корневая папка' ];
+            $body_productFolder = $responses['body_productFolder']->object()->rows;
         } else {
             $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
             $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
             $FolderName = $ClientFolder->requestGet()->name;
             $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
+
+            $body_ =  json_encode(['id' => '0', 'name'=>'Корневая папка' ]);
+            $body_productFolder[] = json_decode($body_);
+            foreach ($responses['body_productFolder']->object()->rows as $item){
+                $body_productFolder[] = $item;
+            }
         }
 
 
@@ -134,7 +141,7 @@ class SettingController extends Controller
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
+            "Body_productFolder" => $body_productFolder,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $request->Store,
