@@ -58,7 +58,7 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
-        if (isset($responses['body_productFolder']->object()->rows))
+        if (array_key_exists(0,$responses['body_productFolder']->object()->rows))
         dd('yes'); else dd('no');
         if ($ProductFolder == null) {
             $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
