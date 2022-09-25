@@ -58,14 +58,20 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
-        if ($responses['body_productFolder']->object()->rows == null) {
-            $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
+        if (array_key_exists(0,$responses['body_productFolder']->object()->rows)){
+            $body_ =  json_encode(['id' => '0', 'name'=>'Корневая папка' ]);
+            $body_productFolder[] = json_decode($body_);
+            foreach ($responses['body_productFolder']->object()->rows as $item){
+                $body_productFolder[] = $item;
+            }
+        } else {
+            $body_ =  json_encode(['id' => '0', 'name'=>'Корневая папка' ]);
+            $body_productFolder[] = json_decode($body_);
         }
-
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
+            "Body_productFolder" => $body_productFolder,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $Store,
@@ -92,11 +98,18 @@ class SettingController extends Controller
         ]);
         if ($request->ProductFolder == '0') {
             $ProductFolder = ['value' => $request->ProductFolder, 'name'=>'Корневая папка' ];
+            $body_productFolder = $responses['body_productFolder']->object()->rows;
         } else {
             $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
             $ClientFolder = new ClientMC($urlFolder, $TokenMoySklad);
             $FolderName = $ClientFolder->requestGet()->name;
             $ProductFolder = ['value' => $request->ProductFolder, 'name'=>$FolderName ];
+
+            $body_ =  json_encode(['id' => '0', 'name'=>'Корневая папка' ]);
+            $body_productFolder[] = json_decode($body_);
+            foreach ($responses['body_productFolder']->object()->rows as $item){
+                $body_productFolder[] = $item;
+            }
         }
 
 
@@ -128,7 +141,7 @@ class SettingController extends Controller
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
+            "Body_productFolder" => $body_productFolder,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $request->Store,
