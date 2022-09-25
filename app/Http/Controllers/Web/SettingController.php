@@ -58,11 +58,11 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
-        if (!array_key_exists(0,$responses['body_productFolder']->object()->rows)){
-            $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
-        } else {
+        if (array_key_exists(0,$responses['body_productFolder']->object()->rows)){
             $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
             $body_productFolder[] = $responses['body_productFolder']->object()->rows;
+        } else {
+            $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
         dd($responses['body_productFolder']->object()->rows);
 
