@@ -68,7 +68,7 @@ class SettingController extends Controller
             $body_ =  json_encode(['id' => '0', 'name'=>'Корневая папка' ]);
             $body_productFolder[] = json_decode($body_);
         }
-        dd($body_productFolder);
+
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
