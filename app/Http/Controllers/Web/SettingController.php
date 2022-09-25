@@ -60,6 +60,8 @@ class SettingController extends Controller
         ]);
         if ($ProductFolder == null) {
             $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
+        } else {
+            $ProductFolder[0] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
 
 
