@@ -72,15 +72,26 @@ class ProductCreateUdsService
     }
 
     private function getMs($folderName, $apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
-        $client = new MsClient($apiKeyMs);
+        if ($folderName == null) {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+            $client = new MsClient($apiKeyMs);
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+            $client = new MsClient($apiKeyMs);
+        }
         return $client->get($url);
     }
 
     private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
-        //dd($productsUds);
-        $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
+        if ($folderId == '0'){
+            $folderName = null;
+        }
+        else {
+            $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
+        }
+
+
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         //dd($folderName);
         set_time_limit(3600);
