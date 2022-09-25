@@ -58,12 +58,9 @@ class SettingController extends Controller
             $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
-        if ($ProductFolder == null) {
+        if ($responses['body_productFolder']->object()->rows == null) {
             $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
-        } else {
-            $ProductFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
-        dd($ProductFolder);
 
 
         return view('web.Setting.index', [
