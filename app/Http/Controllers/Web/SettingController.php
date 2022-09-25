@@ -61,7 +61,7 @@ class SettingController extends Controller
         if (!array_key_exists(0,$responses['body_productFolder']->object()->rows)){
             $responses['body_productFolder']->object()->rows [] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
-
+        dd($responses['body_productFolder']->object()->rows []);
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
