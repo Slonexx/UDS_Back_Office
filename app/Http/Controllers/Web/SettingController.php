@@ -60,7 +60,10 @@ class SettingController extends Controller
         ]);
         if (array_key_exists(0,$responses['body_productFolder']->object()->rows)){
             $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
-            $body_productFolder[] = $responses['body_productFolder']->object()->rows;
+            foreach ($responses['body_productFolder']->object()->rows as $item){
+                $body_productFolder[] = $item;
+            }
+
         } else {
             $body_productFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
