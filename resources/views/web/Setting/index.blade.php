@@ -78,12 +78,12 @@
                                 <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
                                 @foreach ($Body_productFolder as $productFolderItem)
                                     @if ($productFolderItem->id != $ProductFolder['value'])
-                                    <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                    <option value="{{$productFolderItem->id}}"> {{$productFolderItem->name}} </option>
                                     @endif
                                 @endforeach
                             @else
                                 @foreach ($Body_productFolder as $productFolderItem)
-                                        <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                        <option value="{{$productFolderItem->id}}" >{{$productFolderItem->name}} </option>
                                 @endforeach
                             @endif
 

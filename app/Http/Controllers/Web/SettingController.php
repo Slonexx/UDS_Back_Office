@@ -69,10 +69,9 @@ class SettingController extends Controller
             $body_productFolder[] = json_decode($body_);
         }
 
-
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $responses['body_productFolder']->object()->rows,
+            "Body_productFolder" => $body_productFolder,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $Store,
