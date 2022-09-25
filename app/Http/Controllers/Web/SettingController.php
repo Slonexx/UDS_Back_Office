@@ -61,8 +61,9 @@ class SettingController extends Controller
         if ($ProductFolder == null) {
             $ProductFolder = ['value' => '0', 'name'=>'Корневая папка' ];
         } else {
-            $ProductFolder[0] = ['value' => '0', 'name'=>'Корневая папка' ];
+            $ProductFolder[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
+        dd($ProductFolder);
 
 
         return view('web.Setting.index', [
