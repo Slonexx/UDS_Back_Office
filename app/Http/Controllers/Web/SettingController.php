@@ -59,9 +59,9 @@ class SettingController extends Controller
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
         ]);
         if (!array_key_exists(0,$responses['body_productFolder']->object()->rows)){
-            $responses['body_productFolder']->object()->rows [] = ['value' => '0', 'name'=>'Корневая папка' ];
+            $responses['body_productFolder']->object()->rows[] = ['value' => '0', 'name'=>'Корневая папка' ];
         }
-        dd($responses['body_productFolder']->object()->rows []);
+        dd($responses['body_productFolder']->object()->rows);
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
