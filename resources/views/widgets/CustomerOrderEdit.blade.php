@@ -251,7 +251,7 @@
 
 
                 <div class="mt-2 row mx-2">
-                    <div class="col-4 mt-2"> <i class="fa-solid fa-circle-info"></i>
+                    <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
                         <select onclick="" id="" class="p-1 form-select">
