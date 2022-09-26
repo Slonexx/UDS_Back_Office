@@ -261,7 +261,7 @@
                     </div>
                 </div>
                 <div class="mt-2 row mx-2">
-                    <div class="row mt-2 bg-secondary rounded">
+                    <div class="row mt-2 mx-2 bg-secondary rounded">
                         <div class="col-6">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="accrue" value="accrue" checked>
