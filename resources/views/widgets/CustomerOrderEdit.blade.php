@@ -261,7 +261,7 @@
                     </div>
                 </div>
                 <div class="mt-2 row mx-2">
-                    <div class="row mt-2 mx-2 bg-light rounded p-1">
+                    <div class="row mt-2 mx-2 bg-mycolor rounded p-1">
                         <div class="col-6">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="accrue" value="accrue" checked>
@@ -279,9 +279,7 @@
                 </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
-                    <div class="col-10">
-                        <button class="btn btn-success"> Кнопка </button>
-                    </div>
+                        <button class="btn btn-success col-10"> Кнопка </button>
                 </div>
         </div>
     </div>
