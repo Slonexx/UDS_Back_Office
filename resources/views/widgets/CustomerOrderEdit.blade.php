@@ -263,15 +263,15 @@
                 <div class="mt-2 row mx-2">
                     <div class="row mt-2 mx-2 bg-mycolor rounded p-1">
                         <div class="col-6">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" id="accrue" value="accrue" checked>
-                                <label class="form-check-label" for="inlineRadio1">Начислить</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="accrue" value="option1" checked>
+                                <label class="form-check-label" for="exampleRadios1"> Начислить </label>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio"  id="Cancellation" value="Cancellation">
-                                <label class="form-check-label" for="inlineRadio2">Списать</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="Cancellation" value="option2">
+                                <label class="form-check-label" for="exampleRadios2"> Списать</label>
                             </div>
                         </div>
                     </div>
