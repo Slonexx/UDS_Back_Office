@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BackEnd;
 
+use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
@@ -45,6 +46,7 @@ class ObjectController extends Controller
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
         $externalCode = $BodyMC->requestGet()->externalCode;
         $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+
         try {
             $body = $Clint->get($UDSURL.$externalCode);
             $purchase = $body->purchase;
@@ -72,9 +74,13 @@ class ObjectController extends Controller
             ];
         } catch (ClientException $exception) {
             $StatusCode = "404";
-            $message = "В UDS Заказ не найден";
+            $message = [
+                'points' => $this->AgentMCID($objectId, $Setting),
+                'message' => "В UDS Заказ не найден",
+            ];
         }
 
+        dd($message);
         return [
             'StatusCode' => $StatusCode,
             'message' => $message,
@@ -100,6 +106,19 @@ class ObjectController extends Controller
                 'message' => $exception->getMessage(),
             ];
         }
+    }
+
+    public function AgentMCID($objectId, $Setting){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
+        $Clinet = new MsClient($Setting->TokenMoySklad);
+        $bodyAgentHref = $Clinet->get($url)->agent->meta->href;
+        $bodyMC = $Clinet->get($bodyAgentHref);
+        //ПРОЕРВИТЬ ВНЕШНИЙ КОД
+        $url_UDS = 'https://api.uds.app/partner/v2/customers/'.$bodyMC->externalCode;
+        $ClinetUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $body = $ClinetUDS->get($url_UDS)->participant;
+        return $body->points ;
+
     }
 
 }
