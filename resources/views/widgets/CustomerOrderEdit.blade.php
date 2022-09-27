@@ -136,7 +136,15 @@
             oReq.send();
         }
 
-        function CheckPhoneOrQR(){
+        function CheckPhoneOrQR(select){
+            let option = select.options[select.selectedIndex];
+            if (option.value === "0") {
+                document.getElementById("sendQR").style.display = "none";
+            }
+            if (option.value === "1") {
+                document.getElementById("sendQR").style.display = "block";
+            }
+
 
         }
 
@@ -257,15 +265,15 @@
                     <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
-                        <select onclick="" id="CheckPhoneOrQR" class="p-1 form-select">
+                        <select onclick="CheckPhoneOrQR('CheckPhoneOrQR')" id="CheckPhoneOrQR" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>
                             <option value="1"> по QR-коду </option>
                         </select>
                     </div>
                 </div>
-            <div id="sendQR" class="mt-2 row mx-2">
-                <div class="col-1"></div>
-                <div class="col-10">
+            <div id="sendQR" class="mt-4 row mx-2" style="display: none">
+                <div class="col-4"></div>
+                <div class="col-7">
                     <div class="form-group">
                         <input type="number" class="form-control" id="" placeholder="*** ***">
                         <small id="emailHelp" class="form-text text-muted">Введите QR-Код из приложения UDS</small>
