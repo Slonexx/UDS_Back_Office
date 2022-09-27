@@ -80,7 +80,6 @@ class ObjectController extends Controller
             ];
         }
 
-        dd($message);
         return [
             'StatusCode' => $StatusCode,
             'message' => $message,
