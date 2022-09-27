@@ -41,26 +41,25 @@
                             document.getElementById("Complete").style.display = "none";
                             document.getElementById("Deleted").style.display = "none";
                         }
-
                         if (message.state == "COMPLETED") {
                             document.getElementById("Complete").style.display = "block";
                             document.getElementById("ButtonComplete").style.display = "none";
                             document.getElementById("Deleted").style.display = "none";
                         }
-
                         if (message.state == "DELETED") {
                             document.getElementById("Deleted").style.display = "block";
                             document.getElementById("Complete").style.display = "none";
                             document.getElementById("Complete").style.display = "none";
                         }
 
-
                     } else {
                         document.getElementById("activated").style.display = "none";
                         document.getElementById("undefined").style.display = "block";
+
                     }
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+                console.log('GlobalURL = ' + GlobalURL);
                 oReq.open("GET", GlobalURL);
                 oReq.send();
             }
@@ -135,6 +134,10 @@
             GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
             oReq.open("GET", GlobalURL);
             oReq.send();
+        }
+
+        function CheckPhoneOrQR(){
+
         }
 
     </script>
@@ -254,7 +257,7 @@
                     <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
-                        <select onclick="" id="" class="p-1 form-select">
+                        <select onclick="" id="CheckPhoneOrQR" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>
                             <option value="1"> по QR-коду </option>
                         </select>
