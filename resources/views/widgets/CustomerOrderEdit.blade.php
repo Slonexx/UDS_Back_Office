@@ -273,11 +273,10 @@
                 </div>
             <div id="sendQR" style="display: none">
                 <div class="mt-2 row mx-2">
-                    <div class="col-4 mt-2 mx-2"></div>
+                    <div class="col-4 mt-2 mx-2"><small id="emailHelp" class="form-text text-muted">Введите QR-Код из приложения UDS</small></div>
                     <div class="col-7">
                         <div class="form-group">
                             <input type="number" class="form-control" id="" placeholder="*** ***">
-                            <small id="emailHelp" class="form-text text-muted">Введите QR-Код из приложения UDS</small>
                         </div>
                     </div>
                 </div>
