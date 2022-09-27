@@ -272,7 +272,7 @@
                     </div>
                 </div>
             <div id="sendQR" class="mt-4 row mx-2" style="display: none">
-                <div class="col-4"></div>
+                <div class="col-3"></div>
                 <div class="col-7">
                     <div class="form-group">
                         <input type="number" class="form-control" id="" placeholder="*** ***">
