@@ -136,8 +136,8 @@
             oReq.send();
         }
 
-        function CheckPhoneOrQR(select){
-            let option = select.options[select.selectedIndex];
+        function CheckPhoneOrQR(Selector){
+            let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
             }
@@ -265,7 +265,7 @@
                     <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
-                        <select onchange="CheckPhoneOrQR(CheckPhoneOrQR)" id="CheckPhoneOrQR" class="p-1 form-select">
+                        <select onchange="CheckPhoneOrQR(valueSelector)" id="valueSelector" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>
                             <option value="1"> по QR-коду </option>
                         </select>
