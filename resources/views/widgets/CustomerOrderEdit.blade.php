@@ -275,7 +275,7 @@
                 <div class="mt-2 row mx-2">
                     <small id="emailHelp" class="form-text text-muted text-center ">Введите QR-Код из приложения UDS</small>
                     <div class="col-1 mt-2 mx-2"></div>
-                    <div class="col-10">
+                    <div class="col-9">
                         <div class="form-group">
                             <input type="number" class="form-control" id="" placeholder="*** ***">
                         </div>
