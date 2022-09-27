@@ -271,7 +271,7 @@
                         </select>
                     </div>
                 </div>
-            <div id="sendQR" style="display: none">
+                <div id="sendQR" style="display: none">
                 <div class="mt-2 row mx-2">
                     <small id="emailHelp" class="form-text text-muted text-center ">Введите QR-Код из приложения UDS</small>
                     <div class="col-1 mt-2 mx-2"></div>
@@ -301,7 +301,7 @@
                 </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
-                        <button class="btn btn-success col-10"> Кнопка </button>
+                        <button class="btn btn-success col-10"> Провести операцию </button>
                 </div>
         </div>
     </div>
