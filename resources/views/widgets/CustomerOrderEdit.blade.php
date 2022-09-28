@@ -23,7 +23,7 @@
                     GlobalUDSOrderID = message.id;
                     var BonusPoint = message.BonusPoint;
                     var points = message.points;
-
+                    console.log('StatusCode' + StatusCode)
                     if (StatusCode == 200) {
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
@@ -312,7 +312,7 @@
                 <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class="col-10 bg-info rounded p-1 text-black">
+                        <div class=" col-10 bg-secondary rounded p-1 text-white ">
                             <div class="row">
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
                                 <div class="col-4 text-end"> <span> *** </span> </div>
@@ -326,7 +326,7 @@
                 <div id="sendCancellation" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class="col-10 bg-info rounded p-1 text-black">
+                        <div class=" col-10 bg-secondary rounded p-1 text-white ">
                             <span> Общая сумма к оплате  </span>  <span> *** </span>
                             <br>
                             <span> Доступное к списанию:  </span>  <span> 20 </span>
