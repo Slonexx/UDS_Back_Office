@@ -301,11 +301,13 @@
                     </div>
 
                 </div>
-                <div id="sendAccrue" class="mt-2 row mx-2" style="display:none;">
-                    <div class="col-1"></div>
-                    <div class="col-10 my-bg-gray p-1text-black">
-                        <span> Общая сумма к оплате  </span>  <span> *** </span>
-                        <span> Баллы за покупку </span>  <span> 20 Баллы </span>
+                <div id="sendAccrue" style="display:none;">
+                    <div class="row mt-2 row mx-2" >
+                        <div class="col-1"></div>
+                        <div class="col-10 my-bg-gray p-1text-black">
+                            <span> Общая сумма к оплате  </span>  <span> *** </span>
+                            <div> Баллы за покупку </div>  <span> 20 Баллы </span>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-2 row mx-2">
