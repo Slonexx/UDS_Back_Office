@@ -140,9 +140,11 @@
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
+                document.getElementById("sendAccrue").style.display = "block";
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
+                document.getElementById("sendAccrue").style.display = "none";
             }
 
 
@@ -299,7 +301,12 @@
                     </div>
 
                 </div>
-                <div class="mt-2 row mx-2 my-bg-gray p-1">
+                <div id="sendAccrue" class="mt-2 row mx-2" style="display:none;">
+                    <div class="col-1"></div>
+                    <div class="col-10 my-bg-gray p-1text-black">
+                        <span> Общая сумма к оплате  </span>  <span> *** </span>
+                        <span> Баллы за покупку </span>  <span> 20 Баллы </span>
+                    </div>
                 </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
