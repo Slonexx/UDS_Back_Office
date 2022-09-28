@@ -82,7 +82,7 @@
                             let skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
                             console.log('r_textPars = ' + JSON.stringify(r_textPars))
                             document.getElementById("total").innerText = total
-                            document.getElementById("cashBack").innerText = cashBack + ' Баллы'
+                            document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
                         })
                         xmlHttpRequest.open("GET", final);
                         xmlHttpRequest.send();
@@ -357,7 +357,7 @@
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
                                 <div class="col-4 text-end"> <span id="total"> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
-                                <div class="col-4 text-end"> <span id="cashBack"> *** Баллы </span> </div>
+                                <div class="col-4 text-end"> <span id="cashBackOperation"> *** Баллы </span> </div>
                             </div>
                         </div>
                     </div>
