@@ -74,9 +74,14 @@ class ObjectController extends Controller
             ];
         } catch (ClientException $exception) {
             $StatusCode = "404";
+            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
+            //dd($info_total_and_SkipLoyaltyTotal['total']);
             $message = [
+                'total' => $info_total_and_SkipLoyaltyTotal['total'],
+                'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
                 'points' => $this->AgentMCID($objectId, $Setting),
-                'message' => "В UDS Заказ не найден",
+                'phone' => $this->AgentMCPhone($objectId, $Setting),
+
             ];
         }
 
@@ -87,7 +92,7 @@ class ObjectController extends Controller
 
     }
 
-    public function CompletesOrder($accountId, $objectId){
+    public  function CompletesOrder($accountId, $objectId){
         $Setting = new getSettingVendorController($accountId);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         try {
@@ -106,8 +111,7 @@ class ObjectController extends Controller
             ];
         }
     }
-
-    public function AgentMCID($objectId, $Setting){
+    private function AgentMCID($objectId, $Setting){
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
         $Clinet = new MsClient($Setting->TokenMoySklad);
         $bodyAgentHref = $Clinet->get($url)->agent->meta->href;
@@ -119,5 +123,50 @@ class ObjectController extends Controller
         return $body->points ;
 
     }
+    private function AgentMCPhone($objectId, $Setting){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
+        $Clinet = new MsClient($Setting->TokenMoySklad);
+        $bodyAgentHref = $Clinet->get($url)->agent->meta->href;
+        $bodyMC = $Clinet->get($bodyAgentHref);
+        //ПРОЕРВИТЬ ВНЕШНИЙ КОД
+        return '+7 '.$bodyMC->phone;
 
+    }
+    private function TotalAndSkipLoyaltyTotal($objectId, $Setting){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
+        $Clinet = new MsClient($Setting->TokenMoySklad);
+        $bodyOrder = $Clinet->get($url);
+        $sum = $bodyOrder->sum / 100;
+        $SkipLoyaltyTotal = 0;
+        $href = $bodyOrder->positions->meta->href;
+        $BodyPositions = $Clinet->get($href)->rows;
+        //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
+        foreach ($BodyPositions as $item){
+            $url_item = $item->assortment->meta->href;
+            $body = $Clinet->get($url_item)->attributes;
+            $BonusProgramm = false;
+            foreach ($body as $body_item){
+                if ('Не применять бонусную программу (UDS)' == $body_item->name){
+                    $BonusProgramm = $body_item->value;
+                    break;
+                }
+            }
+            if ( $BonusProgramm == true ){
+                $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
+                $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
+            }
+
+        }
+
+        return [
+            'total' => $sum,
+            'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
+        ];
+    }
+
+
+    public function operationsCalc(Request $request){
+        dd($request->request);
+
+    }
 }

@@ -5,24 +5,25 @@
 <body>
 
 <script>
-        var GlobalobjectId;
-        var GlobalURL;
-        var GlobalxRefURL;
-        var GlobalUDSOrderID;
+        const url = 'https://dev.smartuds.kz/'
+        let GlobalobjectId
+        let GlobalURL
+        let GlobalxRefURL
+        let GlobalUDSOrderID
         window.addEventListener("message", function(event) {
-            var receivedMessage = event.data;
+            let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
             if (receivedMessage.name === 'Open') {
-                var oReq = new XMLHttpRequest();
+                let oReq = new XMLHttpRequest();
                 document.getElementById("success").style.display = "none";
                 document.getElementById("danger").style.display = "none";
                 oReq.addEventListener("load", function() {
-                    var responseTextPars = JSON.parse(this.responseText);
-                    var StatusCode = responseTextPars.StatusCode;
-                    var message = responseTextPars.message;
+                    let responseTextPars = JSON.parse(this.responseText);
+                    let StatusCode = responseTextPars.StatusCode;
+                    let message = responseTextPars.message;
                     GlobalUDSOrderID = message.id;
-                    var BonusPoint = message.BonusPoint;
-                    var points = message.points;
+                    let BonusPoint = message.BonusPoint;
+                    let points = message.points;
 
                     if (StatusCode == 200) {
                         document.getElementById("activated").style.display = "block";
@@ -53,10 +54,31 @@
                         }
 
                     } else {
-                        document.getElementById("activated").style.display = "none";
-                        document.getElementById("undefined").style.display = "block";
+                        document.getElementById("activated").style.display = "none"
+                        document.getElementById("undefined").style.display = "block"
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+
+                        let phone = message.phone
+                        let total = message.total
+                        let SkipLoyaltyTotal = message.SkipLoyaltyTotal
+                        let points = 0
+
+                        let params = {
+                            accountId: accountId,
+                            phone: phone,
+                            total: total,
+                            SkipLoyaltyTotal: SkipLoyaltyTotal,
+                            points: points,
+                        };
+                        let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
+                        console.log('final = ' + final);
+                        let xmlHttpRequest = new XMLHttpRequest();
+                        oReq.addEventListener("load", function() {
+
+                        })
+                        oReq.open("GET", final);
+                        oReq.send();
                     }
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
@@ -65,6 +87,15 @@
                 oReq.send();
             }
         });
+
+        function formatParams(params) {
+            return "?" + Object
+                .keys(params)
+                .map(function (key) {
+                    return key + "=" + encodeURIComponent(params[key])
+                })
+                .join("&")
+        }
 
         function xRefURL(){
             window.open(GlobalxRefURL);
@@ -317,9 +348,9 @@
                         <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
                             <div class="row">
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
-                                <div class="col-4 text-end"> <span> *** </span> </div>
+                                <div class="col-4 text-end"> <span id="total"> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
-                                <div class="col-4 text-end"> <span> 20 Баллы </span> </div>
+                                <div class="col-4 text-end"> <span> *** Баллы </span> </div>
                             </div>
                         </div>
                     </div>
