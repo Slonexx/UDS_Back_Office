@@ -10,6 +10,14 @@
         let GlobalURL
         let GlobalxRefURL
         let GlobalUDSOrderID
+
+        let operations_total
+        let operations_cash
+        let operations_points
+        let operations_skipLoyaltyTotal
+        let operations_user
+        let operations_cashier
+
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -59,6 +67,7 @@
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
+                        operations_user = message.phone
                         let phone = message.phone
                         let total = message.total
                         let SkipLoyaltyTotal = message.SkipLoyaltyTotal
@@ -76,12 +85,12 @@
                         let xmlHttpRequest = new XMLHttpRequest();
                         xmlHttpRequest.addEventListener("load", function() {
                             let r_textPars = JSON.parse(this.responseText);
-                            let cash = r_textPars.cash;
+                            operations_cash = r_textPars.cashBack;
+                            operations_total = r_textPars.total;
+                            operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
+
                             let cashBack = r_textPars.cashBack;
-                            let total = r_textPars.total;
-                            let skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
-                            console.log('r_textPars = ' + JSON.stringify(r_textPars))
-                            document.getElementById("total").innerText = total
+                            document.getElementById("total").innerText = operations_total
                             document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
                         })
                         xmlHttpRequest.open("GET", final);
