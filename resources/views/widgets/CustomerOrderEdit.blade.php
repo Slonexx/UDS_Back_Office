@@ -80,7 +80,7 @@
                             let cashBack = r_textPars.cashBack;
                             let total = r_textPars.total;
                             let skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
-                            console.log('r_textPars = ' + r_textPars)
+                            console.log('r_textPars = ' + JSON.stringify(r_textPars))
                             document.getElementById("total").innerText = total
                             document.getElementById("cashBack").innerText = cashBack + ' Баллы'
                         })
