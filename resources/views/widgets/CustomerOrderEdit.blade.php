@@ -56,7 +56,6 @@
                         document.getElementById("activated").style.display = "none";
                         document.getElementById("undefined").style.display = "block";
 
-                        window.alert(StatusCode)
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                     }
                 });
@@ -315,24 +314,26 @@
                 <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class=" col-10 my-bg-gray-2 rounded p-1 text-black ">
+                        <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
                             <div class="row">
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
                                 <div class="col-4 text-end"> <span> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
                                 <div class="col-4 text-end"> <span> 20 Баллы </span> </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
                 <div id="sendCancellation" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class=" col-10 my-bg-gray-2 rounded p-1 text-black ">
-                            <span> Общая сумма к оплате  </span>  <span> *** </span>
-                            <br>
-                            <span> Доступное к списанию:  </span>  <span> 20 </span>
+                        <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
+                            <div class="row">
+                                <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
+                                <div class="col-4 text-end"> <span> *** </span> </div>
+                                <div class="col-8"> <span> Доступное к списанию: </span> </div>
+                                <div class="col-4 text-end"> <span> 20 </span> </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -439,7 +440,7 @@
     }
 
     .my-bg-gray-2{
-        background-color: #d5d5d5 !important;
+        background-color: #e8e8e8 !important;
         color: #3b3c65;
         border-radius: 14px !important;
         overflow: hidden !important;
