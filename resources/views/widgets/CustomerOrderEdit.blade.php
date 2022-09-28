@@ -297,13 +297,13 @@
                     <div class="row mt-2 mx-2 rounded p-1">
                         <div class="col-6">
                             <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" type="radio" id="Accrue" value="sendAccrue" checked>
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
                                 <label class="form-check-label" for="exampleRadios1"> Начислить </label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" type="radio" id="Cancellation" value="sendCancellation">
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation">
                                 <label class="form-check-label" for="exampleRadios2"> Списать</label>
                             </div>
                         </div>
