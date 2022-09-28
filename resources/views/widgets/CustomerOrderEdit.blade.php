@@ -144,19 +144,18 @@
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
             }
-
-        function sendAccrueOrCancellation(myRadio){
-                document.getElementById("sendAccrue").style.display = "none";
-                document.getElementById("sendCancellation").style.display = "none";
-                let div = myRadio.value;
-                if (div == "sendAccrue"){
-                    document.getElementById("sendAccrue").style.display = "block";
-                }
-                if (div == "sendCancellation"){
-                    document.getElementById("sendCancellation").style.display = "block";
-                }
         }
 
+        function sendAccrueOrCancellation(myRadio){
+            document.getElementById("sendAccrue").style.display = "none";
+            document.getElementById("sendCancellation").style.display = "none";
+            let div = myRadio.value;
+            if (div == "sendAccrue"){
+                document.getElementById("sendAccrue").style.display = "block";
+            }
+            if (div == "sendCancellation"){
+                document.getElementById("sendCancellation").style.display = "block";
+            }
         }
 
     </script>
