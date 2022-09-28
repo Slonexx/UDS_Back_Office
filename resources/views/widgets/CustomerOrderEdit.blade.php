@@ -145,10 +145,16 @@
                 document.getElementById("sendQR").style.display = "block";
             }
 
-        function sendAccrueOrCancellation(vis){
+        function sendAccrueOrCancellation(myRadio){
                 document.getElementById("sendAccrue").style.display = "none";
                 document.getElementById("sendCancellation").style.display = "none";
-                vis.style.disable = "block";
+                let div = myRadio.value;
+                if (div == "sendAccrue"){
+                    document.getElementById("sendAccrue").style.display = "block";
+                }
+                if (div == "sendCancellation"){
+                    document.getElementById("sendCancellation").style.display = "block";
+                }
         }
 
         }
@@ -291,13 +297,13 @@
                     <div class="row mt-2 mx-2 rounded p-1">
                         <div class="col-6">
                             <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(sendAccrue)" class="form-check-input" type="radio" id="Accrue" value="option1" checked>
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" type="radio" id="Accrue" value="sendAccrue" checked>
                                 <label class="form-check-label" for="exampleRadios1"> Начислить </label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(sendAccrue)" class="form-check-input" type="radio" id="Cancellation" value="option2">
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" type="radio" id="Cancellation" value="sendCancellation">
                                 <label class="form-check-label" for="exampleRadios2"> Списать</label>
                             </div>
                         </div>
