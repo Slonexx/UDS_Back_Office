@@ -72,13 +72,19 @@
                             points: points,
                         };
                         let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
-                        console.log('final = ' + final);
-                        let xmlHttpRequest = new XMLHttpRequest();
-                        oReq.addEventListener("load", function() {
 
+                        let xmlHttpRequest = new XMLHttpRequest();
+                        xmlHttpRequest.addEventListener("load", function() {
+                            let r_textPars = JSON.parse(this.responseText);
+                            let cash = r_textPars.cash;
+                            let cashBack = r_textPars.cashBack;
+                            let total = r_textPars.total;
+                            let skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
+                            document.getElementById("total").innerText = total
+                            document.getElementById("cashBack").innerText = cashBack
                         })
-                        oReq.open("GET", final);
-                        oReq.send();
+                        xmlHttpRequest.open("GET", final);
+                        xmlHttpRequest.send();
                     }
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
@@ -350,7 +356,7 @@
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
                                 <div class="col-4 text-end"> <span id="total"> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
-                                <div class="col-4 text-end"> <span> *** Баллы </span> </div>
+                                <div class="col-4 text-end"> <span id="cashBack"> *** Баллы </span> </div>
                             </div>
                         </div>
                     </div>

@@ -166,7 +166,35 @@ class ObjectController extends Controller
 
 
     public function operationsCalc(Request $request){
-        dd($request->request);
 
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "phone" => "required|string",
+            "total" => "required|string",
+            "SkipLoyaltyTotal" => "required|string",
+            "points" => "required|string",
+        ]);
+
+        if ($data['SkipLoyaltyTotal']  == '0') {
+            $data['SkipLoyaltyTotal'] = null;
+        }
+
+        $Setting = new getSettingVendorController($data['accountId']);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $url = 'https://api.uds.app/partner/v2/operations/calc';
+        $body = [
+            'code' => null,
+            'participant' => [
+                'uid' => null,
+                'phone' => $data['phone'],
+            ],
+            'receipt' => [
+                'total' => $data['total'],
+                'points' => $data['points'],
+                'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
+            ],
+        ];
+        $postBody = $Client->post($url, $body)->purchase;
+        return response()->json($postBody);
     }
 }
