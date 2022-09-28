@@ -81,7 +81,7 @@
                             let total = r_textPars.total;
                             let skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
                             document.getElementById("total").innerText = total
-                            document.getElementById("cashBack").innerText = cashBack
+                            document.getElementById("cashBack").innerText = cashBack + ' Баллы'
                         })
                         xmlHttpRequest.open("GET", final);
                         xmlHttpRequest.send();
