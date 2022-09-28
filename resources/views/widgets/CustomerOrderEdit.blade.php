@@ -299,6 +299,8 @@
                     </div>
 
                 </div>
+                <div class="mt-2 row mx-2 my-bg-gray p-1">
+                </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                         <button class="btn btn-success col-10"> Провести операцию </button>
