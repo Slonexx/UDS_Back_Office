@@ -140,13 +140,16 @@
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
-                document.getElementById("sendAccrue").style.display = "block";
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
-                document.getElementById("sendAccrue").style.display = "none";
             }
 
+        function sendAccrueOrCancellation(vis){
+                document.getElementById("sendAccrue").style.display = "none";
+                document.getElementById("sendCancellation").style.display = "none";
+                vis.style.disable = "block";
+        }
 
         }
 
@@ -285,16 +288,16 @@
                 </div>
             </div>
                 <div class="mt-2 row mx-2">
-                    <div class="row mt-2 mx-2 bg-mycolor rounded p-1">
+                    <div class="row mt-2 mx-2 rounded p-1">
                         <div class="col-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="exampleRadios" id="accrue" value="option1" checked>
+                                <input onclick="sendAccrueOrCancellation(sendAccrue)" class="form-check-input" type="radio" id="Accrue" value="option1" checked>
                                 <label class="form-check-label" for="exampleRadios1"> Начислить </label>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="exampleRadios" id="Cancellation" value="option2">
+                                <input onclick="sendAccrueOrCancellation(sendAccrue)" class="form-check-input" type="radio" id="Cancellation" value="option2">
                                 <label class="form-check-label" for="exampleRadios2"> Списать</label>
                             </div>
                         </div>
@@ -311,6 +314,16 @@
                         </div>
                     </div>
                 </div>
+            <div id="sendCancellation" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 my-bg-gray p-1text-black">
+                        <span> Общая сумма к оплате  </span>  <span> *** </span>
+                        <br>
+                        <span> Доступное к списанию:  </span>  <span> 20 </span>
+                    </div>
+                </div>
+            </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                         <button class="btn btn-success col-10"> Провести операцию </button>
