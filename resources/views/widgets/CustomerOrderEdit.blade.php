@@ -128,7 +128,7 @@
 
 
                 } else {
-
+                    sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                 }
             });
             GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
@@ -312,23 +312,35 @@
                 <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class="col-10 my-bg-gray p-1text-black">
-                            <span> Общая сумма к оплате  </span>  <span> *** </span>
-                            <br>
-                            <span> Баллы за покупку </span>  <span> 20 Баллы </span>
+                        <div class="col-10 bg-warning p-1text-black">
+                            <div class="row">
+                                <div class="col-8">
+                                    <span> Общая сумма к оплате  </span>
+                                </div>
+                                <div class="col-4">
+                                    <span> *** </span>
+                                </div>
+                                <div class="col-8">
+                                    <span> Баллы за покупку </span>
+                                </div>
+                                <div class="col-4">
+                                    <span> 20 Баллы </span>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-            <div id="sendCancellation" style="display:none;">
-                <div class="row mt-2 row mx-2" >
-                    <div class="col-1"></div>
-                    <div class="col-10 my-bg-gray p-1text-black">
-                        <span> Общая сумма к оплате  </span>  <span> *** </span>
-                        <br>
-                        <span> Доступное к списанию:  </span>  <span> 20 </span>
+                <div id="sendCancellation" style="display:none;">
+                    <div class="row mt-2 row mx-2" >
+                        <div class="col-1"></div>
+                        <div class="col-10 bg-warning y p-1text-black">
+                            <span> Общая сумма к оплате  </span>  <span> *** </span>
+                            <br>
+                            <span> Доступное к списанию:  </span>  <span> 20 </span>
+                        </div>
                     </div>
                 </div>
-            </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                         <button class="btn btn-success col-10"> Провести операцию </button>
