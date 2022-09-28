@@ -6,6 +6,7 @@
 
 <script>
         const url = 'https://dev.smartuds.kz/'
+        const accountId = {{ $accountId }} ;
         let GlobalobjectId
         let GlobalURL
         let GlobalxRefURL
@@ -65,7 +66,7 @@
                         let points = 0
 
                         let params = {
-                            accountId: {{$accountId}},
+                            accountId: accountId,
                             phone: phone,
                             total: total,
                             SkipLoyaltyTotal: SkipLoyaltyTotal,
