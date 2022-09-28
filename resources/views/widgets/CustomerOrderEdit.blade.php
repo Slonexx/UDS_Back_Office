@@ -99,7 +99,6 @@
                 var points = message.points;
 
                 if (StatusCode == 200) {
-
                     GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
                     window.document.getElementById("OrderID").innerHTML = message.id;
                     var icon = message.icon.replace(/\\/g, '');
@@ -128,6 +127,7 @@
 
 
                 } else {
+                    window.alert(StatusCode)
                     sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                 }
             });
