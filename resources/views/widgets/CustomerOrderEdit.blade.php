@@ -65,7 +65,7 @@
                         let points = 0
 
                         let params = {
-                            accountId: accountId,
+                            accountId: {{$accountId}},
                             phone: phone,
                             total: total,
                             SkipLoyaltyTotal: SkipLoyaltyTotal,
