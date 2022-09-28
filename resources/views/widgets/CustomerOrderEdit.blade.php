@@ -306,7 +306,8 @@
                         <div class="col-1"></div>
                         <div class="col-10 my-bg-gray p-1text-black">
                             <span> Общая сумма к оплате  </span>  <span> *** </span>
-                            <div> Баллы за покупку </div>  <span> 20 Баллы </span>
+                            <br>
+                            <span> Баллы за покупку </span>  <span> 20 Баллы </span>
                         </div>
                     </div>
                 </div>
