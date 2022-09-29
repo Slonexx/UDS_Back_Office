@@ -83,7 +83,7 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-
+        dd($employee);
         //$isAdmin = $employee->permissions->admin->view;
 
         $entity = 'customerorder';
