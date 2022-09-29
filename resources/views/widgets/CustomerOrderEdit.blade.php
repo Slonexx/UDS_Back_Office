@@ -22,7 +22,6 @@
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
-            console.log('GlobalobjectId = ' + GlobalobjectId )
             if (receivedMessage.name === 'Open') {
                 let oReq = new XMLHttpRequest();
                 document.getElementById("success").style.display = "none";
@@ -87,7 +86,7 @@
                         let xmlHttpRequest = new XMLHttpRequest();
                         xmlHttpRequest.addEventListener("load", function() {
                             let r_textPars = JSON.parse(this.responseText);
-                            operations_cash = r_textPars.cashBack;
+                            operations_cash = r_textPars.cash;
                             operations_total = r_textPars.total;
                             operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
 
@@ -100,7 +99,6 @@
                     }
                 });
                 GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
-                console.log('GlobalURL = ' + GlobalURL);
                 oReq.open("GET", GlobalURL);
                 oReq.send();
             }
@@ -210,7 +208,6 @@
         }
 
         function sendOperations(){
-            console.log('GlobalobjectId = ' + GlobalobjectId )
             let params = {
                 accountId: "{{ $accountId }}",
                 objectId: GlobalobjectId,

@@ -198,9 +198,9 @@ class ObjectController extends Controller
         return response()->json($postBody);
     }
     public function operations(Request $request){
-        dd($request->request);
         $data = $request->validate([
             "accountId" => 'required|string',
+            "objectId" => 'required|string',
             "user" => "required|string",
             "cashier_id" => "required|string",
             "cashier_name" => "required|string",
@@ -209,14 +209,26 @@ class ObjectController extends Controller
             "receipt_points" => "required|string",
             "receipt_skipLoyaltyTotal" => "required|string",
         ]);
+
+        if ((int) str_replace(' ','',$data['user']) > 999999) {
+            $data['code'] = null;
+            $data['phone'] = $data['user'];
+        } else {
+            $data['code'] = $data['user'];
+            $data['phone'] = null;
+        }
+
+        if ( $data['receipt_points'] == "undefined" ) $data['receipt_points'] = '0';
+        if ( $data['receipt_skipLoyaltyTotal'] == "undefined" or $data['receipt_skipLoyaltyTotal'] == "0" ) $data['receipt_skipLoyaltyTotal'] = null;
+
         $url = 'https://api.uds.app/partner/v2/operations';
         $Setting = new getSettingVendorController($data['accountId']);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $body = [
-            'code' => null,
+            'code' => $data['code'],
             'participant' => [
                 'uid' => null,
-                'phone' => null,
+                'phone' => $data['phone'],
             ],
             'nonce' => null,
             'cashier' => [
@@ -224,15 +236,16 @@ class ObjectController extends Controller
                 'name' => $data['cashier_name'],
             ],
             'receipt' => [
-                'total' => $data['cashier_name'],
-                'cash' => $data['cashier_name'],
-                'points' => $data['cashier_name'],
+                'total' => $data['receipt_total'],
+                'cash' => $data['receipt_cash'],
+                'points' => $data['receipt_points'],
                 'number' => null,
-                'skipLoyaltyTotal' => $data['cashier_name'],
+                'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
             ],
             'tags' => null
         ];
+        dd( ($body));
         $post = $Client->post($url, $body);
-        dd($request->request);
+        dd($post);
     }
 }
