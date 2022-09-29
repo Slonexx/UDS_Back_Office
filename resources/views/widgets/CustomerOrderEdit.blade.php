@@ -213,7 +213,7 @@
         $View = true;
     @endphp
 
-    {{dd($cashier)}}
+    {{dd($cashier['id'])}}
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
