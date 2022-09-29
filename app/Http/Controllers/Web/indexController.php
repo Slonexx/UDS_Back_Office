@@ -93,6 +93,7 @@ class indexController extends Controller
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
             'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
             'getObjectUrl' => $getObjectUrl,
         ] );
     }

@@ -16,8 +16,8 @@
         let operations_points
         let operations_skipLoyaltyTotal
         let operations_user
-        let operations_cashier_id
-        let operations_cashier_name
+        let operations_cashier_id = "{{ $cashier_id }}"
+        let operations_cashier_name = "{{ $cashier_name }}"
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
@@ -98,7 +98,7 @@
                         xmlHttpRequest.send();
                     }
                 });
-                GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+                GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
                 console.log('GlobalURL = ' + GlobalURL);
                 oReq.open("GET", GlobalURL);
                 oReq.send();
@@ -213,6 +213,7 @@
                 accountId: "{{ $accountId }}",
                 user: operations_user,
                 cashier_id: operations_cashier_id,
+                cashier_name: operations_cashier_name,
                 receipt_total: operations_total,
                 receipt_cash: operations_cash,
                 receipt_points: operations_points,
