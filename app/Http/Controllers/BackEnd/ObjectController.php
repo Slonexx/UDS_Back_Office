@@ -198,7 +198,40 @@ class ObjectController extends Controller
         return response()->json($postBody);
     }
     public function operations(Request $request){
-
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "user" => "required|string",
+            "cashier_id" => "required|string",
+            "cashier_name" => "required|string",
+            "receipt_total" => "required|string",
+            "receipt_cash" => "required|string",
+            "receipt_points" => "required|string",
+            "receipt_skipLoyaltyTotal" => "required|string",
+        ]);
+        $url = 'https://api.uds.app/partner/v2/operations';
+        $Setting = new getSettingVendorController($data['accountId']);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $body = [
+            'code' => null,
+            'participant' => [
+                'uid' => null,
+                'phone' => null,
+            ],
+            'nonce' => null,
+            'cashier' => [
+                'externalId' => $data['cashier_id'],
+                'name' => $data['cashier_name'],
+            ],
+            'receipt' => [
+                'total' => $data['cashier_name'],
+                'cash' => $data['cashier_name'],
+                'points' => $data['cashier_name'],
+                'number' => null,
+                'skipLoyaltyTotal' => $data['cashier_name'],
+            ],
+            'tags' => null
+        ];
+        $post = $Client->post($url, $body);
         dd($request->request);
     }
 }

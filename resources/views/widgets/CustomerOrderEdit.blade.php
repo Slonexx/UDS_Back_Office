@@ -211,6 +211,7 @@
         function sendOperations(){
             let params = {
                 accountId: "{{ $accountId }}",
+                objectId: GlobalobjectId,
                 user: operations_user,
                 cashier_id: operations_cashier_id,
                 cashier_name: operations_cashier_name,
