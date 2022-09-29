@@ -16,7 +16,7 @@
         let operations_points
         let operations_skipLoyaltyTotal
         let operations_user
-        let operations_cashier
+        let operations_cashier = {{ $cashier }};
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
@@ -207,13 +207,27 @@
             }
         }
 
+        function sendOperations(){
+            let params = {
+                accountId: "{{ $accountId }}",
+                user: operations_user,
+                cashier_id: operations_cashier.id,
+                cashier_name: operations_cashier.name,
+                receipt_total: operations_total,
+                receipt_cash: operations_cash,
+                receipt_points: operations_points,
+                receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
+            };
+
+            let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
+            console.log('final = ' + final);
+        }
     </script>
 
     @php
         $View = true;
     @endphp
 
-    {{dd($cashier['id'])}}
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
@@ -386,7 +400,7 @@
                 </div>
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
-                        <button class="btn btn-success col-10"> Провести операцию </button>
+                        <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>
         </div>
     </div>

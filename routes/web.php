@@ -25,6 +25,7 @@ Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardControlle
 Route::get('/CustomerOrderEditObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CustomerOrderEditObject']);
 Route::get('/CompletesOrder/{accountId}/{objectId}', [ObjectController::class, 'CompletesOrder']);
 Route::get('/CompletesOrder/operationsCalc/', [ObjectController::class, 'operationsCalc']);
+Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');

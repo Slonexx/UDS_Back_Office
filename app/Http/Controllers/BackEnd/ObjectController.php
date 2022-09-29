@@ -197,4 +197,8 @@ class ObjectController extends Controller
         $postBody = $Client->post($url, $body)->purchase;
         return response()->json($postBody);
     }
+    public function operations(Request $request){
+
+        dd($request->request);
+    }
 }
