@@ -219,7 +219,7 @@
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
 
-            let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
+            let final = url + '/CompletesOrder/operations/' + formatParams(params);
             console.log('final = ' + final);
         }
     </script>
