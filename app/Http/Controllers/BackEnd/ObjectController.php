@@ -198,6 +198,7 @@ class ObjectController extends Controller
         return response()->json($postBody);
     }
     public function operations(Request $request){
+        dd($request->request);
         $data = $request->validate([
             "accountId" => 'required|string',
             "user" => "required|string",

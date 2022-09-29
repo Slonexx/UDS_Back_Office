@@ -22,6 +22,7 @@
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
+            console.log('GlobalobjectId = ' + GlobalobjectId )
             if (receivedMessage.name === 'Open') {
                 let oReq = new XMLHttpRequest();
                 document.getElementById("success").style.display = "none";
@@ -209,6 +210,7 @@
         }
 
         function sendOperations(){
+            console.log('GlobalobjectId = ' + GlobalobjectId )
             let params = {
                 accountId: "{{ $accountId }}",
                 objectId: GlobalobjectId,
