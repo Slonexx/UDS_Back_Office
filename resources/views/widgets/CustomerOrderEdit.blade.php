@@ -16,8 +16,8 @@
         let operations_points
         let operations_skipLoyaltyTotal
         let operations_user
-        let operations_cashier_id = {{ $cashier_id }} ;
-        let operations_cashier_name = {{ $cashier_name }} ;
+        let operations_cashier_id
+        let operations_cashier_name
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
@@ -67,6 +67,9 @@
                         document.getElementById("undefined").style.display = "block"
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+
+                        operations_cashier_id = {{ $cashier_id }} ;
+                        operations_cashier_name = {{ $cashier_name }} ;
 
                         operations_user = message.phone
                         let phone = message.phone
