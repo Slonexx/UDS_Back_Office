@@ -211,8 +211,8 @@
             let params = {
                 accountId: "{{ $accountId }}",
                 user: operations_user,
-               /* cashier_id: {{ $cashier['id'] }},
-                cashier_name: {{ $cashier['name'] }},*/
+                cashier_id: {{ $cashier['id'] }},
+                cashier_name: {{ $cashier['name'] }},
                 receipt_total: operations_total,
                 receipt_cash: operations_cash,
                 receipt_points: operations_points,
