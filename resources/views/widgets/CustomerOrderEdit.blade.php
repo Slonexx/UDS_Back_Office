@@ -16,8 +16,8 @@
         let operations_points
         let operations_skipLoyaltyTotal
         let operations_user
-        let operations_cashier_id = {{ $cashier['id'] }} ;
-        let operations_cashier_name = {{ $cashier['name'] }} ;
+        let operations_cashier_id = {{ $cashier_id }} ;
+        let operations_cashier_name = {{ $cashier_name }} ;
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;

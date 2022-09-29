@@ -83,10 +83,6 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        $cashier = [
-            'id' => $employee->id,
-            'name' => $employee->name,
-        ];
         //$isAdmin = $employee->permissions->admin->view;
 
         $entity = 'customerorder';
@@ -96,7 +92,8 @@ class indexController extends Controller
 
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
-            'cashier' => $cashier,
+            'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
             'getObjectUrl' => $getObjectUrl,
         ] );
     }
