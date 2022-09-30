@@ -175,10 +175,14 @@
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
                 operations_user = OLDPhone
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "block";
                 operations_user = OLDQRCode
             }
         }
@@ -202,13 +206,9 @@
             let div = myRadio.value;
             if (div == "sendAccrue"){
                 document.getElementById("sendAccrue").style.display = "block";
-                document.getElementById("Accrue").style.display = "block";
-                document.getElementById("Cancellation").style.display = "none";
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
-                document.getElementById("Accrue").style.display = "block";
-                document.getElementById("Cancellation").style.display = "block";
             }
         }
 
