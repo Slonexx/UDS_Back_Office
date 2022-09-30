@@ -32,8 +32,6 @@
                 document.getElementById("buttonOperations").style.display = "none";
                 document.getElementById("Accrue").style.display = "none";
                 document.getElementById("Cancellation").style.display = "none";
-                document.getElementById("labelAccrue").style.display = "block";
-                document.getElementById("labelCancellation").style.display = "none";
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -178,17 +176,13 @@
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
                 document.getElementById("Accrue").style.display = "block";
-                document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("Cancellation").style.display = "none";
-                document.getElementById("labelCancellation").style.display = "none";
                 operations_user = OLDPhone
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
                 document.getElementById("Accrue").style.display = "block";
-                document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("Cancellation").style.display = "block";
-                document.getElementById("labelCancellation").style.display = "block";
                 operations_user = OLDQRCode
             }
         }
