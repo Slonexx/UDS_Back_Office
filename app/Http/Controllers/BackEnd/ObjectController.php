@@ -43,6 +43,14 @@ class ObjectController extends Controller
 
         $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
+        $href = $BodyMC->requestGet()->agent->meta->href;
+        $agentId = new ClientMC($href, $Setting->TokenMoySklad);
+        $agentId = $agentId->requestGet();
+        //Может и не быть
+        $agentId = [
+            'externalCode' => $agentId->externalCode,
+            'phone' => $agentId->phone,
+        ];
         $externalCode = $BodyMC->requestGet()->externalCode;
         $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
 
@@ -67,18 +75,22 @@ class ObjectController extends Controller
                 'icon'=> $icon,
             ];
         } catch (ClientException $exception) {
-            $StatusCode = "404";
 
-            $this->newPostOperations($Setting, $Clint, $externalCode);
+            $data = $this->newPostOperations($Clint, $externalCode, $agentId);
+            if ($data['status']) {
+                $StatusCode = "200";
+                $message = $data['data'];
+            } else {
+                $StatusCode = "404";
+                $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
+                $message = [
+                    'total' => $info_total_and_SkipLoyaltyTotal['total'],
+                    'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
+                    'points' => $this->AgentMCID($objectId, $Setting),
+                    'phone' => $this->AgentMCPhone($objectId, $Setting),
 
-            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
-            $message = [
-                'total' => $info_total_and_SkipLoyaltyTotal['total'],
-                'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                'points' => $this->AgentMCID($objectId, $Setting),
-                'phone' => $this->AgentMCPhone($objectId, $Setting),
-
-            ];
+                ];
+            }
         }
 
         return [
@@ -108,10 +120,26 @@ class ObjectController extends Controller
         }
     }
 
-    private function newPostOperations($Setting,$ClientUDS,  $externalCode){
+    private function newPostOperations($ClientUDS,  $externalCode, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
-        $body = $ClientUDS->get($url);
-        dd($body);
+        try {
+            $body = $ClientUDS->get($url);
+            $status = true;
+            $data = [
+                'id'=> $body->id,
+                'BonusPoint'=> $this->Calc($ClientUDS, $body, $agentId),
+                'points'=> $body->points,
+                'state'=> "COMPLETED",
+                'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>',
+            ];
+        } catch (\Throwable $e) {
+            $status = false;
+            $data = null;
+        }
+        return [
+            'status' => $status,
+            'data' => $data,
+        ];
     }
     private function AgentMCID($objectId, $Setting){
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
@@ -164,6 +192,23 @@ class ObjectController extends Controller
             'total' => $sum,
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
+    }
+    private function Calc($ClientUDS, $body, $agentId){
+        $url = 'https://api.uds.app/partner/v2/operations/calc';
+        $body = [
+            'code' => null,
+            'participant' => [
+                'uid' => null,
+                'phone' => "+7" . $agentId['phone'],
+            ],
+            'receipt' => [
+                'total' => $body->total,
+                'points' => $body->points,
+                'skipLoyaltyTotal' => null,
+            ],
+        ];
+        $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
+        return $postBody;
     }
 
 
