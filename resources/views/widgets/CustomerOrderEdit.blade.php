@@ -209,7 +209,7 @@
         function onchangeQR(){
             let QRCode = parseInt(document.getElementById("QRCode").value)
             console.log('QRCode = ' + QRCode)
-            if (QRCode > 99999 || QRCode < 999999){
+            if (QRCode < 999999){
                 alert(QRCode);
             }
         }
