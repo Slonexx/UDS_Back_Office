@@ -86,14 +86,7 @@
             }
         });
 
-        function formatParams(params) {
-            return "?" + Object
-                .keys(params)
-                .map(function (key) {
-                    return key + "=" + encodeURIComponent(params[key])
-                })
-                .join("&")
-        }
+
 
         function xRefURL(){
             window.open(GlobalxRefURL);
@@ -181,17 +174,13 @@
             let QRCode = parseInt(document.getElementById("QRCode").value)
             console.log('QRCode = ' + QRCode)
             if (QRCode < 999999 && QRCode > 99999){
-                document.getElementById("fa_solid").style.display = "none"
                 operations_user = QRCode
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0);
             } else {
-                document.getElementById("fa_solid").style.display = "block"
+                //document.getElementById("fa_solid").style.display = "block"
             }
         }
-        function only_numbers(){
-            if (event.keyCode < 48 || event.keyCode > 57)
-                event.returnValue= false;
-        }
+
 
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendAccrue").style.display = "none";
@@ -262,9 +251,7 @@
 
     </script>
 
-    @php
-        $View = true;
-    @endphp
+
 
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
@@ -383,7 +370,7 @@
             <div id="sendQR" style="display: none">
                 <div class="mt-2 row mx-2">
                     <small id="emailHelp" class="form-text text-muted text-center ">Введите QR-Код из приложения UDS</small>
-                    <div class="col-1 mt-2 mx-2 text-danger"> <i id="fa_solid" class="fa-solid fa-square-xmark" style="display:none;"></i> </div>
+                    <div class="col-1 mt-2 mx-2 text-danger"> </div>
                     <div class="col-9">
                         <div class="form-group">
                             <input onchange="onchangeQR()" onKeyPress="only_numbers()" type="number" class="form-control" id="QRCode" placeholder="*** ***">
@@ -453,7 +440,22 @@
     </div>
 
 
+<script>
 
+    function formatParams(params) {
+        return "?" + Object
+            .keys(params)
+            .map(function (key) {
+                return key + "=" + encodeURIComponent(params[key])
+            })
+            .join("&")
+    }
+    function only_numbers(){
+        if (event.keyCode < 48 || event.keyCode > 57)
+            event.returnValue= false;
+    }
+
+</script>
 
 <style>
     body {
