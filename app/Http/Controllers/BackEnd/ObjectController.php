@@ -169,7 +169,7 @@ class ObjectController extends Controller
 
         $data = $request->validate([
             "accountId" => 'required|string',
-            "phone" => "required|string",
+            "user" => "required|string",
             "total" => "required|string",
             "SkipLoyaltyTotal" => "required|string",
             "points" => "required|string",

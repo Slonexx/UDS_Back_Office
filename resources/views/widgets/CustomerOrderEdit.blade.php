@@ -208,7 +208,7 @@
         function info_operations(user, total, skipTotal, point){
             let params = {
                 accountId: "{{ $accountId }}",
-                phone: user,
+                user: user,
                 total: total,
                 SkipLoyaltyTotal: skipTotal,
                 points: point,
