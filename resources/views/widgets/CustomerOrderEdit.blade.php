@@ -69,6 +69,7 @@
                         document.getElementById("undefined").style.display = "block"
                         document.getElementById("sendWarning").style.display = "none"
                         document.getElementById("buttonOperations").style.display = "block"
+
                         console.log('document.getElementById("Cancellation").value =' + document.getElementById("Cancellation").value)
                         console.log('document.getElementById("Accrue").value =' + document.getElementById("Accrue").value)
                         console.log('document.getElementsByName("eRadios") =' + document.getElementsByName("eRadios"))
@@ -383,7 +384,7 @@
                     <div class="col-1 mt-2 mx-2"></div>
                     <div class="col-9">
                         <div class="form-group">
-                            <input onchange="" onKeyPress="only_numbers()" type="number" class="form-control" id="QRCode" placeholder="*** ***">
+                            <input onchange="onchangeQR()" onKeyPress="only_numbers()" type="number" class="form-control" id="QRCode" placeholder="*** ***">
                         </div>
                     </div>
                 </div>
