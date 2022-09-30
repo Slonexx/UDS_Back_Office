@@ -386,7 +386,7 @@
             <div id="sendQRError" style="display:none;">
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
-                    <div class="col-10 alert alert-denger fade show in text-center "> QR-код состоит из 6 цифр !</div>
+                    <div class="col-10 alert alert-danger fade show in text-center "> QR-код состоит из 6 цифр !</div>
                 </div>
             </div>
             <div class="mt-2 row mx-2">
