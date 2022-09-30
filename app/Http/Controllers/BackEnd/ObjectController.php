@@ -27,7 +27,7 @@ class ObjectController extends Controller
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $last = $body->get($UDSURL.$externalCode);
-
+        dd($last);
 
         return response()->json(
             $last,201);
