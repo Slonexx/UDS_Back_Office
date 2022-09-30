@@ -26,6 +26,7 @@
                 let oReq = new XMLHttpRequest();
                 document.getElementById("success").style.display = "none";
                 document.getElementById("danger").style.display = "none";
+                document.getElementById("sendWarning").style.display = "none";
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -65,6 +66,7 @@
                     } else {
                         document.getElementById("activated").style.display = "none"
                         document.getElementById("undefined").style.display = "block"
+                        document.getElementById("sendWarning").style.display = "block";
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
@@ -221,7 +223,20 @@
             };
 
             let final = url + '/CompletesOrder/operations/' + formatParams(params);
-            console.log('final = ' + final);
+
+            let xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                let r_textPars = JSON.parse(this.responseText);
+                if (r_textPars.code == 200) {
+                    document.getElementById("sendWarning").style.display = "block";
+                    document.getElementById("buttonOperations").style.display = "none";
+                }
+
+            })
+            xmlHttpRequest.open("GET", final);
+            xmlHttpRequest.send();
+
+
         }
     </script>
 
@@ -399,7 +414,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-2 row mx-2">
+                <div id="sendWarning" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
+                    <div>Пожалуйста закройте заказ без сохранения !</div> </div>
+                </div>
+            </div>
+                <div id="buttonOperations" class="mt-2 row mx-2">
                     <div class="col-1"></div>
                         <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>

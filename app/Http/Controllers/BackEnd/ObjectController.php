@@ -244,8 +244,60 @@ class ObjectController extends Controller
             ],
             'tags' => null
         ];
-        dd( ($body));
-        $post = $Client->post($url, $body);
-        dd($post);
+        try {
+            $post = $Client->post($url, $body);
+            $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
+            $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+            $OldBody = $ClientMC->requestGet();
+
+            $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+
+            $OldBody->externalCode = $post->id;
+            $postBody = $ClientMC->requestPut([
+                'externalCode'=>(string) $post->id,
+                'positions'=> $setPositions,
+            ]);
+            $post = [
+                'code' => 200,
+                'id' => $post->id,
+                'points' => $post->points,
+                'total' => $post->total,
+                'message' => 'The operation was successful',
+            ];
+        } catch ( \Throwable $e){
+            $post = [
+               'code' =>  $e->getCode(),
+               'message' =>  $e->getMessage(),
+            ];
+        }
+
+        return response()->json($post);
     }
+
+    private function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting){
+        $Positions = [];
+        $ClientMCPositions = new ClientMC($OldBody->positions->meta->href, $Setting->TokenMoySklad);
+        $OldPositions = $ClientMCPositions->requestGet()->rows;
+
+        $sumMC = $OldBody->sum - $skipLoyaltyTotal;
+        if ($sumMC > 0) $pointsPercent = $postUDS->points  * 100 / $sumMC ;  else $pointsPercent = 0;
+
+        foreach ($OldPositions as $item){
+            //$price = $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100));
+            $Positions[] = [
+                'id' => $item->id,
+                'accountId' => $item->accountId,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'discount' => $item->discount + $pointsPercent,
+                'vat' => $item->vat,
+                'vatEnabled' => $item->vatEnabled,
+                'assortment' => $item->assortment,
+                'shipped' => $item->shipped,
+                'reserve' => $item->reserve,
+            ];
+        }
+        return $Positions;
+    }
+
 }
