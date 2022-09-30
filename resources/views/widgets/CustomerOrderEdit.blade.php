@@ -204,7 +204,16 @@
                 document.getElementById("sendQR").style.display = "block";
             }
         }
-
+        function onchangeQR(){
+            let QRCode = document.getElementById("QRCode")
+            if (QRCode < 999999 || QRCode > 100000){
+                alert(QRCode);
+            }
+        }
+        function only_numbers(){
+            if (event.keyCode < 48 || event.keyCode > 57)
+                event.returnValue= false;
+        }
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendAccrue").style.display = "none";
             document.getElementById("sendCancellation").style.display = "none";
@@ -374,7 +383,7 @@
                     <div class="col-1 mt-2 mx-2"></div>
                     <div class="col-9">
                         <div class="form-group">
-                            <input type="number" class="form-control" id="" placeholder="*** ***">
+                            <input onchange="" onKeyPress="only_numbers()" type="number" class="form-control" id="QRCode" placeholder="*** ***">
                         </div>
                     </div>
                 </div>
