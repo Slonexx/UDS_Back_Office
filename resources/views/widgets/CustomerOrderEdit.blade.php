@@ -10,6 +10,8 @@
         let GlobalURL
         let GlobalxRefURL
         let GlobalUDSOrderID
+        let OLDPhone
+        let OLDQRCode
 
         let operations_total
         let operations_cash
@@ -72,11 +74,11 @@
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
+                        OLDPhone = message.phone
                         operations_user = message.phone
                         operations_total = message.total
                         operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
                         info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0);
-
 
                     }
                 });
@@ -164,20 +166,23 @@
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
+                operations_user = OLDPhone
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
+                operations_user = OLDQRCode
             }
         }
 
         function onchangeQR(){
             let QRCode = parseInt(document.getElementById("QRCode").value)
-            console.log('QRCode = ' + QRCode)
             if (QRCode < 999999 && QRCode > 99999){
+                document.getElementById("sendQRError").style.display = "none"
                 operations_user = QRCode
+                OLDQRCode = QRCode
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0);
             } else {
-                //document.getElementById("fa_solid").style.display = "block"
+                document.getElementById("sendQRError").style.display = "block"
             }
         }
 
@@ -233,7 +238,7 @@
             };
 
             let final = url + '/CompletesOrder/operations/' + formatParams(params);
-
+            console.log('final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
@@ -426,6 +431,13 @@
                     <div class="col-1"></div>
                     <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
                         <div>Пожалуйста закройте заказ без сохранения !</div>
+                    </div>
+                </div>
+            </div>
+            <div id="sendQRError" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 alert alert-success fade show in text-center "> QR-код состоит из 6 цифр !</div>
                     </div>
                 </div>
             </div>
