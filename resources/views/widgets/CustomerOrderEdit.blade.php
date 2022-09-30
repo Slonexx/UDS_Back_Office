@@ -76,9 +76,10 @@
 
                     } else {
                         document.getElementById("activated").style.display = "none"
-                        document.getElementById("undefined").style.display = "block"
                         document.getElementById("sendWarning").style.display = "none"
+                        document.getElementById("undefined").style.display = "block"
                         document.getElementById("buttonOperations").style.display = "block"
+                        document.getElementById("labelCancellation").style.display = "block"
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
@@ -175,14 +176,14 @@
             let option = Selector.options[Selector.selectedIndex];
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none";
-                document.getElementById("Accrue").style.display = "block";
-                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("labelAccrue").style.display = "block";
+                document.getElementById("labelCancellation").style.display = "none";
                 operations_user = OLDPhone
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
-                document.getElementById("Accrue").style.display = "block";
-                document.getElementById("Cancellation").style.display = "block";
+                document.getElementById("labelAccrue").style.display = "block";
+                document.getElementById("labelCancellation").style.display = "block";
                 operations_user = OLDQRCode
             }
         }
