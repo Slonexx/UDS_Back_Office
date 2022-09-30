@@ -41,10 +41,16 @@
                     if (StatusCode == 200) {
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
-
-                        GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
+                        if (message.info == 'Order') {
+                            document.getElementById("infoOrderOrOperations").innerText = 'Заказ №';
+                            GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
+                        }
+                        if (message.info == 'Operations'){
+                            document.getElementById("infoOrderOrOperations").innerText = 'Операция №';
+                            GlobalxRefURL = "https://admin.uds.app/admin/operations"
+                        }
                         window.document.getElementById("OrderID").innerHTML = message.id;
-                        var icon = message.icon.replace(/\\/g, '');
+                        let icon = message.icon.replace(/\\/g, '');
                         window.document.getElementById("icon").innerHTML = icon;
 
                         window.document.getElementById("cashBack").innerHTML = BonusPoint;
@@ -267,8 +273,8 @@
                 </div>
                 <div class="col-10 text-white mt-1 row">
                         <div class="col-11">
-                            <label onclick="xRefURL()" style="cursor: pointer">
-                                Заказ № <span id="OrderID"></span> <span class="mx-1"></span>
+                            <label onclick="xRefURL()" style="cursor: pointer"> <span id="infoOrderOrOperations"> </span>
+                                <span id="OrderID"></span> <span class="mx-1"></span>
                             </label>
                         </div>
                         <div class="col-1">
@@ -276,18 +282,18 @@
                         </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-8 row">
-                        <div class="mx-1 mt-1">
-                            <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
-                        </div>
-                    </div>
-                    <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
-                        <span class="mx-1 mt-2" id="icon"></span>
+
+            </div>
+            <div class="row">
+                <div class="col-8 row">
+                    <div class="mx-1 mt-1">
+                        {{--<button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>--}}
                     </div>
                 </div>
+                <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
+                    <span class="mx-1 mt-2" id="icon"></span>
+                </div>
             </div>
-
             <div class="row mt-3 s-min">
                 <div class="col-1">
 
@@ -349,7 +355,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>

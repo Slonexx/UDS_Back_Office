@@ -73,6 +73,7 @@ class ObjectController extends Controller
                 'points'=> $points,
                 'state'=> $state,
                 'icon'=> $icon,
+                'info'=> 'Order',
             ];
         } catch (ClientException $exception) {
 
@@ -88,7 +89,6 @@ class ObjectController extends Controller
                     'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
                     'points' => $this->AgentMCID($objectId, $Setting),
                     'phone' => $this->AgentMCPhone($objectId, $Setting),
-
                 ];
             }
         }
@@ -131,6 +131,7 @@ class ObjectController extends Controller
                 'points'=> $body->points,
                 'state'=> "COMPLETED",
                 'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>',
+                'info'=> 'Operations',
             ];
         } catch (\Throwable $e) {
             $status = false;
