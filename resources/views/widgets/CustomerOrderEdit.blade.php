@@ -207,7 +207,7 @@
         }
         function onchangeQR(){
             let QRCode = document.getElementById("QRCode").value;
-            if (QRCode < 999999 || QRCode > 100000){
+            if (QRCode < 999999 || QRCode > 99999){
                 alert(QRCode);
             }
         }
