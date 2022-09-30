@@ -83,6 +83,7 @@
                     }
                 });
                 GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
+                console.log('GlobalURL = ' + GlobalURL)
                 oReq.open("GET", GlobalURL);
                 oReq.send();
             }

@@ -27,7 +27,6 @@ class ObjectController extends Controller
 
         $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $last = $body->get($UDSURL.$externalCode);
-        dd($last);
 
         return response()->json(
             $last,201);
@@ -56,14 +55,9 @@ class ObjectController extends Controller
             $points = $purchase->points;
             $state = $body->state;
             $icon = "";
-            if ($state == "NEW")
-                $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
-
-            if ($state == "COMPLETED")
-                $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
-
-            if ($state == "DELETED")
-                $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
+            if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
+            if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
+            if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
 
             $message = [
                 'id'=> $id,
@@ -74,8 +68,10 @@ class ObjectController extends Controller
             ];
         } catch (ClientException $exception) {
             $StatusCode = "404";
+
+            $this->newPostOperations($Setting, $Clint, $externalCode);
+
             $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
-            //dd($info_total_and_SkipLoyaltyTotal['total']);
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
                 'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
@@ -110,6 +106,12 @@ class ObjectController extends Controller
                 'message' => $exception->getMessage(),
             ];
         }
+    }
+
+    private function newPostOperations($Setting,$ClientUDS,  $externalCode){
+        $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
+        $body = $ClientUDS->get($url);
+        dd($body);
     }
     private function AgentMCID($objectId, $Setting){
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/'.$objectId;
