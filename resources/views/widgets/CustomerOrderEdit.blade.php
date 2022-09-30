@@ -27,6 +27,7 @@
                 document.getElementById("success").style.display = "none";
                 document.getElementById("danger").style.display = "none";
                 document.getElementById("sendWarning").style.display = "none";
+                document.getElementById("buttonOperations").style.display = "none";
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -66,7 +67,8 @@
                     } else {
                         document.getElementById("activated").style.display = "none"
                         document.getElementById("undefined").style.display = "block"
-                        document.getElementById("sendWarning").style.display = "block";
+                        document.getElementById("sendWarning").style.display = "none";
+                        document.getElementById("buttonOperations").style.display = "block";
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
