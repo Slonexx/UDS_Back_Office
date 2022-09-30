@@ -30,8 +30,8 @@
                 document.getElementById("danger").style.display = "none";
                 document.getElementById("sendWarning").style.display = "none";
                 document.getElementById("buttonOperations").style.display = "none";
-                document.getElementById("Accrue").style.display = "none";
-                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("labelAccrue").style.display = "none";
+                document.getElementById("labelCancellation").style.display = "none";
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -403,16 +403,16 @@
             </div>
             <div class="mt-2 row mx-2">
                     <div class="row mt-2 mx-2 p-1">
-                        <div class="col-6">
+                        <div id="labelAccrue" class="col-6">
                             <div class="form-check">
                                 <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
-                                <label id="labelAccrue" class="form-check-label" for="Accrue"> Начислить </label>
+                                <label class="form-check-label" for="Accrue"> Начислить </label>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-check">
+                            <div id="labelCancellation" class="form-check">
                                 <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
-                                <label id="labelCancellation"  class="form-check-label" for="Cancellation"> Списать</label>
+                                <label class="form-check-label" for="Cancellation"> Списать</label>
                             </div>
                         </div>
                     </div>
