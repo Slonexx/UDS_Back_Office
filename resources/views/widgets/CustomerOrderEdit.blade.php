@@ -209,7 +209,7 @@
         function onchangeQR(){
             let QRCode = parseInt(document.getElementById("QRCode").value)
             console.log('QRCode = ' + QRCode)
-            if (QRCode < 999999){
+            if (QRCode < 999999 && QRCode > 99999){
                 alert(QRCode);
             }
         }
@@ -371,9 +371,8 @@
             </div>
 
             <div class="mt-2 row mx-2">
-                    <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
-                        Тип </div>
-                    <div class="col-7">
+                    <div class="col-5 mt-2 mx-2"> Тип проведение </div>
+                    <div class="col-6">
                         <select onchange="CheckPhoneOrQR(valueSelector)" id="valueSelector" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>
                             <option value="1"> по QR-коду </option>
