@@ -175,6 +175,14 @@ class ObjectController extends Controller
             "points" => "required|string",
         ]);
 
+        if ((int) str_replace(' ','',$data['user']) > 999999) {
+            $data['code'] = null;
+            $data['phone'] = $data['user'];
+        } else {
+            $data['code'] = $data['user'];
+            $data['phone'] = null;
+        }
+
         if ($data['SkipLoyaltyTotal']  == '0') {
             $data['SkipLoyaltyTotal'] = null;
         }
@@ -183,7 +191,7 @@ class ObjectController extends Controller
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $url = 'https://api.uds.app/partner/v2/operations/calc';
         $body = [
-            'code' => null,
+            'code' => $data['code'],
             'participant' => [
                 'uid' => null,
                 'phone' => $data['phone'],
