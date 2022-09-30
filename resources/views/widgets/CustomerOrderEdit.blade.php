@@ -351,8 +351,7 @@
                 </div>
             </div>
 
-
-                <div class="mt-2 row mx-2">
+            <div class="mt-2 row mx-2">
                     <div class="col-4 mt-2 mx-2"> <i class="fa-solid fa-circle-info"></i>
                         Тип </div>
                     <div class="col-7">
@@ -362,7 +361,7 @@
                         </select>
                     </div>
                 </div>
-                <div id="sendQR" style="display: none">
+            <div id="sendQR" style="display: none">
                 <div class="mt-2 row mx-2">
                     <small id="emailHelp" class="form-text text-muted text-center ">Введите QR-Код из приложения UDS</small>
                     <div class="col-1 mt-2 mx-2"></div>
@@ -373,7 +372,7 @@
                     </div>
                 </div>
             </div>
-                <div class="mt-2 row mx-2">
+            <div class="mt-2 row mx-2">
                     <div class="row mt-2 mx-2 p-1">
                         <div class="col-6">
                             <div class="form-check">
@@ -390,7 +389,7 @@
                     </div>
 
                 </div>
-                <div id="sendAccrue" style="display:none;">
+            <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
                         <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
@@ -403,7 +402,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="sendCancellation" style="display:none;">
+            <div id="sendCancellation" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
                         <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
@@ -416,17 +415,19 @@
                         </div>
                     </div>
                 </div>
-                <div id="sendWarning" style="display:none;">
+            <div id="sendWarning" style="display:none;">
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
                     <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
-                    <div>Пожалуйста закройте заказ без сохранения !</div> </div>
+                        <div>Пожалуйста закройте заказ без сохранения !</div>
+                    </div>
                 </div>
             </div>
-                <div id="buttonOperations" class="mt-2 row mx-2">
+            <div id="buttonOperations" class="mt-2 row mx-2">
                     <div class="col-1"></div>
                         <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>
+
         </div>
     </div>
 
