@@ -405,14 +405,12 @@
                     <div class="row mt-2 mx-2 p-1">
                         <div class="col-6">
                             <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
-                                <label class="form-check-label" for="exampleRadios1"> Начислить </label>
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked placeholder="Начислить">
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation">
-                                <label class="form-check-label" for="exampleRadios2"> Списать</label>
+                            <input class="form-check">
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation" placeholder="Списать">
                             </div>
                         </div>
                     </div>
