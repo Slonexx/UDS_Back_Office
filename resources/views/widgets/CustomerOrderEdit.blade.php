@@ -214,7 +214,7 @@
                 points: point,
             };
             let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
-
+            console.log('final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
