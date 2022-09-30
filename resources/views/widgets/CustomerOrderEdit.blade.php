@@ -404,14 +404,14 @@
             </div>
             <div class="mt-2 row mx-2">
                     <div class="row mt-2 mx-2 p-1">
-                        <div id="labelAccrue" class="col-6 text-center">
-                            <div class="form-check">
+                        <div id="labelAccrue" class="col-6">
+                            <div class="mx-2 form-check">
                                 <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
                                 <label class="form-check-label" for="Accrue"> Начислить </label>
                             </div>
                         </div>
-                        <div id="labelCancellation" class="col-6 text-center">
-                            <div class="form-check">
+                        <div id="labelCancellation" class="col-6">
+                            <div class="mx-2  form-check">
                                 <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
                                 <label class="form-check-label" for="Cancellation"> Списать</label>
                             </div>
