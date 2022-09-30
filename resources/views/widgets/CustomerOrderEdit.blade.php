@@ -69,7 +69,42 @@
                         document.getElementById("undefined").style.display = "block"
                         document.getElementById("sendWarning").style.display = "none"
                         document.getElementById("buttonOperations").style.display = "block"
-                        sendInitialOperations()
+                        console.log('document.getElementById("Cancellation").value =' + document.getElementById("Cancellation").value)
+                        console.log('document.getElementById("Accrue").value =' + document.getElementById("Accrue").value)
+                        console.log('document.getElementsByName("eRadios") =' + document.getElementsByName("eRadios"))
+
+
+
+                        sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+
+                        operations_user = message.phone
+                        let phone = message.phone
+                        let total = message.total
+                        let SkipLoyaltyTotal = message.SkipLoyaltyTotal
+                        let points = 0
+
+                        let params = {
+                            accountId: "{{ $accountId }}",
+                            phone: phone,
+                            total: total,
+                            SkipLoyaltyTotal: SkipLoyaltyTotal,
+                            points: points,
+                        };
+                        let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
+
+                        let xmlHttpRequest = new XMLHttpRequest();
+                        xmlHttpRequest.addEventListener("load", function() {
+                            let r_textPars = JSON.parse(this.responseText);
+                            operations_cash = r_textPars.cash;
+                            operations_total = r_textPars.total;
+                            operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
+
+                            let cashBack = r_textPars.cashBack;
+                            document.getElementById("total").innerText = operations_total
+                            document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
+                        })
+                        xmlHttpRequest.open("GET", final);
+                        xmlHttpRequest.send();
 
                     }
                 });
@@ -180,45 +215,6 @@
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
             }
-        }
-
-        function sendInitialOperations(){
-            console.log('document.getElementById("Cancellation").value =' + document.getElementById("Cancellation").value)
-            console.log('document.getElementById("Accrue").value =' + document.getElementById("Accrue").value)
-            console.log('document.getElementsByName("eRadios") =' + document.getElementsByName("eRadios"))
-
-
-
-            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-
-            operations_user = message.phone
-            let phone = message.phone
-            let total = message.total
-            let SkipLoyaltyTotal = message.SkipLoyaltyTotal
-            let points = 0
-
-            let params = {
-                accountId: "{{ $accountId }}",
-                phone: phone,
-                total: total,
-                SkipLoyaltyTotal: SkipLoyaltyTotal,
-                points: points,
-            };
-            let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
-
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function() {
-                let r_textPars = JSON.parse(this.responseText);
-                operations_cash = r_textPars.cash;
-                operations_total = r_textPars.total;
-                operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
-
-                let cashBack = r_textPars.cashBack;
-                document.getElementById("total").innerText = operations_total
-                document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
-            })
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
         }
 
         function sendOperations(){
