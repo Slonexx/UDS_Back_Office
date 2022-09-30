@@ -30,6 +30,8 @@
                 document.getElementById("danger").style.display = "none";
                 document.getElementById("sendWarning").style.display = "none";
                 document.getElementById("buttonOperations").style.display = "none";
+                document.getElementById("Accrue").style.display = "none";
+                document.getElementById("Cancellation").style.display = "none";
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -200,9 +202,13 @@
             let div = myRadio.value;
             if (div == "sendAccrue"){
                 document.getElementById("sendAccrue").style.display = "block";
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "block";
             }
         }
 
