@@ -410,8 +410,8 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <input class="form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"> Списать </input>
+                            <div class="form-check">
+                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
                                 <label class="form-check-label" for="Cancellation"> Списать</label>
                             </div>
                         </div>
