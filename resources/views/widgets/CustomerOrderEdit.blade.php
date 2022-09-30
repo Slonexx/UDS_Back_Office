@@ -79,7 +79,7 @@
                         document.getElementById("sendWarning").style.display = "none"
                         document.getElementById("undefined").style.display = "block"
                         document.getElementById("buttonOperations").style.display = "block"
-                        document.getElementById("labelCancellation").style.display = "block"
+                        document.getElementById("labelAccrue").style.display = "block"
 
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
