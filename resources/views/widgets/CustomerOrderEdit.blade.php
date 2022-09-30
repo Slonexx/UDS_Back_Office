@@ -185,6 +185,7 @@
         function sendInitialOperations(){
             console.log('document.getElementById("Cancellation").value =' + document.getElementById("Cancellation").value)
             console.log('document.getElementById("Accrue").value =' + document.getElementById("Accrue").value)
+            console.log('document.getElementsByName("eRadios") =' + document.getElementsByName("eRadios"))
 
 
 
