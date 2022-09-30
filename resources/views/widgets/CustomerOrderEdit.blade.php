@@ -205,8 +205,10 @@
                 document.getElementById("sendQR").style.display = "block";
             }
         }
+
         function onchangeQR(){
-            let QRCode = document.getElementById("QRCode").value;
+            let QRCode = parseInt(document.getElementById("QRCode").value)
+            console.log('QRCode = ' + QRCode)
             if (QRCode < 999999 || QRCode > 99999){
                 alert(QRCode);
             }
