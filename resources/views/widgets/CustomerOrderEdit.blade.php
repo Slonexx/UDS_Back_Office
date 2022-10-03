@@ -464,11 +464,16 @@
             </div>
 
             <div id="sendPoint" class="mt-2" style="display: none">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
-                           onchange="onchangePoint()" onKeyPress="only_float()" aria-label="Dollar amount (with dot and two decimal places)">
-                    <div class="input-group-append">
-                        <span id="maxPoint" class="input-group-text">0.00 MAX</span>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
+                                   onchange="onchangePoint()" onKeyPress="only_float()" aria-label="Dollar amount (with dot and two decimal places)">
+                            <div class="input-group-append">
+                                <span id="maxPoint" class="input-group-text">0.00 MAX</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -499,8 +504,13 @@
             event.returnValue= false;
     }
     function only_float(){
+        let max = window.document.getElementById('maxPoint');
+        let point = window.document.getElementById('QRCodePoint');
+        if (max.innerText > point.innerText) {
+            event.returnValue = false;
+        }
         if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode == 46)
-            event.returnValue= false;
+            event.returnValue = false;
     }
 
 </script>
