@@ -214,10 +214,10 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
-            document.getElementById("sendAccrue").style.display = "none";
+            document.getElementById("sendAccrue").style.display = "block";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-                document.getElementById("sendAccrue").style.display = "block";
+
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
@@ -462,12 +462,12 @@
 
             <div id="sendPoint" style="display: none">
                 <div class="input-group">
-                    <input onchange="onchangePoint()" onKeyPress="only_numbers()" type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
-                           aria-label="Dollar amount (with dot and two decimal places)">
-                    <div class="input-group-append">
+                    <div class="input-group-prepend">
                         <span class="input-group-text">Бонусов</span>
                         <span id="maxPoint" class="input-group-text">0.00</span>
                     </div>
+                    <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
+                           onchange="onchangePoint()" onKeyPress="only_numbers()" aria-label="Dollar amount (with dot and two decimal places)">
                 </div>
             </div>
             <div id="buttonOperations">
