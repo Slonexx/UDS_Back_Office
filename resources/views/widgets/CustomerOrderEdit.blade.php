@@ -212,12 +212,11 @@
         }
 
         function sendAccrueOrCancellation(myRadio){
-            document.getElementById("sendAccrue").style.display = "none";
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-                document.getElementById("sendAccrue").style.display = "block";
+
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
@@ -434,28 +433,19 @@
                         </div>
                     </div>
                 </div>
-            <div id="sendAccrue" style="display:none;">
+            <div id="" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
-                        <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
+                        <div class=" col-10 border border-info rounded p-2 text-black ">
                             <div class="row">
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
                                 <div class="col-4 text-end"> <span id="total"> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
                                 <div class="col-4 text-end"> <span id="cashBackOperation"> *** Баллы </span> </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <div id="sendCancellation" style="display:none;">
-                    <div class="row mt-2 row mx-2" >
-                        <div class="col-1"></div>
-                        <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
-                            <div class="row">
-                                <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
-                                <div class="col-4 text-end"> <span id="QRtotal"> *** </span> </div>
-                                <div class="col-8"> <span> Доступное к списанию: </span> </div>
-                                <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
+                                <div id="sendCancellation" class="row">
+                                    <div class="col-8"> <span> Доступное к списанию: </span> </div>
+                                    <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -470,17 +460,12 @@
             </div>
 
             <div id="sendPoint" style="display: none">
-                <div class="mt-2 row mx-2">
-                    <small id="emailHelp" class="form-text text-muted text-center ">Введите количество бонусов</small>
-                    <div class="col-1 mt-2 mx-2 text-danger"> </div>
-                    <div class="col-9">
-                        <div class="input-group">
-                            <input onchange="onchangePoint()" onKeyPress="only_numbers()" type="text" class="form-control" id="QRCodePoint" placeholder="*** ***">
-                            <div class="input-group-append">
-                                <span class="input-group-text">Бонусов</span>
-                                <span id="maxPoint" class="input-group-text">0.00</span>
-                            </div>
-                        </div>
+                <div class="input-group">
+                    <input onchange="onchangePoint()" onKeyPress="only_numbers()" type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
+                           aria-label="Dollar amount (with dot and two decimal places)">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Бонусов</span>
+                        <span id="maxPoint" class="input-group-text">0.00</span>
                     </div>
                 </div>
             </div>
