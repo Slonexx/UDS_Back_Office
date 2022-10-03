@@ -180,7 +180,7 @@
                 document.getElementById("sendQR").style.display = "none";
                 document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("labelCancellation").style.display = "none";
-                document.getElementById("QRCodePoint").innerText = "";
+                document.getElementById("QRCodePoint").value = "";
                 operations_points = 0;
                 operations_user = OLDPhone
             }
@@ -188,7 +188,6 @@
                 document.getElementById("sendQR").style.display = "block";
                 document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("labelCancellation").style.display = "block";
-                document.getElementById("sendPoint").style.display = "block";
                 operations_user = OLDQRCode
             }
         }
@@ -215,12 +214,14 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendAccrue").style.display = "none";
             document.getElementById("sendCancellation").style.display = "none";
+            document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
                 document.getElementById("sendAccrue").style.display = "block";
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
+                document.getElementById("sendPoint").style.display = "block";
             }
         }
 
@@ -243,7 +244,7 @@
 
                 let cashBack = r_textPars.cashBack;
                 document.getElementById("total").innerText = operations_total
-                document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
+                document.getElementById("cashBackOperation").innerText = cashBack
 
                 document.getElementById("QRtotal").innerText = operations_total
                 document.getElementById("availablePoints").innerText = operations_availablePoints
