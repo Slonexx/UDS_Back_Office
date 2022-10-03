@@ -214,9 +214,10 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
+            document.getElementById("sendAccrue").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-
+                document.getElementById("sendAccrue").style.display = "block";
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
@@ -433,7 +434,7 @@
                         </div>
                     </div>
                 </div>
-            <div id="" style="display:none;">
+            <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
                         <div class=" col-10 border border-info rounded p-2 text-black ">
