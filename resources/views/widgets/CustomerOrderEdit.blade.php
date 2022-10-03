@@ -444,9 +444,11 @@
                                 <div class="col-4 text-end"> <span id="total"> *** </span> </div>
                                 <div class="col-8"> <span> Баллы за покупку </span> </div>
                                 <div class="col-4 text-end"> <span id="cashBackOperation"> *** Баллы </span> </div>
-                                <div id="sendCancellation" class="row">
-                                    <div class="col-8"> <span> Доступное к списанию: </span> </div>
-                                    <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
+                                <div id="sendCancellation">
+                                    <div class="row">
+                                        <div class="col-8"> <span> Доступное к списанию: </span> </div>
+                                        <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -461,7 +463,7 @@
                 </div>
             </div>
 
-            <div id="sendPoint" style="display: none">
+            <div id="sendPoint" class="mt-2" style="display: none">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Бонусов</span>
