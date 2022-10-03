@@ -212,6 +212,14 @@
         }
 
         function onchangePoint(){
+
+            let max = window.document.getElementById('maxPoint').innerText;
+            let point = window.document.getElementById('QRCodePoint').value;
+            console.log('max = ' + parseFloat(max))
+            console.log('point = ' + parseFloat(point))
+
+
+
             let QRCodePoint = window.document.getElementById('QRCodePoint');
             operations_points = QRCodePoint.value
         }
@@ -474,7 +482,6 @@
                                    onchange="onchangePoint()" onKeyPress="only_float()" aria-label="Dollar amount (with dot and two decimal places)">
                             <div class="input-group-append">
                                 <span id="maxPoint" class="input-group-text">0.00</span>
-                                <span>0.00 max</span>
                             </div>
                         </div>
                     </div>
@@ -507,14 +514,7 @@
             event.returnValue= false;
     }
     function only_float(){
-        let max = window.document.getElementById('maxPoint').innerText;
-        let point = window.document.getElementById('QRCodePoint').value;
-        console.log('max = ' + parseFloat(max))
-        console.log('point = ' + parseFloat(point))
-        if (Math.floor(max.innerText) >= Math.floor(point.value)) {
-            console.log('point.innerText = ' + point.innerText)
-        }
-        if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode == 46)
+        if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode === 46)
             event.returnValue = false;
     }
 
