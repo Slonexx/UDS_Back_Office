@@ -514,8 +514,11 @@
             event.returnValue= false;
     }
     function only_float(){
-        if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode === 46)
-            event.returnValue = false;
+        if (event.keyCode < 48 || event.keyCode > 57){
+            if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
+
+        }
+
     }
 
 </script>
