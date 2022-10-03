@@ -483,7 +483,7 @@
 <script>
     function PointMax(max){
         let idPoint = window.document.getElementById('maxPoint');
-        idPoint.innerText = max
+        idPoint.innerText = max.toString()
     }
     function formatParams(params) {
         return "?" + Object
