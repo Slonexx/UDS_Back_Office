@@ -217,7 +217,6 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
-            document.getElementById("sendAccrue").style.display = "block";
             let div = myRadio.value;
             if (div == "sendAccrue"){
 
@@ -252,6 +251,7 @@
                 document.getElementById("QRtotal").innerText = operations_total
                 document.getElementById("availablePoints").innerText = operations_availablePoints
                 PointMax(r_textPars.maxPoints)
+                document.getElementById("sendAccrue").style.display = "block";
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
