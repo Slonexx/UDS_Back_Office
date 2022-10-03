@@ -506,6 +506,8 @@
     function only_float(){
         let max = window.document.getElementById('maxPoint');
         let point = window.document.getElementById('QRCodePoint');
+        console.log('Math.floor(max.innerText) =' + Math.floor(max.innerText))
+        console.log('Math.floor(point.value) =' + Math.floor(point.value))
         if (Math.floor(max.innerText) >= Math.floor(point.value)) {
             console.log('point.innerText = ' + point.innerText)
         }
