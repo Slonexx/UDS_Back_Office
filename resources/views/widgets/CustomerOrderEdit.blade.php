@@ -180,6 +180,8 @@
                 document.getElementById("sendQR").style.display = "none";
                 document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("labelCancellation").style.display = "none";
+                document.getElementById("QRCodePoint").innerText = "";
+                operations_points = 0;
                 operations_user = OLDPhone
             }
             if (option.value === "1") {
@@ -202,6 +204,10 @@
             }
         }
 
+        function onchangePoint(){
+            let QRCodePoint = window.document.getElementById('QRCodePoint');
+            operations_points = QRCodePoint.value
+        }
 
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendAccrue").style.display = "none";
@@ -238,6 +244,7 @@
 
                 document.getElementById("QRtotal").innerText = operations_total
                 document.getElementById("availablePoints").innerText = operations_availablePoints
+                PointMax(r_textPars.maxPoints)
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
@@ -422,7 +429,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
@@ -459,6 +465,20 @@
                 </div>
             </div>
 
+            <div id="sendPoint" style="display: none">
+                <div class="mt-2 row mx-2">
+                    <small id="emailHelp" class="form-text text-muted text-center ">Введите количество бонусов</small>
+                    <div class="col-1 mt-2 mx-2 text-danger"> </div>
+                    <div class="col-9">
+                        <div class="input-group">
+                            <input onchange="onchangePoint()" onKeyPress="only_numbers()" type="text" class="form-control" id="QRCodePoint" placeholder="*** ***">
+                            <div class="input-group-append">
+                                <span class="input-group-text">Бонусов</span>
+                                <span id="maxPoint" class="input-group-text">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="buttonOperations">
                 <div class="mt-2 row mx-2">
@@ -466,13 +486,14 @@
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>
             </div>
-
         </div>
     </div>
 
-
 <script>
-
+    function PointMax(max){
+        let idPoint = window.document.getElementById('maxPoint');
+        idPoint.innerText = max
+    }
     function formatParams(params) {
         return "?" + Object
             .keys(params)
