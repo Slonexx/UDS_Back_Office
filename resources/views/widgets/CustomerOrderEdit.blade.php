@@ -449,7 +449,7 @@
                                 <div id="sendCancellation">
                                     <div class="row">
                                         <div class="col-8"> <span> Доступное к списанию: </span> </div>
-                                        <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
+                                        <div class="col-4 text-end"> <span id="availablePoints"> *** </span> <span> max </span> </div>
                                     </div>
                                 </div>
                             </div>
@@ -491,7 +491,7 @@
 <script>
     function PointMax(max){
         let idPoint = window.document.getElementById('maxPoint');
-        idPoint.innerText = max.toString() + ' MAX'
+        idPoint.innerText = max.toString();
     }
     function formatParams(params) {
         return "?" + Object
