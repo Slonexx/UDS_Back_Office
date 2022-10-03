@@ -247,8 +247,6 @@
                 let cashBack = r_textPars.cashBack;
                 document.getElementById("total").innerText = operations_total
                 document.getElementById("cashBackOperation").innerText = cashBack
-
-                document.getElementById("QRtotal").innerText = operations_total
                 document.getElementById("availablePoints").innerText = operations_availablePoints
                 PointMax(r_textPars.maxPoints)
                 document.getElementById("sendAccrue").style.display = "block";
