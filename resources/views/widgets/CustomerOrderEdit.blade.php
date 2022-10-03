@@ -236,7 +236,7 @@
                 document.getElementById("sendCancellation").style.display = "block";
                 console.log('OLDQRCode = ' + OLDQRCode);
                 console.log('operations_user = ' + operations_user);
-                if (operations_user != '' && OLDQRCode != ''){
+                if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
                 }
             }
