@@ -188,6 +188,7 @@
                 document.getElementById("sendQR").style.display = "block";
                 document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("labelCancellation").style.display = "block";
+                document.getElementById("sendPoint").style.display = "block";
                 operations_user = OLDQRCode
             }
         }
@@ -196,11 +197,13 @@
             let QRCode = parseInt(document.getElementById("QRCode").value)
             if (QRCode < 999999 && QRCode > 99999){
                 document.getElementById("sendQRError").style.display = "none"
+                document.getElementById("sendCancellation").style.display = "block"
                 operations_user = QRCode
                 OLDQRCode = QRCode
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
             } else {
                 document.getElementById("sendQRError").style.display = "block"
+                document.getElementById("sendCancellation").style.display = "none"
             }
         }
 
