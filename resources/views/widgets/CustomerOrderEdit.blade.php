@@ -506,7 +506,7 @@
     function only_float(){
         let max = window.document.getElementById('maxPoint');
         let point = window.document.getElementById('QRCodePoint');
-        if (max.innerText < point.innerText) {
+        if (Math.floor(max.innerText) < Math.floor(point.value)) {
             console.log('point.innerText = ' + point.innerText)
         }
         if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode == 46)
