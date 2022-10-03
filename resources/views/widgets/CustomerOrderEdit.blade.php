@@ -465,12 +465,11 @@
 
             <div id="sendPoint" class="mt-2" style="display: none">
                 <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Бонусов</span>
-                        <span id="maxPoint" class="input-group-text">0.00</span>
-                    </div>
                     <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
-                           onchange="onchangePoint()" onKeyPress="only_numbers()" aria-label="Dollar amount (with dot and two decimal places)">
+                           onchange="onchangePoint()" onKeyPress="only_float()" aria-label="Dollar amount (with dot and two decimal places)">
+                    <div class="input-group-append">
+                        <span id="maxPoint" class="input-group-text">0.00 MAX</span>
+                    </div>
                 </div>
             </div>
             <div id="buttonOperations">
@@ -485,7 +484,7 @@
 <script>
     function PointMax(max){
         let idPoint = window.document.getElementById('maxPoint');
-        idPoint.innerText = max.toString()
+        idPoint.innerText = max.toString() + ' MAX'
     }
     function formatParams(params) {
         return "?" + Object
@@ -497,6 +496,10 @@
     }
     function only_numbers(){
         if (event.keyCode < 48 || event.keyCode > 57)
+            event.returnValue= false;
+    }
+    function only_float(){
+        if (event.keyCode < 48 || event.keyCode > 57 || event.keyCode == 46)
             event.returnValue= false;
     }
 
