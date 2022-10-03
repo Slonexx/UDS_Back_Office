@@ -87,7 +87,8 @@ class ObjectController extends Controller
                 $message = [
                     'total' => $info_total_and_SkipLoyaltyTotal['total'],
                     'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                    'points' => $this->AgentMCID($objectId, $Setting),
+                    'availablePoints' => $this->AgentMCID($objectId, $Setting),
+                    'points' => "0",
                     'phone' => $this->AgentMCPhone($objectId, $Setting),
                 ];
             }

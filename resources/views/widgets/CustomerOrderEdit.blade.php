@@ -16,6 +16,7 @@
         let operations_total
         let operations_cash
         let operations_points
+        let operations_availablePoints
         let operations_skipLoyaltyTotal
         let operations_user
         let operations_cashier_id = "{{ $cashier_id }}"
@@ -86,8 +87,9 @@
                         OLDPhone = message.phone
                         operations_user = message.phone
                         operations_total = message.total
+                        operations_availablePoints = message.availablePoints
                         operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
-                        info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0);
+                        info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
 
                     }
                 });
@@ -194,7 +196,7 @@
                 document.getElementById("sendQRError").style.display = "none"
                 operations_user = QRCode
                 OLDQRCode = QRCode
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0);
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
             } else {
                 document.getElementById("sendQRError").style.display = "block"
             }
@@ -213,7 +215,7 @@
             }
         }
 
-        function info_operations(user, total, skipTotal, point){
+        function info_operations(user, total, skipTotal, point, availablePoints){
             let params = {
                 accountId: "{{ $accountId }}",
                 user: user,
@@ -233,6 +235,9 @@
                 let cashBack = r_textPars.cashBack;
                 document.getElementById("total").innerText = operations_total
                 document.getElementById("cashBackOperation").innerText = cashBack + ' Баллы'
+
+                document.getElementById("QRtotal").innerText = operations_total
+                document.getElementById("availablePoints").innerText = operations_availablePoints
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
@@ -438,9 +443,9 @@
                         <div class=" col-10 my-bg-gray-2 rounded p-2 text-black ">
                             <div class="row">
                                 <div class="col-8"> <span> Общая сумма к оплате  </span> </div>
-                                <div class="col-4 text-end"> <span> *** </span> </div>
+                                <div class="col-4 text-end"> <span id="QRtotal"> *** </span> </div>
                                 <div class="col-8"> <span> Доступное к списанию: </span> </div>
-                                <div class="col-4 text-end"> <span> 20 </span> </div>
+                                <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
                             </div>
                         </div>
                     </div>
