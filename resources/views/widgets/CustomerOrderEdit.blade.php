@@ -449,7 +449,7 @@
                                 <div id="sendCancellation">
                                     <div class="row">
                                         <div class="col-8"> <span> Доступное к списанию: </span> </div>
-                                        <div class="col-4 text-end"> <span id="availablePoints"> *** </span> <span> max </span> </div>
+                                        <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
                                     </div>
                                 </div>
                             </div>
@@ -473,7 +473,8 @@
                             <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
                                    onchange="onchangePoint()" onKeyPress="only_float()" aria-label="Dollar amount (with dot and two decimal places)">
                             <div class="input-group-append">
-                                <span id="maxPoint" class="input-group-text">0.00 MAX</span>
+                                <span id="maxPoint" class="input-group-text">0.00</span>
+                                <span>0.00 max</span>
                             </div>
                         </div>
                     </div>
@@ -508,8 +509,8 @@
     function only_float(){
         let max = window.document.getElementById('maxPoint').innerText;
         let point = window.document.getElementById('QRCodePoint').value;
-        console.log('Math.floor(max) =' + Math.floor(max))
-        console.log('Math.floor(point) =' + Math.floor(point))
+        console.log('max = ' + parseFloat(max))
+        console.log('point = ' + parseFloat(point))
         if (Math.floor(max.innerText) >= Math.floor(point.value)) {
             console.log('point.innerText = ' + point.innerText)
         }
