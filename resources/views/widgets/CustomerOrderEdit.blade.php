@@ -196,7 +196,8 @@
         function onchangeQR(){
             let QRCode = (document.getElementById("QRCode").value)
             console.log('QRCode = ' + QRCode)
-            if (QRCode < 999999 && QRCode > 99999){
+            console.log('QRCode.length = ' + QRCode.length)
+            if (QRCode.length > 6){
                 document.getElementById("sendQRError").style.display = "none"
                 document.getElementById("sendCancellation").style.display = "block"
                 document.getElementById("sendAccrue").style.display = "block";
