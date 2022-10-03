@@ -203,6 +203,7 @@
                 document.getElementById("sendAccrue").style.display = "block";
                 operations_user = QRCode
                 OLDQRCode = QRCode
+
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
             } else {
                 document.getElementById("sendQRError").style.display = "block"
@@ -233,7 +234,11 @@
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
-                document.getElementById("sendPoint").style.display = "block";
+                console.log('OLDQRCode = ' + OLDQRCode);
+                console.log('operations_user = ' + operations_user);
+                if (operations_user != '' && OLDQRCode != ''){
+                    document.getElementById("sendPoint").style.display = "block";
+                }
             }
         }
 
@@ -516,9 +521,7 @@
     function only_float(){
         if (event.keyCode < 48 || event.keyCode > 57){
             if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
-
         }
-
     }
 
 </script>
