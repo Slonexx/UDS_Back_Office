@@ -16,6 +16,7 @@
         let operations_total
         let operations_cash
         let operations_points
+        let operations_Max_points
         let operations_availablePoints
         let operations_skipLoyaltyTotal
         let operations_user
@@ -263,6 +264,7 @@
                 document.getElementById("total").innerText = operations_total
                 document.getElementById("cashBackOperation").innerText = cashBack
                 document.getElementById("availablePoints").innerText = operations_availablePoints
+                operations_Max_points = r_textPars.maxPoints
                 PointMax(r_textPars.maxPoints)
                 document.getElementById("sendAccrue").style.display = "block";
             })
@@ -299,6 +301,8 @@
 
 
         }
+
+
 
     </script>
 
@@ -502,6 +506,12 @@
     </div>
 
 <script>
+    document.getElementById("QRCodePoint").addEventListener("change", function() {
+        let v = parseInt(this.value);
+        if (v < 1) this.value = 1;
+        if (v > operations_Max_points) this.value = operations_Max_points;
+    });
+
     function PointMax(max){
         let idPoint = window.document.getElementById('maxPoint');
         idPoint.innerText = max.toString();
