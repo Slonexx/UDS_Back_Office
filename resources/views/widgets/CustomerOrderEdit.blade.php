@@ -284,7 +284,7 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-            console.log('receipt_points = ' + receipt_points);
+            console.log('operations_points = ' + operations_points);
             let final = url + '/CompletesOrder/operations/' + formatParams(params);
             console.log('final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
