@@ -34,6 +34,8 @@
                 document.getElementById("buttonOperations").style.display = "none";
                 document.getElementById("labelAccrue").style.display = "none";
                 document.getElementById("labelCancellation").style.display = "none";
+                document.getElementById("valueSelector").value = 0
+
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
