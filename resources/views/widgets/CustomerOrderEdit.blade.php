@@ -276,8 +276,7 @@
             console.log('operations_points = ' + operations_points)
             console.log('operations_cash = ' + operations_cash)
             if (parseFloat(operations_points) > 0) {
-                console.log('info_operations yes')
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
+                operations_cash = operations_cash - operations_points
             }
             console.log('operations_cash = ' + operations_cash)
             let params = {
