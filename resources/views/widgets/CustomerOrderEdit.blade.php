@@ -273,6 +273,7 @@
                 operations_Max_points = r_textPars.maxPoints
                 PointMax(r_textPars.maxPoints)
                 document.getElementById("sendAccrue").style.display = "block";
+                document.getElementById('buttonOperations').style.display = 'block'
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
