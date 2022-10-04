@@ -34,8 +34,8 @@
                 document.getElementById("buttonOperations").style.display = "none";
                 document.getElementById("labelAccrue").style.display = "none";
                 document.getElementById("labelCancellation").style.display = "none";
-                document.getElementById("valueSelector").value = 0
-
+                document.getElementById("valueSelector").value = "0"
+                CheckPhoneOrQR(document.getElementById("valueSelector"))
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
