@@ -34,6 +34,7 @@
                 document.getElementById("buttonOperations").style.display = "none";
                 document.getElementById("labelAccrue").style.display = "none";
                 document.getElementById("labelCancellation").style.display = "none";
+                document.getElementById("Accrue").checked = true;
                 document.getElementById("valueSelector").value = "0"
                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                 oReq.addEventListener("load", function() {
