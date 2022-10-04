@@ -301,7 +301,6 @@ class ObjectController extends Controller
             ],
             'tags' => null
         ];
-        dd($body);
         try {
             $post = $Client->post($url, $body);
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
@@ -338,8 +337,7 @@ class ObjectController extends Controller
         $OldPositions = $ClientMCPositions->requestGet()->rows;
 
         $sumMC = $OldBody->sum - $skipLoyaltyTotal;
-        if ($sumMC > 0) $pointsPercent = $postUDS->points  * 100 / $sumMC ;  else $pointsPercent = 0;
-
+        if ($sumMC > 0) $pointsPercent = ( $postUDS->points * -1 )  * 100 / ( $sumMC / 100 ) ;  else $pointsPercent = 0;
         foreach ($OldPositions as $item){
             //$price = $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100));
             $Positions[] = [
