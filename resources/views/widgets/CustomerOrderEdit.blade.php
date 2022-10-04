@@ -284,7 +284,7 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-
+            console.log('receipt_points = ' + receipt_points);
             let final = url + '/CompletesOrder/operations/' + formatParams(params);
             console.log('final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
@@ -510,6 +510,7 @@
         let v = parseInt(this.value);
         if (v < 1) this.value = 1;
         if (v > operations_Max_points) this.value = operations_Max_points;
+        operations_points = this.value
     });
 
     function PointMax(max){
