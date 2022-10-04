@@ -273,6 +273,7 @@
         }
 
         function sendOperations(){
+            console.log('operations_points = ' + operations_points)
             if (parseFloat(operations_points) > 0) {
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
             }
