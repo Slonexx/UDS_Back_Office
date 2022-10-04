@@ -273,6 +273,9 @@
         }
 
         function sendOperations(){
+            if (parseFloat(operations_points) > 0) {
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
+            }
             let params = {
                 accountId: "{{ $accountId }}",
                 objectId: GlobalobjectId,
