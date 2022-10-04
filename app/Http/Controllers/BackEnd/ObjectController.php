@@ -321,7 +321,6 @@ class ObjectController extends Controller
             ],
             'tags' => null
         ];
-        dd($body);
         try {
             $post = $Client->post($url, $body);
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
