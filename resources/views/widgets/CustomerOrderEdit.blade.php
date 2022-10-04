@@ -256,18 +256,24 @@
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
-                operations_cash = r_textPars.cash;
-                operations_total = r_textPars.total;
-                operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
+                if (typeof r_textPars.Status !== 'undefined'){
+                    document.getElementById("sendQRErrorID").style.display = "block";
+                } else {
+                    document.getElementById("sendQRErrorID").style.display = "none";
+                    operations_cash = r_textPars.cash;
+                    operations_total = r_textPars.total;
+                    operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
 
-                let cashBack = r_textPars.cashBack;
-                document.getElementById("total").innerText = operations_total
-                document.getElementById("cashBackOperation").innerText = cashBack
-                document.getElementById("availablePoints").innerText = operations_availablePoints
-                operations_Max_points = r_textPars.maxPoints
-                PointMax(r_textPars.maxPoints)
-                document.getElementById("sendAccrue").style.display = "block";
-                document.getElementById('buttonOperations').style.display = 'block'
+                    let cashBack = r_textPars.cashBack;
+                    document.getElementById("total").innerText = operations_total
+                    document.getElementById("cashBackOperation").innerText = cashBack
+                    document.getElementById("availablePoints").innerText = operations_availablePoints
+                    operations_Max_points = r_textPars.maxPoints
+                    PointMax(r_textPars.maxPoints)
+                    document.getElementById("sendAccrue").style.display = "block";
+                    document.getElementById('buttonOperations').style.display = 'block'
+                }
+
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
@@ -439,6 +445,12 @@
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
                     <div class="col-10 alert alert-danger fade show in text-center "> QR-код состоит из 6 цифр !</div>
+                </div>
+            </div>
+            <div id="sendQRErrorID" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 alert alert-danger fade show in text-center "> QR-код не верный !</div>
                 </div>
             </div>
             <div class="mt-2 row mx-2">

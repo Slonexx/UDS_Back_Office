@@ -271,8 +271,14 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
             ],
         ];
-        $postBody = $Client->post($url, $body)->purchase;
-        return response()->json($postBody);
+        try {
+            $postBody = $Client->post($url, $body)->purchase;
+            return response()->json($postBody);
+        } catch (\Throwable $e) {
+            return response()->json(['Status' => $e->getCode()]);
+        }
+
+
     }
     public function operations(Request $request){
         $data = $request->validate([
