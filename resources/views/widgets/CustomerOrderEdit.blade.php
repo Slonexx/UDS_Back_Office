@@ -188,11 +188,13 @@
                 document.getElementById("QRCodePoint").value = "";
                 operations_points = 0;
                 operations_user = OLDPhone
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
                 document.getElementById("labelAccrue").style.display = "block";
                 document.getElementById("labelCancellation").style.display = "block";
+                document.getElementById('buttonOperations').style.display = 'none'
                 operations_user = OLDQRCode
             }
         }
@@ -515,6 +517,14 @@
     </div>
 
 <script>
+    document.getElementById("QRCode").addEventListener("change", function() {
+        Selector = document.getElementById('valueSelector')
+        let option = Selector.options[Selector.selectedIndex];
+        if (option == '1') {
+            document.getElementById('buttonOperations').style.display = 'block'
+        }
+    });
+
     document.getElementById("QRCodePoint").addEventListener("change", function() {
         let v = parseInt(this.value);
         if (v < 1) this.value = 1;
