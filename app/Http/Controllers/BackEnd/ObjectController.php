@@ -8,6 +8,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Models\errorLog;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
@@ -77,7 +78,7 @@ class ObjectController extends Controller
             ];
         } catch (ClientException $exception) {
 
-            $data = $this->newPostOperations($Clint, $externalCode, $agentId);
+            $data = $this->newPostOperations($accountId, $Clint, $externalCode, $agentId);
             if ($data['status']) {
                 $StatusCode = "200";
                 $message = $data['data'];
@@ -121,20 +122,29 @@ class ObjectController extends Controller
         }
     }
 
-    private function newPostOperations($ClientUDS,  $externalCode, $agentId){
+    private function newPostOperations($accountId, $ClientUDS,  $externalCode, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
+
         try {
             $body = $ClientUDS->get($url);
             $status = true;
+
             $data = [
                 'id'=> $body->id,
-                'BonusPoint'=> $this->Calc($ClientUDS, $body, $agentId),
+                'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
                 'points'=> $body->points,
                 'state'=> "COMPLETED",
                 'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>',
                 'info'=> 'Operations',
             ];
+
         } catch (\Throwable $e) {
+            $message = $e->getMessage();
+            errorLog::create([
+                'accountId' => $accountId,
+                'message' => $message,
+            ]);
+
             $status = false;
             $data = null;
         }
@@ -195,7 +205,7 @@ class ObjectController extends Controller
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
-    private function Calc($ClientUDS, $body, $agentId){
+    private function Calc($accountId, $ClientUDS, $body, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/calc';
         $body = [
             'code' => null,
@@ -205,11 +215,20 @@ class ObjectController extends Controller
             ],
             'receipt' => [
                 'total' => $body->total,
-                'points' => $body->points,
+                'points' => ($body->points * -1),
                 'skipLoyaltyTotal' => null,
             ],
         ];
-        $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
+
+        try {
+            $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
+        } catch (\Throwable $e) {
+            $message = $e->getMessage();
+            errorLog::create([
+                'accountId' => $accountId,
+                'message' => $message,
+            ]);
+        }
         return $postBody;
     }
 
