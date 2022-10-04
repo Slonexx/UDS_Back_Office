@@ -203,8 +203,6 @@
 
         function onchangeQR(){
             let QRCode = (document.getElementById("QRCode").value)
-            console.log('QRCode = ' + QRCode)
-            console.log('QRCode.length = ' + QRCode.length)
             if (QRCode.length == 6){
                 document.getElementById("sendQRError").style.display = "none"
                 document.getElementById("sendCancellation").style.display = "block"
@@ -224,10 +222,6 @@
 
             let max = window.document.getElementById('maxPoint').innerText;
             let point = window.document.getElementById('QRCodePoint').value;
-            console.log('max = ' + parseFloat(max))
-            console.log('point = ' + parseFloat(point))
-
-
 
             let QRCodePoint = window.document.getElementById('QRCodePoint');
             operations_points = QRCodePoint.value
@@ -236,14 +230,14 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
+            document.getElementById("QRCodePoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
 
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
-                console.log('OLDQRCode = ' + OLDQRCode);
-                console.log('operations_user = ' + operations_user);
+                document.getElementById("QRCodePoint").style.display = "block";
                 if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
                 }
@@ -259,7 +253,7 @@
                 points: point,
             };
             let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
-            console.log('final = ' + final)
+            console.log('info_operations final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
@@ -281,12 +275,9 @@
         }
 
         function sendOperations(){
-            console.log('operations_points = ' + operations_points)
-            console.log('operations_cash = ' + operations_cash)
             if (parseFloat(operations_points) > 0) {
                 operations_cash = operations_cash - operations_points
             }
-            console.log('operations_cash = ' + operations_cash)
             let params = {
                 accountId: "{{ $accountId }}",
                 objectId: GlobalobjectId,
@@ -298,9 +289,8 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-            console.log('operations_points = ' + operations_points);
             let final = url + '/CompletesOrder/operations/' + formatParams(params);
-            console.log('final = ' + final)
+            console.log('sendOperations final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
