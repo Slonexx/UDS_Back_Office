@@ -128,11 +128,12 @@ class ObjectController extends Controller
         try {
             $body = $ClientUDS->get($url);
             $status = true;
-
+            if ($body->points < 0) $points = $body->points * -1;
+            else $points = $body->points ;
             $data = [
                 'id'=> $body->id,
                 'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
-                'points'=> $body->points,
+                'points'=> $points,
                 'state'=> "COMPLETED",
                 'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>',
                 'info'=> 'Operations',
