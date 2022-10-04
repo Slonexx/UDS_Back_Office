@@ -189,6 +189,7 @@
                 operations_points = 0;
                 operations_user = OLDPhone
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
+                document.getElementById("Accrue").checked = true;
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block";
@@ -518,9 +519,9 @@
 
 <script>
     document.getElementById("QRCode").addEventListener("change", function() {
-        Selector = document.getElementById('valueSelector')
+        let Selector = document.getElementById('valueSelector')
         let option = Selector.options[Selector.selectedIndex];
-        if (option == '1') {
+        if (option === '1') {
             document.getElementById('buttonOperations').style.display = 'block'
         }
     });
