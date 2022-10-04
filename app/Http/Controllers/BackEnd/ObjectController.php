@@ -314,13 +314,14 @@ class ObjectController extends Controller
             ],
             'receipt' => [
                 'total' => $data['receipt_total'],
-                'cash' => $data['receipt_cash'],
+                'cash' => (string) round($data['receipt_cash'],2),
                 'points' => $data['receipt_points'],
                 'number' => null,
                 'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
             ],
             'tags' => null
         ];
+        dd($body);
         try {
             $post = $Client->post($url, $body);
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
