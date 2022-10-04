@@ -143,7 +143,7 @@ class ObjectController extends Controller
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
-                'message' => $message,
+                'ErrorMessage' => $message,
             ]);
 
             $status = false;
@@ -227,7 +227,7 @@ class ObjectController extends Controller
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
-                'message' => $message,
+                'ErrorMessage' => $message,
             ]);
         }
         return $postBody;
