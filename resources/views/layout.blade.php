@@ -25,10 +25,9 @@
                     <div class="dropdown-container">
                         <a href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
                         <a href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
-                        <a href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
                         <a href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
                         <a href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
-
+                        <a href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
                     </div>
                 </div>
 
