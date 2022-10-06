@@ -23,6 +23,8 @@
         let operations_cashier_id = "{{ $cashier_id }}"
         let operations_cashier_name = "{{ $cashier_name }}"
 
+        let EnableOffs
+
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
@@ -86,6 +88,7 @@
                         document.getElementById("buttonOperations").style.display = "block"
                         document.getElementById("labelAccrue").style.display = "block"
 
+                        EnableOffs = message.EnableOffs
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
                         OLDPhone = message.phone
@@ -233,7 +236,9 @@
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-
+                if (EnableOffs === true && operations_user != undefined){
+                    document.getElementById("sendPoint").style.display = "block";
+                }
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";

@@ -7,6 +7,7 @@ use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\errorLog;
 use GuzzleHttp\Exception\ClientException;
@@ -85,12 +86,18 @@ class ObjectController extends Controller
             } else {
                 $StatusCode = "404";
                 $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
+                $SettingBD = new getSetting();
+                $SettingBD = $SettingBD->getSendSettingOperations($accountId);
+                if ($SettingBD->EnableOffs == 1 or $SettingBD->EnableOffs == '1'){
+                    $EnableOffs = true;
+                } else { $EnableOffs = false; }
                 $message = [
                     'total' => $info_total_and_SkipLoyaltyTotal['total'],
                     'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
                     'availablePoints' => $this->AgentMCID($objectId, $Setting),
                     'points' => "0",
                     'phone' => $this->AgentMCPhone($objectId, $Setting),
+                    'EnableOffs' => $EnableOffs,
                 ];
             }
         }
@@ -263,7 +270,7 @@ class ObjectController extends Controller
             'code' => $data['code'],
             'participant' => [
                 'uid' => null,
-                'phone' => $data['phone'],
+                'phone' => str_replace(" ", '', $data['phone']),
             ],
             'receipt' => [
                 'total' => $data['total'],
