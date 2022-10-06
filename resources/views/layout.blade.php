@@ -26,11 +26,9 @@
                         <a href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
                         <a href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
                         <a href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
-                        <button class="mt-2 dropdown-btn">Операции <i class="fa fa-caret-down"></i> </button>
-                        <div class="dropdown-container">
-                            <a href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Проведение операции </a>
-                            <a href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
-                        </div>
+                        <a href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
+                        <a href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
+
                     </div>
                 </div>
 
