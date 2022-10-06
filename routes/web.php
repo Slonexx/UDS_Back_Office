@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BackEnd\ObjectController;
+use App\Http\Controllers\Web\employees;
+use App\Http\Controllers\Web\sendOperations;
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\SupportController;
 use App\Http\Controllers\Web\RewardController;
@@ -35,6 +37,12 @@ Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("in
 Route::get('/Setting/{accountId}/{isAdmin}', [SettingController::class, 'index'])->name('indexSetting');
 Route::get('/Setting/Document/{accountId}/{isAdmin}', [SettingController::class, 'indexDocument'])->name('indexDocument');
 Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'indexAdd'])->name('indexAdd');
+
+
+Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);
+Route::get('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'index']);
+Route::post('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'postOperations']);
+
 
 Route::get('/Setting/Error/{accountId}/{isAdmin}/{message}', [SettingController::class, 'indexError'])->name('indexError');
 Route::get('/Setting/noAdmin/{accountId}/{isAdmin}/', [SettingController::class, 'indexNoAdmin'])->name('indexNoAdmin');

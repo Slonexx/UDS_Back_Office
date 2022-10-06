@@ -480,7 +480,7 @@
                                 <div class="col-4 text-end"> <span id="cashBackOperation"> *** Баллы </span> </div>
                                 <div id="sendCancellation">
                                     <div class="row">
-                                        <div class="col-8"> <span> Доступное к списанию: </span> </div>
+                                        <div class="col-8"> <span> Доступное баллов: </span> </div>
                                         <div class="col-4 text-end"> <span id="availablePoints"> *** </span> </div>
                                     </div>
                                 </div>
@@ -492,7 +492,7 @@
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
                     <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
-                        <div>Пожалуйста закройте заказ без сохранения !</div>
+                        <div> <b> Пожалуйста закройте заказ без сохранения ! </b> </div>
                     </div>
                 </div>
             </div>
