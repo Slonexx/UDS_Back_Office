@@ -51,7 +51,7 @@ class sendOperations extends Controller
                 'accountId' => $accountId,
                 'EnableOffs' => $request->offsPhone,
                 'operationsDocument' => $request->operationsDocument,
-                'PaymentDocument' => $request->PaymentDocument,
+                'operationsPaymentDocument' => $request->PaymentDocument,
             ]);
             $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
             $message["message"] = "Настройки сохранились!";

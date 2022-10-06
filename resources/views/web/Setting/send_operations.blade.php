@@ -43,7 +43,7 @@
                 <div class="mb-3 row">
                     <P class="col-6 col-form-label"> Выберите какой тип документов создавать: </P>
                     <div class="col-5">
-                        <select name="operationsDocument" class="form-select text-black" >
+                        <select id="operationsDocument" name="operationsDocument" class="form-select text-black" >
                             <option selected value="0">Не создавать</option>
                             <option value="1">Отгрузка</option>
                             <option value="2">Отгрузка + счет-фактура выданный</option>
@@ -75,7 +75,9 @@
         let EnableOffs_value = document.getElementById('EnableOffs').value = {{ $EnableOffs }};
         let operationsDocument_value  = document.getElementById('operationsDocument').value = {{ $operationsDocument }};
         let operationsPaymentDocument_value  = document.getElementById('operationsPaymentDocument').value = {{ $operationsPaymentDocument }};
-
+        console.log('EnableOffs_value = ' + EnableOffs_value)
+        console.log('operationsDocument_value = ' + operationsDocument_value)
+        console.log('operationsPaymentDocument_value = ' + operationsPaymentDocument_value)
     /*
         function EnableOffs_true_or_false(This_value){
             let value = parseInt(This_value);

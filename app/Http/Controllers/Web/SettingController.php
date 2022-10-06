@@ -9,6 +9,7 @@ use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\counterparty_add;
 use App\Models\orderSettingModel;
@@ -119,15 +120,31 @@ class SettingController extends Controller
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
         if ($body == 200){
 
-            SettingMain::create([
-                'accountId' => $accountId,
-                'TokenMoySklad' => $TokenMoySklad,
-                'companyId' => $request->companyId,
-                'TokenUDS' => $request->TokenUDS,
-                'ProductFolder' => $request->ProductFolder,
-                'UpdateProduct' => $request->UpdateProduct,
-                'Store' => $request->Store,
-            ]);
+            $SettingBD = new getSetting();
+            $SettingBD = $SettingBD->getSettingMain($accountId);
+
+            if ($SettingBD->TokenMoySklad == null) {
+                SettingMain::create([
+                    'accountId' => $accountId,
+                    'TokenMoySklad' => $TokenMoySklad,
+                    'companyId' => $request->companyId,
+                    'TokenUDS' => $request->TokenUDS,
+                    'ProductFolder' => $request->ProductFolder,
+                    'UpdateProduct' => $request->UpdateProduct,
+                    'Store' => $request->Store,
+                ]);
+            } else {
+                $SettingMain_update = SettingMain::query()->where('accountId', $accountId);
+                $SettingMain_update->update([
+                    'TokenMoySklad' => $TokenMoySklad,
+                    'companyId' => $request->companyId,
+                    'TokenUDS' => $request->TokenUDS,
+                    'ProductFolder' => $request->ProductFolder,
+                    'UpdateProduct' => $request->UpdateProduct,
+                    'Store' => $request->Store,
+                ]);
+            }
+
 
             $app->companyId = $request->companyId;
             $app->TokenUDS = $request->TokenUDS;
