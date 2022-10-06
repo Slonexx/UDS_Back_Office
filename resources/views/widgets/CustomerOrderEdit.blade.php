@@ -422,7 +422,7 @@
             </div>
 
             <div class="mt-2 row mx-2">
-                    <div class="col-5 mt-2 mx-2"> Тип проведение </div>
+                    <div class="col-5 mt-2 mx-2"> Тип проведения </div>
                     <div class="col-6">
                         <select onchange="CheckPhoneOrQR(valueSelector)" id="valueSelector" class="p-1 form-select">
                             <option value="0" selected> по номеру телефона </option>

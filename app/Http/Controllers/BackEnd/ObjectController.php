@@ -135,7 +135,7 @@ class ObjectController extends Controller
                 'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
                 'points'=> $points,
                 'state'=> "COMPLETED",
-                'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>',
+                'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info'=> 'Operations',
             ];
 
