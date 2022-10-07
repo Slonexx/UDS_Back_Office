@@ -30,6 +30,9 @@
             GlobalobjectId = receivedMessage.objectId;
             if (receivedMessage.name === 'Open') {
                 let oReq = new XMLHttpRequest();
+                document.getElementById("activated").style.display = "none";
+                document.getElementById("undefined").style.display = "none";
+                document.getElementById("Error402").style.display = "none"
                 document.getElementById("success").style.display = "none";
                 document.getElementById("danger").style.display = "none";
                 document.getElementById("sendWarning").style.display = "none";
