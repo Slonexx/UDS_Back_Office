@@ -89,6 +89,9 @@
                         document.getElementById("labelAccrue").style.display = "block"
 
                         EnableOffs = message.EnableOffs
+                        if (EnableOffs == true){
+                            document.getElementById("labelCancellation").style.display = "block"
+                        }
                         sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
                         OLDPhone = message.phone
