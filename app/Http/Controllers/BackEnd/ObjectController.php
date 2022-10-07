@@ -271,9 +271,9 @@ class ObjectController extends Controller
             "points" => "required|string",
         ]);
 
-        if ((int) str_replace(' ','',$data['user']) > 999999) {
+        if ( strlen(str_replace(' ','',$data['user']) )  > 6) {
             $data['code'] = null;
-            $data['phone'] = $data['user'];
+            $data['phone'] = str_replace("+7", '', $data['user']);
         } else {
             $data['code'] = $data['user'];
             $data['phone'] = null;
@@ -290,7 +290,7 @@ class ObjectController extends Controller
             'code' => $data['code'],
             'participant' => [
                 'uid' => null,
-                'phone' => str_replace(" ", '', $data['phone']),
+                'phone' => '+7' . str_replace(" ", '', $data['phone']),
             ],
             'receipt' => [
                 'total' => $data['total'],
@@ -298,11 +298,12 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
             ],
         ];
+
         try {
             $postBody = $Client->post($url, $body)->purchase;
             return response()->json($postBody);
         } catch (\Throwable $e) {
-            return response()->json(['Status' => $e->getCode()]);
+            return response()->json(['Status' => $e->getCode(), 'Message' => $e->getMessage()]);
         }
 
 
