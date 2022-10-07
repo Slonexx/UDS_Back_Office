@@ -271,9 +271,10 @@ class ObjectController extends Controller
             "points" => "required|string",
         ]);
 
-        if ( strlen(str_replace(' ','',$data['user']) )  > 6) {
+        if ( strlen( str_replace(' ','',$data['user']) ) > 6) {
             $data['code'] = null;
             $data['phone'] = str_replace("+7", '', $data['user']);
+            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
         } else {
             $data['code'] = $data['user'];
             $data['phone'] = null;
@@ -290,7 +291,7 @@ class ObjectController extends Controller
             'code' => $data['code'],
             'participant' => [
                 'uid' => null,
-                'phone' => '+7' . str_replace(" ", '', $data['phone']),
+                'phone' => $data['phone'],
             ],
             'receipt' => [
                 'total' => $data['total'],
@@ -298,7 +299,6 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
             ],
         ];
-
         try {
             $postBody = $Client->post($url, $body)->purchase;
             return response()->json($postBody);
@@ -321,9 +321,10 @@ class ObjectController extends Controller
             "receipt_skipLoyaltyTotal" => "required|string",
         ]);
 
-        if ((int) str_replace(' ','',$data['user']) > 999999) {
+        if ( strlen(str_replace(' ','',$data['user']) )  > 6) {
             $data['code'] = null;
-            $data['phone'] = $data['user'];
+            $data['phone'] = str_replace("+7", '', $data['user']);
+            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
         } else {
             $data['code'] = $data['user'];
             $data['phone'] = null;
@@ -355,6 +356,7 @@ class ObjectController extends Controller
             ],
             'tags' => null
         ];
+        dd($body);
         try {
             $post = $Client->post($url, $body);
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
