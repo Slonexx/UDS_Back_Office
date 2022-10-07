@@ -194,6 +194,9 @@
                 operations_user = OLDPhone
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
                 document.getElementById("Accrue").checked = true
+                if (EnableOffs == true){
+                    document.getElementById("labelCancellation").style.display = "block"
+                }
                 sendAccrueOrCancellation(window.document.getElementById("Accrue"))
             }
             if (option.value === "1") {
@@ -236,9 +239,7 @@
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-                if (EnableOffs === true && operations_user != undefined){
-                    document.getElementById("sendPoint").style.display = "block";
-                }
+
             }
             if (div == "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
