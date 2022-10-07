@@ -319,8 +319,7 @@ class ObjectController extends Controller
             "receipt_points" => "required|string",
             "receipt_skipLoyaltyTotal" => "required|string",
         ]);
-
-        if ( strlen(str_replace(' ','',$data['user']) )  > 6) {
+        if ( strlen(str_replace(' ','',$data['user']) ) > 6) {
             $data['code'] = null;
             $data['phone'] = str_replace("+7", '', $data['user']);
             $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
@@ -363,7 +362,7 @@ class ObjectController extends Controller
             $OldBody = $ClientMC->requestGet();
 
             $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
-            $setAttributes = $this->Attributes($post, $OldBody, $Setting);
+            $setAttributes = $this->Attributes($post, $Setting);
 
             $OldBody->externalCode = $post->id;
             $postBody = $ClientMC->requestPut([
@@ -412,7 +411,42 @@ class ObjectController extends Controller
         }
         return $Positions;
     }
-    private function Attributes($postUDS, $OldBody, $Setting){
+    private function Attributes($postUDS, $Setting){
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes';
+        $SettingBD = new getSetting();
+        $SettingBD = $SettingBD->getSendSettingOperations($Setting->accountId);
+        $Client = new ClientMC($url, $Setting->TokenMoySklad);
+        $metadata = $Client->requestGet()->rows;
+        $Attributes[] = '';
+        foreach ($metadata as $item) {
+            if ($item->name == "Списание баллов (UDS)") {
+                if ($postUDS->points > 0) {
+                    $Attributes[] = [
+                        'meta' => $item->meta,
+                        'value' => true,
+                    ];
+                } else {
+                    $Attributes[] = [
+                        'meta' => $item->meta,
+                        'value' => false,
+                    ];
+                }
+            }
+            if ($item->name == "Начисление баллов (UDS)") {
+                if ($postUDS->cash < 0) {
+                    $Attributes[] = [
+                        'meta' => $item->meta,
+                        'value' => true,
+                    ];
+                } else {
+                    $Attributes[] = [
+                        'meta' => $item->meta,
+                        'value' => false,
+                    ];
+                }
+            }
+        }
 
+        return $Attributes;
     }
 }
