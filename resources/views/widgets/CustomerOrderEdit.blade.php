@@ -349,12 +349,12 @@
 
             </div>
             <div class="row">
-                <div class="col-8 row">
+                <div class="col-7 row">
                     <div class="mx-1 mt-1">
                         {{--<button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>--}}
                     </div>
                 </div>
-                <div class="col-4 bg-light rounded-pill s-min mt-1 p-1">
+                <div class="col-5 bg-light rounded-pill s-min mt-1 p-1">
                     <span class="mx-1 mt-2" id="icon"></span>
                 </div>
             </div>
