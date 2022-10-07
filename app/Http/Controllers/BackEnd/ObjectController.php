@@ -357,6 +357,7 @@ class ObjectController extends Controller
 
         try {
             $post = $Client->post($url, $body);
+
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
             $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
             $OldBody = $ClientMC->requestGet();
@@ -365,7 +366,7 @@ class ObjectController extends Controller
             $setAttributes = $this->Attributes($post, $Setting);
 
             $OldBody->externalCode = $post->id;
-            $postBody = $ClientMC->requestPut([
+            $pitBody = $ClientMC->requestPut([
                 'externalCode'=>(string) $post->id,
                 'positions'=> $setPositions,
                 'attributes' => $setAttributes,
@@ -377,6 +378,7 @@ class ObjectController extends Controller
                 'total' => $post->total,
                 'message' => 'The operation was successful',
             ];
+
         } catch ( \Throwable $e){
             $post = [
                'code' =>  $e->getCode(),
@@ -413,11 +415,9 @@ class ObjectController extends Controller
     }
     private function Attributes($postUDS, $Setting){
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes';
-        $SettingBD = new getSetting();
-        $SettingBD = $SettingBD->getSendSettingOperations($Setting->accountId);
         $Client = new ClientMC($url, $Setting->TokenMoySklad);
         $metadata = $Client->requestGet()->rows;
-        $Attributes[] = '';
+        $Attributes = null;
         foreach ($metadata as $item) {
             if ($item->name == "Списание баллов (UDS)") {
                 if ($postUDS->points > 0) {
@@ -446,7 +446,6 @@ class ObjectController extends Controller
                 }
             }
         }
-
         return $Attributes;
     }
 }
