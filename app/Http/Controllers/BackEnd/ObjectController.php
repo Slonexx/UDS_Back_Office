@@ -180,11 +180,17 @@ class ObjectController extends Controller
         $Clinet = new MsClient($Setting->TokenMoySklad);
         $bodyAgentHref = $Clinet->get($url)->agent->meta->href;
         $bodyMC = $Clinet->get($bodyAgentHref);
-        //ПРОЕРВИТЬ ВНЕШНИЙ КОД
-        $url_UDS = 'https://api.uds.app/partner/v2/customers/'.$bodyMC->externalCode;
-        $ClinetUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $body = $ClinetUDS->get($url_UDS)->participant;
-        return $body->points ;
+        //ПРОВЕРВИТЬ ВНЕШНИЙ КОД
+
+        try {
+            $url_UDS = 'https://api.uds.app/partner/v2/customers/'.$bodyMC->externalCode;
+            $ClinetUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+            $body = $ClinetUDS->get($url_UDS)->participant;
+            return $body->points ;
+        } catch (\Throwable $e) {
+            return "Не известно";
+        }
+
 
     }
     private function AgentMCPhone($objectId, $Setting){
