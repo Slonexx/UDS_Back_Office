@@ -366,7 +366,7 @@ class ObjectController extends Controller
             $setAttributes = $this->Attributes($post, $Setting);
 
             $OldBody->externalCode = $post->id;
-            $pitBody = $ClientMC->requestPut([
+            $putBody = $ClientMC->requestPut([
                 'externalCode'=>(string) $post->id,
                 'positions'=> $setPositions,
                 'attributes' => $setAttributes,
@@ -420,7 +420,7 @@ class ObjectController extends Controller
         $Attributes = null;
         foreach ($metadata as $item) {
             if ($item->name == "Списание баллов (UDS)") {
-                if ($postUDS->points > 0) {
+                if (($postUDS->points * -1) > 0) {
                     $Attributes[] = [
                         'meta' => $item->meta,
                         'value' => true,
@@ -433,7 +433,7 @@ class ObjectController extends Controller
                 }
             }
             if ($item->name == "Начисление баллов (UDS)") {
-                if ($postUDS->cash < 0) {
+                if ($postUDS->cash > 0) {
                     $Attributes[] = [
                         'meta' => $item->meta,
                         'value' => true,
