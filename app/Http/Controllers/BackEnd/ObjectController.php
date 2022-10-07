@@ -273,9 +273,9 @@ class ObjectController extends Controller
         if ( strlen( str_replace(' ','',$data['user']) ) > 6) {
             $data['code'] = null;
             $data['phone'] = str_replace("+7", '', $data['user']);
+            $data['phone'] = str_replace("+8", '', $data['user']);
+            $data['phone'] = str_replace("+9", '', $data['user']);
             $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
-            $data['phone'] = '+8' . str_replace(" ", '', $data['phone']);
-            $data['phone'] = '+9' . str_replace(" ", '', $data['phone']);
         } else {
             $data['code'] = $data['user'];
             $data['phone'] = null;
@@ -300,6 +300,7 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
             ],
         ];
+        dd($body);
         try {
             $postBody = $Client->post($url, $body)->purchase;
             return response()->json($postBody);
