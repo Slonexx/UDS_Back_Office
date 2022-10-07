@@ -42,65 +42,71 @@
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
-                    let message = responseTextPars.message;
-                    GlobalUDSOrderID = message.id;
-                    let BonusPoint = message.BonusPoint;
-                    let points = message.points;
 
-                    if (StatusCode == 200) {
-                        document.getElementById("activated").style.display = "block";
-                        document.getElementById("undefined").style.display = "none";
-                        if (message.info == 'Order') {
-                            document.getElementById("infoOrderOrOperations").innerText = 'Заказ №';
-                            GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
-                        }
-                        if (message.info == 'Operations'){
-                            document.getElementById("infoOrderOrOperations").innerText = 'Операция №';
-                            GlobalxRefURL = "https://admin.uds.app/admin/operations"
-                        }
-                        window.document.getElementById("OrderID").innerHTML = message.id;
-                        let icon = message.icon.replace(/\\/g, '');
-                        window.document.getElementById("icon").innerHTML = icon;
-
-                        window.document.getElementById("cashBack").innerHTML = BonusPoint;
-                        window.document.getElementById("points").innerHTML = points;
-
-                        if (message.state == "NEW") {
-                            document.getElementById("ButtonComplete").style.display = "block";
-                            document.getElementById("Complete").style.display = "none";
-                            document.getElementById("Deleted").style.display = "none";
-                        }
-                        if (message.state == "COMPLETED") {
-                            document.getElementById("Complete").style.display = "block";
-                            document.getElementById("ButtonComplete").style.display = "none";
-                            document.getElementById("Deleted").style.display = "none";
-                        }
-                        if (message.state == "DELETED") {
-                            document.getElementById("Deleted").style.display = "block";
-                            document.getElementById("Complete").style.display = "none";
-                            document.getElementById("Complete").style.display = "none";
-                        }
-
+                    if (StatusCode == 402){
+                        document.getElementById("Error402").style.display = "block"
+                        document.getElementById("ErrorMessage").innerText = responseTextPars.message
                     } else {
-                        document.getElementById("activated").style.display = "none"
-                        document.getElementById("sendWarning").style.display = "none"
-                        document.getElementById("undefined").style.display = "block"
-                        document.getElementById("buttonOperations").style.display = "block"
-                        document.getElementById("labelAccrue").style.display = "block"
+                        let message = responseTextPars.message;
+                        GlobalUDSOrderID = message.id;
+                        let BonusPoint = message.BonusPoint;
+                        let points = message.points;
 
-                        EnableOffs = message.EnableOffs
-                        if (EnableOffs == true){
-                            document.getElementById("labelCancellation").style.display = "block"
+                        if (StatusCode == 200) {
+                            document.getElementById("activated").style.display = "block";
+                            document.getElementById("undefined").style.display = "none";
+                            if (message.info == 'Order') {
+                                document.getElementById("infoOrderOrOperations").innerText = 'Заказ №';
+                                GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
+                            }
+                            if (message.info == 'Operations'){
+                                document.getElementById("infoOrderOrOperations").innerText = 'Операция №';
+                                GlobalxRefURL = "https://admin.uds.app/admin/operations"
+                            }
+                            window.document.getElementById("OrderID").innerHTML = message.id;
+                            let icon = message.icon.replace(/\\/g, '');
+                            window.document.getElementById("icon").innerHTML = icon;
+
+                            window.document.getElementById("cashBack").innerHTML = BonusPoint;
+                            window.document.getElementById("points").innerHTML = points;
+
+                            if (message.state == "NEW") {
+                                document.getElementById("ButtonComplete").style.display = "block";
+                                document.getElementById("Complete").style.display = "none";
+                                document.getElementById("Deleted").style.display = "none";
+                            }
+                            if (message.state == "COMPLETED") {
+                                document.getElementById("Complete").style.display = "block";
+                                document.getElementById("ButtonComplete").style.display = "none";
+                                document.getElementById("Deleted").style.display = "none";
+                            }
+                            if (message.state == "DELETED") {
+                                document.getElementById("Deleted").style.display = "block";
+                                document.getElementById("Complete").style.display = "none";
+                                document.getElementById("Complete").style.display = "none";
+                            }
+
+                        } else {
+                            document.getElementById("activated").style.display = "none"
+                            document.getElementById("sendWarning").style.display = "none"
+                            document.getElementById("undefined").style.display = "block"
+                            document.getElementById("buttonOperations").style.display = "block"
+                            document.getElementById("labelAccrue").style.display = "block"
+
+                            EnableOffs = message.EnableOffs
+                            if (EnableOffs == true){
+                                document.getElementById("labelCancellation").style.display = "block"
+                            }
+                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+
+                            OLDPhone = message.phone
+                            operations_user = message.phone
+                            operations_total = message.total
+                            operations_availablePoints = message.availablePoints
+                            operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
+                            info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
+
                         }
-                        sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-
-                        OLDPhone = message.phone
-                        operations_user = message.phone
-                        operations_total = message.total
-                        operations_availablePoints = message.availablePoints
-                        operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
-                        info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
-
                     }
                 });
                 GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
@@ -142,6 +148,7 @@
             oReq.addEventListener("load", function() {
                 var responseTextPars = JSON.parse(this.responseText);
                 var StatusCode = responseTextPars.StatusCode;
+
                 var message = responseTextPars.message;
                 GlobalUDSOrderID = message.id;
                 var BonusPoint = message.BonusPoint;
@@ -527,6 +534,23 @@
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="Error402" class="content bg-white text-Black rounded" style="display: none">
+            <div class="row uds-gradient p-2">
+                <div class="col-2">
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
+                </div>
+                <div class="col-10 text-white mt-1 row">
+                    Ошибка
+                </div>
+            </div>
+            <div class="row">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div id="ErrorMessage" class="col-10 alert alert-danger fade show in text-center "> </div>
                 </div>
             </div>
         </div>

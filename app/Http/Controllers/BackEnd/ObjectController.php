@@ -49,10 +49,25 @@ class ObjectController extends Controller
         $agentId = new ClientMC($href, $Setting->TokenMoySklad);
         $agentId = $agentId->requestGet();
         //Может и не быть
-        $agentId = [
-            'externalCode' => $agentId->externalCode,
-            'phone' => $agentId->phone,
-        ];
+        if (property_exists($agentId, 'phone')) {
+            $agentId = [
+                'externalCode' => $agentId->externalCode,
+                'phone' => $agentId->phone,
+            ];
+        } else {
+            $agentId = [
+                'externalCode' => $agentId->externalCode,
+                'phone' => null,
+                'dontPhone' => true,
+            ];
+            $StatusCode = 402;
+            $message = 'Отсутствует номер телефона у данного контрагента';
+            return [
+                'StatusCode' => $StatusCode,
+                'message' => $message,
+            ];
+        }
+
         $externalCode = $BodyMC->requestGet()->externalCode;
         $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
 
@@ -78,7 +93,6 @@ class ObjectController extends Controller
                 'info'=> 'Order',
             ];
         } catch (ClientException $exception) {
-
             $data = $this->newPostOperations($accountId, $Clint, $externalCode, $agentId);
             if ($data['status']) {
                 $StatusCode = "200";
@@ -341,11 +355,13 @@ class ObjectController extends Controller
             $OldBody = $ClientMC->requestGet();
 
             $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+            $setAttributes = $this->Attributes($post, $OldBody, $Setting);
 
             $OldBody->externalCode = $post->id;
             $postBody = $ClientMC->requestPut([
                 'externalCode'=>(string) $post->id,
                 'positions'=> $setPositions,
+                'attributes' => $setAttributes,
             ]);
             $post = [
                 'code' => 200,
@@ -388,5 +404,7 @@ class ObjectController extends Controller
         }
         return $Positions;
     }
+    private function Attributes($postUDS, $OldBody, $Setting){
 
+    }
 }
