@@ -39,6 +39,7 @@
                 document.getElementById("Accrue").checked = true;
                 document.getElementById("valueSelector").value = "0"
                 CheckPhoneOrQR(document.getElementById("valueSelector"))
+                document.getElementById("Error402").style.display = "none"
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
