@@ -239,7 +239,7 @@ class ObjectController extends Controller
             'code' => null,
             'participant' => [
                 'uid' => null,
-                'phone' => "+7" . $agentId['phone'],
+                'phone' => '+7' . str_replace('+7','',str_replace(" ", '', $agentId['phone'])),
             ],
             'receipt' => [
                 'total' => $body->total,
@@ -247,7 +247,6 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => null,
             ],
         ];
-
         try {
             $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
         } catch (\Throwable $e) {
