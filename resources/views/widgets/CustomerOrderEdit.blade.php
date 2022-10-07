@@ -249,6 +249,9 @@
                 if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
                 }
+                if (operations_user != undefined && EnableOffs == true){
+                    document.getElementById("sendPoint").style.display = "block";
+                }
             }
         }
 
