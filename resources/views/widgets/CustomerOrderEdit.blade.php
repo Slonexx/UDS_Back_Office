@@ -158,56 +158,6 @@
             xmlHttpRequest.send();
         }
 
-        function update(){
-            var oReq = new XMLHttpRequest();
-            document.getElementById("success").style.display = "none";
-            document.getElementById("danger").style.display = "none";
-            oReq.addEventListener("load", function() {
-                var responseTextPars = JSON.parse(this.responseText);
-                var StatusCode = responseTextPars.StatusCode;
-
-                var message = responseTextPars.message;
-                GlobalUDSOrderID = message.id;
-                var BonusPoint = message.BonusPoint;
-                var points = message.points;
-
-                if (StatusCode == 200) {
-                    GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
-                    window.document.getElementById("OrderID").innerHTML = message.id;
-                    var icon = message.icon.replace(/\\/g, '');
-                    window.document.getElementById("icon").innerHTML = icon;
-
-                    window.document.getElementById("cashBack").innerHTML = BonusPoint;
-                    window.document.getElementById("points").innerHTML = points;
-
-                    if (message.state == "NEW") {
-                        document.getElementById("ButtonComplete").style.display = "block";
-                        document.getElementById("Complete").style.display = "none";
-                        document.getElementById("Deleted").style.display = "none";
-                    }
-
-                    if (message.state == "COMPLETED") {
-                        document.getElementById("Complete").style.display = "block";
-                        document.getElementById("ButtonComplete").style.display = "none";
-                        document.getElementById("Deleted").style.display = "none";
-                    }
-
-                    if (message.state == "DELETED") {
-                        document.getElementById("Deleted").style.display = "block";
-                        document.getElementById("ButtonComplete").style.display = "none";
-                        document.getElementById("Complete").style.display = "none";
-                    }
-
-
-                } else {
-
-                }
-            });
-            GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
-            oReq.open("GET", GlobalURL);
-            oReq.send();
-        }
-
         function CheckPhoneOrQR(Selector){
             let option = Selector.options[Selector.selectedIndex];
             document.getElementById("sendAccrue").style.display = "none"
@@ -245,6 +195,28 @@
                 OLDQRCode = QRCode
 
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
+
+                let params = {
+                    'code':OLDQRCode,
+                };
+                let final = 'https://api.uds.app/partner/v2/customers/find' + formatParams(params);
+                console.log('info_operations final = ' + final)
+                let xmlHttpRequest = new XMLHttpRequest();
+                xmlHttpRequest.addEventListener("load", function() {
+                    let r_textPars = JSON.parse(this.responseText);
+                    console.log(r_textPars);
+
+                })
+                xmlHttpRequest.open("GET", final);
+                xhr.setRequestHeader("Accept", "application/json");
+                @php
+                $Setting = new \App\Http\Controllers\Config\getSettingVendorController($accountId);
+                $companyId = $Setting->companyId;
+                $TokenUDS = $Setting->TokenUDS;
+                @endphp
+                xhr.setRequestHeader("Authorization", "Basic " + btoa("{{$companyId}}:{{$TokenUDS}}"));
+                xmlHttpRequest.send();
+
             } else {
                 document.getElementById("sendQRError").style.display = "block"
                 document.getElementById("sendCancellation").style.display = "none"
