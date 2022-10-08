@@ -206,7 +206,25 @@ class ObjectController extends Controller
             $body = $ClinetUDS->get($url_UDS)->participant;
             return $body->points ;
         } catch (\Throwable $e) {
-            return "Не известно";
+
+            if (property_exists($bodyMC, 'phone')) {
+                $phone = urlencode ((string) '+'. $this->phone_number($bodyMC->phone));
+                $url = 'https://api.uds.app/partner/v2/customers/find?phone='.$phone;
+                $result = 0;
+                try {
+                    $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+                    $Body = $Client->get($url)->user;
+                    $result = $Body->participant->points;
+                } catch (\Throwable $e) {
+                    $result = 0;
+                }
+                return $result;
+            }
+
+
+
+
+            return 0;
         }
 
 
@@ -494,5 +512,12 @@ class ObjectController extends Controller
             }
         }
         return $Attributes;
+    }
+
+
+    private function phone_number($phone){
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if($phone[0]==8)$phone[0] = 7;
+        return $phone;
     }
 }

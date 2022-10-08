@@ -41,6 +41,8 @@ Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'ind
 
 
 Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);
+
+
 Route::get('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'index']);
 Route::post('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'postOperations']);
 
