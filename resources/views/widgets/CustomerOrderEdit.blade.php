@@ -121,10 +121,6 @@
                                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
                             }
-
-
-
-
                         }
                     }
                 });
@@ -207,12 +203,10 @@
                     let r_textPars = JSON.parse(this.responseText);
                     operations_availablePoints = r_textPars.availablePoints
                     document.getElementById("availablePoints").innerText = r_textPars.availablePoints
+                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
                 })
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
-
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
-
             } else {
                 document.getElementById("sendQRError").style.display = "block"
                 document.getElementById("sendCancellation").style.display = "none"
