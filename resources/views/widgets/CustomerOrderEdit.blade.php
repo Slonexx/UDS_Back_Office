@@ -200,8 +200,8 @@
                     accountId: "{{ $accountId }}",
                     code:OLDQRCode,
                 };
-                let final = url + '/customers/find'+ formatParams(params);
-                console.log('info_operations final = ' + final)
+                let final = url + 'customers/find'+ formatParams(params);
+                console.log('customers/find final = ' + final)
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function() {
                     let r_textPars = JSON.parse(this.responseText);
