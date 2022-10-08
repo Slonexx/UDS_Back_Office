@@ -98,30 +98,31 @@
                             document.getElementById("undefined").style.display = "block"
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
-
+                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                             EnableOffs = message.EnableOffs
+                            tmp_operations_style = message.operations
+                            OLDPhone = message.phone
+                            operations_user = message.phone
+                            operations_total = message.total
+                            operations_availablePoints = message.availablePoints
+                            operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
+
                             if (EnableOffs == true){
                                 document.getElementById("labelCancellation").style.display = "block"
                             }
-                            tmp_operations_style = message.operations
+
+
                             if (tmp_operations_style == true) {
                                 document.getElementById("valueSelector").value = 1;
                                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                             } else {
                                 document.getElementById("valueSelector").value = 0;
                                 CheckPhoneOrQR(document.getElementById("valueSelector"))
+                                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
                             }
 
 
 
-                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-
-                            OLDPhone = message.phone
-                            operations_user = message.phone
-                            operations_total = message.total
-                            operations_availablePoints = message.availablePoints
-                            operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
-                            info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
 
                         }
                     }
@@ -197,9 +198,10 @@
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
 
                 let params = {
-                    'code':OLDQRCode,
+                    accountId: "{{ $accountId }}",
+                    code:OLDQRCode,
                 };
-                let final = 'https://api.uds.app/partner/v2/customers/find' + formatParams(params);
+                let final = url + '/customers/find'+ formatParams(params);
                 console.log('info_operations final = ' + final)
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function() {
@@ -208,13 +210,6 @@
 
                 })
                 xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.setRequestHeader("Accept", "application/json");
-                @php
-                $Setting = new \App\Http\Controllers\Config\getSettingVendorController($accountId);
-                $companyId = $Setting->companyId;
-                $TokenUDS = $Setting->TokenUDS;
-                @endphp
-                xmlHttpRequest.setRequestHeader("Authorization", "Basic " + btoa("{{$companyId}}:{{$TokenUDS}}"));
                 xmlHttpRequest.send();
 
             } else {

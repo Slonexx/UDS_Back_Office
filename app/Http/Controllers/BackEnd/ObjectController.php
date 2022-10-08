@@ -100,20 +100,32 @@ class ObjectController extends Controller
             } else {
                 $StatusCode = "404";
                 $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
+                $availablePoints = 0;
                 $SettingBD = new getSetting();
                 $SettingBD = $SettingBD->getSendSettingOperations($accountId);
+
                 if ($SettingBD->EnableOffs == 1 or $SettingBD->EnableOffs == '1'){
                     $EnableOffs = true;
-                } else { $EnableOffs = false; }
+                    $availablePoints = $this->AgentMCID($objectId, $Setting);
+                    $phone = $this->AgentMCPhone($objectId, $Setting);
+                } else {
+                    $EnableOffs = false;
+                }
+
                 if ($SettingBD->operations == 1 or $SettingBD->operations == '1'){
                     $operations = true;
-                } else { $operations = false; }
+                    $availablePoints = 0;
+                    $phone = 0;
+                } else {
+                    $operations = false;
+                }
+
                 $message = [
                     'total' => $info_total_and_SkipLoyaltyTotal['total'],
                     'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                    'availablePoints' => $this->AgentMCID($objectId, $Setting),
-                    'points' => "0",
-                    'phone' => $this->AgentMCPhone($objectId, $Setting),
+                    'availablePoints' => $availablePoints,
+                    'points' => 0,
+                    'phone' => $phone,
                     'EnableOffs' => $EnableOffs,
                     'operations' => $operations,
                 ];
@@ -263,6 +275,9 @@ class ObjectController extends Controller
         return $postBody;
     }
 
+    public function customers(Request $request){
+        dd($request->request);
+    }
 
     public function operationsCalc(Request $request){
 

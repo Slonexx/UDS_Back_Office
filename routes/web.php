@@ -28,6 +28,7 @@ Route::get('/CustomerOrderEditObject/{accountId}/{entity}/{objectId}', [ObjectCo
 Route::get('/CompletesOrder/{accountId}/{objectId}', [ObjectController::class, 'CompletesOrder']);
 Route::get('/CompletesOrder/operationsCalc/', [ObjectController::class, 'operationsCalc']);
 Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations']);
+Route::get('/customers/find', [ObjectController::class, 'customers']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
