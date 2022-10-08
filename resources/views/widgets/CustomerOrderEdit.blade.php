@@ -13,6 +13,7 @@
         let OLDPhone
         let OLDQRCode
 
+        let tmp_operations_style
         let operations_total
         let operations_cash
         let operations_points
@@ -43,6 +44,7 @@
                 document.getElementById("valueSelector").value = "0"
                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                 document.getElementById("Error402").style.display = "none"
+                document.getElementById("operations_style").style.display = "none"
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
@@ -101,6 +103,17 @@
                             if (EnableOffs == true){
                                 document.getElementById("labelCancellation").style.display = "block"
                             }
+                            tmp_operations_style = message.operations
+                            if (tmp_operations_style == true) {
+                                document.getElementById("valueSelector").value = 1;
+                                CheckPhoneOrQR(document.getElementById("valueSelector"))
+                            } else {
+                                document.getElementById("valueSelector").value = 0;
+                                CheckPhoneOrQR(document.getElementById("valueSelector"))
+                            }
+
+
+
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
 
                             OLDPhone = message.phone
@@ -444,7 +457,7 @@
                 </div>
             </div>
 
-            <div class="mt-2 row mx-2" style="font-size: 16px">
+            <div id="operations_style" class="mt-2 row mx-2" style="font-size: 16px; display: none">
                     <div class="col-5 mt-2 mx-2"> Тип проведения </div>
                     <div class="col-6">
                         <select onchange="CheckPhoneOrQR(valueSelector)" id="valueSelector" class="p-1 form-select">

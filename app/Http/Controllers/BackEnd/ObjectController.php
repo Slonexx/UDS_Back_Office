@@ -105,6 +105,9 @@ class ObjectController extends Controller
                 if ($SettingBD->EnableOffs == 1 or $SettingBD->EnableOffs == '1'){
                     $EnableOffs = true;
                 } else { $EnableOffs = false; }
+                if ($SettingBD->operations == 1 or $SettingBD->operations == '1'){
+                    $operations = true;
+                } else { $operations = false; }
                 $message = [
                     'total' => $info_total_and_SkipLoyaltyTotal['total'],
                     'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
@@ -112,6 +115,7 @@ class ObjectController extends Controller
                     'points' => "0",
                     'phone' => $this->AgentMCPhone($objectId, $Setting),
                     'EnableOffs' => $EnableOffs,
+                    'operations' => $operations,
                 ];
             }
         }
