@@ -283,12 +283,12 @@ class ObjectController extends Controller
 
         $Setting = new getSettingVendorController($data['accountId']);
         $url = 'https://api.uds.app/partner/v2/customers/find?code='.$data['code'];
-        $Client = new ClientMC($url, $Setting->TokenMoySklad);
-        $Body = $Client->requestGet()->user->participant;
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $Body = $Client->get($url)->user;
 
         return response()->json([
-            'id' => $Body->id,
-            'availablePoints' => $Body->points,
+            'id' => $Body->participant->id,
+            'availablePoints' => $Body->participant->points,
             'displayName' => $Body->displayName,
         ]);
 
