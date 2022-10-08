@@ -208,13 +208,13 @@
 
                 })
                 xmlHttpRequest.open("GET", final);
-                xhr.setRequestHeader("Accept", "application/json");
+                xmlHttpRequest.setRequestHeader("Accept", "application/json");
                 @php
                 $Setting = new \App\Http\Controllers\Config\getSettingVendorController($accountId);
                 $companyId = $Setting->companyId;
                 $TokenUDS = $Setting->TokenUDS;
                 @endphp
-                xhr.setRequestHeader("Authorization", "Basic " + btoa("{{$companyId}}:{{$TokenUDS}}"));
+                xmlHttpRequest.setRequestHeader("Authorization", "Basic " + btoa("{{$companyId}}:{{$TokenUDS}}"));
                 xmlHttpRequest.send();
 
             } else {
