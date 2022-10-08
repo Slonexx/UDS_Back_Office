@@ -204,6 +204,11 @@
                     operations_availablePoints = r_textPars.availablePoints
                     document.getElementById("availablePoints").innerText = r_textPars.availablePoints
                     info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
+                    if (r_textPars.id == 0) {
+                        document.getElementById("sendQRErrorID").style.display = "block";
+                    } else  {
+                        document.getElementById("sendQRErrorID").style.display = "none";
+                    }
                 })
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
@@ -251,7 +256,6 @@
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
                 if (typeof r_textPars.Status !== 'undefined'){
-                    document.getElementById("sendQRErrorID").style.display = "block";
                 } else {
                     document.getElementById("sendQRErrorID").style.display = "none";
                     operations_cash = r_textPars.cash;
