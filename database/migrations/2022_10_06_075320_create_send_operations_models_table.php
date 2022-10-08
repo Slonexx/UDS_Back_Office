@@ -17,6 +17,7 @@ class CreateSendOperationsModelsTable extends Migration
             $table->id();
             $table->string('accountId');
             $table->foreign('accountId')->references('accountId')->on('setting_mains')->cascadeOnDelete();
+            $table->string('operations')->nullable();
             $table->string('EnableOffs')->nullable();
             $table->string('operationsDocument')->nullable();
             $table->string('operationsPaymentDocument')->nullable();

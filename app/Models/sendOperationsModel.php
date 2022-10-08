@@ -9,6 +9,7 @@ class sendOperationsModel extends Model
 {
     protected $fillable = [
         'accountId',
+        'operations',
         'EnableOffs',
         'operationsDocument',
         'operationsPaymentDocument',

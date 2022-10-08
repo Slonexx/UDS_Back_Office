@@ -30,13 +30,26 @@
         @csrf <!-- {{ csrf_field() }} -->
             <div class="mb-3 row">
                 <div class="col-6">
-                    <label class="mt-1 from-label">Включить списание бонусных балов по номеру телефона  </label>
+                    <label class="mt-1 from-label">Проводить операции по </label>
                 </div>
                 <div class="col-5">
-                    <select id="EnableOffs" name="offsPhone" class="form-select text-black" >
-                        <option value="0">Нет</option>
-                        <option value="1">Да</option>
+                    <select id="operations" name="operations" class="form-select text-black" onchange="EnableOffs_true_or_false(this.value)" >
+                        <option value="0">Номеру телефона</option>
+                        <option value="1">QR-коду мобильного приложения</option>
                     </select>
+                </div>
+            </div>
+            <div id="EnableOffsSelect" class="mb-3" style="display: none">
+                <div class="row">
+                    <div class="col-6">
+                        <label class="mt-1 from-label">Включить списание бонусных балов по номеру телефона  </label>
+                    </div>
+                    <div class="col-5">
+                        <select id="EnableOffs" name="offsPhone" class="form-select text-black" >
+                            <option value="0">Нет</option>
+                            <option value="1">Да</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div id="Enable_true_or_false" style="display:block;">
@@ -72,23 +85,22 @@
     </div>
 
     <script>
+        let operations = document.getElementById('operations').value = {{ $operations }};
+        EnableOffs_true_or_false(operations);
         let EnableOffs_value = document.getElementById('EnableOffs').value = {{ $EnableOffs }};
         let operationsDocument_value  = document.getElementById('operationsDocument').value = {{ $operationsDocument }};
         let operationsPaymentDocument_value  = document.getElementById('operationsPaymentDocument').value = {{ $operationsPaymentDocument }};
-        console.log('EnableOffs_value = ' + EnableOffs_value)
-        console.log('operationsDocument_value = ' + operationsDocument_value)
-        console.log('operationsPaymentDocument_value = ' + operationsPaymentDocument_value)
-    /*
+
         function EnableOffs_true_or_false(This_value){
             let value = parseInt(This_value);
             if (value === 0){
-                window.document.getElementById('Enable_true_or_false').style.display = 'none';
+                window.document.getElementById('EnableOffsSelect').style.display = 'block';
             }
             if (value === 1){
-                window.document.getElementById('Enable_true_or_false').style.display = 'block';
+                window.document.getElementById('EnableOffsSelect').style.display = 'none';
             }
         }
-    */
+
     </script>
 
 @endsection
