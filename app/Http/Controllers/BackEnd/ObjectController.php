@@ -110,6 +110,8 @@ class ObjectController extends Controller
                     $phone = $this->AgentMCPhone($objectId, $Setting);
                 } else {
                     $EnableOffs = false;
+                    $availablePoints = $this->AgentMCID($objectId, $Setting);
+                    $phone = $this->AgentMCPhone($objectId, $Setting);
                 }
 
                 if ($SettingBD->operations == 1 or $SettingBD->operations == '1'){
