@@ -276,7 +276,22 @@ class ObjectController extends Controller
     }
 
     public function customers(Request $request){
-        dd($request->request);
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "code" => 'required|string',
+        ]);
+
+        $Setting = new getSettingVendorController($data['accountId']);
+        $url = 'https://api.uds.app/partner/v2/customers/find?code='.$data['code'];
+        $Client = new ClientMC($url, $Setting->TokenMoySklad);
+        $Body = $Client->requestGet()->user->participant;
+
+        return response()->json([
+            'id' => $Body->id,
+            'availablePoints' => $Body->points,
+            'displayName' => $Body->displayName,
+        ]);
+
     }
 
     public function operationsCalc(Request $request){

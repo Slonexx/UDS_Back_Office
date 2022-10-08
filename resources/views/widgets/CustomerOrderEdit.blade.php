@@ -195,8 +195,6 @@
                 operations_user = QRCode
                 OLDQRCode = QRCode
 
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
-
                 let params = {
                     accountId: "{{ $accountId }}",
                     code:OLDQRCode,
@@ -206,11 +204,13 @@
                 let xmlHttpRequest = new XMLHttpRequest();
                 xmlHttpRequest.addEventListener("load", function() {
                     let r_textPars = JSON.parse(this.responseText);
-                    console.log(r_textPars);
-
+                    operations_availablePoints = r_textPars.availablePoints
+                    document.getElementById("availablePoints").innerText = r_textPars.availablePoints
                 })
                 xmlHttpRequest.open("GET", final);
                 xmlHttpRequest.send();
+
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
 
             } else {
                 document.getElementById("sendQRError").style.display = "block"
@@ -220,10 +220,6 @@
         }
 
         function onchangePoint(){
-
-            let max = window.document.getElementById('maxPoint').innerText;
-            let point = window.document.getElementById('QRCodePoint').value;
-
             let QRCodePoint = window.document.getElementById('QRCodePoint');
             operations_points = QRCodePoint.value
         }
