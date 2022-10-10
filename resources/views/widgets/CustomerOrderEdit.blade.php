@@ -132,6 +132,7 @@
             let option = Selector.options[Selector.selectedIndex];
             document.getElementById("sendAccrue").style.display = "none"
             document.getElementById('buttonOperations').style.display = 'none'
+            document.getElementById("labelCancellation").style.display = "none"
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("labelAccrue").style.display = "block"
@@ -139,12 +140,13 @@
                 document.getElementById("QRCodePoint").value = ""
                 operations_points = 0
                 operations_user = OLDPhone
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
+
                 document.getElementById("Accrue").checked = true
-                if (EnableOffs == true){
+                if (operationsCancellation === 1){
                     document.getElementById("labelCancellation").style.display = "block"
                 }
-                sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block"
