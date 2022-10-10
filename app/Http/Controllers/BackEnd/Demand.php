@@ -105,5 +105,113 @@ class Demand extends Controller
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
+    private function createFactureout($Setting, $SettingBD, $OldBody, $externalCode){
+        if ($SettingBD->operationsDocument == 0 or $SettingBD->operationsDocument == null) {
 
+        } else {
+            try {
+                if ($SettingBD->operationsDocument == '2' or $SettingBD->operationsDocument == 2) {
+                    $body = [
+                        'demands' => [  0 => [ 'meta' => [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                        ] ] ] ];
+
+                    $urlFacture = 'https://online.moysklad.ru/api/remap/1.2/entity/factureout';
+                    $client = new MsClient($Setting->TokenMoySklad);
+                    $postBodyCreateFactureout = $client->post($urlFacture, $body);
+                }
+            } catch (\Throwable $e) {
+            }
+        }
+    }
+
+    public function operations(Request $request){
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "objectId" => 'required|string',
+            "user" => "required|string",
+            "cashier_id" => "required|string",
+            "cashier_name" => "required|string",
+            "receipt_total" => "required|string",
+            "receipt_cash" => "required|string",
+            "receipt_points" => "required|string",
+            "receipt_skipLoyaltyTotal" => "required|string",
+        ]);
+        if ( strlen(str_replace(' ','',$data['user']) ) > 6) {
+            $data['code'] = null;
+            $data['phone'] = str_replace("+7", '', $data['user']);
+            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
+        } else {
+            $data['code'] = $data['user'];
+            $data['phone'] = null;
+        }
+
+        if ( $data['receipt_points'] == "undefined" ) $data['receipt_points'] = '0';
+        if ( $data['receipt_skipLoyaltyTotal'] == "undefined" or $data['receipt_skipLoyaltyTotal'] == "0" ) $data['receipt_skipLoyaltyTotal'] = null;
+
+        $url = 'https://api.uds.app/partner/v2/operations';
+        $Setting = new getSettingVendorController($data['accountId']);
+        $SettingBD = new getSetting();
+        $SettingBD = $SettingBD->getSendSettingOperations($data['accountId']);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $body = [
+            'code' => $data['code'],
+            'participant' => [
+                'uid' => null,
+                'phone' => $data['phone'],
+            ],
+            'nonce' => null,
+            'cashier' => [
+                'externalId' => $data['cashier_id'],
+                'name' => $data['cashier_name'],
+            ],
+            'receipt' => [
+                'total' => $data['receipt_total'],
+                'cash' => (string) round($data['receipt_cash'],2),
+                'points' => $data['receipt_points'],
+                'number' => null,
+                'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
+            ],
+            'tags' => null
+        ];
+
+        //try {
+        $post = $Client->post($url, $body);
+
+        $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/demand/' . $data['objectId'];
+        $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+        $OldBody = $ClientMC->requestGet();
+
+        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+        $setAttributes = $this->Attributes($post, $Setting);
+
+        $OldBody->externalCode = $post->id;
+        $putBody = $ClientMC->requestPut([
+            'externalCode'=>(string) $post->id,
+            'positions'=> $setPositions,
+            'attributes' => $setAttributes,
+        ]);
+        $this->createFactureout($Setting, $SettingBD, $putBody, (string) $post->id);
+        $post = [
+            'code' => 200,
+            'id' => $post->id,
+            'points' => $post->points,
+            'total' => $post->total,
+            'message' => 'The operation was successful',
+        ];
+
+        /*} catch ( \Throwable $e){
+            dd($e);
+
+            /*$post = [
+               'code' =>  $e->getCode(),
+               'message' =>  $e->getMessage(),
+            ];
+        }*/
+
+        return response()->json($post);
+    }
 }

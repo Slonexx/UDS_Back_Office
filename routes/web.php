@@ -34,7 +34,7 @@ Route::get('/customers/find', [ObjectController::class, 'customers']);
 
 
 Route::get('/Demand/{accountId}/{entity}/{objectId}', [Demand::class, 'DemandObject']);
-
+Route::get('/Demand/operations/', [Demand::class, 'operations']);
 
 Route::get('/', [indexController::class, 'index'])->name('index');
 Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("indexMain");

@@ -257,7 +257,7 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-            let final = url + '/CompletesOrder/operations/' + formatParams(params);
+            let final = url + '/Demand/operations/' + formatParams(params);
             console.log('sendOperations final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {

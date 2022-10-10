@@ -575,7 +575,7 @@ class ObjectController extends Controller
             'tags' => null
         ];
 
-        //try {
+        try {
         $post = $Client->post($url, $body);
 
         $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
@@ -600,14 +600,12 @@ class ObjectController extends Controller
             'message' => 'The operation was successful',
         ];
 
-        /*} catch ( \Throwable $e){
-            dd($e);
-
-            /*$post = [
+        } catch ( \Throwable $e){
+            $post = [
                'code' =>  $e->getCode(),
                'message' =>  $e->getMessage(),
             ];
-        }*/
+        }
 
         return response()->json($post);
     }
