@@ -283,139 +283,6 @@ class ObjectController extends Controller
 
     }
 
-    public function operationsCalc(Request $request){
-
-        $data = $request->validate([
-            "accountId" => 'required|string',
-            "user" => "required|string",
-            "total" => "required|string",
-            "SkipLoyaltyTotal" => "required|string",
-            "points" => "required|string",
-        ]);
-
-        if ( strlen( str_replace(' ','',$data['user']) ) > 6) {
-            $data['code'] = null;
-            $data['phone'] = str_replace("+7", '', $data['user']);
-            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
-        } else {
-            $data['code'] = $data['user'];
-            $data['phone'] = null;
-        }
-
-        if ($data['SkipLoyaltyTotal']  == '0') {
-            $data['SkipLoyaltyTotal'] = null;
-        }
-
-        $Setting = new getSettingVendorController($data['accountId']);
-        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $url = 'https://api.uds.app/partner/v2/operations/calc';
-        $body = [
-            'code' => $data['code'],
-            'participant' => [
-                'uid' => null,
-                'phone' => $data['phone'],
-            ],
-            'receipt' => [
-                'total' => $data['total'],
-                'points' => $data['points'],
-                'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
-            ],
-        ];
-        try {
-            $postBody = $Client->post($url, $body)->purchase;
-            return response()->json($postBody);
-        } catch (\Throwable $e) {
-            return response()->json(['Status' => $e->getCode(), 'Message' => $e->getMessage()]);
-        }
-
-
-    }
-    public function operations(Request $request){
-        $data = $request->validate([
-            "accountId" => 'required|string',
-            "objectId" => 'required|string',
-            "user" => "required|string",
-            "cashier_id" => "required|string",
-            "cashier_name" => "required|string",
-            "receipt_total" => "required|string",
-            "receipt_cash" => "required|string",
-            "receipt_points" => "required|string",
-            "receipt_skipLoyaltyTotal" => "required|string",
-        ]);
-        if ( strlen(str_replace(' ','',$data['user']) ) > 6) {
-            $data['code'] = null;
-            $data['phone'] = str_replace("+7", '', $data['user']);
-            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
-        } else {
-            $data['code'] = $data['user'];
-            $data['phone'] = null;
-        }
-
-        if ( $data['receipt_points'] == "undefined" ) $data['receipt_points'] = '0';
-        if ( $data['receipt_skipLoyaltyTotal'] == "undefined" or $data['receipt_skipLoyaltyTotal'] == "0" ) $data['receipt_skipLoyaltyTotal'] = null;
-
-        $url = 'https://api.uds.app/partner/v2/operations';
-        $Setting = new getSettingVendorController($data['accountId']);
-        $SettingBD = new getSetting();
-        $SettingBD = $SettingBD->getSendSettingOperations($data['accountId']);
-        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $body = [
-            'code' => $data['code'],
-            'participant' => [
-                'uid' => null,
-                'phone' => $data['phone'],
-            ],
-            'nonce' => null,
-            'cashier' => [
-                'externalId' => $data['cashier_id'],
-                'name' => $data['cashier_name'],
-            ],
-            'receipt' => [
-                'total' => $data['receipt_total'],
-                'cash' => (string) round($data['receipt_cash'],2),
-                'points' => $data['receipt_points'],
-                'number' => null,
-                'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
-            ],
-            'tags' => null
-        ];
-
-        //try {
-            $post = $Client->post($url, $body);
-
-            $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
-            $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
-            $OldBody = $ClientMC->requestGet();
-
-            $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
-            $setAttributes = $this->Attributes($post, $Setting);
-
-            $OldBody->externalCode = $post->id;
-            $putBody = $ClientMC->requestPut([
-                'externalCode'=>(string) $post->id,
-                'positions'=> $setPositions,
-                'attributes' => $setAttributes,
-            ]);
-            $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
-            $post = [
-                'code' => 200,
-                'id' => $post->id,
-                'points' => $post->points,
-                'total' => $post->total,
-                'message' => 'The operation was successful',
-            ];
-
-        /*} catch ( \Throwable $e){
-            dd($e);
-
-            /*$post = [
-               'code' =>  $e->getCode(),
-               'message' =>  $e->getMessage(),
-            ];
-        }*/
-
-        return response()->json($post);
-    }
 
     public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting){
         $Positions = [];
@@ -607,5 +474,140 @@ class ObjectController extends Controller
         $phone = preg_replace('/[^0-9]/', '', $phone);
         if($phone[0]==8)$phone[0] = 7;
         return $phone;
+    }
+
+
+
+    public function operationsCalc(Request $request){
+
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "user" => "required|string",
+            "total" => "required|string",
+            "SkipLoyaltyTotal" => "required|string",
+            "points" => "required|string",
+        ]);
+
+        if ( strlen( str_replace(' ','',$data['user']) ) > 6) {
+            $data['code'] = null;
+            $data['phone'] = $data['user'];
+        } else {
+            $data['code'] = $data['user'];
+            $data['phone'] = null;
+        }
+
+        if ($data['SkipLoyaltyTotal']  == '0') {
+            $data['SkipLoyaltyTotal'] = null;
+        }
+
+        $Setting = new getSettingVendorController($data['accountId']);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $url = 'https://api.uds.app/partner/v2/operations/calc';
+        $body = [
+            'code' => $data['code'],
+            'participant' => [
+                'uid' => null,
+                'phone' => $data['phone'],
+            ],
+            'receipt' => [
+                'total' => $data['total'],
+                'points' => $data['points'],
+                'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
+            ],
+        ];
+        try {
+            $postBody = $Client->post($url, $body)->purchase;
+            return response()->json($postBody);
+        } catch (\Throwable $e) {
+            return response()->json(['Status' => $e->getCode(), 'Message' => $e->getMessage()]);
+        }
+
+
+    }
+    public function operations(Request $request){
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "objectId" => 'required|string',
+            "user" => "required|string",
+            "cashier_id" => "required|string",
+            "cashier_name" => "required|string",
+            "receipt_total" => "required|string",
+            "receipt_cash" => "required|string",
+            "receipt_points" => "required|string",
+            "receipt_skipLoyaltyTotal" => "required|string",
+        ]);
+        if ( strlen(str_replace(' ','',$data['user']) ) > 6) {
+            $data['code'] = null;
+            $data['phone'] = str_replace("+7", '', $data['user']);
+            $data['phone'] = '+7' . str_replace(" ", '', $data['phone']);
+        } else {
+            $data['code'] = $data['user'];
+            $data['phone'] = null;
+        }
+
+        if ( $data['receipt_points'] == "undefined" ) $data['receipt_points'] = '0';
+        if ( $data['receipt_skipLoyaltyTotal'] == "undefined" or $data['receipt_skipLoyaltyTotal'] == "0" ) $data['receipt_skipLoyaltyTotal'] = null;
+
+        $url = 'https://api.uds.app/partner/v2/operations';
+        $Setting = new getSettingVendorController($data['accountId']);
+        $SettingBD = new getSetting();
+        $SettingBD = $SettingBD->getSendSettingOperations($data['accountId']);
+        $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $body = [
+            'code' => $data['code'],
+            'participant' => [
+                'uid' => null,
+                'phone' => $data['phone'],
+            ],
+            'nonce' => null,
+            'cashier' => [
+                'externalId' => $data['cashier_id'],
+                'name' => $data['cashier_name'],
+            ],
+            'receipt' => [
+                'total' => $data['receipt_total'],
+                'cash' => (string) round($data['receipt_cash'],2),
+                'points' => $data['receipt_points'],
+                'number' => null,
+                'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
+            ],
+            'tags' => null
+        ];
+
+        //try {
+        $post = $Client->post($url, $body);
+
+        $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
+        $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+        $OldBody = $ClientMC->requestGet();
+
+        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+        $setAttributes = $this->Attributes($post, $Setting);
+
+        $OldBody->externalCode = $post->id;
+        $putBody = $ClientMC->requestPut([
+            'externalCode'=>(string) $post->id,
+            'positions'=> $setPositions,
+            'attributes' => $setAttributes,
+        ]);
+        $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
+        $post = [
+            'code' => 200,
+            'id' => $post->id,
+            'points' => $post->points,
+            'total' => $post->total,
+            'message' => 'The operation was successful',
+        ];
+
+        /*} catch ( \Throwable $e){
+            dd($e);
+
+            /*$post = [
+               'code' =>  $e->getCode(),
+               'message' =>  $e->getMessage(),
+            ];
+        }*/
+
+        return response()->json($post);
     }
 }
