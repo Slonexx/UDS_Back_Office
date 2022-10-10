@@ -163,7 +163,7 @@
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("QRCodePoint").value = ""
                 operations_user = OLDPhone
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints_Nubmer)
             }
             if (Val === 1) {
                 document.getElementById("sendQR").style.display = "block"
