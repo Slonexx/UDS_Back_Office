@@ -142,7 +142,7 @@
                 operations_user = OLDPhone
 
                 document.getElementById("Accrue").checked = true
-                if (operationsCancellation === 1){
+                if (operationsCancellation === 0){
                     document.getElementById("labelCancellation").style.display = "block"
                 }
 
