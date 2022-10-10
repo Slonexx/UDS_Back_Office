@@ -321,7 +321,7 @@ class ObjectController extends Controller
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
             ],
         ];
-
+        dd($body);
         try {
             $postBody = $Client->post($url, $body)->purchase;
             return response()->json($postBody);

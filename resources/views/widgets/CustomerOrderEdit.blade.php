@@ -279,7 +279,40 @@
         }
 
 
-
+        function clearWidget(){
+            document.getElementById("activated").style.display = "none";
+            document.getElementById("undefined").style.display = "none";
+            document.getElementById("Error402").style.display = "none"
+            document.getElementById("success").style.display = "none";
+            document.getElementById("danger").style.display = "none";
+            document.getElementById("sendWarning").style.display = "none";
+            document.getElementById("buttonOperations").style.display = "none";
+            document.getElementById("labelAccrue").style.display = "none";
+            document.getElementById("labelCancellation").style.display = "none";
+            document.getElementById("Accrue").checked = true;
+            document.getElementById("valueSelector").value = "0"
+            CheckPhoneOrQR(document.getElementById("valueSelector"))
+            document.getElementById("Error402").style.display = "none"
+            document.getElementById("sendQRErrorID").style.display = "none"
+            document.getElementById("operations_style").style.display = "none"
+        }
+        function setStateByStatus(State){
+            if (State == "NEW") {
+                document.getElementById("ButtonComplete").style.display = "block";
+                document.getElementById("Complete").style.display = "none";
+                document.getElementById("Deleted").style.display = "none";
+            }
+            if (State == "COMPLETED") {
+                document.getElementById("Complete").style.display = "block";
+                document.getElementById("ButtonComplete").style.display = "none";
+                document.getElementById("Deleted").style.display = "none";
+            }
+            if (State == "DELETED") {
+                document.getElementById("Deleted").style.display = "block";
+                document.getElementById("Complete").style.display = "none";
+                document.getElementById("Complete").style.display = "none";
+            }
+        }
     </script>
 
 
@@ -505,43 +538,6 @@
     </div>
 
 <script>
-
-    function clearWidget(){
-        document.getElementById("activated").style.display = "none";
-        document.getElementById("undefined").style.display = "none";
-        document.getElementById("Error402").style.display = "none"
-        document.getElementById("success").style.display = "none";
-        document.getElementById("danger").style.display = "none";
-        document.getElementById("sendWarning").style.display = "none";
-        document.getElementById("buttonOperations").style.display = "none";
-        document.getElementById("labelAccrue").style.display = "none";
-        document.getElementById("labelCancellation").style.display = "none";
-        document.getElementById("Accrue").checked = true;
-        document.getElementById("valueSelector").value = "0"
-        CheckPhoneOrQR(document.getElementById("valueSelector"))
-        document.getElementById("Error402").style.display = "none"
-        document.getElementById("sendQRErrorID").style.display = "none"
-        document.getElementById("operations_style").style.display = "none"
-    }
-
-    function setStateByStatus(State){
-        if (State == "NEW") {
-            document.getElementById("ButtonComplete").style.display = "block";
-            document.getElementById("Complete").style.display = "none";
-            document.getElementById("Deleted").style.display = "none";
-        }
-        if (State == "COMPLETED") {
-            document.getElementById("Complete").style.display = "block";
-            document.getElementById("ButtonComplete").style.display = "none";
-            document.getElementById("Deleted").style.display = "none";
-        }
-        if (State == "DELETED") {
-            document.getElementById("Deleted").style.display = "block";
-            document.getElementById("Complete").style.display = "none";
-            document.getElementById("Complete").style.display = "none";
-        }
-    }
-
     document.getElementById("QRCode").addEventListener("change", function() {
         let Selector = document.getElementById('valueSelector')
         let option = Selector.options[Selector.selectedIndex];
