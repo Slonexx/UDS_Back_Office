@@ -98,6 +98,20 @@ class indexController extends Controller
         ] );
     }
 
+    public function DemandEdit(Request $request){
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
+        $getObjectUrl = "https://dev.smartuds.kz/CustomerOrderEditObject/$accountId/demand/";
 
+
+        return view( 'widgets.Demand', [
+            'accountId' => $accountId,
+            'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
+            'getObjectUrl' => $getObjectUrl,
+        ] );
+    }
 
 }

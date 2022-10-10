@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackEnd\Demand;
 use App\Http\Controllers\BackEnd\ObjectController;
 use App\Http\Controllers\Web\employees;
 use App\Http\Controllers\Web\sendOperations;
@@ -17,6 +18,7 @@ Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->na
 
 Route::get('/Counterparty', [indexController::class, 'counterparty']);
 Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
+Route::get('/DemandEdit', [indexController::class, 'DemandEdit']);
 
 
 Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject']);
@@ -29,6 +31,9 @@ Route::get('/CompletesOrder/{accountId}/{objectId}', [ObjectController::class, '
 Route::get('/CompletesOrder/operationsCalc/', [ObjectController::class, 'operationsCalc']);
 Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations']);
 Route::get('/customers/find', [ObjectController::class, 'customers']);
+
+
+Route::get('/Demand/{accountId}', [Demand::class, 'DemandObject']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
