@@ -233,6 +233,7 @@
                 SkipLoyaltyTotal: skipTotal,
                 points: point,
             };
+            console.log('params info_operations = ' +  JSON.stringify(params))
             let final = url + '/CompletesOrder/operationsCalc/' + formatParams(params);
             console.log('info_operations final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
