@@ -217,9 +217,6 @@
                 if (operationsCancellation === 1) {
                     document.getElementById("valueSelector").value = "1"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
-                } else {
-                    document.getElementById("valueSelector").value = "0"
-                    CheckPhoneOrQR(document.getElementById("valueSelector"))
                 }
 
             }
