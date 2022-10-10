@@ -67,6 +67,7 @@
                             document.getElementById("undefined").style.display = "block"
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
+                            document.getElementById("labelCancellation").style.display = "block"
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                             console.log("message = " + JSON.stringify(message))
                             operationsAccrue = message.operationsAccrue
@@ -77,6 +78,7 @@
                             operations_total = message.total
                             operations_availablePoints = message.availablePoints
                             operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
+
 
                            /* if (EnableOffs == true){
                                 document.getElementById("labelCancellation").style.display = "block"
@@ -199,6 +201,14 @@
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
+                if (operationsAccrue === 1) {
+                    document.getElementById("valueSelector").value = "0"
+                    CheckPhoneOrQR(document.getElementById("valueSelector"))
+                } else {
+                    document.getElementById("valueSelector").value = "1"
+                    CheckPhoneOrQR(document.getElementById("valueSelector"))
+                }
+
 
             }
             if (div == "sendCancellation"){
@@ -209,6 +219,15 @@
                 if (operations_user != undefined && EnableOffs == true){
                     document.getElementById("sendPoint").style.display = "block";
                 }
+
+                if (operationsCancellation === 1) {
+                    document.getElementById("valueSelector").value = "0"
+                    CheckPhoneOrQR(document.getElementById("valueSelector"))
+                } else {
+                    document.getElementById("valueSelector").value = "1"
+                    CheckPhoneOrQR(document.getElementById("valueSelector"))
+                }
+
             }
         }
 
