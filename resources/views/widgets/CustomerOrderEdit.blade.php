@@ -36,6 +36,7 @@
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
+                    let message = responseTextPars.message;
                     if (StatusCode == 402){
                         document.getElementById("Error402").style.display = "block"
                         document.getElementById("ErrorMessage").innerText = responseTextPars.message
@@ -44,7 +45,6 @@
                             document.getElementById("activated").style.display = "block";
                             document.getElementById("undefined").style.display = "none";
                             GlobalUDSOrderID = message.id;
-                            let message = responseTextPars.message;
                             let BonusPoint = message.BonusPoint;
                             let points = message.points;
                             if (message.info == 'Order') {
@@ -68,6 +68,7 @@
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+                            console.log(JSON.stringify(message))
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
 
