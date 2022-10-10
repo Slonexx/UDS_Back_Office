@@ -132,7 +132,7 @@ class ObjectController extends Controller
         }
     }
 
-    private function newPostOperations($accountId, $ClientUDS,  $externalCode, $agentId){
+    public function newPostOperations($accountId, $ClientUDS,  $externalCode, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
         try {
             $body = $ClientUDS->get($url);
@@ -160,7 +160,7 @@ class ObjectController extends Controller
             'data' => $data,
         ];
     }
-    private function AgentMCID($href, $Setting){
+    public function AgentMCID($href, $Setting){
         $Clinet = new MsClient($Setting->TokenMoySklad);
         $bodyAgentHref = $href;
         $bodyMC = $Clinet->get($bodyAgentHref);
@@ -188,7 +188,7 @@ class ObjectController extends Controller
 
 
     }
-    private function AgentMCPhone($href, $Setting){
+    public function AgentMCPhone($href, $Setting){
         $Clinet = new MsClient($Setting->TokenMoySklad);
         $bodyAgentHref = $href;
         $bodyMC = $Clinet->get($bodyAgentHref);
@@ -228,7 +228,7 @@ class ObjectController extends Controller
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
-    private function Calc($accountId, $ClientUDS, $body, $agentId){
+    public function Calc($accountId, $ClientUDS, $body, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/calc';
         $body = [
             'code' => null,
@@ -417,7 +417,7 @@ class ObjectController extends Controller
         return response()->json($post);
     }
 
-    private function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting){
+    public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting){
         $Positions = [];
         $ClientMCPositions = new ClientMC($OldBody->positions->meta->href, $Setting->TokenMoySklad);
         $OldPositions = $ClientMCPositions->requestGet()->rows;
@@ -441,7 +441,7 @@ class ObjectController extends Controller
         }
         return $Positions;
     }
-    private function Attributes($postUDS, $Setting){
+    public function Attributes($postUDS, $Setting){
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes';
         $Client = new ClientMC($url, $Setting->TokenMoySklad);
         $metadata = $Client->requestGet()->rows;
@@ -603,7 +603,7 @@ class ObjectController extends Controller
     }
 
 
-    private function phone_number($phone){
+    public function phone_number($phone){
         $phone = preg_replace('/[^0-9]/', '', $phone);
         if($phone[0]==8)$phone[0] = 7;
         return $phone;

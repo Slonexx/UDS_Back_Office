@@ -33,7 +33,7 @@ Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations'
 Route::get('/customers/find', [ObjectController::class, 'customers']);
 
 
-Route::get('/Demand/{accountId}', [Demand::class, 'DemandObject']);
+Route::get('/Demand/{accountId}/{entity}/{objectId}', [Demand::class, 'DemandObject']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
