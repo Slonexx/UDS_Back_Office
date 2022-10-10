@@ -68,7 +68,7 @@
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-                            console.log(JSON.stringify(message))
+                            console.log("message = " + JSON.stringify(message))
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
 
