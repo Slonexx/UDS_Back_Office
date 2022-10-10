@@ -99,8 +99,8 @@ class ObjectController extends Controller
                     'availablePoints' => $availablePoints,
                     'points' => 0,
                     'phone' => $phone,
-                    'operationsAccrue' => $operationsAccrue,
-                    'operationsCancellation' => $operationsCancellation,
+                    'operationsAccrue' => (int) $operationsAccrue,
+                    'operationsCancellation' => (int) $operationsCancellation,
                 ];
             }
         }
