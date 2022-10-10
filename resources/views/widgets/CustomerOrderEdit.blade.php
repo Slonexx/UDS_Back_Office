@@ -291,7 +291,7 @@
             document.getElementById("labelCancellation").style.display = "none";
             document.getElementById("Accrue").checked = true;
             document.getElementById("valueSelector").value = "0"
-            CheckPhoneOrQR(document.getElementById("valueSelector"))
+            /*CheckPhoneOrQR(document.getElementById("valueSelector"))*/
             document.getElementById("Error402").style.display = "none"
             document.getElementById("sendQRErrorID").style.display = "none"
             document.getElementById("operations_style").style.display = "none"
