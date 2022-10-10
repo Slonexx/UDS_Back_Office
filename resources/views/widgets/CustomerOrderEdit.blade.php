@@ -201,7 +201,7 @@
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div == "sendAccrue"){
-                if (operationsAccrue === 1) {
+                if (operationsAccrue == 1) {
                     document.getElementById("valueSelector").value = "0"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 } else {
@@ -220,7 +220,7 @@
                     document.getElementById("sendPoint").style.display = "block";
                 }
 
-                if (operationsCancellation === 1) {
+                if (operationsCancellation == 1) {
                     document.getElementById("valueSelector").value = "0"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 } else {
