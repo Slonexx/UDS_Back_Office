@@ -356,6 +356,8 @@ class ObjectController extends Controller
 
         $url = 'https://api.uds.app/partner/v2/operations';
         $Setting = new getSettingVendorController($data['accountId']);
+        $SettingBD = new getSetting();
+        $SettingBD = $SettingBD->getSendSettingOperations($data['accountId']);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $body = [
             'code' => $data['code'],
@@ -378,7 +380,7 @@ class ObjectController extends Controller
             'tags' => null
         ];
 
-        try {
+        //try {
             $post = $Client->post($url, $body);
 
             $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
@@ -394,6 +396,7 @@ class ObjectController extends Controller
                 'positions'=> $setPositions,
                 'attributes' => $setAttributes,
             ]);
+            $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
             $post = [
                 'code' => 200,
                 'id' => $post->id,
@@ -402,12 +405,14 @@ class ObjectController extends Controller
                 'message' => 'The operation was successful',
             ];
 
-        } catch ( \Throwable $e){
-            $post = [
+        /*} catch ( \Throwable $e){
+            dd($e);
+
+            /*$post = [
                'code' =>  $e->getCode(),
                'message' =>  $e->getMessage(),
             ];
-        }
+        }*/
 
         return response()->json($post);
     }
@@ -445,12 +450,20 @@ class ObjectController extends Controller
             if ($item->name == "Списание баллов (UDS)") {
                 if (($postUDS->points * -1) > 0) {
                     $Attributes[] = [
-                        'meta' => $item->meta,
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
                         'value' => true,
                     ];
                 } else {
                     $Attributes[] = [
-                        'meta' => $item->meta,
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
                         'value' => false,
                     ];
                 }
@@ -458,18 +471,137 @@ class ObjectController extends Controller
             if ($item->name == "Начисление баллов (UDS)") {
                 if ($postUDS->cash > 0) {
                     $Attributes[] = [
-                        'meta' => $item->meta,
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
                         'value' => true,
                     ];
                 } else {
                     $Attributes[] = [
-                        'meta' => $item->meta,
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
                         'value' => false,
                     ];
                 }
             }
         }
         return $Attributes;
+    }
+    function createDemands($Setting, $SettingBD, $OldBody, $externalCode){
+        if ($SettingBD->operationsDocument == 0 or $SettingBD->operationsDocument == null) {
+
+        } else {
+            $client = new MsClient($Setting->TokenMoySklad);
+            $attributes = null;
+            $attributes_value = null;
+            $Store = $Setting->Store;
+            $bodyStore = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/store?filter=name='.$Store)->rows;
+            $Store = $bodyStore[0]->id;
+            $bodyAttributes = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows;
+            foreach ($OldBody->attributes as $item) {
+                if ($item->name == "Начисление баллов (UDS)") {
+                    $attributes_value[$item->name] = [
+                        'value' => $item->value
+                    ];
+                }
+                if ($item->name == "Списание баллов (UDS)") {
+                    $attributes_value[$item->name] = [
+                        'value' => $item->value
+                    ];
+                }
+            }
+            foreach ($bodyAttributes as $item) {
+                if ($item->name == "Начисление баллов (UDS)") {
+                    $attributes[] = [
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
+                        'value' => $attributes_value[$item->name]['value']
+                    ];
+                }
+                if ($item->name == "Списание баллов (UDS)") {
+                    $attributes[] = [
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
+                        'value' => $attributes_value[$item->name]['value']
+                    ];
+                }
+            }
+            $href_positions = $OldBody->positions->meta->href;
+            $bodyPositions = $client->get($href_positions)->rows;
+            foreach ($bodyPositions as $id=>$item) {
+                $positions[$id] = [
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'discount' => $item->discount,
+                    'vat' => $item->vat,
+                    'assortment' => ['meta'=> [
+                        'href' => $item->assortment->meta->href,
+                        'type' => $item->assortment->meta->type,
+                        'mediaType' => $item->assortment->meta->mediaType,
+                    ] ],
+                ];
+            }
+            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/demand';
+            $body = [
+                'organization' => [  'meta' => [
+                    'href' => $OldBody->organization->meta->href,
+                    'type' => $OldBody->organization->meta->type,
+                    'mediaType' => $OldBody->organization->meta->mediaType,
+                ] ],
+                'agent' => [ 'meta'=> [
+                    'href' => $OldBody->agent->meta->href,
+                    'type' => $OldBody->agent->meta->type,
+                    'mediaType' => $OldBody->agent->meta->mediaType,
+                ] ],
+                'store' => [ 'meta'=> [
+                    'href' => 'https://online.moysklad.ru/api/remap/1.2/entity/store/'.$Store,
+                    'type' => 'store',
+                    'mediaType' => 'application/json',
+                ] ],
+                'externalCode' => $externalCode,
+                'attributes' => $attributes,
+                'positions' => $positions,
+                'customerOrder' => [
+                    'meta'=> [
+                        'href' => $OldBody->meta->href,
+                        'metadataHref' => $OldBody->meta->metadataHref,
+                        'type' => $OldBody->meta->type,
+                        'mediaType' => $OldBody->meta->mediaType,
+                        'uuidHref' => $OldBody->meta->uuidHref,
+                    ] ],
+            ];
+            try {
+                $postBodyCreateDemand = $client->post($url, $body);
+                if ($SettingBD->operationsDocument == '2' or $SettingBD->operationsDocument == 2) {
+                    $body = [
+                        'demands' => [
+                            'meta'=> [
+                                'href' => $postBodyCreateDemand->meta->href,
+                                'metadataHref' => $postBodyCreateDemand->meta->metadataHref,
+                                'type' => $postBodyCreateDemand->meta->type,
+                                'mediaType' => $postBodyCreateDemand->meta->mediaType,
+                            ] ],
+                    ];
+
+                    $urlFacture = 'https://online.moysklad.ru/api/remap/1.2/entity/factureout';
+                    $client = new MsClient($Setting->TokenMoySklad);
+                    $postBodyCreateFactureout = $client->post($urlFacture, $body);
+                }
+            } catch (\Throwable $e) {
+                dd($e);
+            }
+        }
     }
 
 
