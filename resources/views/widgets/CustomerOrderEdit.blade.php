@@ -128,34 +128,41 @@
         }
 
         function CheckPhoneOrQR(Selector){
-            let option = Selector.options[Selector.selectedIndex];
+           /* let option = Selector.options[Selector.selectedIndex];
             document.getElementById("sendAccrue").style.display = "none"
             document.getElementById('buttonOperations').style.display = 'none'
             document.getElementById("labelCancellation").style.display = "block"
             if (option.value === "0") {
-                document.getElementById("sendQR").style.display = "none"
+                /!*document.getElementById("sendQR").style.display = "none"
                 document.getElementById("labelAccrue").style.display = "block"
                 document.getElementById("QRCodePoint").value = ""
                 operations_points = 0
                 operations_user = OLDPhone
 
                 document.getElementById("Accrue").checked = true
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)*!/
             }
             if (option.value === "1") {
                 document.getElementById("sendQR").style.display = "block"
                 document.getElementById("QRCode").value = ''
                 document.getElementById("labelAccrue").style.display = "block"
                 operations_user = OLDQRCode
-                if (operationsCancellation === 1) {
+            }*/
+        }
 
-                } else {
-                    document.getElementById("sendPoint").style.display = "block"
-                    document.getElementById("sendQR").style.display = "none"
-                    document.getElementById("QRCode").value = ''
-                    operations_user = OLDPhone
-                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
-                }
+        function sendAccrueFUNCTION(Val){
+            operations_points = 0
+            if (Val === 0) {
+                document.getElementById("sendQR").style.display = "none"
+                document.getElementById("sendPoint").style.display = "none";
+                document.getElementById("QRCodePoint").value = ""
+                operations_user = OLDPhone
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
+            }
+            if (Val === 1) {
+                document.getElementById("sendQR").style.display = "block"
+                document.getElementById("QRCode").value = ''
+                operations_user = OLDQRCode
             }
         }
 
@@ -205,16 +212,7 @@
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div === "sendAccrue"){
-
-                if (operationsAccrue === 1) {
-                    document.getElementById("valueSelector").value = "1"
-                    CheckPhoneOrQR(document.getElementById("valueSelector"))
-                } else {
-                    document.getElementById("valueSelector").value = "0"
-                    CheckPhoneOrQR(document.getElementById("valueSelector"))
-                }
-
-
+                sendAccrueFUNCTION(operationsAccrue)
             }
             if (div === "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
