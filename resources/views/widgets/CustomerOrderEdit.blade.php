@@ -203,18 +203,19 @@
             console.log('div = ' + div)
             console.log('operationsAccrue = ' + operationsAccrue)
             console.log('operationsCancellation = ' + operationsCancellation)
-            if (div == "sendAccrue"){
-                if (operationsAccrue == 1) {
-                    document.getElementById("valueSelector").value = "0"
+            if (div === "sendAccrue"){
+
+                if (operationsAccrue === 1) {
+                    document.getElementById("valueSelector").value = "1"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 } else {
-                    document.getElementById("valueSelector").value = "1"
+                    document.getElementById("valueSelector").value = "0"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 }
 
 
             }
-            if (div == "sendCancellation"){
+            if (div === "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
                 if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
@@ -223,11 +224,11 @@
                     document.getElementById("sendPoint").style.display = "block";
                 }
 
-                if (operationsCancellation == 1) {
-                    document.getElementById("valueSelector").value = "0"
+                if (operationsCancellation === 1) {
+                    document.getElementById("valueSelector").value = "1"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 } else {
-                    document.getElementById("valueSelector").value = "1"
+                    document.getElementById("valueSelector").value = "0"
                     CheckPhoneOrQR(document.getElementById("valueSelector"))
                 }
 
