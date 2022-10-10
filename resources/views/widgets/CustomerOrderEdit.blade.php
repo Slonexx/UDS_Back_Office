@@ -132,7 +132,7 @@
             let option = Selector.options[Selector.selectedIndex];
             document.getElementById("sendAccrue").style.display = "none"
             document.getElementById('buttonOperations').style.display = 'none'
-            document.getElementById("labelCancellation").style.display = "none"
+            document.getElementById("labelCancellation").style.display = "block"
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("labelAccrue").style.display = "block"
@@ -142,9 +142,6 @@
                 operations_user = OLDPhone
 
                 document.getElementById("Accrue").checked = true
-                if (operationsCancellation === 0){
-                    document.getElementById("labelCancellation").style.display = "block"
-                }
 
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
             }
@@ -220,9 +217,6 @@
             if (div === "sendCancellation"){
                 document.getElementById("sendCancellation").style.display = "block";
                 if (operations_user != undefined && OLDQRCode != undefined){
-                    document.getElementById("sendPoint").style.display = "block";
-                }
-                if (operations_user != undefined && EnableOffs == true){
                     document.getElementById("sendPoint").style.display = "block";
                 }
 
