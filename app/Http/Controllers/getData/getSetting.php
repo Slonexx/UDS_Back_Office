@@ -17,8 +17,8 @@ class getSetting extends Controller
         } catch (\Throwable $e) {
             $result = [
                 "accountId" => $accountId,
-                "operations" => null,
-                "EnableOffs" => null,
+                "operationsAccrue" => null,
+                "operationsCancellation" => null,
                 "operationsDocument" => null,
                 "operationsPaymentDocument" => null,
             ];

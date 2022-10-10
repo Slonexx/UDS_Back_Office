@@ -7,7 +7,7 @@
 
         <div class="row gradient rounded p-2 pb-3">
             <div class="col-10">
-                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Операции &#8594; Проведение операции </span>
+                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Операции </span>
                 </div>
             </div>
         </div>
@@ -28,32 +28,32 @@
 
         <form action="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}" method="post">
         @csrf <!-- {{ csrf_field() }} -->
-            <div class="mb-3 row">
+            <div class="mb-1 row">
                 <div class="col-6">
-                    <label class="mt-1 from-label">Проводить операции по </label>
+                    <label class="mt-1 from-label">Начисление </label>
                 </div>
                 <div class="col-5">
-                    <select id="operations" name="operations" class="form-select text-black" onchange="EnableOffs_true_or_false(this.value)" >
+                    <select id="operationsAccrue" name="operationsAccrue" class="form-select text-black" >
                         <option value="0">Номеру телефона</option>
                         <option value="1">QR-коду мобильного приложения</option>
                     </select>
                 </div>
             </div>
-            <div id="EnableOffsSelect" class="mb-3" style="display: none">
+            <div id="EnableOffsSelect" class="mb-3">
                 <div class="row">
                     <div class="col-6">
-                        <label class="mt-1 from-label">Включить списание бонусных балов по номеру телефона  </label>
+                        <label class="mt-1 from-label">Списание  </label>
                     </div>
                     <div class="col-5">
-                        <select id="EnableOffs" name="offsPhone" class="form-select text-black" >
-                            <option value="0">Нет</option>
-                            <option value="1">Да</option>
+                        <select id="operationsCancellation" name="operationsCancellation" class="form-select text-black" >
+                            <option value="0">Номеру телефона</option>
+                            <option value="1">QR-коду мобильного приложения</option>
                         </select>
                     </div>
                 </div>
             </div>
             <div id="Enable_true_or_false" style="display:block;">
-                <div class="mb-3 row">
+                <div class="row">
                     <P class="col-6 col-form-label"> Выберите какой тип документов создавать: </P>
                     <div class="col-5">
                         <select id="operationsDocument" name="operationsDocument" class="form-select text-black" >
@@ -85,9 +85,9 @@
     </div>
 
     <script>
-        let operations = document.getElementById('operations').value = {{ $operations }};
-        EnableOffs_true_or_false(operations);
-        let EnableOffs_value = document.getElementById('EnableOffs').value = {{ $EnableOffs }};
+        let operationsAccrue = document.getElementById('operationsAccrue').value = {{ $operationsAccrue }};
+        let operationsCancellation = document.getElementById('operationsCancellation').value = {{ $operationsCancellation }};
+        //EnableOffs_true_or_false(operations);
         let operationsDocument_value  = document.getElementById('operationsDocument').value = {{ $operationsDocument }};
         let operationsPaymentDocument_value  = document.getElementById('operationsPaymentDocument').value = {{ $operationsPaymentDocument }};
 

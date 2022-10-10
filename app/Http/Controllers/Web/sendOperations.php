@@ -29,8 +29,8 @@ class sendOperations extends Controller
         $SettingBD = new getSetting();
         $SettingBD = $SettingBD->getSendSettingOperations($accountId);
         //dd($SettingBD);
-        if ($SettingBD->operations != null) $operations = $SettingBD->operations; else $operations = 0 ;
-        if ($SettingBD->EnableOffs != null) $EnableOffs = $SettingBD->EnableOffs; else $EnableOffs = 0 ;
+        if ($SettingBD->operationsAccrue != null) $operationsAccrue = $SettingBD->operationsAccrue; else $operationsAccrue = 0 ;
+        if ($SettingBD->operationsCancellation != null) $operationsCancellation = $SettingBD->operationsCancellation; else $operationsCancellation = 0 ;
         if ($SettingBD->operationsDocument != null) $operationsDocument = $SettingBD->operationsDocument; else $operationsDocument = 0 ;
         if ($SettingBD->operationsPaymentDocument != null) $operationsPaymentDocument = $SettingBD->operationsPaymentDocument; else $operationsPaymentDocument = 0 ;
 
@@ -38,8 +38,8 @@ class sendOperations extends Controller
             "accountId"=> $accountId,
             "isAdmin" => $isAdmin,
 
-            'operations' => $operations,
-            'EnableOffs' => $EnableOffs,
+            'operationsAccrue' => $operationsAccrue,
+            'operationsCancellation' => $operationsCancellation,
             'operationsDocument' => $operationsDocument,
             'operationsPaymentDocument' => $operationsPaymentDocument,
         ]);
@@ -48,14 +48,11 @@ class sendOperations extends Controller
 
     public function postOperations(Request $request, $accountId, $isAdmin){
 
-        if ($request->operations == 1) {
-            $offsPhone = 0;
-        } else $offsPhone = $request->offsPhone;
         try {
             sendOperationsModel::create([
                 'accountId' => $accountId,
-                'operations' => $request->operations,
-                'EnableOffs' => $offsPhone,
+                'operationsAccrue' => $request->operationsAccrue,
+                'operationsCancellation' => $request->operationsCancellation,
                 'operationsDocument' => $request->operationsDocument,
                 'operationsPaymentDocument' => $request->PaymentDocument,
             ]);
@@ -72,8 +69,8 @@ class sendOperations extends Controller
             "accountId"=> $accountId,
             'isAdmin' => $isAdmin,
 
-            'operations' => $request->operations,
-            'EnableOffs' => $request->offsPhone,
+            'operationsAccrue' => $request->operationsAccrue,
+            'operationsCancellation' => $request->operationsCancellation,
             'operationsDocument' => $request->operationsDocument,
             'operationsPaymentDocument' =>  $request->PaymentDocument,
         ]);

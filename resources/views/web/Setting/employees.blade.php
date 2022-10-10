@@ -22,7 +22,7 @@
 
         <div class="row gradient rounded p-2 pb-3">
             <div class="col-10">
-                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Операции &#8594; Сотрудники </span>
+                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Сотрудники </span>
                 </div>
             </div>
         </div>

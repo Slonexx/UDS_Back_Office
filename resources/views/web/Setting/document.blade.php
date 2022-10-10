@@ -5,8 +5,12 @@
 
 
     <div class="content p-4 mt-2 bg-white text-Black rounded">
-        <h4> <i class="fa-solid fa-gears text-orange"></i> Настройка документов </h4>
-
+        <div class="row gradient rounded p-2 pb-3">
+            <div class="col-10">
+                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Заказы </span>
+                </div>
+            </div>
+        </div>
         <br>
 
         @isset($message)
