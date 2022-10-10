@@ -194,6 +194,7 @@ class ObjectController extends Controller
         $bodyMC = $Clinet->get($bodyAgentHref);
         $phone = preg_replace('/[^0-9]/', '', $bodyMC->phone);
         if($phone[0]==8)$phone[0] = 7;
+        if ( strlen($phone) == 10 ) $phone = '7'.$phone;
         return '+'.$phone;
 
     }
