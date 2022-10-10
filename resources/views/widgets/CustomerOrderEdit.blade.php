@@ -140,7 +140,6 @@
                 operations_user = OLDPhone
 
                 document.getElementById("Accrue").checked = true
-
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
             }
             if (option.value === "1") {
@@ -148,6 +147,15 @@
                 document.getElementById("QRCode").value = ''
                 document.getElementById("labelAccrue").style.display = "block"
                 operations_user = OLDQRCode
+                if (operationsCancellation === 1) {
+
+                } else {
+                    document.getElementById("sendPoint").style.display = "block"
+                    document.getElementById("sendQR").style.display = "none"
+                    document.getElementById("QRCode").value = ''
+                    operations_user = OLDPhone
+                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)
+                }
             }
         }
 
@@ -213,12 +221,8 @@
                 if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
                 }
-
-                if (operationsCancellation === 1) {
-                    document.getElementById("valueSelector").value = "1"
-                    CheckPhoneOrQR(document.getElementById("valueSelector"))
-                }
-
+                document.getElementById("valueSelector").value = "1"
+                CheckPhoneOrQR(document.getElementById("valueSelector"))
             }
         }
 
