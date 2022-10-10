@@ -143,7 +143,6 @@
             operations_points = 0
             if (Val === 0) {
                 document.getElementById("sendQR").style.display = "none"
-                document.getElementById("sendPoint").style.display = "none";
                 document.getElementById("QRCodePoint").value = ""
                 operations_user = OLDPhone
                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
@@ -158,7 +157,6 @@
         function sendCancellationFUNCTION(Val){
             operations_points = 0
             document.getElementById("sendCancellation").style.display = "block";
-            document.getElementById("sendPoint").style.display = "block";
             if (Val === 0) {
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("QRCodePoint").value = ""
@@ -216,12 +214,14 @@
         function sendAccrueOrCancellation(myRadio){
             document.getElementById('buttonOperations').style.display = "none"
             document.getElementById("sendCancellation").style.display = "none"
+            document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
             if (div === "sendAccrue"){
                 sendAccrueFUNCTION(operationsAccrue)
             }
             if (div === "sendCancellation"){
                 sendCancellationFUNCTION(operationsCancellation)
+                document.getElementById("sendPoint").style.display = "block";
             }
         }
 
