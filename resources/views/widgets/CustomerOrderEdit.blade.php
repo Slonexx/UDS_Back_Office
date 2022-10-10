@@ -19,6 +19,7 @@
         let operations_points
         let operations_Max_points
         let operations_availablePoints
+        let operations_availablePoints_Nubmer
         let operations_skipLoyaltyTotal
         let operations_user
         let operations_cashier_id = "{{ $cashier_id }}"
@@ -72,6 +73,7 @@
                             OLDPhone = message.phone
                             operations_user = message.phone
                             operations_total = message.total
+                            operations_availablePoints_Nubmer = message.availablePoints
                             operations_availablePoints = message.availablePoints
                             operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
 
@@ -249,7 +251,10 @@
                     let cashBack = r_textPars.cashBack;
                     document.getElementById("total").innerText = operations_total
                     document.getElementById("cashBackOperation").innerText = cashBack
-                    document.getElementById("availablePoints").innerText = operations_availablePoints
+                    if (operationsCancellation === 0) {
+                        document.getElementById("availablePoints").innerText = operations_availablePoints_Nubmer
+                    } else document.getElementById("availablePoints").innerText = operations_availablePoints
+
                     operations_Max_points = r_textPars.maxPoints
                     PointMax(r_textPars.maxPoints)
                     document.getElementById("sendAccrue").style.display = "block";
