@@ -68,8 +68,6 @@
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
                             document.getElementById("labelCancellation").style.display = "block"
-                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-                            console.log("message = " + JSON.stringify(message))
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
 
@@ -79,6 +77,8 @@
                             operations_availablePoints = message.availablePoints
                             operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
 
+                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
+                            console.log("message = " + JSON.stringify(message))
 
                            /* if (EnableOffs == true){
                                 document.getElementById("labelCancellation").style.display = "block"
@@ -200,6 +200,9 @@
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
+            console.log('div = ' + div)
+            console.log('operationsAccrue = ' + operationsAccrue)
+            console.log('operationsCancellation = ' + operationsCancellation)
             if (div == "sendAccrue"){
                 if (operationsAccrue == 1) {
                     document.getElementById("valueSelector").value = "0"
