@@ -585,14 +585,12 @@ class ObjectController extends Controller
                 $postBodyCreateDemand = $client->post($url, $body);
                 if ($SettingBD->operationsDocument == '2' or $SettingBD->operationsDocument == 2) {
                     $body = [
-                        'demands' => [
-                            'meta'=> [
-                                'href' => $postBodyCreateDemand->meta->href,
-                                'metadataHref' => $postBodyCreateDemand->meta->metadataHref,
-                                'type' => $postBodyCreateDemand->meta->type,
-                                'mediaType' => $postBodyCreateDemand->meta->mediaType,
-                            ] ],
-                    ];
+                        'demands' => [  0 => [ 'meta' => [
+                            'href' => $postBodyCreateDemand->meta->href,
+                            'metadataHref' => $postBodyCreateDemand->meta->metadataHref,
+                            'type' => $postBodyCreateDemand->meta->type,
+                            'mediaType' => $postBodyCreateDemand->meta->mediaType,
+                        ] ] ] ];
 
                     $urlFacture = 'https://online.moysklad.ru/api/remap/1.2/entity/factureout';
                     $client = new MsClient($Setting->TokenMoySklad);
