@@ -67,7 +67,6 @@
                             document.getElementById("undefined").style.display = "block"
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
-                            document.getElementById("labelCancellation").style.display = "block"
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
 
@@ -136,7 +135,6 @@
             if (option.value === "0") {
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("labelAccrue").style.display = "block"
-                document.getElementById("labelCancellation").style.display = "none"
                 document.getElementById("QRCodePoint").value = ""
                 operations_points = 0
                 operations_user = OLDPhone
@@ -149,7 +147,6 @@
                 document.getElementById("sendQR").style.display = "block"
                 document.getElementById("QRCode").value = ''
                 document.getElementById("labelAccrue").style.display = "block"
-                document.getElementById("labelCancellation").style.display = "block"
                 operations_user = OLDQRCode
             }
         }
@@ -199,9 +196,6 @@
             document.getElementById("sendCancellation").style.display = "none";
             document.getElementById("sendPoint").style.display = "none";
             let div = myRadio.value;
-            console.log('div = ' + div)
-            console.log('operationsAccrue = ' + operationsAccrue)
-            console.log('operationsCancellation = ' + operationsCancellation)
             if (div === "sendAccrue"){
 
                 if (operationsAccrue === 1) {
