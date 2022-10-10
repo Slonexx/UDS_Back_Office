@@ -12,7 +12,7 @@
         </div>
         @isset($message)
 
-            <div class="{{$message['alert']}}"> {{ $message['message'] }}
+            <div class="{{$message['alert']}} mt-1"> {{ $message['message'] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 

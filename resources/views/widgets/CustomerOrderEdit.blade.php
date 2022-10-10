@@ -24,44 +24,29 @@
         let operations_cashier_id = "{{ $cashier_id }}"
         let operations_cashier_name = "{{ $cashier_name }}"
 
-        let EnableOffs
+        let operationsAccrue
+        let operationsCancellation
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data;
             GlobalobjectId = receivedMessage.objectId;
             if (receivedMessage.name === 'Open') {
-                let oReq = new XMLHttpRequest();
-                document.getElementById("activated").style.display = "none";
-                document.getElementById("undefined").style.display = "none";
-                document.getElementById("Error402").style.display = "none"
-                document.getElementById("success").style.display = "none";
-                document.getElementById("danger").style.display = "none";
-                document.getElementById("sendWarning").style.display = "none";
-                document.getElementById("buttonOperations").style.display = "none";
-                document.getElementById("labelAccrue").style.display = "none";
-                document.getElementById("labelCancellation").style.display = "none";
-                document.getElementById("Accrue").checked = true;
-                document.getElementById("valueSelector").value = "0"
-                CheckPhoneOrQR(document.getElementById("valueSelector"))
-                document.getElementById("Error402").style.display = "none"
-                document.getElementById("sendQRErrorID").style.display = "none"
-                document.getElementById("operations_style").style.display = "none"
+                let oReq = new XMLHttpRequest()
+                clearWidget()
                 oReq.addEventListener("load", function() {
                     let responseTextPars = JSON.parse(this.responseText);
                     let StatusCode = responseTextPars.StatusCode;
-
                     if (StatusCode == 402){
                         document.getElementById("Error402").style.display = "block"
                         document.getElementById("ErrorMessage").innerText = responseTextPars.message
                     } else {
-                        let message = responseTextPars.message;
-                        GlobalUDSOrderID = message.id;
-                        let BonusPoint = message.BonusPoint;
-                        let points = message.points;
-
                         if (StatusCode == 200) {
                             document.getElementById("activated").style.display = "block";
                             document.getElementById("undefined").style.display = "none";
+                            GlobalUDSOrderID = message.id;
+                            let message = responseTextPars.message;
+                            let BonusPoint = message.BonusPoint;
+                            let points = message.points;
                             if (message.info == 'Order') {
                                 document.getElementById("infoOrderOrOperations").innerText = 'Заказ №';
                                 GlobalxRefURL = "https://admin.uds.app/admin/orders?order="+message.id;
@@ -73,26 +58,9 @@
                             window.document.getElementById("OrderID").innerHTML = message.id;
                             let icon = message.icon.replace(/\\/g, '');
                             window.document.getElementById("icon").innerHTML = icon;
-
                             window.document.getElementById("cashBack").innerHTML = BonusPoint;
                             window.document.getElementById("points").innerHTML = points;
-
-                            if (message.state == "NEW") {
-                                document.getElementById("ButtonComplete").style.display = "block";
-                                document.getElementById("Complete").style.display = "none";
-                                document.getElementById("Deleted").style.display = "none";
-                            }
-                            if (message.state == "COMPLETED") {
-                                document.getElementById("Complete").style.display = "block";
-                                document.getElementById("ButtonComplete").style.display = "none";
-                                document.getElementById("Deleted").style.display = "none";
-                            }
-                            if (message.state == "DELETED") {
-                                document.getElementById("Deleted").style.display = "block";
-                                document.getElementById("Complete").style.display = "none";
-                                document.getElementById("Complete").style.display = "none";
-                            }
-
+                            setStateByStatus(message.state)
                         } else {
                             document.getElementById("activated").style.display = "none"
                             document.getElementById("sendWarning").style.display = "none"
@@ -100,27 +68,28 @@
                             document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-                            EnableOffs = message.EnableOffs
-                            tmp_operations_style = message.operations
+                            operationsAccrue = message.operationsAccrue
+                            operationsCancellation = message.operationsCancellation
+
                             OLDPhone = message.phone
                             operations_user = message.phone
                             operations_total = message.total
                             operations_availablePoints = message.availablePoints
                             operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
 
-                            if (EnableOffs == true){
+                           /* if (EnableOffs == true){
                                 document.getElementById("labelCancellation").style.display = "block"
-                            }
+                            }*/
 
 
-                            if (tmp_operations_style == true) {
+                            /*if (tmp_operations_style == true) {
                                 document.getElementById("valueSelector").value = 1;
                                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                             } else {
                                 document.getElementById("valueSelector").value = 0;
                                 CheckPhoneOrQR(document.getElementById("valueSelector"))
                                 info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
-                            }
+                            }*/
                         }
                     }
                 });
@@ -536,6 +505,43 @@
     </div>
 
 <script>
+
+    function clearWidget(){
+        document.getElementById("activated").style.display = "none";
+        document.getElementById("undefined").style.display = "none";
+        document.getElementById("Error402").style.display = "none"
+        document.getElementById("success").style.display = "none";
+        document.getElementById("danger").style.display = "none";
+        document.getElementById("sendWarning").style.display = "none";
+        document.getElementById("buttonOperations").style.display = "none";
+        document.getElementById("labelAccrue").style.display = "none";
+        document.getElementById("labelCancellation").style.display = "none";
+        document.getElementById("Accrue").checked = true;
+        document.getElementById("valueSelector").value = "0"
+        CheckPhoneOrQR(document.getElementById("valueSelector"))
+        document.getElementById("Error402").style.display = "none"
+        document.getElementById("sendQRErrorID").style.display = "none"
+        document.getElementById("operations_style").style.display = "none"
+    }
+
+    function setStateByStatus(State){
+        if (State == "NEW") {
+            document.getElementById("ButtonComplete").style.display = "block";
+            document.getElementById("Complete").style.display = "none";
+            document.getElementById("Deleted").style.display = "none";
+        }
+        if (State == "COMPLETED") {
+            document.getElementById("Complete").style.display = "block";
+            document.getElementById("ButtonComplete").style.display = "none";
+            document.getElementById("Deleted").style.display = "none";
+        }
+        if (State == "DELETED") {
+            document.getElementById("Deleted").style.display = "block";
+            document.getElementById("Complete").style.display = "none";
+            document.getElementById("Complete").style.display = "none";
+        }
+    }
+
     document.getElementById("QRCode").addEventListener("change", function() {
         let Selector = document.getElementById('valueSelector')
         let option = Selector.options[Selector.selectedIndex];
