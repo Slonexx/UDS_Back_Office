@@ -147,7 +147,7 @@
                 document.getElementById("sendQR").style.display = "none"
                 document.getElementById("QRCodePoint").value = ""
                 operations_user = OLDPhone
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints)
+                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints_Nubmer)
             }
             if (Val === 1) {
                 document.getElementById("sendQR").style.display = "block"
@@ -192,7 +192,7 @@
                     let r_textPars = JSON.parse(this.responseText);
                     operations_availablePoints = r_textPars.availablePoints
                     document.getElementById("availablePoints").innerText = r_textPars.availablePoints
-                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
+                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, r_textPars.availablePoints);
                     if (r_textPars.id == 0) {
                         document.getElementById("sendQRErrorID").style.display = "block";
                     } else  {
@@ -251,9 +251,8 @@
                     let cashBack = r_textPars.cashBack;
                     document.getElementById("total").innerText = operations_total
                     document.getElementById("cashBackOperation").innerText = cashBack
-                    if (operationsCancellation === 0) {
-                        document.getElementById("availablePoints").innerText = operations_availablePoints_Nubmer
-                    } else document.getElementById("availablePoints").innerText = operations_availablePoints
+                    document.getElementById("availablePoints").innerText = availablePoints
+
 
                     operations_Max_points = r_textPars.maxPoints
                     PointMax(r_textPars.maxPoints)
