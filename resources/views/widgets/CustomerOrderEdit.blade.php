@@ -76,6 +76,9 @@
                             operations_availablePoints = message.availablePoints
                             operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
 
+                            document.getElementById("labelAccrue").style.display = "block"
+                            document.getElementById("labelCancellation").style.display = "block"
+
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                             console.log("message = " + JSON.stringify(message))
 
