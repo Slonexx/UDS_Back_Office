@@ -65,7 +65,6 @@
                             document.getElementById("activated").style.display = "none"
                             document.getElementById("sendWarning").style.display = "none"
                             document.getElementById("undefined").style.display = "block"
-                            document.getElementById("buttonOperations").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
@@ -82,19 +81,6 @@
                             sendAccrueOrCancellation(window.document.getElementById("Accrue"))
                             console.log("message = " + JSON.stringify(message))
 
-                           /* if (EnableOffs == true){
-                                document.getElementById("labelCancellation").style.display = "block"
-                            }*/
-
-
-                            /*if (tmp_operations_style == true) {
-                                document.getElementById("valueSelector").value = 1;
-                                CheckPhoneOrQR(document.getElementById("valueSelector"))
-                            } else {
-                                document.getElementById("valueSelector").value = 0;
-                                CheckPhoneOrQR(document.getElementById("valueSelector"))
-                                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints);
-                            }*/
                         }
                     }
                 });
@@ -211,8 +197,9 @@
         }
 
         function sendAccrueOrCancellation(myRadio){
-            document.getElementById("sendCancellation").style.display = "none";
-            document.getElementById("sendPoint").style.display = "none";
+            document.getElementById('buttonOperations').style.display = "none"
+            document.getElementById("sendCancellation").style.display = "none"
+            document.getElementById("sendPoint").style.display = "none"
             let div = myRadio.value;
             if (div === "sendAccrue"){
                 sendAccrueFUNCTION(operationsAccrue)
@@ -222,8 +209,6 @@
                 if (operations_user != undefined && OLDQRCode != undefined){
                     document.getElementById("sendPoint").style.display = "block";
                 }
-                document.getElementById("valueSelector").value = "1"
-                CheckPhoneOrQR(document.getElementById("valueSelector"))
             }
         }
 
@@ -306,8 +291,6 @@
             document.getElementById("labelAccrue").style.display = "none";
             document.getElementById("labelCancellation").style.display = "none";
             document.getElementById("Accrue").checked = true;
-            document.getElementById("valueSelector").value = "0"
-            /*CheckPhoneOrQR(document.getElementById("valueSelector"))*/
             document.getElementById("Error402").style.display = "none"
             document.getElementById("sendQRErrorID").style.display = "none"
             document.getElementById("operations_style").style.display = "none"
@@ -436,16 +419,6 @@
                         Провести операцию
                 </div>
             </div>
-
-            <div id="operations_style" class="mt-2 row mx-2" style="font-size: 16px; display: none">
-                    <div class="col-5 mt-2 mx-2"> Тип проведения </div>
-                    <div class="col-6">
-                        <select onchange="CheckPhoneOrQR(valueSelector)" id="valueSelector" class="p-1 form-select">
-                            <option value="0" selected> по номеру телефона </option>
-                            <option value="1"> по QR-коду </option>
-                        </select>
-                    </div>
-                </div>
             <div class="mt-2 row mx-2">
                 <div class="row mt-2 mx-2 p-1">
                     <div id="labelAccrue" class="col-6">
@@ -554,13 +527,6 @@
     </div>
 
 <script>
-    document.getElementById("QRCode").addEventListener("change", function() {
-        let Selector = document.getElementById('valueSelector')
-        let option = Selector.options[Selector.selectedIndex];
-        if (option === '1') {
-            document.getElementById('buttonOperations').style.display = 'block'
-        }
-    });
 
     document.getElementById("QRCodePoint").addEventListener("change", function() {
         let v = parseInt(this.value);
