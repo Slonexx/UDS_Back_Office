@@ -467,22 +467,6 @@
                     <div class="col-10 alert alert-danger fade show in text-center "> QR-код не верный !</div>
                 </div>
             </div>
-            <div class="mt-2 row mx-2">
-                    <div class="row mt-2 mx-2 p-1">
-                        <div id="labelAccrue" class="col-6">
-                            <div class="mx-3 form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
-                                <label class="form-check-label" for="Accrue"> Начислить </label>
-                            </div>
-                        </div>
-                        <div id="labelCancellation" class="col-6">
-                            <div class="mx-3  form-check">
-                                <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
-                                <label class="form-check-label" for="Cancellation"> Списать</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             <div id="sendAccrue" style="display:none;">
                     <div class="row mt-2 row mx-2" >
                         <div class="col-1"></div>
@@ -510,7 +494,22 @@
                     </div>
                 </div>
             </div>
-
+            <div class="mt-2 row mx-2">
+                <div class="row mt-2 mx-2 p-1">
+                    <div id="labelAccrue" class="col-6">
+                        <div class="mx-3 form-check">
+                            <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Accrue" value="sendAccrue" checked>
+                            <label class="form-check-label" for="Accrue"> Начислить </label>
+                        </div>
+                    </div>
+                    <div id="labelCancellation" class="col-6">
+                        <div class="mx-3  form-check">
+                            <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
+                            <label class="form-check-label" for="Cancellation"> Списать</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="sendPoint" class="mt-2" style="display: none">
                 <div class="row">
                     <div class="col-1"></div>
