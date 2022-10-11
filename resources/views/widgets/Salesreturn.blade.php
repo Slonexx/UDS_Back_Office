@@ -61,14 +61,15 @@
                 <div class="col-1"></div>
                 <div class="col-10 border border-info rounded p-2 text-black ">
                     <div class="row">
-                        <button class="col-12 btn btn-danger">Частичный возврат</button>
-                        <hr>
+                        <div class="col-12 row">
+                            <div class="col-1"></div>
+                            <button class="col-10 btn btn-outline-secondary">Частичный возврат</button>
+                        </div>
                         <div class="col-12">Итого к возврату</div>
                         <div class="col-8"> <span> Сумма  </span> </div>
                         <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
                         <div class="col-8"> <span> Баллы  </span> </div>
                         <div class="col-4 text-end"> <span id="point"> *** </span> </div>
-                        <hr>
                     </div>
                 </div>
             </div>
