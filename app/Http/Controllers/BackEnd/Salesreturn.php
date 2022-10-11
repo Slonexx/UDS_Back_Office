@@ -36,9 +36,9 @@ class Salesreturn extends Controller
                    'Status' => 200,
                    'Data' => [
                        'id' => $bodyUDS->id,
-                       'points' => ((int) $bodyUDS->points - $OLD_partialAmount),
+                       'points' => $bodyUDS->points,
                        'cash' => $bodyUDS->cash,
-                       'total' => $bodyUDS->total,
+                       'total' => ((int) $bodyUDS->total - $OLD_partialAmount),
                    ],
                ];
            } catch (\Throwable $e) {
