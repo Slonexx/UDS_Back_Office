@@ -360,7 +360,7 @@ class ObjectController extends Controller
         }
         return $Attributes;
     }
-    function createDemands($Setting, $SettingBD, $OldBody, $externalCode){
+    public function createDemands($Setting, $SettingBD, $OldBody, $externalCode){
         if ($SettingBD->operationsDocument == 0 or $SettingBD->operationsDocument == null) {
 
         } else {
@@ -469,7 +469,62 @@ class ObjectController extends Controller
             }
         }
     }
+    public function createPaymentDocument($Setting, $SettingBD, $OldBody ){
+        if ($SettingBD->operationsPaymentDocument == 0 or $SettingBD->operationsPaymentDocument == null) {
 
+        } else {  $client = new MsClient($Setting->TokenMoySklad);
+            if ($SettingBD->operationsPaymentDocument == 1) {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'customerOrder' => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ] ],
+                ];
+                $postBodyCreateCashin = $client->post($url, $body);
+            }
+            if ($SettingBD->operationsPaymentDocument == 2) {
+                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+
+                $body = [
+                    'organization' => [  'meta' => [
+                        'href' => $OldBody->organization->meta->href,
+                        'type' => $OldBody->organization->meta->type,
+                        'mediaType' => $OldBody->organization->meta->mediaType,
+                    ] ],
+                    'agent' => [ 'meta'=> [
+                        'href' => $OldBody->agent->meta->href,
+                        'type' => $OldBody->agent->meta->type,
+                        'mediaType' => $OldBody->agent->meta->mediaType,
+                    ] ],
+                    'customerOrder' => [
+                        'meta'=> [
+                            'href' => $OldBody->meta->href,
+                            'metadataHref' => $OldBody->meta->metadataHref,
+                            'type' => $OldBody->meta->type,
+                            'mediaType' => $OldBody->meta->mediaType,
+                            'uuidHref' => $OldBody->meta->uuidHref,
+                        ] ],
+                ];
+                $postBodyCreatePaymentin = $client->post($url, $body);
+            }
+        }
+    }
 
     public function phone_number($phone){
         $phone = preg_replace('/[^0-9]/', '', $phone);
@@ -592,6 +647,7 @@ class ObjectController extends Controller
             'attributes' => $setAttributes,
         ]);
         $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
+        $this->createPaymentDocument();
         $post = [
             'code' => 200,
             'id' => $post->id,
