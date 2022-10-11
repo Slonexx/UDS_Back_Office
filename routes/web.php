@@ -37,7 +37,7 @@ Route::get('/customers/find', [ObjectController::class, 'customers']);
 
 
 Route::get('/Demand/{accountId}/{entity}/{objectId}', [Demand::class, 'DemandObject']);
-Route::get('/Demand/operations/', [Demand::class, 'operations']);
+Route::get('/postDemand/operations/', [Demand::class, 'operations']);
 
 
 Route::get('/Salesreturn/{accountId}/{entity}/{objectId}', [Salesreturn::class, 'SalesreturnObject']);
