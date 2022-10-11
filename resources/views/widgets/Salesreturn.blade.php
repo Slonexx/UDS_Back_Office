@@ -92,11 +92,10 @@
                         <div class="col-12 mb-3">
                             <div id="Private_return_full" class="row" style="display: none">
                                 <div class="col-1"></div>
-                                <button onclick="btnPrivateReturn(0)" class="col-10 mx-2 btn btn-outline-secondary">Частичный возврат</button>
+                                <button onclick="btnPrivateReturn(0)" class="col-10 mx-4 btn btn-outline-secondary">Частичный возврат</button>
                             </div>
                             <div id="Private_return" class="row" style="display: none">
-                                <div class="col-1"></div>
-                                <div class="col-10 mx-2">
+                                <div class="col-12">
                                     <div class="row">
                                         <div class="col-8">
                                             <input id="ReturnPointTotal" type="text" class="form-control" placeholder="Сумма к возврату"
