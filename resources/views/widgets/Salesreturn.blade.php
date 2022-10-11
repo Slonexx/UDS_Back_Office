@@ -31,10 +31,15 @@
                         window.document.getElementById('main').style.display = "block"
                         window.document.getElementById('sendError').style.display = "none"
                         window.document.getElementById('sendWarning').style.display = "none"
+                        window.document.getElementById('DontExternal').style.display = "none"
                         window.document.getElementById('Private_return').style.display = "none"
                         window.document.getElementById('Private_return_full').style.display = "block"
                         setDataParameters(Data)
-                    } else { }
+                    } else {
+
+                        window.document.getElementById('DontExternal').style.display = "block"
+                        window.document.getElementById('main').style.display = "none"
+                    }
                 });
                 GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
                 console.log('GlobalURL = ' + GlobalURL)
@@ -113,7 +118,7 @@
 
 
     <div class="main-container">
-        <div id="main" class="bg-white text-Black rounded content-container">
+        <div class="bg-white text-Black rounded content-container">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
                     <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
@@ -122,7 +127,14 @@
                     Возврат по операции
                 </div>
             </div>
-            <div class="mt-2 row mx-2">
+            <div id="DontExternal" class="row" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 alert alert-danger fade show in text-center "> Нету связных документов
+                    </div>
+                </div>
+            </div>
+            <div id="main" class="mt-2 row mx-2">
                 <div class="col-1"></div>
                 <div class="col-10 border border-info rounded p-2 text-black ">
                     <div class="row">
@@ -165,7 +177,7 @@
             <div id="sendError" style="display:none;">
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
-                    <div id="ErrorMessage" class="col-10 alert alert-success fade show in text-center "> </div>
+                    <div id="ErrorMessage" class="col-10 alert alert-danger fade show in text-center "> </div>
                 </div>
             </div>
             <div id="buttonOperations">
