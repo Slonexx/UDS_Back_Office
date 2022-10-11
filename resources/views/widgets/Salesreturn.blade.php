@@ -70,10 +70,18 @@
 
         function onchangePoint(){
             setTotal = window.document.getElementById('ReturnPointTotal').value
-            let procent = setTotal * 100 / return_total
+            let procent
+            if (setTotal !== 0 && setTotal !== undefined) {
+                procent = setTotal * 100 / return_total
+            } else {
+                procent = 0
+                setTotal = 0
+            }
+
             if (setPoints !== 0 && setPoints !== undefined) {
                 setPoints = return_points * procent / 100
-            } else  {   setPoints = 0
+            } else  {
+                setPoints = 0
             }
 
             setInnerText_Point_and_Total(setTotal, setPoints);
