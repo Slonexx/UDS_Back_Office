@@ -17,9 +17,6 @@
         let setPoints
 
         let accountId = "{{ $accountId }}"
-        let return_cashier_id = "{{ $cashier_id }}"
-        let return_cashier_name = "{{ $cashier_name }}"
-
 
         window.addEventListener("message", function(event) {
             let receivedMessage = event.data

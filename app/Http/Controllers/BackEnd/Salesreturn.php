@@ -28,7 +28,7 @@ class Salesreturn extends Controller
            $ClientMC->setRequestUrl($href);
            $bodyDemand = $ClientMC->requestGet();
            $externalCode = $bodyDemand->externalCode;
-
+           $OLD_partialAmount = ((int) substr(strrchr($MAINBody->externalCode, "="), 1));
            $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
            try {
                $bodyUDS = $ClientUDS->get('https://api.uds.app/partner/v2/operations/'.$externalCode);
@@ -36,7 +36,7 @@ class Salesreturn extends Controller
                    'Status' => 200,
                    'Data' => [
                        'id' => $bodyUDS->id,
-                       'points' => $bodyUDS->points,
+                       'points' => ((int) $bodyUDS->points - $OLD_partialAmount),
                        'cash' => $bodyUDS->cash,
                        'total' => $bodyUDS->total,
                    ],
@@ -63,10 +63,11 @@ class Salesreturn extends Controller
         $ClientMC = new MsClient($Setting->TokenMoySklad);
         $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$data['objectId'];
         $BodyMC = $ClientMC->get($url);
-        $externalCode = $BodyMC->externalCode.'='.$data['partialAmount'];
-        dd($externalCode);
+        $OLD_partialAmount = ((int) substr(strrchr($BodyMC->externalCode, "="), 1));
+        $partialAmount = ( (int) $data['partialAmount']) + $OLD_partialAmount;
+        $externalCode = $BodyMC->externalCode.'='.$partialAmount;
         $urlUDS = 'https://api.uds.app/partner/v2/operations/'.$data['return_id'].'/refund';
-        $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenMoySklad);
+        $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         try {
             $bodyUDS = $ClientUDS->post($urlUDS, ['partialAmount' => $data['partialAmount']]);
             $putBody = $ClientMC->put($url, ['externalCode'=>$externalCode]);
