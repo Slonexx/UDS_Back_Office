@@ -32,11 +32,12 @@ class Salesreturn extends Controller
            $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
            try {
                $bodyUDS = $ClientUDS->get('https://api.uds.app/partner/v2/operations/'.$externalCode);
+               $procent = ($bodyUDS->total - $OLD_partialAmount) * 100 / $bodyUDS->total;
                $return = [
                    'Status' => 200,
                    'Data' => [
                        'id' => $bodyUDS->id,
-                       'points' => $bodyUDS->points,
+                       'points' => ($bodyUDS->points * -1) - (($bodyUDS->points * -1) * $procent / 100),
                        'cash' => $bodyUDS->cash,
                        'total' => ((int) $bodyUDS->total - $OLD_partialAmount),
                    ],
