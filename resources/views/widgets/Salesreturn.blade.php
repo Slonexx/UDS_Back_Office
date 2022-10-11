@@ -211,7 +211,7 @@
         if (v <= 0) this.value = 0;
         if (v >= return_total) this.value = return_total;
         setTotal = this.value
-        setInnerText_Point_and_Total(setTotal, setPoints);
+        onchangePoint();
     });
 
     function only_float(){
