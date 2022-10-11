@@ -29,6 +29,8 @@
                     let Data = responseTextPars.Data
                     if (Status === 200){
                         window.document.getElementById('main').style.display = "block"
+                        window.document.getElementById('sendError').style.display = "none"
+                        window.document.getElementById('sendWarning').style.display = "none"
                         window.document.getElementById('Private_return').style.display = "none"
                         window.document.getElementById('Private_return_full').style.display = "block"
                         setDataParameters(Data)
@@ -59,7 +61,11 @@
         function onchangePoint(){
             setTotal = window.document.getElementById('ReturnPointTotal').value
             let procent = setTotal * 100 / return_total
-            setPoints = return_points * procent / 100
+            if (setPoints !== 0 && setPoints !== undefined) {
+                setPoints = return_points * procent / 100
+            } else  {   setPoints = 0
+            }
+
             setInnerText_Point_and_Total(setTotal, setPoints);
         }
 
@@ -69,8 +75,8 @@
             window.document.getElementById('ReturnPointTotal').value = ''
             if (val === 0){
                 window.document.getElementById('Private_return').style.display = "block"
-                window.document.getElementById('refund_total').innerText = '0';
-                window.document.getElementById('point').innerText = '0';
+                window.document.getElementById('refund_total').innerText = return_total
+                window.document.getElementById('point').innerText = return_points
             }
             if (val === 1){
                 window.document.getElementById('Private_return_full').style.display = "block"
@@ -90,10 +96,12 @@
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
                 let r_textPars = JSON.parse(this.responseText);
-                if (r_textPars.code == 200) {
-
+                if (r_textPars.Status === 200) {
+                    window.document.getElementById('sendWarning').style.display = "block"
+                } else {
+                    window.document.getElementById('sendError').style.display = "block"
+                    window.document.getElementById('ErrorMessage').innerText = r_textPars.Data
                 }
-
             })
             xmlHttpRequest.open("GET", final);
             xmlHttpRequest.send();
@@ -144,6 +152,20 @@
                         <div class="col-8"> <span> Баллы  </span> </div>
                         <div class="col-4 text-end"> <span id="point"> *** </span> </div>
                     </div>
+                </div>
+            </div>
+            <div id="sendWarning" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
+                        <div> <b> Пожалуйста закройте заказ без сохранения ! </b> </div>
+                    </div>
+                </div>
+            </div>
+            <div id="sendError" style="display:none;">
+                <div class="row mt-2 row mx-2" >
+                    <div class="col-1"></div>
+                    <div id="ErrorMessage" class="col-10 alert alert-success fade show in text-center "> </div>
                 </div>
             </div>
             <div id="buttonOperations">
