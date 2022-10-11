@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BackEnd;
 
+use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
@@ -48,5 +49,31 @@ class Salesreturn extends Controller
            }
        };
     return response()->json($return);
+    }
+
+    public function sReturn(Request $request){
+        $data = $request->validate([
+            "accountId" => 'required|string',
+            "objectId" => 'required|string',
+            "return_id" => 'required|string',
+            "partialAmount" => "required|string",
+        ]);
+
+        $Setting = new getSettingVendorController($data['accountId']);
+        $ClientMC = new MsClient($Setting->TokenMoySklad);
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$data['objectId'];
+        $BodyMC = $ClientMC->get($url);
+        $externalCode = $BodyMC->externalCode.'='.$data['partialAmount'];
+        dd($externalCode);
+        $urlUDS = 'https://api.uds.app/partner/v2/operations/'.$data['return_id'].'/refund';
+        $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenMoySklad);
+        try {
+            $bodyUDS = $ClientUDS->post($urlUDS, ['partialAmount' => $data['partialAmount']]);
+            $putBody = $ClientMC->put($url, ['externalCode'=>$externalCode]);
+            $return = ['Status' => 200, 'Data'=> 'Успешно'];
+        } catch (\Throwable $e) {
+            $return = ['Status' => $e->getCode(), 'Data'=> $e->getMessage()];
+        }
+       return response()->json($return);
     }
 }

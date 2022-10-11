@@ -10,10 +10,11 @@
         let GlobalURL
 
         let return_id
-        let return_point_total
         let return_points
         let return_cash
         let return_total
+        let setTotal
+        let setPoints
 
         let accountId = "{{ $accountId }}"
         let return_cashier_id = "{{ $cashier_id }}"
@@ -48,19 +49,31 @@
             return_points = Data.points
             return_cash = Data.cash
             return_total = Data.total
-
-            window.document.getElementById('refund_total').innerText = return_total
-            window.document.getElementById('point').innerText = return_points
+            setTotal = return_total
+            setPoints = return_points
+            setInnerText_Point_and_Total(setTotal, setPoints);
         }
+
+        function setInnerText_Point_and_Total(Total, Points){
+            window.document.getElementById('refund_total').innerText = Total
+            window.document.getElementById('point').innerText = Points
+        }
+
         function onchangePoint(){
-            return_point_total = window.document.getElementById('ReturnPointTotal').value
+            setTotal = window.document.getElementById('ReturnPointTotal').value
+            let procent = setTotal * 100 / return_total
+            setPoints = return_points * procent / 100
+            setInnerText_Point_and_Total(setTotal, setPoints);
         }
 
         function btnPrivateReturn(val){
             window.document.getElementById('Private_return').style.display = "none"
             window.document.getElementById('Private_return_full').style.display = "none"
+            window.document.getElementById('ReturnPointTotal').value = ''
             if (val === 0){
                 window.document.getElementById('Private_return').style.display = "block"
+                window.document.getElementById('refund_total').innerText = '0';
+                window.document.getElementById('point').innerText = '0';
             }
             if (val === 1){
                 window.document.getElementById('Private_return_full').style.display = "block"
@@ -68,6 +81,25 @@
         }
 
         function sendOperations(){
+
+            let params = {
+                accountId: accountId,
+                objectId: GlobalobjectId,
+                return_id: return_id,
+                partialAmount: setTotal,
+            };
+            let final = url + '/Demand/operations/' + formatParams(params);
+            console.log('sendOperations final = ' + final)
+            let xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.addEventListener("load", function() {
+                let r_textPars = JSON.parse(this.responseText);
+                if (r_textPars.code == 200) {
+
+                }
+
+            })
+            xmlHttpRequest.open("GET", final);
+            xmlHttpRequest.send();
 
         }
 
@@ -131,6 +163,14 @@
         if (event.keyCode < 48 || event.keyCode > 57){
             if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
         }
+    }
+    function formatParams(params) {
+        return "?" + Object
+            .keys(params)
+            .map(function (key) {
+                return key + "=" + encodeURIComponent(params[key])
+            })
+            .join("&")
     }
 </script>
 <style>
