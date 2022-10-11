@@ -251,6 +251,7 @@ class Demand extends Controller
             'attributes' => $setAttributes,
         ]);
         $this->createFactureout($Setting, $SettingBD, $putBody, (string) $post->id);
+        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
         $post = [
             'code' => 200,
             'id' => $post->id,
