@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BackEnd\Demand;
 use App\Http\Controllers\BackEnd\ObjectController;
+use App\Http\Controllers\BackEnd\Salesreturn;
+use App\Http\Controllers\BackEnd\Selesreturn;
 use App\Http\Controllers\Web\employees;
 use App\Http\Controllers\Web\sendOperations;
 use App\Http\Controllers\Web\SettingController;
@@ -19,6 +21,7 @@ Route::post('/CheckSave/{accountId}', [indexController::class, 'CheckSave'])->na
 Route::get('/Counterparty', [indexController::class, 'counterparty']);
 Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
 Route::get('/DemandEdit', [indexController::class, 'DemandEdit']);
+Route::get('/SalesreturnEdit', [indexController::class, 'SalesreturnEdit']);
 
 
 Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject']);
@@ -35,6 +38,10 @@ Route::get('/customers/find', [ObjectController::class, 'customers']);
 
 Route::get('/Demand/{accountId}/{entity}/{objectId}', [Demand::class, 'DemandObject']);
 Route::get('/Demand/operations/', [Demand::class, 'operations']);
+
+
+Route::get('/Salesreturn/{accountId}/{entity}/{objectId}', [Salesreturn::class, 'SalesreturnObject']);
+
 
 Route::get('/', [indexController::class, 'index'])->name('index');
 Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("indexMain");

@@ -114,4 +114,19 @@ class indexController extends Controller
         ] );
     }
 
+    public function SalesreturnEdit(Request $request){
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
+        $getObjectUrl = "https://dev.smartuds.kz/Salesreturn/$accountId/demand/";
+
+
+        return view( 'widgets.Salesreturn', [
+            'accountId' => $accountId,
+            'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
+            'getObjectUrl' => $getObjectUrl,
+        ] );
+    }
 }
