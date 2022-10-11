@@ -200,8 +200,8 @@
 
     document.getElementById("ReturnPointTotal").addEventListener("change", function() {
         let v = parseInt(this.value);
-        if (v < 0) this.value = 0;
-        if (v > return_total) this.value = return_total;
+        if (v <= 0) this.value = 0;
+        if (v >= return_total) this.value = return_total;
         setPoints = this.value
         setInnerText_Point_and_Total(setTotal, setPoints);
     });
