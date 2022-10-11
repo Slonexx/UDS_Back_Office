@@ -88,7 +88,7 @@
                 return_id: return_id,
                 partialAmount: setTotal,
             };
-            let final = url + '/postDemand/operations/' + formatParams(params);
+            let final = url + '/postSalesreturn/operations/' + formatParams(params);
             console.log('sendOperations final = ' + final)
             let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {

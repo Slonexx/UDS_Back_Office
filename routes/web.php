@@ -41,7 +41,7 @@ Route::get('/postDemand/operations/', [Demand::class, 'operations']);
 
 
 Route::get('/Salesreturn/{accountId}/{entity}/{objectId}', [Salesreturn::class, 'SalesreturnObject']);
-Route::get('/Salesreturn/operations', [Salesreturn::class, 'sReturn']);
+Route::get('/postSalesreturn/operations', [Salesreturn::class, 'sReturn']);
 
 
 Route::get('/', [indexController::class, 'index'])->name('index');
