@@ -79,7 +79,7 @@
             }
 
             if (setPoints !== 0 && setPoints !== undefined) {
-                setPoints = return_points * procent / 100
+                setPoints = (return_points * procent / 100).toFixed(2)
             } else  {
                 setPoints = 0
             }
@@ -210,7 +210,8 @@
         let v = parseInt(this.value);
         if (v <= 0) this.value = 0;
         if (v >= return_total) this.value = return_total;
-        setPoints = this.value
+        setTotal = this.value
+        setInnerText_Point_and_Total(setTotal, setPoints);
     });
 
     function only_float(){
