@@ -9,27 +9,32 @@
         let GlobalobjectId
         let GlobalURL
 
-        let operations_cashier_id = "{{ $cashier_id }}"
-        let operations_cashier_name = "{{ $cashier_name }}"
+        let return_id
+        let return_point_total
+        let return_points
+        let return_cash
+        let return_total
+
+        let accountId = "{{ $accountId }}"
+        let return_cashier_id = "{{ $cashier_id }}"
+        let return_cashier_name = "{{ $cashier_name }}"
 
 
         window.addEventListener("message", function(event) {
-            let receivedMessage = event.data;
-            GlobalobjectId = receivedMessage.objectId;
+            let receivedMessage = event.data
+            GlobalobjectId = receivedMessage.objectId
             if (receivedMessage.name === 'Open') {
                 let oReq = new XMLHttpRequest()
                 oReq.addEventListener("load", function() {
-                    let responseTextPars = JSON.parse(this.responseText);
-                    let StatusCode = responseTextPars.StatusCode;
-                    let message = responseTextPars.message;
-                    if (StatusCode == 402){
-                        document.getElementById("Error402").style.display = "block"
-                        document.getElementById("ErrorMessage").innerText = responseTextPars.message
-                    } else {
-
-
-
-                    }
+                    let responseTextPars = JSON.parse(this.responseText)
+                    let Status = responseTextPars.Status
+                    let Data = responseTextPars.Data
+                    if (Status === 200){
+                        window.document.getElementById('main').style.display = "block"
+                        window.document.getElementById('Private_return').style.display = "none"
+                        window.document.getElementById('Private_return_full').style.display = "block"
+                        setDataParameters(Data)
+                    } else { }
                 });
                 GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
                 console.log('GlobalURL = ' + GlobalURL)
@@ -38,6 +43,29 @@
             }
         });
 
+        function setDataParameters(Data){
+            return_id = Data.id
+            return_points = Data.points
+            return_cash = Data.cash
+            return_total = Data.total
+
+            window.document.getElementById('refund_total').innerText = return_total
+            window.document.getElementById('point').innerText = return_points
+        }
+        function onchangePoint(){
+            return_point_total = window.document.getElementById('ReturnPointTotal').value
+        }
+
+        function btnPrivateReturn(val){
+            window.document.getElementById('Private_return').style.display = "none"
+            window.document.getElementById('Private_return_full').style.display = "none"
+            if (val === 0){
+                window.document.getElementById('Private_return').style.display = "block"
+            }
+            if (val === 1){
+                window.document.getElementById('Private_return_full').style.display = "block"
+            }
+        }
 
         function sendOperations(){
 
@@ -48,7 +76,7 @@
 
 
     <div class="main-container">
-        <div id="undefined" class="bg-white text-Black rounded content-container">
+        <div id="main" class="bg-white text-Black rounded content-container">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
                     <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
@@ -61,11 +89,28 @@
                 <div class="col-1"></div>
                 <div class="col-10 border border-info rounded p-2 text-black ">
                     <div class="row">
-                        <div class="col-12 row">
-                            <div class="col-1"></div>
-                            <button class="col-10 btn btn-outline-secondary">Частичный возврат</button>
+                        <div class="col-12 mb-3">
+                            <div id="Private_return_full" class="row" style="display: none">
+                                <div class="col-1"></div>
+                                <button onclick="btnPrivateReturn(0)" class="col-10 mx-2 btn btn-outline-secondary">Частичный возврат</button>
+                            </div>
+                            <div id="Private_return" class="row" style="display: none">
+                                <div class="col-1"></div>
+                                <div class="col-10 mx-2">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <input id="ReturnPointTotal" type="text" class="form-control" placeholder="Сумма к возврату"
+                                                   onchange="onchangePoint()" onKeyPress="only_float()">
+                                        </div>
+                                        <div class="col-4">
+                                            <button onclick="btnPrivateReturn(1)" class="btn btn-outline-secondary">Отмена</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-12">Итого к возврату</div>
+                        <hr class="col-11 mx-3 text-info">
                         <div class="col-8"> <span> Сумма  </span> </div>
                         <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
                         <div class="col-8"> <span> Баллы  </span> </div>
@@ -82,7 +127,13 @@
         </div>
     </div>
 
-
+<script>
+    function only_float(){
+        if (event.keyCode < 48 || event.keyCode > 57){
+            if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
+        }
+    }
+</script>
 <style>
     body {
         font-family: 'Helvetica', 'Arial', sans-serif;
