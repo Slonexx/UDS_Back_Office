@@ -185,7 +185,7 @@
                 <div class="row mt-2 row mx-2" >
                     <div class="col-1"></div>
                     <div class="col-10 alert alert-success fade show in text-center "> Операция прошла успешно
-                        <div> <b> Пожалуйста закройте заказ без сохранения ! </b> </div>
+                        <div> <b> Пожалуйста закройте документ без сохранения ! </b> </div>
                     </div>
                 </div>
             </div>
