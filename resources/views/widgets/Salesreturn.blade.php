@@ -59,6 +59,11 @@
         }
 
         function setInnerText_Point_and_Total(Total, Points){
+            if (return_total === 0) {
+                window.document.getElementById('buttonOperations').style.display = "none"
+            } else {
+                window.document.getElementById('buttonOperations').style.display = "block"
+            }
             window.document.getElementById('refund_total').innerText = Total
             window.document.getElementById('point').innerText = Points
         }
@@ -165,7 +170,7 @@
                             <div class="col-8"> <span> Баллы  </span> </div>
                             <div class="col-4 text-end"> <span id="point"> *** </span> </div>
                         </div>
-                    </div>  
+                    </div>
                 </div>
             </div>
             <div id="sendWarning" style="display:none;">
@@ -192,6 +197,14 @@
     </div>
 
 <script>
+
+    document.getElementById("ReturnPointTotal").addEventListener("change", function() {
+        let v = parseInt(this.value);
+        if (v < 0) this.value = 0;
+        if (v > return_total) this.value = return_total;
+        setPoints = this.value
+    });
+
     function only_float(){
         if (event.keyCode < 48 || event.keyCode > 57){
             if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
