@@ -473,7 +473,7 @@ class ObjectController extends Controller
         if ($SettingBD->operationsPaymentDocument == 0 or $SettingBD->operationsPaymentDocument == null) {
 
         } else {  $client = new MsClient($Setting->TokenMoySklad);
-            if ($SettingBD->operationsPaymentDocument == 1) {
+            if ($SettingBD->operationsPaymentDocument == 1 or $SettingBD->operationsPaymentDocument == "1") {
                 $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
 
                 $body = [
@@ -487,14 +487,18 @@ class ObjectController extends Controller
                         'type' => $OldBody->agent->meta->type,
                         'mediaType' => $OldBody->agent->meta->mediaType,
                     ] ],
-                    'customerOrder' => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
                 ];
                 $postBodyCreateCashin = $client->post($url, $body);
             }
@@ -512,14 +516,18 @@ class ObjectController extends Controller
                         'type' => $OldBody->agent->meta->type,
                         'mediaType' => $OldBody->agent->meta->mediaType,
                     ] ],
-                    'customerOrder' => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
                 ];
                 $postBodyCreatePaymentin = $client->post($url, $body);
             }
@@ -647,7 +655,7 @@ class ObjectController extends Controller
             'attributes' => $setAttributes,
         ]);
         $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
-        $this->createPaymentDocument();
+        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
         $post = [
             'code' => 200,
             'id' => $post->id,

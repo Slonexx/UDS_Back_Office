@@ -145,14 +145,18 @@ class Demand extends Controller
                         'type' => $OldBody->agent->meta->type,
                         'mediaType' => $OldBody->agent->meta->mediaType,
                     ] ],
-                    'demands' => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
                 ];
                 $postBodyCreateCashin = $client->post($url, $body);
             }
@@ -170,14 +174,18 @@ class Demand extends Controller
                         'type' => $OldBody->agent->meta->type,
                         'mediaType' => $OldBody->agent->meta->mediaType,
                     ] ],
-                    'demands' => [
-                        'meta'=> [
-                            'href' => $OldBody->meta->href,
-                            'metadataHref' => $OldBody->meta->metadataHref,
-                            'type' => $OldBody->meta->type,
-                            'mediaType' => $OldBody->meta->mediaType,
-                            'uuidHref' => $OldBody->meta->uuidHref,
-                        ] ],
+                    'sum' => $OldBody->sum,
+                    'operations' => [
+                        0 => [
+                            'meta'=> [
+                                'href' => $OldBody->meta->href,
+                                'metadataHref' => $OldBody->meta->metadataHref,
+                                'type' => $OldBody->meta->type,
+                                'mediaType' => $OldBody->meta->mediaType,
+                                'uuidHref' => $OldBody->meta->uuidHref,
+                            ],
+                            'linkedSum' => 0
+                        ], ]
                 ];
                 $postBodyCreatePaymentin = $client->post($url, $body);
             }
