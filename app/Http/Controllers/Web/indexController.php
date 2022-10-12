@@ -15,13 +15,11 @@ class indexController extends Controller
 {
 
     public function index(Request $request){
-
-        session_start();
-
         $contextKey = $request->contextKey;
         if ($contextKey == null) {
             return view("main.dump");
         }
+
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
@@ -85,7 +83,6 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-
         //$isAdmin = $employee->permissions->admin->view;
 
         $entity = 'customerorder';
@@ -95,11 +92,39 @@ class indexController extends Controller
 
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
-
+            'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
             'getObjectUrl' => $getObjectUrl,
         ] );
     }
 
+    public function DemandEdit(Request $request){
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
+        $getObjectUrl = "https://smartuds.kz/Demand/$accountId/demand/";
 
 
+        return view( 'widgets.Demand', [
+            'accountId' => $accountId,
+            'cashier_id' => $employee->id,
+            'cashier_name' => $employee->name,
+            'getObjectUrl' => $getObjectUrl,
+        ] );
+    }
+
+    public function SalesreturnEdit(Request $request){
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
+        $getObjectUrl = "https://smartuds.kz/Salesreturn/$accountId/salesreturn/";
+
+
+        return view( 'widgets.Salesreturn', [
+            'accountId' => $accountId,
+            'getObjectUrl' => $getObjectUrl,
+        ] );
+    }
 }

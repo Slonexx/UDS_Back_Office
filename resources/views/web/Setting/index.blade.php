@@ -4,12 +4,15 @@
 @section('content')
 
     <div class="content p-4 mt-2 bg-white text-Black rounded">
-        <h4> <i class="fa-solid fa-gears text-orange"></i> Данные для интеграции</h4>
-
-        <br>
+        <div class="row gradient rounded p-2 pb-3">
+            <div class="col-10">
+                <div class="mx-2"> <span class="text-white"> Настройки &#8594; Главное </span>
+                </div>
+            </div>
+        </div>
         @isset($message)
 
-            <div class="{{$message['alert']}}"> {{ $message['message'] }}
+            <div class="{{$message['alert']}} mt-1"> {{ $message['message'] }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
@@ -75,17 +78,18 @@
                         <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
 
                             @if($ProductFolder != null)
-                                <option selected value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
+                                <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
                                 @foreach ($Body_productFolder as $productFolderItem)
                                     @if ($productFolderItem->id != $ProductFolder['value'])
-                                    <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                    <option value="{{$productFolderItem->id}}"> {{$productFolderItem->name}} </option>
                                     @endif
                                 @endforeach
                             @else
                                 @foreach ($Body_productFolder as $productFolderItem)
-                                        <option value="{{$productFolderItem->id}}">{{$productFolderItem->name}}</option>
+                                        <option value="{{$productFolderItem->id}}" >{{$productFolderItem->name}} </option>
                                 @endforeach
                             @endif
+
                         </select>
                     </div>
                 </div>

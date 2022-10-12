@@ -84,8 +84,8 @@
         }
 
         function Accrue(){
-          var input = document.getElementById("inputAccrue").value;
-          var xmlHttpRequest = new XMLHttpRequest();
+            var input = document.getElementById("inputAccrue").value;
+            var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
 
                 var statusCode = this.responseText;
@@ -153,10 +153,26 @@
             document.getElementById("danger").style.display = "none";
         }
 
+        function Bonus() {
+            var select = document.getElementById('Bonus');
+            var option = select.options[select.selectedIndex];
+            if (option.value == 1) {
+                document.getElementById("Accrue").style.display = "block";
+                document.getElementById("Cancellation").style.display = "none";
+            }else if (option.value == 2) {
+                document.getElementById("Cancellation").style.display = "block";
+                document.getElementById("Accrue").style.display = "none";
+            }
+            else {
+                document.getElementById("Cancellation").style.display = "none";
+                document.getElementById("Accrue").style.display = "none";
+            }
+        }
+
     </script>
 
     @php
-    $View = true;
+        $View = true;
     @endphp
 
 
@@ -187,7 +203,6 @@
         </div>
 
 
-
         <div class="row mx-2 text-black mt-1">
             <div class="col-8">
                 <div class="s-min ">Последняя покупка </div>
@@ -204,9 +219,7 @@
             </div>
         </div>
 
-
         <br>
-
 
 
         <div class="row">
@@ -278,9 +291,6 @@
                 </div>
             </div>
         </div>
-
-
-
         <div id="success" class="mt-2" style="display: none">
             <div class="row">
                 <div class="col-1"></div>
@@ -308,10 +318,6 @@
         </div>
 
 
-
-        <script>
-
-        </script>
     </div>
 
     <div id="undefined" class="bg-white text-Black rounded" style="display: none">
@@ -342,7 +348,7 @@
     }
 
     .myPM{
-       padding-left: 4px !important;
+        padding-left: 4px !important;
         margin: 2px !important;
         margin-right: 11px !important;
     }

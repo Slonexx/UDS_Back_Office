@@ -9,8 +9,11 @@ use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\counterparty_add;
+use App\Models\orderSettingModel;
+use App\Models\SettingMain;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
@@ -116,6 +119,33 @@ class SettingController extends Controller
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
         if ($body == 200){
+
+            $SettingBD = new getSetting();
+            $SettingBD = $SettingBD->getSettingMain($accountId);
+
+            if ($SettingBD->TokenMoySklad == null) {
+                SettingMain::create([
+                    'accountId' => $accountId,
+                    'TokenMoySklad' => $TokenMoySklad,
+                    'companyId' => $request->companyId,
+                    'TokenUDS' => $request->TokenUDS,
+                    'ProductFolder' => $request->ProductFolder,
+                    'UpdateProduct' => $request->UpdateProduct,
+                    'Store' => $request->Store,
+                ]);
+            } else {
+                $SettingMain_update = SettingMain::query()->where('accountId', $accountId);
+                $SettingMain_update->update([
+                    'TokenMoySklad' => $TokenMoySklad,
+                    'companyId' => $request->companyId,
+                    'TokenUDS' => $request->TokenUDS,
+                    'ProductFolder' => $request->ProductFolder,
+                    'UpdateProduct' => $request->UpdateProduct,
+                    'Store' => $request->Store,
+                ]);
+            }
+
+
             $app->companyId = $request->companyId;
             $app->TokenUDS = $request->TokenUDS;
 
@@ -259,7 +289,14 @@ class SettingController extends Controller
             }
 
             $app->persist();
-
+            orderSettingModel::create([
+                'accountId' => $accountId,
+                'creatDocument' => $request->creatDocument,
+                'Organization' => $request->Organization,
+                'PaymentDocument' => $request->Document,
+                'Document' => $request->PaymentDocument,
+                'PaymentAccount' => $PaymentAccount,
+            ]);
         } else {
             $app->creatDocument = null;
             $app->Organization = null;
