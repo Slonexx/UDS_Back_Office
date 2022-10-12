@@ -177,8 +177,8 @@
                             <div class="col-4 text-end"> <span id="refund_total_dont_point"> *** </span> </div>
                             <div class="col-8"> <span> Баллы  </span> </div>
                             <div class="col-4 text-end"> <span id="point"> *** </span> </div>
-                            <div class="col-8">Итого к возврату</div>
                             <hr class="col-11 mx-3 text-info">
+                            <div class="col-8">Итого к возврату</div>
                             <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
 
                         </div>
