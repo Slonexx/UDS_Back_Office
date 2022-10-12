@@ -65,6 +65,7 @@
                 window.document.getElementById('buttonOperations').style.display = "block"
             }
             window.document.getElementById('refund_total').innerText = Total
+            window.document.getElementById('return_points').innerText = (Total - Points)
             window.document.getElementById('point').innerText = Points
         }
 
@@ -94,6 +95,7 @@
             if (val === 0){
                 window.document.getElementById('Private_return').style.display = "block"
                 window.document.getElementById('refund_total').innerText = return_total
+                window.document.getElementById('refund_total_dont_point').innerText = return_total - return_points
                 window.document.getElementById('point').innerText = return_points
             }
             if (val === 1){
@@ -171,12 +173,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">Итого к возврату</div>
-                            <hr class="col-11 mx-3 text-info">
                             <div class="col-8"> <span> Сумма  </span> </div>
-                            <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
+                            <div class="col-4 text-end"> <span id="refund_total_dont_point"> *** </span> </div>
                             <div class="col-8"> <span> Баллы  </span> </div>
                             <div class="col-4 text-end"> <span id="point"> *** </span> </div>
+                            <div class="col-8">Итого к возврату</div>
+                            <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
+                            <hr class="col-11 mx-3 text-info">
                         </div>
                     </div>
                 </div>
