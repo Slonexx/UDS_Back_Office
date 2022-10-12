@@ -65,7 +65,7 @@
                 window.document.getElementById('buttonOperations').style.display = "block"
             }
             window.document.getElementById('refund_total').innerText = Total
-            window.document.getElementById('return_points').innerText = (Total - Points)
+            window.document.getElementById('refund_total_dont_point').innerText = (Total - Points)
             window.document.getElementById('point').innerText = Points
         }
 
@@ -178,8 +178,9 @@
                             <div class="col-8"> <span> Баллы  </span> </div>
                             <div class="col-4 text-end"> <span id="point"> *** </span> </div>
                             <div class="col-8">Итого к возврату</div>
-                            <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
                             <hr class="col-11 mx-3 text-info">
+                            <div class="col-4 text-end"> <span id="refund_total"> *** </span> </div>
+
                         </div>
                     </div>
                 </div>
