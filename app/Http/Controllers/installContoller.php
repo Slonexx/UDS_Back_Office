@@ -13,7 +13,7 @@ class installContoller extends Controller
         try {
             $Setting = new getSettingVendorController($accountId);
 
-            $client = new Client(['base_uri' => 'https://dev.smartuds.kz/api/']);
+            $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
             $client->post('attributes',[
                 'headers'=> ['Accept' => 'application/json'],
                 'form_params' => [

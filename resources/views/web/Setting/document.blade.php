@@ -185,7 +185,7 @@
                                        <i onclick="myWebXyk1()" class="text-orange btn fa-solid fa-link p-2 "></i>
                                     </div>
                                     <div id="myWebXyk1" class="mt-1 col-11 myWebXyk1 s-min-16">
-                                        https://dev.smartuds.kz/api/webhook/{{$accountId}}/client
+                                        https://smartuds.kz/api/webhook/{{$accountId}}/client
                                     </div>
                                     </div>
                             </div>

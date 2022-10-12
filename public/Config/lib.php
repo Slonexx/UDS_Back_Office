@@ -60,7 +60,7 @@ class AppInstanceContoller {
     }
 
     function deleteAnyway(){
-        $url = 'https://dev.smartuds.kz/DeleteVendorApi/'.$this->appId.'/'.$this->accountId;
+        $url = 'https://smartuds.kz/DeleteVendorApi/'.$this->appId.'/'.$this->accountId;
         $result = file_get_contents($url);
     }
 

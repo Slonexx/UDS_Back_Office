@@ -100,7 +100,7 @@
                 }
 
             });
-            xmlHttpRequest.open("GET", "https://dev.smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.open("GET", "https://smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
             xmlHttpRequest.send();
             update();
         }
@@ -122,7 +122,7 @@
                 }
 
             });
-            xmlHttpRequest.open("GET", "https://dev.smartuds.kz/Cancellation/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.open("GET", "https://smartuds.kz/Cancellation/{{$accountId}}/" + input + "/" + UDSClientID);
             xmlHttpRequest.send();
             update();
         }
