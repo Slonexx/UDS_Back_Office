@@ -70,7 +70,11 @@ class ProductCreateUdsService
     }
 
     private function getMs($folderName, $apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+        if ($folderName == null) {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+        }
         $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
@@ -183,9 +187,14 @@ class ProductCreateUdsService
 
     private function getFolderNameById($folderId, $apiKeyMs)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
-        $client = new MsClient($apiKeyMs);
-        return $client->get($url)->name;
+        if ($folderId == 0){
+            $result = null;
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
+            $client = new MsClient($apiKeyMs);
+            $result = $client->get($url)->name;
+        }
+        return $result;
     }
 
     private function getCategoriesMs(&$rows,$folderName,$apiKeyMs): bool

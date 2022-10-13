@@ -120,6 +120,9 @@ class ProductUpdateUdsService
         } else {
             $name = $msProduct->name;
         }
+        if (property_exists($msProduct, 'description')) {
+            $description = $msProduct->description;
+        } else $description = "";
 
         $body = [
             "name" => $name,
@@ -127,6 +130,7 @@ class ProductUpdateUdsService
                 "type" => "ITEM",
                 "price" => $prices["salePrice"],
                 "measurement" => $nameOumUds,
+                "description" => $description,
             ],
         ];
 
@@ -285,7 +289,11 @@ class ProductUpdateUdsService
     }
 
     private function getMs($folderName,$apiKeyMs){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+        if ($folderName == null) {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
+        }
         $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
@@ -392,9 +400,14 @@ class ProductUpdateUdsService
 
     private function getFolderNameById($folderId, $apiKeyMs)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
-        $client = new MsClient($apiKeyMs);
-        return $client->get($url)->name;
+        if ($folderId == 0){
+            $result = null;
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
+            $client = new MsClient($apiKeyMs);
+            $result = $client->get($url)->name;
+        }
+        return $result;
     }
 
 }
