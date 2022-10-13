@@ -5,6 +5,7 @@ namespace App\Services\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Services\AdditionalServices\ImgService;
 use App\Services\AdditionalServices\StockProductService;
 use App\Services\MetaServices\Entity\StoreService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
@@ -22,6 +23,7 @@ class ProductCreateUdsService
     private UomHook $uomHookService;
     private StockProductService $stockProductService;
     private StoreService $storeService;
+    private ImgService $imgService;
 
 
 
@@ -34,8 +36,16 @@ class ProductCreateUdsService
      * @param UomHook $uomHookService
      * @param StockProductService $stockProductService
      * @param StoreService $storeService
+     * @param ImgService $imgService
      */
-    public function __construct(AttributeHook $attributeHookService, CurrencyHook $currencyHookService, PriceTypeHook $priceTypeHookService, UomHook $uomHookService, StockProductService $stockProductService, StoreService $storeService)
+    public function __construct(
+        AttributeHook $attributeHookService,
+        CurrencyHook $currencyHookService,
+        PriceTypeHook $priceTypeHookService,
+        UomHook $uomHookService,
+        StockProductService $stockProductService,
+        StoreService $storeService,
+        ImgService $imgService)
     {
         $this->attributeHookService = $attributeHookService;
         $this->currencyHookService = $currencyHookService;
@@ -43,6 +53,7 @@ class ProductCreateUdsService
         $this->uomHookService = $uomHookService;
         $this->stockProductService = $stockProductService;
         $this->storeService = $storeService;
+        $this->imgService = $imgService;
     }
 
     public function insertToUds($data)
@@ -58,6 +69,7 @@ class ProductCreateUdsService
     }
 
     private function getUdsCheck($companyId, $apiKeyUds,$accountId){
+        set_time_limit(3600);
         $this->findNodesUds($nodeIds,$companyId,$apiKeyUds,$accountId);
         if ($nodeIds == null){
             $nodeIds = [
@@ -118,11 +130,19 @@ class ProductCreateUdsService
                     );
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
+                        /*if (property_exists($row,'images')){
+                            //dd($row);
+                            $this->imgService->setImgUDS($createdProduct,$row->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                        }*/
                     }
                 } else {
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId);
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
+                       /* if (property_exists($row,'images')){
+                            //dd($row);
+                            $this->imgService->setImgUDS($createdProduct,$row->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                        }*/
                     }
                 }
             }
@@ -469,9 +489,17 @@ class ProductCreateUdsService
 
         //dd(($body));
 
+        if (property_exists($product,'images')){
+            //dd($product);
+           $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+           $body["data"]["photos"] = $imgIds;
+           //dd($body);
+        }
+
         try {
             return $client->post($url,$body);
         }catch (ClientException $e){
+            //dd(json_encode($body),$e->getMessage());
             $bd = new BDController();
             $bd->errorProductLog($accountId,$e->getMessage());
             return null;

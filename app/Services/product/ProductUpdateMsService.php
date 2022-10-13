@@ -5,6 +5,7 @@ namespace App\Services\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Services\AdditionalServices\ImgService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
@@ -17,24 +18,28 @@ class ProductUpdateMsService
     private CurrencyHook $currencyHookService;
     private PriceTypeHook $priceTypeHookService;
     private UomHook $uomHookService;
+    private ImgService $imgService;
 
     /**
      * @param AttributeHook $attributeHookService
      * @param CurrencyHook $currencyHookService
      * @param PriceTypeHook $priceTypeHookService
      * @param UomHook $uomHookService
+     * @param ImgService $imgService
      */
     public function __construct(
         AttributeHook $attributeHookService,
         CurrencyHook $currencyHookService,
         PriceTypeHook $priceTypeHookService,
-        UomHook $uomHookService
+        UomHook $uomHookService,
+        ImgService $imgService
     )
     {
         $this->attributeHookService = $attributeHookService;
         $this->currencyHookService = $currencyHookService;
         $this->priceTypeHookService = $priceTypeHookService;
         $this->uomHookService = $uomHookService;
+        $this->imgService = $imgService;
     }
 
 
@@ -80,7 +85,11 @@ class ProductUpdateMsService
                 $clientMs = new MsClient($apiKeyMs);
                 $json = $clientMs->get($urlToFind);
                 if ($json->meta->size > 0){
-                    $this->updateProductInMs($row,$json->rows[0]->id,$accountId,$apiKeyMs);
+                    $msP = $json->rows[0];
+                    $this->updateProductInMs($row,$msP->id,$accountId,$apiKeyMs);
+                    if (count($row->imageUrls) > 0){
+                        $this->imgService->setImgMS($msP,$row->imageUrls,$apiKeyMs);
+                    }
                 }
             }
             elseif ($row->data->type == "CATEGORY"){
