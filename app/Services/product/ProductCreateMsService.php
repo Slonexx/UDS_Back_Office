@@ -428,6 +428,8 @@ class ProductCreateMsService
 
         $bodyProduct["externalCode"] = "".$productUds->id;
 
+        $bodyProduct["description"] = $productUds->data->description;
+
         if ($productFolderMeta != null){
             $bodyProduct["productFolder"] = [
                 "meta" => $productFolderMeta,
@@ -539,11 +541,15 @@ class ProductCreateMsService
     }
 
     private function getFolderMetaById($folderId, $apiKeyMs)
-    {
+    {   if ($folderId != 0) {
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
-        return $json->meta;
+        $return = $json->meta;
+    } else {
+        $return = null;
+    }
+        return $return;
     }
 
 }

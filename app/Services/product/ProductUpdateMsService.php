@@ -334,7 +334,8 @@ class ProductUpdateMsService
         ];
 
         $bodyProduct["externalCode"] = "".$productUds->id;
-        //dd($bodyProduct);
+
+        $bodyProduct["description"] = $productUds->data->description;
 
         $client = new MsClient($apiKeyMs);
         try {
