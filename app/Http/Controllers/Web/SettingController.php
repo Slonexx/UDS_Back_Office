@@ -293,8 +293,8 @@ class SettingController extends Controller
                 'accountId' => $accountId,
                 'creatDocument' => $request->creatDocument,
                 'Organization' => $request->Organization,
-                'PaymentDocument' => $request->Document,
-                'Document' => $request->PaymentDocument,
+                'PaymentDocument' => $request->PaymentDocument,
+                'Document' => $request->Document,
                 'PaymentAccount' => $PaymentAccount,
             ]);
         } else {
