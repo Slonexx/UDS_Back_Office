@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 
 class installContoller extends Controller
@@ -24,6 +25,9 @@ class installContoller extends Controller
         } catch (\Exception $ee) {
             $bd = new BDController();
             $bd->errorLog($accountId, $ee->getMessage());
+        } catch (GuzzleException $e) {
+            $bd = new BDController();
+            $bd->errorLog($accountId, $e->getMessage());
         }
     }
 }
