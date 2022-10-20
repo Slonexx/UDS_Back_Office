@@ -95,7 +95,7 @@ class CreateUdsCommand extends Command
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                    //dd($response->getBody()->getContents());
+                    dd($response->getBody()->getContents());
                 } else {
                     //dd($response);
                 }
