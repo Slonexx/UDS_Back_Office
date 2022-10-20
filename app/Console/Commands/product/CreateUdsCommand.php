@@ -78,7 +78,8 @@ class CreateUdsCommand extends Command
                     continue;
                 }
                 //dd($allSettings);
-                yield $client->requestAsync('POST', $url,[
+                yield $client->postAsync( $url, [
+                    'headers' => ['Accept' => 'application/json'],
                     'form_params' => [
                         "tokenMs" => $settings->TokenMoySklad,
                         "companyId" => $settings->companyId,
@@ -87,7 +88,6 @@ class CreateUdsCommand extends Command
                         "store" => $settings->Store,
                         "accountId" => $settings->accountId,
                     ],
-                    'headers' => ['Accept' => 'application/json'],
                 ]);
             }
         })();
@@ -96,7 +96,7 @@ class CreateUdsCommand extends Command
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                   // dd($response->getBody()->getContents());
+                    dd($response->getBody()->getContents());
                 } else {
                     //dd($response);
                 }
