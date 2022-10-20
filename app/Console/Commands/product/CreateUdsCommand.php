@@ -79,7 +79,6 @@ class CreateUdsCommand extends Command
                 }
                 //dd($allSettings);
                 yield $client->requestAsync('POST', $url,[
-                    //'headers' => ['Accept' => 'application/json'],
                     'form_params' => [
                         "tokenMs" => $settings->TokenMoySklad,
                         "companyId" => $settings->companyId,
@@ -88,6 +87,7 @@ class CreateUdsCommand extends Command
                         "store" => $settings->Store,
                         "accountId" => $settings->accountId,
                     ],
+                    'headers' => ['Accept' => 'application/json'],
                 ]);
             }
         })();
@@ -100,7 +100,7 @@ class CreateUdsCommand extends Command
                 } else {
                     //dd($response);
                 }
-                //dd($response->getStatusCode());
+                dd($response->getStatusCode());
             },
             'rejected' => function ($reason) {
                 dd($reason);
