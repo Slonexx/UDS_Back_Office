@@ -80,7 +80,7 @@ class CreateUdsCommand extends Command
                 //dd($allSettings);
                 yield $client->postAsync( $url, [
                     'headers' => ['Accept' => 'application/json'],
-                    'form_params' => [
+                    'body' => [
                         "tokenMs" => $settings->TokenMoySklad,
                         "companyId" => $settings->companyId,
                         "apiKeyUds" => $settings->TokenUDS,
