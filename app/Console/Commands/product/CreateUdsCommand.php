@@ -77,14 +77,15 @@ class CreateUdsCommand extends Command
                 ){
                     continue;
                 }
-                //dd($allSettings);
+                //($settings);
+                if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
                 yield $client->postAsync( $url, [
                     'headers' => ['Accept' => 'application/json'],
-                    'body' => [
+                    'form_params' => [
                         "tokenMs" => $settings->TokenMoySklad,
                         "companyId" => $settings->companyId,
                         "apiKeyUds" => $settings->TokenUDS,
-                        "folder_id" => $settings->ProductFolder,
+                        "folder_id" => $folder_id,
                         "store" => $settings->Store,
                         "accountId" => $settings->accountId,
                     ],
@@ -96,11 +97,11 @@ class CreateUdsCommand extends Command
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                    dd($response->getBody()->getContents());
+                    //dd($response->getBody()->getContents());
                 } else {
                     //dd($response);
                 }
-                dd($response->getStatusCode());
+                //dd($response->getStatusCode());
             },
             'rejected' => function ($reason) {
                 dd($reason);

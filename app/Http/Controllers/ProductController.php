@@ -59,7 +59,7 @@ class ProductController extends Controller
             "tokenMs" => 'required|string',
             "companyId" => "required|string",
             "apiKeyUds" => "required|string",
-            "folder_id" => "required|string",
+            "folder_id" => "required",
             "store" => "required|string",
             "accountId" => "required|string",
         ]);
