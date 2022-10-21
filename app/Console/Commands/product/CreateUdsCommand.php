@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\product;
 
+use App\Components\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Services\Settings\SettingsService;
 use Dflydev\DotAccessData\Data;
@@ -46,8 +47,15 @@ class CreateUdsCommand extends Command
         foreach ($accountIds as $accountId){
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null || $settings->companyId != null){
-                if ($settings->UpdateProduct != "1")
-                $countSettings++;
+                if ($settings->UpdateProduct != "1"){
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
+                    try {
+                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                        $countSettings++;
+                    } catch (\Throwable $e) {
+
+                    }
+                }
             }
         }
         return $countSettings;
@@ -72,11 +80,15 @@ class CreateUdsCommand extends Command
         $promises = (function () use ($accountIds, $client, $url){
             foreach ($accountIds as $accountId){
                 $settings = new getSettingVendorController($accountId);
-                if (
-                    $settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"
-                ){
+                try {
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
+                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
                     continue;
+                } catch (\Throwable $e) {
+
                 }
+                if ($settings->TokenUDS == null || $settings->companyId == null
+                    || $settings->UpdateProduct == "1"){ continue; }
                 //($settings);
                 if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
                 yield $client->postAsync( $url, [
