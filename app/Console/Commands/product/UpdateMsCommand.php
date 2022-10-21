@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\product;
 
+use App\Components\MsClient;
+use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Client;
@@ -45,7 +47,15 @@ class UpdateMsCommand extends Command
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null || $settings->companyId != null){
                 if ($settings->UpdateProduct != "0")
-                $countSettings++;
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
+                    try {
+                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                        $countSettings++;
+                    } catch (\Throwable $e) {
+
+                    }
             }
         }
         return $countSettings;
@@ -70,20 +80,28 @@ class UpdateMsCommand extends Command
             foreach ($accountIds as $accountId){
                 $settings = new getSettingVendorController($accountId);
                 //dd($settings);
-                if (
-                    $settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"
-                ){
+                try {
+                    $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+
+                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                } catch (\Throwable $e) { continue; }
+                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"){ continue; }
+                //dd($allSettings);
+                try {
+                    yield $client->postAsync($url,[
+                        'headers' => ['Accept' => 'application/json'],
+                        'form_params' => [
+                            "tokenMs" => $settings->TokenMoySklad,
+                            "companyId" => $settings->companyId,
+                            "apiKeyUds" => $settings->TokenUDS,
+                            "accountId" => $settings->accountId,
+                        ],
+                    ]);
+                } catch (\Throwable $e) {
                     continue;
                 }
-                //dd($allSettings);
-                yield $client->postAsync($url,[
-                    'form_params' => [
-                        "tokenMs" => $settings->TokenMoySklad,
-                        "companyId" => $settings->companyId,
-                        "apiKeyUds" => $settings->TokenUDS,
-                        "accountId" => $settings->accountId,
-                    ],
-                ]);
             }
         })();
 

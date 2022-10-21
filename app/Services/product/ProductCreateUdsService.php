@@ -102,9 +102,9 @@ class ProductCreateUdsService
         if (!array_key_exists('categoryIds', $productsUds)) {
             $productsUds['categoryIds'] = [];
         }
-        $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId);
+        $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
-
+        //dd($productsMs);
         foreach ($productsMs->rows as $row){
 
             $isProductNotAdd = false;
@@ -114,8 +114,7 @@ class ProductCreateUdsService
                 foreach ($row->attributes as $attribute){
                     if ($attribute->name == "id (UDS)"){
                         $foundedIdAttrib = true;
-                        if (!in_array($attribute->value,$productsUds["productIds"]))
-                        {
+                        if (!in_array($attribute->value,$productsUds["productIds"])) {
                             $isProductNotAdd = true;
                         }
                         break;
@@ -132,6 +131,7 @@ class ProductCreateUdsService
                     $createdProduct = $this->createProductUds(
                         $row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory
                     );
+
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
                         /*if (property_exists($row,'images')){
@@ -158,15 +158,16 @@ class ProductCreateUdsService
         ];
     }
 
-    private function addCategoriesToUds($check, $pathName, $apiKeyMs, $companyId, $apiKeyUds,$accountId, $nodeId = ""){
+    private function addCategoriesToUds($check, $pathName, $apiKeyMs, $companyId, $apiKeyUds,$accountId, $nodeId){
         $categoriesMs = null;
         if (!$this->getCategoriesMs($categoriesMs,$pathName,$apiKeyMs)) return;
+        if ($pathName == null) $pathName = '';
 
         foreach ($categoriesMs as $categoryMs){
             $nameCategory = $categoryMs->name;
             if (!in_array($categoryMs->externalCode,$check)){
                 if ($nodeId == ""){
-                    $createdCategory = $this->createCategoryUds($categoryMs->name,$companyId,$apiKeyUds,$accountId);
+                    $createdCategory = $this->createCategoryUds($nameCategory,$companyId,$apiKeyUds,$accountId);
                 } else {
                     $folderHref = $categoryMs->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
@@ -178,7 +179,6 @@ class ProductCreateUdsService
                         $accountId,
                         $idNodeCategory);
                 }
-                //dd($newPath);
                 if ($createdCategory != null){
                     $createdCategoryId = $createdCategory->id;
                     $newNodeId = "".$createdCategoryId;
@@ -191,8 +191,9 @@ class ProductCreateUdsService
             } else {
                 $newNodeId = $categoryMs->externalCode;
             }
+            if ($pathName == '') $newPath = $pathName."".$nameCategory;
+            else $newPath = $pathName."/".$nameCategory;
 
-            $newPath = $pathName."/".$nameCategory;
             $this->addCategoriesToUds(
                 $check,
                 $newPath,
@@ -219,15 +220,35 @@ class ProductCreateUdsService
 
     private function getCategoriesMs(&$rows,$folderName,$apiKeyMs): bool
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=".$folderName;
-        $client = new MsClient($apiKeyMs);
-        try {
-            $json = $client->get($url);
-        }catch (ClientException $e){
-            //dd($url,$e->getMessage());
+        $result = [];
+
+        if ($folderName != null) {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=".$folderName;
+            $client = new MsClient($apiKeyMs);
+            try {
+                $json = $client->get($url);
+                $rows = $json->rows;
+                return (true);
+            }catch (ClientException $e){
+                //dd($url,$e->getMessage());
+                return (false);
+            }
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+            $client = new MsClient($apiKeyMs);
+            try {
+                $json = $client->get($url);
+                $rowss = $json->rows;
+                $newrows = null;
+                foreach ($rowss as $id=>$item){
+                if (!isset($item->productFolder)) $newrows[] = $item;}
+                $rows = $newrows;
+                return (true);
+            }catch (ClientException $e){
+                //dd($url,$e->getMessage());
+                return (false);
+            }
         }
-        $rows = $json->rows;
-        return ($json->meta->size > 0 );
     }
 
     private function updateCategory($createdCategoryId,$idMs,$apiKeyMs){
@@ -449,19 +470,13 @@ class ProductCreateUdsService
                     );
             }
 
-            if (
-                $isFractionProduct
-                && (
-                    !array_key_exists("increment",$body["data"])
-                    || !array_key_exists("minQuantity", $body["data"])
-                )
-            ){
+            if ($isFractionProduct && (
+                !array_key_exists("increment",$body["data"]) || !array_key_exists("minQuantity", $body["data"]))){
                 //dd(($body));
                 $bd = new BDController();
                 $bd->errorProductLog($accountId,$error_log." У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
                 return null;
-            }
-            if($isFractionProduct) {
+            } if($isFractionProduct) {
                 if ($body["data"]["minQuantity"] < $body["data"]["increment"]){
                     $bd = new BDController();
                     $bd->errorProductLog($accountId,$error_log." У дробного товара Шаг дробного значения, не может быть больше Минимального размера заказа");
@@ -496,15 +511,13 @@ class ProductCreateUdsService
             $body["nodeId"] = intval($nodeId);
         }
 
-        //dd(($body));
-
         if (property_exists($product,'images')){
             //dd($product);
             $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
             $body["data"]["photos"] = $imgIds;
             //dd($body);
         }
-
+        //dd(($client->post($url,$body)));
         try {
             return $client->post($url,$body);
         }catch (ClientException $e){

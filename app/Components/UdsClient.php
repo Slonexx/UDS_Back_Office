@@ -53,6 +53,7 @@ class UdsClient {
                 "Accept" => "application/json",
                 "X-Origin-Request-Id" => $uuid_v4,
                 "X-Timestamp" => $date->format(DateTime::ATOM),
+            'http_errors' => false,
             'body' => json_encode($body),
         ]);
 
