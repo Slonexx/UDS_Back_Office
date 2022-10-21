@@ -91,17 +91,21 @@ class CreateUdsCommand extends Command
                     || $settings->UpdateProduct == "1"){ continue; }
                 //($settings);
                 if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
-                yield $client->postAsync( $url, [
-                    'headers' => ['Accept' => 'application/json'],
-                    'form_params' => [
-                        "tokenMs" => $settings->TokenMoySklad,
-                        "companyId" => $settings->companyId,
-                        "apiKeyUds" => $settings->TokenUDS,
-                        "folder_id" => $folder_id,
-                        "store" => $settings->Store,
-                        "accountId" => $settings->accountId,
-                    ],
-                ]);
+                try {
+                    yield $client->postAsync( $url, [
+                        'headers' => ['Accept' => 'application/json'],
+                        'form_params' => [
+                            "tokenMs" => $settings->TokenMoySklad,
+                            "companyId" => $settings->companyId,
+                            "apiKeyUds" => $settings->TokenUDS,
+                            "folder_id" => $folder_id,
+                            "store" => $settings->Store,
+                            "accountId" => $settings->accountId,
+                        ],
+                    ]);
+                } catch (\Throwable $e) {
+                    continue;
+                }
             }
         })();
 
