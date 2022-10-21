@@ -13,7 +13,6 @@ use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
 use App\Services\MetaServices\MetaHook\UomHook;
 use GuzzleHttp\Exception\ClientException;
-use Illuminate\Support\Facades\Log;
 
 class ProductCreateUdsService
 {
@@ -56,7 +55,7 @@ class ProductCreateUdsService
         $this->imgService = $imgService;
     }
 
-    public function insertToUds($data)
+    public function insertToUds($data): array
     {
         return $this->notAddedInUds(
             $data['tokenMs'],
@@ -68,7 +67,8 @@ class ProductCreateUdsService
         );
     }
 
-    private function getUdsCheck($companyId, $apiKeyUds,$accountId){
+    private function getUdsCheck($companyId, $apiKeyUds,$accountId): array
+    {
         set_time_limit(3600);
         $this->findNodesUds($nodeIds,$companyId,$apiKeyUds,$accountId);
         if ($nodeIds == null){
@@ -143,10 +143,10 @@ class ProductCreateUdsService
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId);
                     if ($createdProduct != null){
                         $this->updateProduct($createdProduct,$row->id,$apiKeyMs);
-                       /* if (property_exists($row,'images')){
-                            //dd($row);
-                            $this->imgService->setImgUDS($createdProduct,$row->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                        }*/
+                        /* if (property_exists($row,'images')){
+                             //dd($row);
+                             $this->imgService->setImgUDS($createdProduct,$row->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                         }*/
                     }
                 }
             }
@@ -380,64 +380,64 @@ class ProductCreateUdsService
 
             foreach ($product->attributes as $attribute){
                 if ($attribute->name == "Акционный товар (UDS)" && $attribute->value == 1){
-                    $body["data"]["offer"]["offerPrice"] = $prices["offerPrice"];
-                }
-                elseif ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == 1){
-                    $body["data"]["offer"]["skipLoyalty"] = true;
-                }
-                elseif ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
-                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
+                $body["data"]["offer"]["offerPrice"] = $prices["offerPrice"];
+            }
+            elseif ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == 1){
+                $body["data"]["offer"]["skipLoyalty"] = true;
+            }
+            elseif ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
+                //if ($attribute->value <= 0 || $attribute->value == null) return null;
                     $body["data"]["increment"] = intval($attribute->value);
-                    if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                        $body["data"]["increment"] *= 1000.0;
-                        if ($body["data"]["increment"] >= 10000000){
-                            //dd($body["data"]["increment"]);
-                            $bd = new BDController();
-                            $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
-                            return null;
-                        }
-                    } elseif ($nameOumUds == "CENTIMETRE"){
-                        $body["data"]["increment"] *= 100.0;
-                        if ($body["data"]["increment"] >= 1000000){
-                            //dd($body["data"]["increment"]);
-                            $bd = new BDController();
-                            $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
-                            return null;
-                        }
+                if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                    $body["data"]["increment"] *= 1000.0;
+                    if ($body["data"]["increment"] >= 10000000){
+                        //dd($body["data"]["increment"]);
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
+                        return null;
+                    }
+                } elseif ($nameOumUds == "CENTIMETRE"){
+                    $body["data"]["increment"] *= 100.0;
+                    if ($body["data"]["increment"] >= 1000000){
+                        //dd($body["data"]["increment"]);
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
+                        return null;
                     }
                 }
-                elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
-                    //if ($attribute->value <= 0 || $attribute->value == null) return null;
-                    $body["data"]["minQuantity"] = intval($attribute->value);
-                    if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                        $body["data"]["price"] /= 1000;
-                        $body["data"]["minQuantity"] *= 1000.0;
-                        if ($body["data"]["minQuantity"] >= 10000000){
-                            $bd = new BDController();
-                            $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
-                            return null;
-                        }
-                    } elseif ($nameOumUds == "CENTIMETRE"){
-                        $body["data"]["price"] /= 100;
-                        $body["data"]["minQuantity"] *= 100.0;
-                        if ($body["data"]["minQuantity"] >= 1000000){
-                            $bd = new BDController();
-                            $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
-                            return null;
-                        }
+            }
+            elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
+                //if ($attribute->value <= 0 || $attribute->value == null) return null;
+                $body["data"]["minQuantity"] = intval($attribute->value);
+                if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                    $body["data"]["price"] /= 1000;
+                    $body["data"]["minQuantity"] *= 1000.0;
+                    if ($body["data"]["minQuantity"] >= 10000000){
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
+                        return null;
+                    }
+                } elseif ($nameOumUds == "CENTIMETRE"){
+                    $body["data"]["price"] /= 100;
+                    $body["data"]["minQuantity"] *= 100.0;
+                    if ($body["data"]["minQuantity"] >= 1000000){
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
+                        return null;
                     }
                 }
-                elseif ($attribute->name == "Товар неограничен (UDS)"){
-                    if ($attribute->value == 1){
-                        $stock = null;
-                    } else {
-                        $stock = $this->stockProductService->getProductStockMs(
-                            $product->externalCode,
-                            $storeHref,
-                            $apiKeyMs
-                        );
-                    }
-                    $body["data"]["inventory"]["inStock"] = $stock;
+            }
+            elseif ($attribute->name == "Товар неограничен (UDS)"){
+                if ($attribute->value == 1){
+                    $stock = null;
+                } else {
+                    $stock = $this->stockProductService->getProductStockMs(
+                        $product->externalCode,
+                        $storeHref,
+                        $apiKeyMs
+                    );
+                }
+                $body["data"]["inventory"]["inStock"] = $stock;
                 }
             }
 
@@ -500,9 +500,9 @@ class ProductCreateUdsService
 
         if (property_exists($product,'images')){
             //dd($product);
-           $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-           $body["data"]["photos"] = $imgIds;
-           //dd($body);
+            $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+            $body["data"]["photos"] = $imgIds;
+            dd($body);
         }
 
         try {
@@ -599,31 +599,16 @@ class ProductCreateUdsService
         $client = new MsClient($apiKeyMs);
         $json = $client->get($href);
 
-        $nameUomUds = "";
-        switch ($json->name){
-            case "шт":
-                $nameUomUds = "PIECE";
-                break;
-            case "см":
-                $nameUomUds = "CENTIMETRE";
-                break;
-            case "м":
-                $nameUomUds = "METRE";
-                break;
-            case "мм":
-                $nameUomUds = "MILLILITRE";
-                break;
-            case "л; дм3":
-                $nameUomUds = "LITRE";
-                break;
-            case "г":
-                $nameUomUds = "GRAM";
-                break;
-            case "кг":
-                $nameUomUds = "KILOGRAM";
-                break;
-        }
-        return $nameUomUds;
+        return match ($json->name) {
+            "шт" => "PIECE",
+            "см" => "CENTIMETRE",
+            "м" => "METRE",
+            "мм" => "MILLILITRE",
+            "л; дм3" => "LITRE",
+            "г" => "GRAM",
+            "кг" => "KILOGRAM",
+            default => "",
+        };
     }
 
 }
