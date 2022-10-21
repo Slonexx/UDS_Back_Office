@@ -224,7 +224,7 @@ class ProductCreateUdsService
         try {
             $json = $client->get($url);
         }catch (ClientException $e){
-            dd($url,$e->getMessage());
+            //dd($url,$e->getMessage());
         }
         $rows = $json->rows;
         return ($json->meta->size > 0 );
@@ -502,7 +502,7 @@ class ProductCreateUdsService
             //dd($product);
             $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
             $body["data"]["photos"] = $imgIds;
-            dd($body);
+            //dd($body);
         }
 
         try {
