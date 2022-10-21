@@ -120,7 +120,7 @@ class CreateUdsCommand extends Command
                 //dd($response->getStatusCode());
             },
             'rejected' => function ($reason) {
-                dd($reason);
+                //dd($reason);
             }
         ]);
         //dd($eachPromise);
