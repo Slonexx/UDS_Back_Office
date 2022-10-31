@@ -94,16 +94,16 @@ class ProductCreateUdsService
     private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
         //UPDATE if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }
-        if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }
+        /*if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }*/
         //dd($productsUds);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         //dd($folderName);
         set_time_limit(3600);
 
-        /*if (!array_key_exists('categoryIds', $productsUds)) {
+        if (!array_key_exists('categoryIds', $productsUds)) {
             $productsUds['categoryIds'] = [];
-        }*/
+        }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
         //dd($productsMs);
