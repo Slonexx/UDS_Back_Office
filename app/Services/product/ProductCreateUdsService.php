@@ -101,9 +101,9 @@ class ProductCreateUdsService
         //dd($folderName);
         set_time_limit(3600);
 
-        if (!array_key_exists('categoryIds', $productsUds)) {
+        /*if (!array_key_exists('categoryIds', $productsUds)) {
             $productsUds['categoryIds'] = [];
-        }
+        }*/
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
         //dd($productsMs);
