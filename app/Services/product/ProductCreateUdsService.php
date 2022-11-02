@@ -124,6 +124,8 @@ class ProductCreateUdsService
                 if (!$foundedIdAttrib) $isProductNotAdd = true;
             }
 
+            $idNodeCategory = 0;
+
             if ($isProductNotAdd){
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
