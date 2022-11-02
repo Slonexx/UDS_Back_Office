@@ -132,7 +132,10 @@ class ProductCreateUdsService
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
 
                     //UPDATE
-                    if (strlen($idNodeCategory) > 12) continue;
+                    if (strlen($idNodeCategory) > 12) {
+                        $idNodeCategory = 0;
+                       // dd($row, strlen($idNodeCategory));
+                    };
 
                     try {
                         $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
@@ -141,7 +144,8 @@ class ProductCreateUdsService
                         break;
                     }
 
-                } else { $idNodeCategory = 0;
+                } else {
+                    $idNodeCategory = 0;
                     //UPDATE
                     try {
                         $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
