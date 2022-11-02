@@ -124,7 +124,7 @@ class ProductCreateUdsService
                 if (!$foundedIdAttrib) $isProductNotAdd = true;
             }
 
-            $idNodeCategory = 0;
+
 
             if ($isProductNotAdd){
                 if (property_exists($row,"productFolder")){
@@ -141,7 +141,7 @@ class ProductCreateUdsService
                         break;
                     }
 
-                } else {
+                } else { $idNodeCategory = 0;
                     //UPDATE
                     try {
                         $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
