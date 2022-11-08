@@ -47,7 +47,7 @@
                     <div class="col-5">
                         <select id="operationsCancellation" name="operationsCancellation" class="form-select text-black" >
                             <option value="0">Номеру телефона</option>
-                            <option value="1">QR-коду мобильного приложения</option>
+                            <option selected value="1">QR-коду мобильного приложения</option>
                         </select>
                     </div>
                 </div>
