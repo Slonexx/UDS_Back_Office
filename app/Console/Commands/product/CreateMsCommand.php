@@ -48,8 +48,8 @@ class CreateMsCommand extends Command
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null && $settings->companyId != null){
                 if ($settings->UpdateProduct != "0")
-                    $clientCheck = new MsClient($settings->TokenMoySklad);
                 try {
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
                     $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');

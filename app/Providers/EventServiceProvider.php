@@ -14,6 +14,7 @@ use App\Models\webhookOrderLog;
 use App\Observers\CounterpartyAddModelObserver;
 use App\Observers\ErrorLogModelObserver;
 use App\Observers\orderIDModelObserver;
+use App\Observers\orderSettingObserver;
 use App\Observers\OrderUpdateModelObserver;
 use App\Observers\sendOperationsSetttingObserver;
 use App\Observers\SettingMainObserver;
@@ -45,7 +46,7 @@ class EventServiceProvider extends ServiceProvider
         errorLog::observe(ErrorLogModelObserver::class);
         order_update::observe(OrderUpdateModelObserver::class);
         SettingMain::observe(SettingMainObserver::class);
-        orderSettingModel::observe(orderSettingModel::class);
+        orderSettingModel::observe(orderSettingObserver::class);
         sendOperationsModel::observe(sendOperationsSetttingObserver::class);
     }
 }
