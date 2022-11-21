@@ -15,7 +15,7 @@ class orderSettingObserver
 
         foreach($accountIds as $accountId){
 
-            $query = SettingMain::query();
+            $query = orderSettingModel::query();
             $logs = $query->where('accountId',$accountId->accountId)->get();
             if(count($logs) > 1){
                 DB::table('order_setting_models')
