@@ -36,7 +36,7 @@ class ProductController extends Controller
     }
 
 
-    public function insertMs(Request $request)
+    public function insertMs(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
             "tokenMs" => 'required|string',
@@ -46,14 +46,12 @@ class ProductController extends Controller
             "accountId" => "required|string",
         ]);
 
-       // dd(100/10.0);
-
         return response(
             $this->productCreateMsService->insertToMs($data)
         );
     }
 
-    public function insertUds(Request $request)
+    public function insertUds(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
             "tokenMs" => 'required|string',
@@ -69,7 +67,7 @@ class ProductController extends Controller
        );
     }
 
-    public function updateMs(Request $request)
+    public function updateMs(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
             "tokenMs" => 'required|string',
@@ -85,7 +83,7 @@ class ProductController extends Controller
         );
     }
 
-    public function updateUds(Request $request)
+    public function updateUds(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
             "tokenMs" => 'required|string',

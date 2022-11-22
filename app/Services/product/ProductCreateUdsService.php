@@ -13,6 +13,7 @@ use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
 use App\Services\MetaServices\MetaHook\UomHook;
 use GuzzleHttp\Exception\ClientException;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ProductCreateUdsService
 {
@@ -55,7 +56,7 @@ class ProductCreateUdsService
         $this->imgService = $imgService;
     }
 
-    public function insertToUds($data): array
+    #[ArrayShape(["message" => "string"])] public function insertToUds($data): array
     {
         return $this->notAddedInUds(
             $data['tokenMs'],
@@ -77,7 +78,6 @@ class ProductCreateUdsService
                 "categoryIds" => [],
             ];
         }
-        //dd($nodeIds);
         return $nodeIds;
     }
 
@@ -91,8 +91,10 @@ class ProductCreateUdsService
         return $client->get($url);
     }
 
-    private function notAddedInUds($apiKeyMs,$apiKeyUds,$companyId,$folderId, $storeName,$accountId){
+    #[ArrayShape(["message" => "string"])] private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $folderId, $storeName, $accountId): array
+    {
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
+
         //UPDATE if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         /*if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }*/
         //dd($productsUds);
@@ -103,6 +105,9 @@ class ProductCreateUdsService
 
         if (!array_key_exists('categoryIds', $productsUds)) {
             $productsUds['categoryIds'] = [];
+        }
+        if (!array_key_exists('productIds', $productsUds)) {
+            $productsUds['productIds'] = [];
         }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);

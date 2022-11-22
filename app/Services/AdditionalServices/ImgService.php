@@ -8,12 +8,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\ArrayShape;
 use Nette\Utils\DateTime;
 
 class ImgService
 {
 
-    public function setImgUDS($urlImages,$apiKeyMs,$companyId,$password)
+    public function setImgUDS($urlImages,$apiKeyMs,$companyId,$password): array
     {
         //$urlGood = "https://api.uds.app/partner/v2/goods/".$item_good->id;
 
@@ -86,7 +87,7 @@ class ImgService
         $client->put($urlProduct,$body);
     }
 
-    private function getImgContent($url)
+    #[ArrayShape(["type" => "string", "content" => "string"])] private function getImgContent($url): array
     {
         //$url = "https://thumbor.uds.app/IFr7jeq2K4arj2Xf5GKk_K2QLeA=/game-prod/549755819292/GOODS/c8df7baf-3abe-49ff-8d58-f378a8d9d7b3";
         //$url = "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg";
@@ -100,7 +101,7 @@ class ImgService
         ];
     }
 
-    private function setImageToUds($imgType,$url, $imageHref, $apiKeyMs)
+    private function setImageToUds($imgType,$url, $imageHref, $apiKeyMs): array
     {
         /*$opts = array(
             'http' => array(
@@ -162,7 +163,7 @@ class ImgService
         return $out;
     }
 
-    private function setUrlToUds($img_type,$companyId,$apiKey)
+    private function setUrlToUds($img_type,$companyId,$apiKey): array
     {
         $url = "https://api.uds.app/partner/v2/image-upload-url";
         //$companyId = "549755819292";
