@@ -4,12 +4,14 @@ namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use DateTime;
+use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
-use Nette\Utils\DateTime;
+//use Nette\Utils\DateTime;
 
 class ImgService
 {
@@ -26,9 +28,9 @@ class ImgService
         $images = $clientMs->get($urlImages);
 
         foreach ($images->rows as $image){
-            if(property_exists($image, 'miniature')){
-                $imgHref = $image->miniature->href;
-                $imageType = $image->miniature->mediaType;
+            if(property_exists($image, 'meta')){
+                $imgHref = $image->meta->downloadHref;
+                $imageType = 'image/png';
 
                 $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
                 $dataImgUds = json_decode($response_Image_UDS['result']);
@@ -46,17 +48,6 @@ class ImgService
         //dd($imgIds);
 
         return $imgIds;
-
-        /*$body = [
-            "data" => [
-                "photos" => $imgIds,
-            ],
-        ];*/
-
-        //dd($body);
-
-        //$client = new UdsClient($companyId,$password);
-        //$client->put($urlGood,$body);
     }
 
     public function setImgMS($product,$urls,$apiKeyMs)
@@ -101,24 +92,11 @@ class ImgService
         ];
     }
 
-    private function setImageToUds($imgType,$url, $imageHref, $apiKeyMs): array
+    /**
+     * @throws GuzzleException
+     */
+    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): array
     {
-        /*$opts = array(
-            'http' => array(
-                'method' => 'GET',
-                'header' =>
-                    "Content-Type: application/json\r\n" .
-                    "Authorization: Basic ".$apiKeyMs."\r\n" ,
-                'content' => $imageHref,
-                'ignore_errors' => true
-            )
-        );
-
-        $context = stream_context_create($opts);
-        $image = file_get_contents($imageHref, false, $context);*/
-
-        //dd($image);
-
         $clientMs = new Client([
             'headers' => [
                 'Authorization' => $apiKeyMs,
@@ -166,8 +144,6 @@ class ImgService
     private function setUrlToUds($img_type,$companyId,$apiKey): array
     {
         $url = "https://api.uds.app/partner/v2/image-upload-url";
-        //$companyId = "549755819292";
-        //$apiKey = "YTI1Y2Y1MjItMzA3Ny00ZjFjLTllMDAtNzdjZDVhZmI0N2Q4";
 
         $date = new DateTime();
         $uuid_v4 = Str::uuid(); //generate universally unique identifier version 4 (RFC 4122)
@@ -185,7 +161,7 @@ class ImgService
                     "Content-Type: application/json\r\n" .
                     "Authorization: Basic ". base64_encode("$companyId:$apiKey")."\r\n" .
                     "X-Origin-Request-Id: ".$uuid_v4."\r\n" .
-                    "X-Timestamp: ".$date->format(DateTime::ATOM),
+                    "X-Timestamp: ".$date->format(DateTimeInterface::ATOM),
                 'content' => $itemData,
                 'ignore_errors' => true
             )
@@ -197,13 +173,13 @@ class ImgService
         //dd($context,$result);
 
         preg_match('/([0-9])\d+/',$http_response_header[0],$matches);
-        $responsecode = intval($matches[0]);
+        $response = intval($matches[0]);
 
-        if ($responsecode == 200) {
+        if ($response == 200) {
             $message = "Creat new URL S3. Ready!";
-        } else { $message = "ERROR: $responsecode";}
+        } else { $message = "ERROR: $response";}
 
-        $out["code"] = $responsecode;
+        $out["code"] = $response;
         $out["result"] = $result;
         $out["message"] = $message;
         return $out;
