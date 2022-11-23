@@ -1,5 +1,5 @@
 @extends('layout')
-
+@section('item', 'link_1')
 @section('content')
     <script>
         const url = 'https://office.uds.app/register/trial?ref=3942050';
@@ -13,8 +13,12 @@
 
     </form>--}}
     <div class="content p-4 mt-2 bg-white text-Black rounded">
-        <div class="row text-center">
-            <h3>Возможности интеграции</h3>
+        <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
+            <div class="col-10" style="margin-top: 1.2rem"> <span class="text-white" style="font-size: 20px">  Возможности интеграции </span></div>
+            <div class="col-2 text-center">
+                <img src="https://smarttis.kz/Config/logo.png" width="40%"  alt="">
+                <div class="text-white" style="font-size: 11px; margin-top: 8px"> Топ партнёр сервиса МойСклад </div>
+            </div>
         </div>
         <div class="row mt-3">
             <div class="col-6">

@@ -19,15 +19,15 @@
             </div>
             <br>
             <div class="mb-2 toc-list-h1">
-                <a href="{{ route('indexMain', [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ] ) }}">Главная </a>
+                <a id="link_1" href="{{ route('indexMain', [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ] ) }}">Главная </a>
                 <div class="mt-2">
-                    <button class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
+                    <button id="btn_1" class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
                     <div class="dropdown-container">
-                        <a href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
-                        <a href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
-                        <a href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
-                        <a href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
-                        <a href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
+                        <a class="mt-1" id="link_2" href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
+                        <a class="mt-1" id="link_3" href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
+                        <a class="mt-1" id="link_4" href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
+                        <a class="mt-1" id="link_5" href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
+                        <a class="mt-1" id="link_6" href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
                     </div>
                 </div>
 
@@ -60,124 +60,6 @@
 </html>
 
 
-<style>
-
-    .headfull {
-        height: 720px;
-    }
-
-    body {
-        font-family: 'Helvetica', 'Arial', sans-serif;
-        color: #444444;
-        font-size: 8pt;
-        background-color: #FAFAFA;
-    }
-
-    .s-min-16 {
-        font-size: 16px;
-    }
-
-    .gradient{
-        background: rgb(145,0,253);
-        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
-    }
-
-    .uds-gradient{
-        background: rgb(145,0,253);
-        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
-    }
-
-    /* Фиксированный боковых навигационных ссылок, полной высоты */
-    .sidenav {
-        height: 100%;
-        width: 15%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #eaeaea;
-        overflow-x: hidden;
-        padding-top: 20px;
-    }
-
-    /* Стиль боковых навигационных ссылок и раскрывающейся кнопки */
-    .sidenav a, .dropdown-btn {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 16px;
-        color: #343434;
-        display: block;
-        border: none;
-        background: none;
-        width:100%;
-        text-align: left;
-        cursor: pointer;
-        outline: none;
-    }
-
-    /* При наведении курсора мыши */
-    .sidenav a:hover, .dropdown-btn:hover {
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(145,0,253,1) 0%, rgba(232,0,141,1) 90% );
-        border-radius: 10px 10px 0px 0px;
-        color: white;
-    }
-
-    /* Основное содержание */
-    .main {
-        margin-left: 15%; /* То же, что и ширина боковой навигации */
-        font-size: 18px; /* Увеличенный текст для включения прокрутки */
-        padding: 0 10px;
-    }
-    /* Добавить активный класс для кнопки активного выпадающего списка */
-    .active {
-        background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(145,0,253,1) 0%, rgba(232,0,141,1) 90% );
-        margin-right: 50px;
-        border-radius: 10px 10px 0px 0px;
-        color: white;
-    }
-
-    /* Выпадающий контейнер (по умолчанию скрыт). Необязательно: добавьте более светлый цвет фона и некоторые левые отступы, чтобы изменить дизайн выпадающего содержимого */
-    .dropdown-container {
-        display: none;
-        background-color: #d5d5d5;
-        padding: 5px;
-    }
-
-    /* Необязательно: стиль курсора вниз значок */
-    .fa-caret-down {
-        float: right;
-        padding-right: 8px;
-    }
-</style>
-
-<style>
-    /* Новый цвет текста */
-    .text-orange{
-        color: orange;
-    }
-
-    .btn-new:hover{
-        border-color: white !important
-    }
-    .btn-new:focus{
-        border-color: white !important;
-        color: orange !important;
-    }
-    .form-control-orange:focus{
-        background-color: white;
-        border-color: black;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(255, 77, 0, 0.16);
-    }
-
-    .btnP p:hover {
-        color: orange;
-    }
-    .btnP button:hover {
-        color: orange;
-    }
-
-</style>
 
 <script>
     var dropdown = document.getElementsByClassName("dropdown-btn");
@@ -194,5 +76,24 @@
             }
         });
     }
+
+    let item = '@yield('item')'
+
+    window.document.getElementById(item).classList.add('active_sprint')
+    if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 6){
+        this_click(window.document.getElementById('btn_1'))
+    }
+
+    function this_click(btn){
+        btn.classList.toggle("active");
+        let dropdownContent = btn.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+            dropdownContent.style.display = "none";
+        } else {
+            dropdownContent.style.display = "block";
+        }
+    }
+
 </script>
 
+@include('style')
