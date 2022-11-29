@@ -15,7 +15,8 @@ use Illuminate\Http\Request;
 
 class ObjectController extends Controller
 {
-    public function CounterpartyObject(Request $request, $accountId, $entity, $objectId){
+    public function CounterpartyObject(Request $request, $accountId, $entity, $objectId): \Illuminate\Http\JsonResponse
+    {
 
         $UDSURL = "https://api.uds.app/partner/v2/customers/";
 
@@ -36,7 +37,8 @@ class ObjectController extends Controller
     }
 
 
-    public function CustomerOrderEditObject($accountId, $entity, $objectId){
+    public function CustomerOrderEditObject($accountId, $entity, $objectId): array
+    {
 
         $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
 
@@ -112,7 +114,8 @@ class ObjectController extends Controller
 
     }
 
-    public  function CompletesOrder($accountId, $objectId){
+    public  function CompletesOrder($accountId, $objectId): array
+    {
         $Setting = new getSettingVendorController($accountId);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         try {
@@ -188,7 +191,8 @@ class ObjectController extends Controller
 
 
     }
-    public function AgentMCPhone($href, $Setting){
+    public function AgentMCPhone($href, $Setting): string
+    {
         $Clinet = new MsClient($Setting->TokenMoySklad);
         $bodyAgentHref = $href;
         $bodyMC = $Clinet->get($bodyAgentHref);
@@ -209,14 +213,18 @@ class ObjectController extends Controller
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         foreach ($BodyPositions as $item){
             $url_item = $item->assortment->meta->href;
-            $body = $Clinet->get($url_item)->attributes;
+            $body = $Clinet->get($url_item);
+
             $BonusProgramm = false;
-            foreach ($body as $body_item){
-                if ('Не применять бонусную программу (UDS)' == $body_item->name){
-                    $BonusProgramm = $body_item->value;
-                    break;
+            if (property_exists($body, 'attributes')){
+                foreach ($body as $body_item){
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name){
+                        $BonusProgramm = $body_item->value;
+                        break;
+                    }
                 }
-            }
+            } else  $BonusProgramm = false;
+
             if ( $BonusProgramm == true ){
                 $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;

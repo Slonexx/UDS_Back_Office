@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Components\MsClient;
+use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Models\counterparty_add;
@@ -44,6 +46,7 @@ class AgentsCommand extends Command
         //agent add
         $accountSavedSettings = counterparty_add::all();
         $accountIds = [];
+
         foreach ($accountSavedSettings as $savedSetting){
             $accountIds[] = $savedSetting->accountId;
         }
@@ -57,21 +60,28 @@ class AgentsCommand extends Command
         $promises = (function () use ($accountIds, $client, $url){
             foreach ($accountIds as $accountId){
                 $settings = new getSettingVendorController($accountId);
-/*                if (
-                    $settings->TokenUDS == null || $settings->companyId == null
-                ){
+
+                try {
+                    $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+
+                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                } catch (\Throwable $e) { continue; }
+
+                try {
+                    yield $client->postAsync( $url, [
+                        'headers' => ['Accept' => 'application/json'],
+                        'form_params' => [
+                            "tokenMs" => $settings->TokenMoySklad,
+                            "companyId" => $settings->companyId,
+                            "apiKeyUds" => $settings->TokenUDS,
+                            "accountId" => $settings->accountId
+                        ],
+                    ]);
+                } catch (\Throwable $e) {
                     continue;
-                }*/
-                //dd($allSettings);
-                yield $client->postAsync($url,[
-                    'headers'=> ['Accept' => 'application/json'],
-                    'form_params' => [
-                        "tokenMs" => $settings->TokenMoySklad,
-                        "companyId" => $settings->companyId,
-                        "apiKeyUds" => $settings->TokenUDS,
-                        "accountId" => $settings->accountId
-                    ]
-                ]);
+                }
             }
         })();
 
@@ -85,7 +95,7 @@ class AgentsCommand extends Command
                 }
             },
             'rejected' => function ($reason) {
-                //dd($reason);
+                dd($reason);
             }
         ]);
         //dd($eachPromise);
