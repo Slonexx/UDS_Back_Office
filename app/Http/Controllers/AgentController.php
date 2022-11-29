@@ -25,7 +25,13 @@ class AgentController extends Controller
             "apiKeyUds" => "required|string",
             "accountId" => "required|string"
         ]);
-        //dd($data);
+        return response(
+            $this->agentService->insertToMs($data)
+        );
+    }
+
+    public function insert($data): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
         return response(
             $this->agentService->insertToMs($data)
         );

@@ -4,14 +4,12 @@ namespace App\Console\Commands;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Models\counterparty_add;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
 
@@ -69,7 +67,17 @@ class AgentsCommand extends Command
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (\Throwable $e) { continue; }
 
+               $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "accountId" => $settings->accountId
+                ];
+
+                //dd($request->request);
                 try {
+                    yield app(AgentController::class)->insert($data);
+/*
                     yield $client->postAsync( $url, [
                         'headers' => ['Accept' => 'application/json'],
                         'form_params' => [
@@ -78,7 +86,7 @@ class AgentsCommand extends Command
                             "apiKeyUds" => $settings->TokenUDS,
                             "accountId" => $settings->accountId
                         ],
-                    ]);
+                    ]);*/
                 } catch (\Throwable $e) {
                     continue;
                 }
@@ -91,7 +99,7 @@ class AgentsCommand extends Command
                 if ($response->getStatusCode() == 200) {
                     //dd($response);
                 } else {
-                    //dd($response);
+                   //dd($response);
                 }
             },
             'rejected' => function ($reason) {
