@@ -217,7 +217,7 @@ class ObjectController extends Controller
 
             $BonusProgramm = false;
             if (property_exists($body, 'attributes')){
-                foreach ($body as $body_item){
+                foreach ($body->attributes as $body_item){
                     if ('Не применять бонусную программу (UDS)' == $body_item->name){
                         $BonusProgramm = $body_item->value;
                         break;
