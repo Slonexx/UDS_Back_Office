@@ -111,7 +111,7 @@ class ProductCreateUdsService
         }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
-        //dd($productsMs);
+
         foreach ($productsMs->rows as $row){
 
             $isProductNotAdd = false;
@@ -127,6 +127,9 @@ class ProductCreateUdsService
                     }
                 }
                 if (!$foundedIdAttrib) $isProductNotAdd = true;
+            }else{
+                $isProductNotAdd = true;
+                //dd($row);
             }
 
 
@@ -156,7 +159,7 @@ class ProductCreateUdsService
                         $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
                         if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
                     } catch (\Throwable $e){
-                        break;
+                        continue;
                     }
 
                 }
@@ -355,6 +358,7 @@ class ProductCreateUdsService
 
         if ($prices["salePrice"] <= 0){
             $bd = new BDController();
+            //dd($product);
             $bd->errorProductLog($accountId, $error_log." Не была указана цена товара в MS");
             return null;
         }
@@ -536,7 +540,7 @@ class ProductCreateUdsService
         try {
             return $client->post($url,$body);
         }catch (ClientException $e){
-            //dd(json_encode($body),$e->getMessage());
+            //dd($product, $e->getMessage());
             $bd = new BDController();
             $bd->errorProductLog($accountId,$e->getMessage());
             return null;
@@ -559,6 +563,7 @@ class ProductCreateUdsService
         try {
             return $client->post($url, $body);
         }catch (ClientException $e){
+            //dd($body, $e->getMessage());
             $bd = new BDController();
             $bd->errorProductLog($accountId,$e->getMessage());
             return null;
