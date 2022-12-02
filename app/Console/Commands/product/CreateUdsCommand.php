@@ -5,6 +5,7 @@ namespace App\Console\Commands\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
 use Dflydev\DotAccessData\Data;
 use GuzzleHttp\Client;
@@ -96,21 +97,21 @@ class CreateUdsCommand extends Command
                 if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
                 if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
 
+                $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "folder_id" => $folder_id,
+                    "store" => $settings->Store,
+                    "accountId" => $settings->accountId,
+                ];
+
                 try {
-                    yield $client->postAsync( $url, [
-                        'headers' => ['Accept' => 'application/json'],
-                        'form_params' => [
-                            "tokenMs" => $settings->TokenMoySklad,
-                            "companyId" => $settings->companyId,
-                            "apiKeyUds" => $settings->TokenUDS,
-                            "folder_id" => $folder_id,
-                            "store" => $settings->Store,
-                            "accountId" => $settings->accountId,
-                        ],
-                    ]);
+                    yield app(ProductController::class)->insertUds_data($data);
                 } catch (\Throwable $e) {
                     continue;
                 }
+
             }
 
         })();
@@ -118,11 +119,7 @@ class CreateUdsCommand extends Command
         $eachPromise = new EachPromise($promises,[
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
-                if ($response->getStatusCode() == 200) {
-                    //dd($response->getBody()->getContents());
-                } else {
-                    //dd($response);
-                }
+                dd($response->getBody());
                 //dd($response->getStatusCode());
             },
             'rejected' => function ($reason) {

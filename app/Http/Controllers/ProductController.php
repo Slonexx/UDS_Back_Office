@@ -67,6 +67,13 @@ class ProductController extends Controller
        );
     }
 
+    public function insertUds_data($data): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        return response(
+            $this->productCreateUdsService->insertToUds($data)
+        );
+    }
+
     public function updateMs(Request $request): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
         $data = $request->validate([
