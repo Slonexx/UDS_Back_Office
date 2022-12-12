@@ -4,27 +4,24 @@
 @section('counterparty')
 
     <script>
-        var GlobalobjectId;
-        var GlobalURL;
-        var GlobalxRefURL;
-        var UDSClientID;
+        let ObjectID
+        let GlobalURL
+        let GlobalxRefURL
+        let UDSClientID
+
         window.addEventListener("message", function(event) {
-            var receivedMessage = event.data;
-            GlobalobjectId = receivedMessage.objectId;
-            document.getElementById("success").style.display = "none";
-            document.getElementById("danger").style.display = "none";
+            let receivedMessage = event.data
+            ObjectID = receivedMessage.objectId
+
 
 
 
             if (receivedMessage.name === 'Open') {
-
-                var oReq = new XMLHttpRequest();
-
+                clr()
+                let oReq = new XMLHttpRequest();
                 oReq.addEventListener("load", function() {
-                    clr()
-
                     try {
-                        var responseTextPars = JSON.parse(this.responseText);
+                        let responseTextPars = JSON.parse(this.responseText);
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
                     } catch (error){
@@ -32,8 +29,8 @@
                         document.getElementById("undefined").style.display = "block";
                     }
 
-                    var participant = responseTextPars.participant;
-                    var membershipTier = participant.membershipTier
+                    let participant = responseTextPars.participant;
+                    let membershipTier = participant.membershipTier
                     UDSClientID = participant.id;
                     GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
 
@@ -44,6 +41,7 @@
                     window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
+                console.log('receivedMessage = ' + GlobalURL)
                 oReq.open("GET", GlobalURL);
                 oReq.send();
             }
@@ -106,8 +104,8 @@
         }
 
         function Cancellation(){
-            var input = document.getElementById("inputCancellation").value;
-            var xmlHttpRequest = new XMLHttpRequest();
+            let input = document.getElementById("inputCancellation").value;
+            let xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.addEventListener("load", function() {
 
                 var statusCode = this.responseText;
@@ -127,46 +125,25 @@
             update();
         }
 
-        function Bonus() {
-            var select = document.getElementById('Bonus');
-            var option = select.options[select.selectedIndex];
-            if (option.value == 1) {
+        function Bonus_UDS(val) {
+            document.getElementById("Cancellation").style.display = "none";
+            document.getElementById("Accrue").style.display = "none";
+            if (val == 1) {
                 document.getElementById("Accrue").style.display = "block";
                 document.getElementById("Cancellation").style.display = "none";
-            }else if (option.value == 2) {
+            }else if (val == 2) {
                 document.getElementById("Cancellation").style.display = "block";
-                document.getElementById("Accrue").style.display = "none";
-            }
-            else {
-                document.getElementById("Cancellation").style.display = "none";
                 document.getElementById("Accrue").style.display = "none";
             }
         }
 
 
         function clr(){
-            var select = document.getElementById('Bonus');
-            select.value = 0;
-            Bonus()
+            document.getElementById('Bonus').value = 0;
+            Bonus_UDS()
 
             document.getElementById("success").style.display = "none";
             document.getElementById("danger").style.display = "none";
-        }
-
-        function Bonus() {
-            var select = document.getElementById('Bonus');
-            var option = select.options[select.selectedIndex];
-            if (option.value == 1) {
-                document.getElementById("Accrue").style.display = "block";
-                document.getElementById("Cancellation").style.display = "none";
-            }else if (option.value == 2) {
-                document.getElementById("Cancellation").style.display = "block";
-                document.getElementById("Accrue").style.display = "none";
-            }
-            else {
-                document.getElementById("Cancellation").style.display = "none";
-                document.getElementById("Accrue").style.display = "none";
-            }
         }
 
     </script>
@@ -181,8 +158,8 @@
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
-                <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
+                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30"  alt="">
+                <label onclick="xRefURL()" style="cursor: pointer"> <i class="fa-solid fa-arrow-up-right-from-square"></i> Клиент </label>
             </div>
             <div class="mx-2 col-2 p-2">
                 <button type="submit" onclick="update()" class="myButton btn "> <i class="fa-solid fa-arrow-rotate-right"></i> </button>
@@ -225,7 +202,7 @@
         <div class="row">
             <div class="col-1"> </div>
             <div class="col-10">
-                <select onclick="Bonus()" class="p-1 form-select" id="Bonus">
+                <select onchange="Bonus_UDS(this.value)" class="p-1 form-select" id="Bonus">
                     <option value="0" selected> Действия с баллами </option>
                     <option value="1"> Начислить баллы </option>
                     <option value="2"> Списать баллы </option>
@@ -295,7 +272,7 @@
             <div class="row">
                 <div class="col-1"></div>
                 <div class="col-10">
-                    <div class=" alert alert-success fade show in text-center "> Начислялись баллы !</div>
+                    <div class=" alert alert-success fade show in text-center "> Баллы начислены !</div>
                 </div>
             </div>
         </div>

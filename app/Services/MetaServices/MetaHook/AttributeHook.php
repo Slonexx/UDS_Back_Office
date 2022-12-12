@@ -16,23 +16,25 @@ class AttributeHook
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
         return $foundedMeta;
     }
 
     public function getOrderAttribute($nameAttribute, $apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes";
+        // обработка ошибки);
         $client = new MsClient($apiKey);
-        $json = $client->get($uri);
+        $json = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes');
+
         $foundedMeta = null;
         foreach($json->rows as $row){
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
+
         return $foundedMeta;
     }
 
@@ -46,7 +48,7 @@ class AttributeHook
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
         return $foundedMeta;
     }
@@ -61,7 +63,7 @@ class AttributeHook
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
         return $foundedMeta;
     }
@@ -76,7 +78,7 @@ class AttributeHook
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
         return $foundedMeta;
     }
@@ -91,7 +93,7 @@ class AttributeHook
             if($row->name == $nameAttribute){
                 $foundedMeta = $row->meta;
                 break;
-            }
+            } else continue;
         }
         return $foundedMeta;
     }
