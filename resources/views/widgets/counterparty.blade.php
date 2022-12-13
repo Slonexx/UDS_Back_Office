@@ -24,21 +24,23 @@
                         let responseTextPars = JSON.parse(this.responseText);
                         document.getElementById("activated").style.display = "block";
                         document.getElementById("undefined").style.display = "none";
+
+                        let participant = responseTextPars.participant;
+                        let membershipTier = participant.membershipTier
+                        UDSClientID = participant.id;
+                        GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
+
+                        window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
+                        window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
+                        window.document.getElementById("points").innerHTML = participant.points;
+                        window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                        window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
+
                     } catch (error){
                         document.getElementById("activated").style.display = "none";
                         document.getElementById("undefined").style.display = "block";
                     }
 
-                    let participant = responseTextPars.participant;
-                    let membershipTier = participant.membershipTier
-                    UDSClientID = participant.id;
-                    GlobalxRefURL = "https://admin.uds.app/admin/customers/"+participant.id+'/info';
-
-                    window.document.getElementById("displayName").innerHTML = responseTextPars.displayName;
-                    window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0,10);
-                    window.document.getElementById("points").innerHTML = participant.points;
-                    window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
-                    window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
                 });
                 GlobalURL = "{{$getObjectUrl}}" + receivedMessage.objectId;
                 console.log('receivedMessage = ' + GlobalURL)
