@@ -160,54 +160,57 @@ class ProductCreateUdsService
         $categoriesMs = null;
         if (!$this->getCategoriesMs($categoriesMs,$pathName,$apiKeyMs)) return;
         if ($pathName == null) $pathName = '';
+
 //UPDATE
-        try {
-            foreach ($categoriesMs as $categoryMs){
-                $nameCategory = $categoryMs->name;
-                if (!in_array($categoryMs->externalCode,$check)){
-                    if ($nodeId == ""){
-                        $createdCategory = $this->createCategoryUds($nameCategory,$companyId,$apiKeyUds,$accountId);
-                    } else {
-                        $folderHref = $categoryMs->productFolder->meta->href;
-                        $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
-                        //dd($idNodeCategory);
-                        $createdCategory = $this->createCategoryUds(
-                            $nameCategory,
-                            $companyId,
-                            $apiKeyUds,
-                            $accountId,
-                            $idNodeCategory);
-                    }
-                    if ($createdCategory != null){
-                        $createdCategoryId = $createdCategory->id;
-                        $newNodeId = "".$createdCategoryId;
-                        $check[] = "".$createdCategoryId;
-                        $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
-                    } else {
-                        $newNodeId = $categoryMs->externalCode;
-                    }
+       if ($categoriesMs != null){
+           try {
+               foreach ($categoriesMs as $categoryMs){
+                   $nameCategory = $categoryMs->name;
+                   if (!in_array($categoryMs->externalCode,$check)){
+                       if ($nodeId == ""){
+                           $createdCategory = $this->createCategoryUds($nameCategory,$companyId,$apiKeyUds,$accountId);
+                       } else {
+                           $folderHref = $categoryMs->productFolder->meta->href;
+                           $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                           //dd($idNodeCategory);
+                           $createdCategory = $this->createCategoryUds(
+                               $nameCategory,
+                               $companyId,
+                               $apiKeyUds,
+                               $accountId,
+                               $idNodeCategory);
+                       }
+                       if ($createdCategory != null){
+                           $createdCategoryId = $createdCategory->id;
+                           $newNodeId = "".$createdCategoryId;
+                           $check[] = "".$createdCategoryId;
+                           $this->updateCategory($createdCategoryId, $categoryMs->id,$apiKeyMs);
+                       } else {
+                           $newNodeId = $categoryMs->externalCode;
+                       }
 
-                } else {
-                    $newNodeId = $categoryMs->externalCode;
-                }
-                if ($pathName == '') $newPath = $pathName."".$nameCategory;
-                else $newPath = $pathName."/".$nameCategory;
+                   } else {
+                       $newNodeId = $categoryMs->externalCode;
+                   }
+                   if ($pathName == '') $newPath = $pathName."".$nameCategory;
+                   else $newPath = $pathName."/".$nameCategory;
 
-                $this->addCategoriesToUds(
-                    $check,
-                    $newPath,
-                    $apiKeyMs,
-                    $companyId,
-                    $apiKeyUds,
-                    $accountId,
-                    $newNodeId
-                );
-                //UPDATE
-            }
-        } catch (\Throwable $e){
-            $BD = new BDController();
-            $BD->errorProductLog($accountId, $e->getMessage());
-        }
+                   $this->addCategoriesToUds(
+                       $check,
+                       $newPath,
+                       $apiKeyMs,
+                       $companyId,
+                       $apiKeyUds,
+                       $accountId,
+                       $newNodeId
+                   );
+                   //UPDATE
+               }
+           } catch (\Throwable $e){
+               $BD = new BDController();
+               $BD->errorProductLog($accountId, $e->getMessage());
+           }
+       }
     }
 
     private function getFolderNameById($folderId, $apiKeyMs)
@@ -234,17 +237,15 @@ class ProductCreateUdsService
                 $rows = $json->rows;
                 return (true);
             }catch (ClientException $e){
-                //dd($url,$e->getMessage());
                 return (false);
             }
         } else {
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
             $client = new MsClient($apiKeyMs);
             try {
-                $json = $client->get($url);
-                $rowss = $json->rows;
+                $json = $client->get($url)->rows;
                 $newrows = null;
-                foreach ($rowss as $id=>$item){
+                foreach ($json as $id=>$item){
                 if (!isset($item->productFolder)) $newrows[] = $item;}
                 $rows = $newrows;
                 return (true);
@@ -390,17 +391,12 @@ class ProductCreateUdsService
                 }
             }
 
-            if ($isFractionProduct && ( $nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE")
-            ){
+            if ($isFractionProduct && ( $nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE") ){
                 $bd->errorProductLog($accountId,$error_log." Выбранная ед.изм товара в MS, не может быть дробным товаром в UDS.");
                 return null;
             }
 
-            if (
-                $isOfferProduct &&
-                ($prices['offerPrice'] <= 0 || $prices['offerPrice'] > $prices['salePrice'])
-            ){
-                $bd = new BDController();
+            if ($isOfferProduct && ($prices['offerPrice'] <= 0 || $prices['offerPrice'] > $prices['salePrice'])){
                 $bd->errorProductLog($accountId,$error_log." Акционная цена не может быть равна 0, также не может быть больше Цены продажи");
                 return null;
             }
@@ -413,34 +409,27 @@ class ProductCreateUdsService
                 $body["data"]["offer"]["skipLoyalty"] = true;
             }
             elseif ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
-                //if ($attribute->value <= 0 || $attribute->value == null) return null;
-                    $body["data"]["increment"] = intval($attribute->value);
+                    $body["data"]["increment"] = (float) ($attribute->value);
                 if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                     $body["data"]["increment"] *= 1000.0;
                     if ($body["data"]["increment"] >= 10000000){
-                        //dd($body["data"]["increment"]);
-                        $bd = new BDController();
                         $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                         return null;
                     }
                 } elseif ($nameOumUds == "CENTIMETRE"){
                     $body["data"]["increment"] *= 100.0;
                     if ($body["data"]["increment"] >= 1000000){
-                        //dd($body["data"]["increment"]);
-                        $bd = new BDController();
                         $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                         return null;
                     }
                 }
             }
             elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
-                //if ($attribute->value <= 0 || $attribute->value == null) return null;
-                $body["data"]["minQuantity"] = intval($attribute->value);
+                $body["data"]["minQuantity"] = (float) ($attribute->value);
                 if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                     $body["data"]["price"] /= 1000;
                     $body["data"]["minQuantity"] *= 1000.0;
                     if ($body["data"]["minQuantity"] >= 10000000){
-                        $bd = new BDController();
                         $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
                         return null;
                     }
@@ -448,7 +437,6 @@ class ProductCreateUdsService
                     $body["data"]["price"] /= 100;
                     $body["data"]["minQuantity"] *= 100.0;
                     if ($body["data"]["minQuantity"] >= 1000000){
-                        $bd = new BDController();
                         $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
                         return null;
                     }
@@ -469,11 +457,7 @@ class ProductCreateUdsService
             }
 
             if (!array_key_exists("inventory",$body["data"])){
-                $body["data"]["inventory"]["inStock"] = $this->stockProductService
-                    ->getProductStockMs($product->externalCode,
-                        $storeHref,
-                        $apiKeyMs
-                    );
+                $body["data"]["inventory"]["inStock"] = $this->stockProductService->getProductStockMs($product->externalCode, $storeHref,  $apiKeyMs );
             }
 
             if ($isFractionProduct && (
@@ -491,15 +475,11 @@ class ProductCreateUdsService
             }
 
             if ($isFractionProduct){
-                //if ($body["name"] == "Мешок с негром"){
                 $dPrice = explode('.',"".$body["data"]["price"]);
-                //dd($dPrice);
                 if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
-                    $bd = new BDController();
                     $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
                     return null;
                 }
-                // }
             }
 
             if ($nameOumUds == "PIECE"){
@@ -527,8 +507,6 @@ class ProductCreateUdsService
         try {
             return $client->post($url,$body);
         }catch (ClientException $e){
-            //dd($product, $e->getMessage());
-            $bd = new BDController();
             $bd->errorProductLog($accountId,$e->getMessage());
             return null;
         }
@@ -606,14 +584,14 @@ class ProductCreateUdsService
         $client = new MsClient($apiKeyMs);
         $json = $client->get($href);
 
-        return match ($json->name) {
-            "шт" => "PIECE",
-            "см" => "CENTIMETRE",
-            "м" => "METRE",
-            "мм" => "MILLILITRE",
-            "л; дм3" => "LITRE",
-            "г" => "GRAM",
-            "кг" => "KILOGRAM",
+        return match ($json->description) {
+            "Штука" => "PIECE",
+            "Сантиметр" => "CENTIMETRE",
+            "Метр" => "METRE",
+            "Миллиметр" => "MILLILITRE",
+            "Литр; кубический дециметр" => "LITRE",
+            "Грамм" => "GRAM",
+            "Килограмм" => "KILOGRAM",
             default => "",
         };
     }
