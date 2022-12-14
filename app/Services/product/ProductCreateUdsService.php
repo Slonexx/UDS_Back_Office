@@ -56,7 +56,7 @@ class ProductCreateUdsService
         $this->imgService = $imgService;
     }
 
-    #[ArrayShape(["message" => "string"])] public function insertToUds($data): array
+    public function insertToUds($data): array
     {
         return $this->notAddedInUds(
             $data['tokenMs'],
@@ -91,7 +91,7 @@ class ProductCreateUdsService
         return $client->get($url);
     }
 
-    #[ArrayShape(["message" => "string"])] private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $folderId, $storeName, $accountId): array
+    private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $folderId, $storeName, $accountId): array
     {
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
 
@@ -103,15 +103,11 @@ class ProductCreateUdsService
         //dd($folderName);
         set_time_limit(3600);
 
-        if (!array_key_exists('categoryIds', $productsUds)) {
-            $productsUds['categoryIds'] = [];
-        }
-        if (!array_key_exists('productIds', $productsUds)) {
-            $productsUds['productIds'] = [];
-        }
+        if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
+        if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
-
+        //dd($productsMs);
         foreach ($productsMs->rows as $row){
 
             $isProductNotAdd = false;
@@ -132,36 +128,24 @@ class ProductCreateUdsService
                 //dd($row);
             }
 
-
-
             if ($isProductNotAdd){
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
-
+                    //dd($idNodeCategory);
                     //UPDATE
-                    if (strlen($idNodeCategory) > 12) {
-                        $idNodeCategory = 0;
-                       // dd($row, strlen($idNodeCategory));
-                    };
-
-                    try {
-                        $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
-                        if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
-                    } catch (\Throwable $e){
-                        break;
-                    }
+                    if (strlen($idNodeCategory) > 12) { $idNodeCategory = 0; };
 
                 } else {
                     $idNodeCategory = 0;
                     //UPDATE
-                    try {
-                        $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
-                        if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
-                    } catch (\Throwable $e){
-                        continue;
-                    }
-
+                }
+                try {
+                    $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
+                    if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
+                    else continue;
+                } catch (\Throwable $e){
+                    continue;
                 }
             }
 
@@ -342,36 +326,43 @@ class ProductCreateUdsService
     }
 
     private function createProductUds($product,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$nodeId = 0){
+
         $url = "https://api.uds.app/partner/v2/goods";
         $client = new UdsClient($companyId,$apiKeyUds);
         $error_log = "Не удалось создать товар ".$product->name." в UDS.";
+        $bd = new BDController();
 
         $prices = [];
 
         foreach ($product->salePrices as $price){
-            if ($price->priceType->name == "Цена продажи"){
-                $prices["salePrice"] = ($price->value / 100);
-            } elseif ($price->priceType->name == "Акционный"){
-                $prices["offerPrice"] = ($price->value / 100);
+            if ($price->priceType->name == "Цена продажи"){ $prices["salePrice"] = ($price->value / 100);
+            } else {
+                if ($price->priceType->name == "Акционный") $prices["offerPrice"] = ($price->value / 100);
+            }
+        }
+
+        if ($prices == []){
+            $prices["salePrice"] = 0;
+            for ($index = 0; $index < count($product->salePrices); $index++){
+                if ($prices["salePrice"] > 0) break;
+                else $prices["salePrice"] = $product->salePrices[$index]->value / 100;
             }
         }
 
         if ($prices["salePrice"] <= 0){
-            $bd = new BDController();
-            //dd($product);
             $bd->errorProductLog($accountId, $error_log." Не была указана цена товара в MS");
             return null;
         }
 
+
+        //ДО делать get UoM
         $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
         if ($nameOumUds == ""){
-            $bd = new BDController();
             $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
             return null;
         }
 
-        if (strlen($product->name) > 100){
-            $name = mb_substr($product->name,0,100);
+        if (strlen($product->name) > 100){ $name = mb_substr($product->name,0,100);
         } else {
             $name = $product->name;
         }
@@ -399,12 +390,8 @@ class ProductCreateUdsService
                 }
             }
 
-            if ($isFractionProduct && (
-                    $nameOumUds == "KILOGRAM"
-                    || $nameOumUds == "LITRE"
-                    || $nameOumUds == "METRE")
+            if ($isFractionProduct && ( $nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE")
             ){
-                $bd = new BDController();
                 $bd->errorProductLog($accountId,$error_log." Выбранная ед.изм товара в MS, не может быть дробным товаром в UDS.");
                 return null;
             }
