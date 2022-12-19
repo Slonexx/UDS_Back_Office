@@ -5,6 +5,7 @@ namespace App\Console\Commands\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\EachPromise;
@@ -46,15 +47,16 @@ class UpdateUdsCommand extends Command
         foreach ($accountIds as $accountId){
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null || $settings->companyId != null){
-                if ($settings->UpdateProduct != "1")
+                if ($settings->UpdateProduct != "1"){
                     $clientCheck = new MsClient($settings->TokenMoySklad);
-                try {
-                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
-                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                    $countSettings++;
-                } catch (\Throwable $e) {
+                    try {
+                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                        $countSettings++;
+                    } catch (\Throwable $e) {
 
+                    }
                 }
             }
         }
@@ -64,12 +66,10 @@ class UpdateUdsCommand extends Command
     public function handle()
     {
         $allSettings = $this->settingsService->getSettings();
-        //dd($allSettings);
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-        //dd($accountIds);
         if (count($accountIds) == 0) return;
 
         $client = new Client();
@@ -81,26 +81,26 @@ class UpdateUdsCommand extends Command
                 $settings = new getSettingVendorController($accountId);
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (\Throwable $e) { continue; }
-                //dd($settings);
+
                 if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
                 if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
-                //dd($allSettings);
+
+                $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "folder_id" => $folder_id,
+                    "store" => $settings->Store,
+                    "accountId" => $settings->accountId,
+                ];
+
                 try {
-                    yield $client->postAsync($url,[
-                        'form_params' => [
-                            "tokenMs" => $settings->TokenMoySklad,
-                            "companyId" => $settings->companyId,
-                            "apiKeyUds" => $settings->TokenUDS,
-                            "folder_id" => $settings->ProductFolder,
-                            "store" => $settings->Store,
-                            "accountId" => $settings->accountId,
-                        ],
-                    ]);
+                    yield app(ProductController::class)->updateUds_data($data);
                 } catch (\Throwable $e) {
                     continue;
                 }
@@ -110,11 +110,7 @@ class UpdateUdsCommand extends Command
         $eachPromise = new EachPromise($promises,[
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
-                if ($response->getStatusCode() == 200) {
-                    //dd($response);
-                } else {
-                    //dd($response);
-                }
+                dd($response->getBody());
             },
             'rejected' => function ($reason) {
                 //dd($reason);

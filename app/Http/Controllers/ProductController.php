@@ -105,4 +105,12 @@ class ProductController extends Controller
            $this->productUpdateUdsService->updateProductsUds($data)
        );
     }
+
+    public function updateUds_data($data): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        return response(
+            $this->productUpdateUdsService->updateProductsUds($data)
+        );
+    }
+
 }

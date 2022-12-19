@@ -52,7 +52,7 @@ class CreateUdsCommand extends Command
                 if ($settings->UpdateProduct != "1"){
                     $clientCheck = new MsClient($settings->TokenMoySklad);
                     try {
-                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
                         $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                         $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                         $countSettings++;
@@ -67,14 +67,13 @@ class CreateUdsCommand extends Command
 
     public function handle()
     {
-        //dd($this->COUNT_FAILED_SETTINGS);
+
         $allSettings = $this->settingsService->getSettings();
-        //dd($allSettings);
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-        //dd($accountIds);
+
         if (count($accountIds) == 0) return;
 
         $client = new Client();
@@ -85,10 +84,9 @@ class CreateUdsCommand extends Command
             foreach ($accountIds as $accountId){
 
                 $settings = new getSettingVendorController($accountId);
-                //dd($settings);
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');

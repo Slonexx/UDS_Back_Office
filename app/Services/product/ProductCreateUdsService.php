@@ -94,7 +94,7 @@ class ProductCreateUdsService
     private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $folderId, $storeName, $accountId): array
     {
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
-
+        //dd($productsUds);
         //UPDATE if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         /*if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }*/
         //dd($productsUds);
