@@ -13,6 +13,7 @@ class Salesreturn extends Controller
 {
     public function SalesreturnObject($accountId, $entity, $objectId){
        $Setting = new getSettingVendorController($accountId);
+       $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
 
        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$objectId;
        $ClientMC = new ClientMC($url, $Setting->TokenMoySklad);
@@ -29,7 +30,23 @@ class Salesreturn extends Controller
            $bodyDemand = $ClientMC->requestGet();
            $externalCode = $bodyDemand->externalCode;
            $OLD_partialAmount = ((int) substr(strrchr($MAINBody->externalCode, "="), 1));
-           $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+
+           try {
+               $bodyUDS = $ClientUDS->get('https://api.uds.app/partner/v2/operations/'.$externalCode);
+           } catch (\Throwable $e) {
+               if (!property_exists($bodyDemand, 'customerOrder')) {
+                   $return = [
+                       'Status' => 400,
+                       'Data' => 'У данного документа нету связных документов отгрузки',
+                   ];
+               } else {
+                   $href = $bodyDemand->customerOrder->meta->href;
+                   $ClientMC->setRequestUrl($href);
+                   $customerOrder = $ClientMC->requestGet();
+                   $externalCode = $customerOrder->externalCode;
+               }
+           }
+
            try {
                $bodyUDS = $ClientUDS->get('https://api.uds.app/partner/v2/operations/'.$externalCode);
                $procent = ($bodyUDS->total - ($bodyUDS->total-$OLD_partialAmount)) * 100 / $bodyUDS->total;
@@ -42,7 +59,7 @@ class Salesreturn extends Controller
                        'total' => ((int) $bodyUDS->total - $OLD_partialAmount),
                    ],
                ];
-           } catch (\Throwable $e) {
+           }catch (\Throwable $e){
                $return = [
                    'Status' => (int) $e->getCode(),
                    'Data' => $e->getMessage(),
