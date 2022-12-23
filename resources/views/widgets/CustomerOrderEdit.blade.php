@@ -34,11 +34,11 @@
 
             if (receivedMessage.name === 'Open') { clearWidget()
                 let settings = ajax_settings(GlobalURL + receivedMessage.objectId, "GET", null)
-                console.log('initial request settings  &#8595; ')
+                console.log('initial request settings  ↓ ')
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-                    console.log('initial request response  &#8595; ')
+                    console.log('initial request response  ↓ ')
                     console.log(response)
 
                     let message = response.message;
@@ -100,10 +100,10 @@
 
         function ButtonComplete(){
             let settings = ajax_settings(url+ "CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID, "GET", null)
-            console.log('Button Complete request settings  &#8595; ')
+            console.log('Button Complete request settings  ↓ ')
             console.log(settings)
             $.ajax(settings).done(function (response) {
-                console.log('Button Complete request response  &#8595; ')
+                console.log('Button Complete request response  ↓ ')
                 console.log(response)
                 if (response.StatusCode == 200) {
                     document.getElementById("success").style.display = "block";
@@ -234,10 +234,10 @@
             };
 
             let settings = ajax_settings(url + 'CompletesOrder/operationsCalc/', "GET", data);
-            console.log('info operations request settings  &#8595; ')
+            console.log('info operations request settings  ↓ ')
             console.log(settings)
             $.ajax(settings).done(function (response) {
-                console.log('info operations request response  &#8595; ')
+                console.log('info operations request response  ↓ ')
                 console.log(response)
                 if (typeof response.Status != 'undefined'){
                 } else {
@@ -277,11 +277,11 @@
             };
 
             let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
-            console.log('send operations parameters  &#8595; ')
+            console.log('send operations parameters  ↓ ')
             console.log(settings)
 
             $.ajax(settings).done(function (response) {
-                console.log('send operations response  &#8595; ')
+                console.log('send operations response  ↓ ')
                 console.log(response)
 
                 if (response.code == 200) {
