@@ -170,37 +170,44 @@
         }
 
         function onchangeQR(){
-            let QRCode = (document.getElementById("QRCode").value)
+            let QRCode = document.getElementById("QRCode").value
             if (QRCode.length == 6){
                 document.getElementById("sendQRError").style.display = "none"
+                document.getElementById("sendPoint").style.display = "block"
                 document.getElementById("sendCancellation").style.display = "block"
+                document.getElementById("buttonOperations").style.display = "block"
                 document.getElementById("sendAccrue").style.display = "block";
+
                 operations_user = QRCode
                 OLDQRCode = QRCode
 
-                let params = {
-                    accountId: "{{ $accountId }}",
+                let data = {
+                    accountId: accountId,
                     code:OLDQRCode,
                 };
-                let final = url + 'customers/find'+ formatParams(params);
-                console.log('customers/find final = ' + final)
-                let xmlHttpRequest = new XMLHttpRequest();
-                xmlHttpRequest.addEventListener("load", function() {
-                    let r_textPars = JSON.parse(this.responseText);
-                    operations_availablePoints = r_textPars.availablePoints
-                    document.getElementById("availablePoints").innerText = r_textPars.availablePoints
-                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, r_textPars.availablePoints);
-                    if (r_textPars.id == 0) {
+
+                let settings = ajax_settings(url + 'customers/find', "GET", data)
+                console.log('QR-CODE request settings  ↓ ')
+                console.log(settings)
+                $.ajax(settings).done(function (response) {
+                    console.log('QR-CODE request response  ↓ ')
+                    console.log(response)
+
+                    operations_availablePoints = response.availablePoints
+                    document.getElementById("availablePoints").innerText = response.availablePoints
+                    info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, response.availablePoints);
+                    if (response.id == 0) {
                         document.getElementById("sendQRErrorID").style.display = "block";
                     } else  {
                         document.getElementById("sendQRErrorID").style.display = "none";
                     }
+
                 })
-                xmlHttpRequest.open("GET", final);
-                xmlHttpRequest.send();
             } else {
                 document.getElementById("sendQRError").style.display = "block"
+                document.getElementById("sendPoint").style.display = "none"
                 document.getElementById("sendCancellation").style.display = "none"
+                document.getElementById("buttonOperations").style.display = "none"
                 document.getElementById("sendAccrue").style.display = "none";
             }
         }
