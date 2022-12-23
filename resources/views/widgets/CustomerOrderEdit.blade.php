@@ -6,8 +6,9 @@
 
 <script>
         const url = 'https://smartuds.kz/'
+        let accountId = "{{ $accountId }}"
         let GlobalobjectId
-        let GlobalURL
+        let GlobalURL = "{{ $getObjectUrl }}"
         let GlobalxRefURL
         let GlobalUDSOrderID
         let OLDPhone
@@ -28,21 +29,24 @@
         let operationsAccrue
         let operationsCancellation
 
-        window.addEventListener("message", function(event) {
-            let receivedMessage = event.data;
+        window.addEventListener("message", function(event) { let receivedMessage = event.data
             GlobalobjectId = receivedMessage.objectId;
-            if (receivedMessage.name === 'Open') {
-                let oReq = new XMLHttpRequest()
-                clearWidget()
-                oReq.addEventListener("load", function() {
-                    let responseTextPars = JSON.parse(this.responseText);
-                    let StatusCode = responseTextPars.StatusCode;
-                    let message = responseTextPars.message;
-                    if (StatusCode == 402){
+
+            if (receivedMessage.name === 'Open') { clearWidget()
+                let settings = ajax_settings(GlobalURL + receivedMessage.objectId, "GET", null)
+                console.log('initial request settings  &#8595; ')
+                console.log(settings)
+
+                $.ajax(settings).done(function (response) {
+                    console.log('initial request response  &#8595; ')
+                    console.log(response)
+
+                    let message = response.message;
+                    if (response.StatusCode == 402){
                         document.getElementById("Error402").style.display = "block"
-                        document.getElementById("ErrorMessage").innerText = responseTextPars.message
+                        document.getElementById("ErrorMessage").innerText = response.message
                     } else {
-                        if (StatusCode == 200) {
+                        if (response.StatusCode == 200) {
                             document.getElementById("activated").style.display = "block";
                             document.getElementById("undefined").style.display = "none";
                             GlobalUDSOrderID = message.id;
@@ -85,37 +89,30 @@
 
                         }
                     }
-                });
-                GlobalURL = "{{ $getObjectUrl }}" + receivedMessage.objectId;
-                console.log('GlobalURL = ' + GlobalURL)
-                oReq.open("GET", GlobalURL);
-                oReq.send();
+
+                })
             }
         });
 
 
 
-        function xRefURL(){
-            window.open(GlobalxRefURL);
-        }
+
 
         function ButtonComplete(){
-            var xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function() {
-                var responseTextPars = JSON.parse(this.responseText);
-                var StatusCode = responseTextPars.StatusCode;
-                if (StatusCode == 200) {
+            let settings = ajax_settings(url+ "CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID, "GET", null)
+            console.log('Button Complete request settings  &#8595; ')
+            console.log(settings)
+            $.ajax(settings).done(function (response) {
+                console.log('Button Complete request response  &#8595; ')
+                console.log(response)
+                if (response.StatusCode == 200) {
                     document.getElementById("success").style.display = "block";
                     document.getElementById("danger").style.display = "none";
                 } else {
                     document.getElementById("success").style.display = "none";
                     document.getElementById("danger").style.display = "block";
-
-
                 }
             });
-            xmlHttpRequest.open("GET", "https://smartuds.kz/ompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
-            xmlHttpRequest.send();
         }
 
         function CheckPhoneOrQR(Selector){
@@ -228,49 +225,47 @@
         }
 
         function info_operations(user, total, skipTotal, point, availablePoints){
-            let params = {
-                accountId: "{{ $accountId }}",
+            let data = {
+                accountId: accountId,
                 user: user,
                 total: total,
                 SkipLoyaltyTotal: skipTotal,
                 points: point,
             };
-            console.log('params info_operations = ' +  JSON.stringify(params))
-            let final = url + 'CompletesOrder/operationsCalc/' + formatParams(params);
-            console.log('info_operations final = ' + final)
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function() {
-                let r_textPars = JSON.parse(this.responseText);
-                if (typeof r_textPars.Status !== 'undefined'){
+
+            let settings = ajax_settings(url + 'CompletesOrder/operationsCalc/', "GET", data);
+            console.log('info operations request settings  &#8595; ')
+            console.log(settings)
+            $.ajax(settings).done(function (response) {
+                console.log('info operations request response  &#8595; ')
+                console.log(response)
+                if (typeof response.Status != 'undefined'){
                 } else {
                     document.getElementById("sendQRErrorID").style.display = "none";
-                    operations_cash = r_textPars.cash;
-                    operations_total = r_textPars.total;
-                    operations_skipLoyaltyTotal = r_textPars.skipLoyaltyTotal;
+                    operations_cash = response.cash;
+                    operations_total = response.total;
+                    operations_skipLoyaltyTotal = response.skipLoyaltyTotal;
 
-                    let cashBack = r_textPars.cashBack;
+                    let cashBack = response.cashBack;
                     document.getElementById("total").innerText = operations_total
                     document.getElementById("cashBackOperation").innerText = cashBack
                     document.getElementById("availablePoints").innerText = availablePoints
 
 
-                    operations_Max_points = r_textPars.maxPoints
-                    PointMax(r_textPars.maxPoints)
+                    operations_Max_points = response.maxPoints
+                    PointMax(response.maxPoints)
                     document.getElementById("sendAccrue").style.display = "block";
                     document.getElementById('buttonOperations').style.display = 'block'
                 }
-
             })
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
         }
 
         function sendOperations(){
             if (parseFloat(operations_points) > 0) {
                 operations_cash = operations_cash - operations_points
             }
-            let params = {
-                accountId: "{{ $accountId }}",
+            let data = {
+                accountId: accountId,
                 objectId: GlobalobjectId,
                 user: operations_user,
                 cashier_id: operations_cashier_id,
@@ -280,38 +275,24 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-            let final = url + '/CompletesOrder/operations/' + formatParams(params);
-            console.log('sendOperations final = ' + final)
-            let xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.addEventListener("load", function() {
-                let r_textPars = JSON.parse(this.responseText);
-                if (r_textPars.code == 200) {
+
+            let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
+            console.log('send operations parameters  &#8595; ')
+            console.log(settings)
+
+            $.ajax(settings).done(function (response) {
+                console.log('send operations response  &#8595; ')
+                console.log(response)
+
+                if (response.code == 200) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";
                 }
-
             })
-            xmlHttpRequest.open("GET", final);
-            xmlHttpRequest.send();
-
-
         }
 
 
-        function clearWidget(){
-            document.getElementById("activated").style.display = "none";
-            document.getElementById("undefined").style.display = "none";
-            document.getElementById("Error402").style.display = "none"
-            document.getElementById("success").style.display = "none";
-            document.getElementById("danger").style.display = "none";
-            document.getElementById("sendWarning").style.display = "none";
-            document.getElementById("buttonOperations").style.display = "none";
-            document.getElementById("labelAccrue").style.display = "none";
-            document.getElementById("labelCancellation").style.display = "none";
-            document.getElementById("Accrue").checked = true;
-            document.getElementById("Error402").style.display = "none"
-            document.getElementById("sendQRErrorID").style.display = "none"
-        }
+
         function setStateByStatus(State){
             if (State == "NEW") {
                 document.getElementById("ButtonComplete").style.display = "block";
@@ -329,6 +310,17 @@
                 document.getElementById("Complete").style.display = "none";
             }
         }
+
+        function ajax_settings(url, method, data){
+            return {
+                "url": url,
+                "method": method,
+                "timeout": 0,
+                "headers": {"Content-Type": "application/json",},
+                "data": data,
+            }
+        }
+
     </script>
 
 
@@ -446,7 +438,7 @@
                     </div>
                     <div id="labelCancellation" class="col-6">
                         <div class="mx-3  form-check">
-                            <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation"
+                            <input onclick="sendAccrueOrCancellation(this)" class="form-check-input" name="eRadios" type="radio" id="Cancellation" value="sendCancellation">
                             <label class="form-check-label" for="Cancellation"> Списать</label>
                         </div>
                     </div>
@@ -552,10 +544,26 @@
         operations_points = this.value
     });
 
+    function clearWidget(){
+        document.getElementById("activated").style.display = "none";
+        document.getElementById("undefined").style.display = "none";
+        document.getElementById("Error402").style.display = "none"
+        document.getElementById("success").style.display = "none";
+        document.getElementById("danger").style.display = "none";
+        document.getElementById("sendWarning").style.display = "none";
+        document.getElementById("buttonOperations").style.display = "none";
+        document.getElementById("labelAccrue").style.display = "none";
+        document.getElementById("labelCancellation").style.display = "none";
+        document.getElementById("Accrue").checked = true;
+        document.getElementById("Error402").style.display = "none"
+        document.getElementById("sendQRErrorID").style.display = "none"
+    }
+
     function PointMax(max){
         let idPoint = window.document.getElementById('maxPoint');
         idPoint.innerText = max.toString();
     }
+
     function formatParams(params) {
         return "?" + Object
             .keys(params)
@@ -564,6 +572,12 @@
             })
             .join("&")
     }
+
+
+    function xRefURL(){
+        window.open(GlobalxRefURL);
+    }
+
     function only_numbers(){
         if (event.keyCode < 48 || event.keyCode > 57)
             event.returnValue= false;
@@ -617,70 +631,8 @@
     .s-min-8{
         font-size: 8px;
     }
-
-    .myPM{
-        padding-left: 4px !important;
-        margin: 2px !important;
-        margin-right: 11px !important;
-    }
-
-    .myButton {
-        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-        background-color: #00a6ff !important;
-        color: white !important;
-        border-radius:50px !important;
-        display:inline-block !important;
-        cursor:pointer !important;
-        padding:5px 5px !important;
-        text-decoration:none !important;
-    }
-    .myButton:hover {
-        background-color: #fffdfd !important;
-        color: #111111 !important;
-    }
-    .myButton:active {
-        position: relative !important;
-        top: 1px !important;
-    }
-
-    .myButton {
-        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-        background-color: #00a6ff !important;
-        color: white !important;
-        border-radius:50px !important;
-        display:inline-block !important;
-        cursor:pointer !important;
-        padding:5px 5px !important;
-        text-decoration:none !important;
-    }
-    .myButton:hover {
-        background-color: #fffdfd !important;
-        color: #111111 !important;
-    }
-    .myButton:active {
-        position: relative !important;
-        top: 1px !important;
-    }
-    .my-bg-gray{
-        background-color: #ebefff !important;
-        color: #3b3c65;
-        border-radius: 14px !important;
-        overflow: hidden !important;
-    }
-
-    .my-bg-gray-2{
-        background-color: #e8e8e8 !important;
-        color: #3b3c65;
-        border-radius: 14px !important;
-        overflow: hidden !important;
-    }
-
-    .my-bg-success{
-        border-radius: 14px !important;
-        overflow: hidden !important;
-    }
-
 </style>
+
 </body>
 </html>
 
