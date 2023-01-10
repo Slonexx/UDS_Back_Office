@@ -5,7 +5,7 @@
 <body>
 
 <script>
-        const url = 'https://smartuds.kz/'
+        const url = 'https://dev.smartuds.kz/'
         let GlobalobjectId
         let GlobalURL
         let GlobalxRefURL
@@ -114,7 +114,7 @@
 
                 }
             });
-            xmlHttpRequest.open("GET", "https://smartuds.kz/ompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
+            xmlHttpRequest.open("GET", "https://dev.smartuds.kz/ompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
             xmlHttpRequest.send();
         }
 
@@ -314,7 +314,7 @@
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" >
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
                 </div>
                 <div class="col-10 text-white mt-1 row">
                         <div class="col-11">
@@ -407,7 +407,7 @@
         <div id="undefined" class="bg-white text-Black rounded content-container" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" >
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
                 </div>
                 <div class="col-10 text-white mt-1 row">
                         Провести операцию
@@ -505,7 +505,7 @@
         <div id="Error402" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" >
+                    <img src="https://dev.smartuds.kz/Config/UDS.png" width="35" height="35" >
                 </div>
                 <div class="col-10 text-white mt-1 row">
                     Ошибка

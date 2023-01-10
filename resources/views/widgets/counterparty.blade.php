@@ -100,7 +100,7 @@
                 }
 
             });
-            xmlHttpRequest.open("GET", "https://smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.open("GET", "https://dev.smartuds.kz/Accrue/{{$accountId}}/" + input + "/" + UDSClientID);
             xmlHttpRequest.send();
             update();
         }
@@ -122,7 +122,7 @@
                 }
 
             });
-            xmlHttpRequest.open("GET", "https://smartuds.kz/Cancellation/{{$accountId}}/" + input + "/" + UDSClientID);
+            xmlHttpRequest.open("GET", "https://dev.smartuds.kz/Cancellation/{{$accountId}}/" + input + "/" + UDSClientID);
             xmlHttpRequest.send();
             update();
         }
@@ -181,7 +181,7 @@
     <div id="activated" class="content bg-white text-Black rounded">
         <div class="row uds-gradient mx-2">
             <div class="mx-2 p-2 col-9 text-white">
-                <img src="https://smartuds.kz/Config/UDS.png" width="30" height="30" >
+                <img src="https://dev.smartuds.kz/Config/UDS.png" width="30" height="30" >
                 <label onclick="xRefURL()" style="cursor: pointer"> Клиент </label>
             </div>
             <div class="mx-2 col-2 p-2">
