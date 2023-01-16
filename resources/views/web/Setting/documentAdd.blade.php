@@ -71,7 +71,7 @@
 
             </div>
 
-                <div class="mb-3 row">
+            <div class="mb-3 row">
                     <div class="mb-2 row mx-3">
                             <label class="col-sm-5 col-form-label"> 1) Новый заказ </label>
                             <div class="col-sm-7 ">

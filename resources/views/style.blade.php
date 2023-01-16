@@ -1,5 +1,80 @@
 <style>
 
+
+
+    .s-min-16 {
+        font-size: 16px;
+    }
+
+
+
+    .uds-gradient{
+        background: rgb(145,0,253);
+        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+    }
+
+    .gradient{
+        background: rgb(145,0,253);
+        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+    }
+
+    .text_gradient{
+        background-color: rgb(145,0,253);
+        background-image: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+        background-size: 100%;
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -moz-text-fill-color: transparent;
+    }
+
+    .gradient_focus:hover{
+        color: white;
+        border: 0px;
+        background: rgb(145,0,253);
+        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+    }
+
+    .gradient_focus:active, .gradient_focus:focus{
+        background-color: rgb(145,0,253);
+        background-image: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+        border: 0px;
+        background-size: 100%;
+        -webkit-background-clip: text;
+        -moz-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -moz-text-fill-color: transparent;
+    }
+
+
+    .gradient_invert{
+        background-image: linear-gradient(135deg, #e1eaf8 0%, #f5f7fa 100%);
+    }
+
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+    .content-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-grow: 1;
+    }
+    .buttons-container-head{
+        background-image: linear-gradient(135deg, #e1eaf8 0%, #f5f7fa 100%);
+        padding-top: 3px;
+        min-height: 3px;
+    }
+    .buttons-container {
+        padding-top: 10px;
+        min-height: 10px;
+    }
+
+
+</style>
+
+<style>
     .headfull {
         height: 720px;
     }
@@ -9,20 +84,6 @@
         color: #444444;
         font-size: 8pt;
         background-color: #FAFAFA;
-    }
-
-    .s-min-16 {
-        font-size: 16px;
-    }
-
-    .gradient{
-        background: rgb(145,0,253);
-        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
-    }
-
-    .uds-gradient{
-        background: rgb(145,0,253);
-        background: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
     }
 
     /* Фиксированный боковых навигационных ссылок, полной высоты */
@@ -86,33 +147,6 @@
         float: right;
         padding-right: 8px;
     }
-</style>
 
-<style>
-    /* Новый цвет текста */
-    .text-orange{
-        color: orange;
-    }
-
-    .btn-new:hover{
-        border-color: white !important
-    }
-    .btn-new:focus{
-        border-color: white !important;
-        color: orange !important;
-    }
-    .form-control-orange:focus{
-        background-color: white;
-        border-color: black;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(255, 77, 0, 0.16);
-    }
-
-    .btnP p:hover {
-        color: orange;
-    }
-    .btnP button:hover {
-        color: orange;
-    }
 
 </style>
