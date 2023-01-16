@@ -23,11 +23,11 @@
                 <div class="mt-2">
                     <button id="btn_1" class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
                     <div class="dropdown-container">
-                        <a class="mt-1" id="link_2" href="/Setting/{{$accountId}}/{{$isAdmin}}"> Основная </a>
+                        <a class="mt-1" id="link_2" href="/Setting/Main/{{$accountId}}/{{$isAdmin}}"> Основная </a>
                         <a class="mt-1" id="link_3" href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
                         <a class="mt-1" id="link_4" href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
                         <a class="mt-1" id="link_5" href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
-                        <a class="mt-1" id="link_6" href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>
+                        {{--<a class="mt-1" id="link_6" href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>--}}
                     </div>
                 </div>
 
@@ -62,13 +62,13 @@
 
 
 <script>
-    var dropdown = document.getElementsByClassName("dropdown-btn");
-    var i;
+    let dropdown = document.getElementsByClassName("dropdown-btn");
+    let i;
 
     for (i = 0; i < dropdown.length; i++) {
         dropdown[i].addEventListener("click", function() {
             this.classList.toggle("active");
-            var dropdownContent = this.nextElementSibling;
+            let dropdownContent = this.nextElementSibling;
             if (dropdownContent.style.display === "block") {
                 dropdownContent.style.display = "none";
             } else {

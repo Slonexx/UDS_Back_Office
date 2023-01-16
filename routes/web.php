@@ -3,13 +3,13 @@
 use App\Http\Controllers\BackEnd\Demand;
 use App\Http\Controllers\BackEnd\ObjectController;
 use App\Http\Controllers\BackEnd\Salesreturn;
-use App\Http\Controllers\BackEnd\Selesreturn;
+use App\Http\Controllers\Web\ADD\ApplicationController;
 use App\Http\Controllers\Web\employees;
+use App\Http\Controllers\Web\GET\getController;
+use App\Http\Controllers\Web\POST\postController;
 use App\Http\Controllers\Web\sendOperations;
 use App\Http\Controllers\Web\SettingController;
-use App\Http\Controllers\Web\SupportController;
 use App\Http\Controllers\Web\RewardController;
-use App\Http\Controllers\Web\WhatsappController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Web\indexController;
 use \App\Http\Controllers\Config\DeleteVendorApiController;
@@ -48,9 +48,16 @@ Route::get('/', [indexController::class, 'index'])->name('index');
 Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("indexMain");
 
 
-Route::get('/Setting/{accountId}/{isAdmin}', [SettingController::class, 'index'])->name('indexSetting');
-Route::get('/Setting/Document/{accountId}/{isAdmin}', [SettingController::class, 'indexDocument'])->name('indexDocument');
+Route::get('/Setting/Main/{accountId}/{isAdmin}', [getController::class, 'mainSetting'])->name('indexSetting');
+Route::post('/setSetting/Main/{accountId}/{isAdmin}', [postController::class, 'postSettingIndex'])->name('setSettingIndex');
+
+
+Route::get('/Setting/Document/{accountId}/{isAdmin}', [getController::class, 'indexDocument'])->name('indexDocument');
+Route::post('/setSetting/Document/{accountId}/{isAdmin}', [postController::class, 'postSettingOrder'])->name('setSettingDocument');
+
+
 Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'indexAdd'])->name('indexAdd');
+Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
 
 
 Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);
@@ -63,11 +70,8 @@ Route::post('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::cl
 Route::get('/Setting/Error/{accountId}/{isAdmin}/{message}', [SettingController::class, 'indexError'])->name('indexError');
 Route::get('/Setting/noAdmin/{accountId}/{isAdmin}/', [SettingController::class, 'indexNoAdmin'])->name('indexNoAdmin');
 
-Route::post('/setSetting/{accountId}/{isAdmin}', [SettingController::class, 'postSettingIndex'])->name('setSettingIndex');
-Route::post('/setSetting/Document/{accountId}/{isAdmin}', [SettingController::class, 'postSettingDocument'])->name('setSettingDocument');
-Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
 
-Route::get('/CountProduct/{accountId}/{folderName}', [SettingController::class, 'CountProduct']);
+Route::post('/CountProduct/', [ApplicationController::class, 'CountProduct']);
 
 
 

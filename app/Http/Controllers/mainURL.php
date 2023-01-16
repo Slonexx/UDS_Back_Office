@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class mainURL extends Controller
 {
 
@@ -15,6 +13,11 @@ class mainURL extends Controller
     public function url_uds(): string
     {
         return 'https://api.uds.app/';
+    }
+
+    public function url_ms(): string
+    {
+        return 'https://online.moysklad.ru/api/remap/1.2/entity/';
     }
 
 

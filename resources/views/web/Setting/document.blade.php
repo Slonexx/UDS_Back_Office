@@ -3,236 +3,294 @@
 @section('item', 'link_3')
 @section('content')
 
-
-    <div class="content p-4 mt-2 bg-white text-Black rounded">
-        <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
-            <div class="col-10" style="margin-top: 1.2rem"> <span class="text-white" style="font-size: 20px">  Настройки &#8594; Заказы </span></div>
-            <div class="col-2 text-center">
-                <img src="https://smarttis.kz/Config/logo.png" width="40%"  alt="">
-                <div class="text-white" style="font-size: 11px; margin-top: 8px"> Топ партнёр сервиса МойСклад </div>
+    <div class="main-container">
+        <div class="content-container">
+            <div class="content p-4 mt-2 bg-white text-Black rounded">
+            <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
+                <div class="col-10" style="margin-top: 1.2rem"> <span class="text-white" style="font-size: 20px">  Настройки &#8594; Заказы </span></div>
+                <div class="col-2 text-center">
+                    <img src="https://smarttis.kz/Config/logo.png" width="40%"  alt="">
+                    <div class="text-white" style="font-size: 11px; margin-top: 8px"> Топ партнёр сервиса МойСклад </div>
+                </div>
             </div>
-        </div>
 
-        <br>
+                <div id="div_message" class="mt-1 alert alert-warning alert-dismissible fade show in text-center" style="display: none">
+                    <div id="message"></div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
-        @isset($message)
-
-            <div class="{{$message['alert']}}"> {{ $message['message'] }}
+            <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"> Склад на который будет создаваться заказ, это тот же склад который выбирается по остаткам в настройках &#8594; основная
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-        @endisset
 
-        <div class=" alert alert-warning alert-dismissible fade show in text-center "> Склад на который будет создаваться заказ, это тот же склад который выбирается по остаткам в настройках &#8594; основная
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <form action="/setSetting/Document/{{ $accountId }}/{{ $isAdmin }}" method="post">
+            @csrf <!-- {{ csrf_field() }} -->
 
-
-        <form action=" {{ route('setSettingDocument' , [ 'accountId' => $accountId, 'isAdmin' => $isAdmin ] ) }} " method="post">
-        @csrf <!-- {{ csrf_field() }} -->
-
-
-            <div class="mb-3 row">
-                <div class="col-sm-5">
-                    <label class="mt-1 from-label">Создавать заказы с UDS ? </label>
+                <div class="row p-1 gradient_invert rounded text-black">
+                    <div class="col-11">
+                        <div style="font-size: 20px"> Настройки заказа </div>
+                    </div>
+                    <div onclick="toggleClick(1)" class="col-1 d-flex justify-content-end " style="font-size: 30px; cursor: pointer">
+                        <i id="toggle_off" class="fa-solid fa-toggle-off text_gradient" style="display: block"></i>
+                        <i id="toggle_on"  class="fa-solid fa-toggle-on  text_gradient" style="display: none"></i>
+                    </div>
                 </div>
-                <div class="col-sm-2">
+                <div id="T1">
 
+                    <div class="mt-2 row">
+                        <div class="col-5">
+                            <label class="mt-1 from-label">Создавать заказы с UDS ? </label>
+                        </div>
+                        <div class="col-2">
+                            <select id="creatDocument" name="creatDocument" class="form-select text-black" onchange="creatDocumentView(this.value)">
+                                <option value="0">Нет</option>
+                                <option value="1">Да</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="DocumentView" class="mt-2">
 
-                        @php
-
-                        if ($creatDocument == "1") {
-                            $creatDocument_data = "anti_hidden_div";
-                            $creatDocument_data_option_0 = "";
-                            $creatDocument_data_option_1 = "selected";
-                        }
-                        else {
-                            $creatDocument_data = "hidden_div";
-                            $creatDocument_data_option_0 = "selected";
-                            $creatDocument_data_option_1 = "";
-                        }
-
-                        @endphp
-
-
-                  <select name="creatDocument" class="form-select text-black" onchange="showDiv('{{$creatDocument_data}}', this)">
-                      <option {{$creatDocument_data_option_0}} value="0">Нет</option>
-                      <option {{$creatDocument_data_option_1}} value="1">Да</option>
-                  </select>
-
-
-
-                </div>
-
-                    <div id="{{$creatDocument_data}}">
-                    <br>
-                        <div class="mb-3 row" >
+                        <div class="mt-1 row" >
                             <P class="col-sm-5 col-form-label"> Выберите на какую организацию создавать заказы: </P>
                             <div class="col-sm-7">
 
-
-                                <select name="Organization"  id="hidden_Organization" class="form-select text-black" onclick="PaymentAccountFun()" >
-                                    @if ($Organization != "0")
-                                        <option selected value="{{ $Organization->id }}"> {{ ($Organization->name) }} </option>
-                                        @foreach($Body_organization as $bodyItem)
-                                            @if ($Organization->id != $bodyItem->id)
-                                                <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                    @if ($Organization == "0")
-                                        @foreach($Body_organization as $bodyItem)
-                                                <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
-                                        @endforeach
-                                        @endif
+                                <select name="Organization"  id="select_Organization" class="form-select text-black" onchange="Organization_PaymentAccount(this.value)">{{--onclick="PaymentAccountFun()" >--}}
+                                    @foreach($arr_Organization as $bodyItem)
+                                        <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
+                                    @endforeach
                                 </select>
 
                             </div>
                         </div>
-                        <div class="mb-3 row">
-                            <P class="col-sm-5 col-form-label"> Выберите какой тип документов создавать: </P>
-                            <div class="col-sm-7">
-                                <select name="Document" class="form-select text-black" >
-                                    @if($Document == "0")
-                                        <option selected value="0">Не создавать</option>
-                                        <option value="1">Отгрузка</option>
-                                        <option value="2">Отгрузка + счет-фактура выданный</option>
-                                    @endif
-                                    @if($Document == "1")
-                                        <option value="0">Не создавать</option>
-                                        <option selected value="1">Отгрузка</option>
-                                        <option value="2">Отгрузка + счет-фактура выданный</option>
-                                    @endif
-                                    @if($Document == "2")
-                                        <option value="0">Не создавать</option>
-                                        <option value="1">Отгрузка</option>
-                                        <option selected value="2">Отгрузка и счет-фактура выданный</option>
-                                    @endif
+                        <div class="mt-1 row">
+                            <P class="col-5 col-form-label"> Выберите какой тип документов создавать: </P>
+                            <div class="col-7">
+                                <select id="Document" name="Document" class="form-select text-black" >
+                                    <option value="0">Не создавать</option>
+                                    <option value="1">Отгрузка</option>
+                                    <option value="2">Отгрузка + счет-фактура выданный</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3 row">
+                        <div class="mt-1 row">
                             <P class="col-sm-5 col-form-label"> Выберите какой тип платежного документа создавать: </P>
                             <div class="col-sm-7">
                                 <select id="PaymentDocument" name="PaymentDocument" class="form-select text-black"  onclick="PaymentDocumentFun()">
-                                    @if($PaymentDocument == "0")
-                                        <option selected value="0">Не создавать</option>
-                                        <option value="1">Приходной ордер</option>
-                                        <option value="2">Входящий платёж </option>
-                                    @endif
-                                    @if($PaymentDocument == "1")
-                                        <option value="0">Не создавать</option>
-                                        <option selected value="1">Приходной ордер</option>
-                                        <option value="2">Входящий платёж </option>
-                                    @endif
-                                    @if($PaymentDocument == "2")
-                                        <option value="0">Не создавать</option>
-                                        <option value="1">Приходной ордер</option>
-                                        <option selected value="2">Входящий платёж </option>
-                                    @endif
+                                    <option value="0">Не создавать</option>
+                                    <option value="1">Приходной ордер</option>
+                                    <option value="2">Входящий платёж </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3" id="hidden_PaymentAccount">
+                        <div class="mt-1" id="hidden_PaymentAccount">
                             <div class="row">
-                            <P class="col-sm-5 col-form-label"> Выберите расчетный счет: </P>
-                            <div class="col-sm-7">
-                                @foreach($Body_organization as $row)
-                                    <div class="Payment" id="Payment_{{$row->id}}">
-                                        @php
-                                            $id = $row->id;
-                                            $array_element = [];
-                                            $url_accounts = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$id."/accounts";
-                                            $clinet = new \App\Http\Controllers\GuzzleClient\ClientMC($url_accounts, $apiKey);
-                                            $Body_accounts = $clinet->requestGet()->rows;
-                                        @endphp
-
-                                        <select name="{{$row->id}}" class="form-select text-black">
-                                            @if (array_key_exists(0, $Body_accounts))
-                                                @if ($Organization != "0")
-                                                    @if ($Organization->id == $row->id)
-                                                        <option selected value="{{$PaymentAccount}}"> {{ $PaymentAccount }}</option>
-                                                    @endif
+                                <P class="col-5 col-form-label"> Выберите расчетный счет: </P>
+                                <div class="col-7">
+                                    @foreach($arr_PaymentAccount as $id=>$arr_item)
+                                        <div id="PaymentAccount_{{$id}}" style="display: none">
+                                            <select id="select_PaymentAccount_{{$id}}" name="{{$id}}" class="form-select text-black" >
+                                                @if(($arr_item) != [])
+                                                    @foreach($arr_item as $item)
+                                                        <option value="{{$item->accountNumber}}"> {{$item->accountNumber}} </option>
+                                                    @endforeach
+                                                @else
+                                                    <option value="0"> Нет расчетного счёта </option>
                                                 @endif
-                                            @foreach ($Body_accounts as $Body_accounts_item)
-                                                @if($PaymentAccount != $Body_accounts_item->accountNumber)
-                                                    <option value="{{$Body_accounts_item->accountNumber}}"> {{ $Body_accounts_item->accountNumber }}</option>
-                                                @endif
-                                            @endforeach
-                                            @else <option>Нет расчетного счёта</option>
-                                            @endif
-                                        </select>
-
-
-
-                                    </div>
-
-                                @endforeach
-                            </div>
-                        </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="form-label mb-3"> Вебхуки   <button type="button" class="btn btn-new fa-solid fa-circle-info myPopover1"
-                                                                              data-toggle="popover" data-placement="right" data-trigger="focus"
-                                                                              data-content="Данный вебхуки необходимо вставить в UDS &#8594; Настройки &#8594; Интеграция &#8594; Вебхуки ">
-                                </button></label>
-                            <script> $('.myPopover1').popover(); </script>
-
-                            <div class="col-5">
-                                <label class="mt-2"> Получение новых клиентах </label>
-                            </div>
-                            <div class="col-7">
-                                <div  class=" row mb-2 mx-2 bg-myBlue rounded">
-                                    <div class="col-1">
-                                       <i onclick="myWebXyk1()" class="text-orange btn fa-solid fa-link p-2 "></i>
-                                    </div>
-                                    <div id="myWebXyk1" class="mt-1 col-11 myWebXyk1 s-min-16">
-                                        https://smartuds.kz/api/webhook/{{$accountId}}/client
-                                    </div>
-                                    </div>
-                            </div>
-                            <div class="col-5 mt-2">
-                                <label class="mt-2"> Получение новых заказов  </label>
-                            </div>
-                            <div class="col-7 mt-2">
-                                <div  class=" row mb-2 mx-2 bg-myBlue rounded">
-                                    <div class="col-1">
-                                        <i onclick="myWebXyk2()" class="text-orange btn fa-solid fa-link p-2"></i>
-                                    </div>
-                                    <div id="myWebXyk2" class="mt-1 col-11 myWebXyk2 s-min-16">
-                                        https://smartuds.kz/api/webhook/{{$accountId}}/order
-                                    </div>
+                                            </select>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
-                        <br>
+                    </div>
+                </div>
+
+                <div class="row mt-1 p-1 gradient_invert rounded text-black">
+                    <div class="col-11">
+                        <div style="font-size: 20px">Вебхуки
+                            <button type="button" class="btn gradient_focus fa-solid fa-circle-info myPopover1"
+                                    data-toggle="popover" data-placement="right" data-trigger="focus"
+                                    data-content="Данный вебхуки необходимо вставить в UDS &#8594; Настройки &#8594; Интеграция &#8594; Вебхуки ">
+                            </button>
+                        </div>
+                    </div>
+                    <div onclick="toggleClick(2)" class="col-1 d-flex justify-content-end " style="font-size: 30px; cursor: pointer">
+                        <i id="toggle_off_2" class="fa-solid fa-toggle-off text_gradient" style="display: block"></i>
+                        <i id="toggle_on_2"  class="fa-solid fa-toggle-on  text_gradient" style="display: none"></i>
+                    </div>
+                </div>
+                <div id="T2" class="mt-1" style="display:block;">
+                    <div class="row">
+                        <div class="col-5"> <label class="mt-2"> Получение новых клиентах </label> </div>
+                        <div class="col-7">
+                            <div  class=" row mx-2 bg-myBlue rounded">
+                                <div class="col-1">
+                                    <i onclick="myWebXyk1()" class="gradient_focus btn fa-solid fa-link p-2 "></i>
+                                </div>
+                                <div id="myWebXyk1" class="mt-1 col-11 myWebXyk1 s-min-16">
+                                    https://smartuds.kz/api/webhook/{{$accountId}}/client
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 mt-2">
+                            <label class="mt-2"> Получение новых заказов  </label>
+                        </div>
+                        <div class="col-7 mt-2">
+                            <div  class=" row mt-1 mx-2 bg-myBlue rounded">
+                                <div class="col-1">
+                                    <i onclick="myWebXyk2()" class="gradient_focus btn fa-solid fa-link p-2"></i>
+                                </div>
+                                <div id="myWebXyk2" class="mt-1 col-11 myWebXyk2 s-min-16">
+                                    https://smartuds.kz/api/webhook/{{$accountId}}/order
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-1 p-1 gradient_invert rounded text-black">
+                    <div class="col-11">
+                        <div style="font-size: 20px">Дополнительные настройки при заказе с UDS</div>
+                    </div>
+                    <div onclick="toggleClick(3)" class="col-1 d-flex justify-content-end " style="font-size: 30px; cursor: pointer">
+                        <i id="toggle_off_3" class="fa-solid fa-toggle-off text_gradient" style="display: block"></i>
+                        <i id="toggle_on_3"  class="fa-solid fa-toggle-on  text_gradient" style="display: none"></i>
+                    </div>
+                </div>
+                <div id="T3" class="mt-1" style="display: block">
+                    <div class="mt-1 row">
+                        <P class="col-5 col-form-label"> Выберите канал продаж: </P>
+                        <div class="col-7">
+                            <select id="Saleschannel" name="Saleschannel" class="form-select text-black " >
+                                <option value="0"> Не выбирать  </option>
+                                @foreach($arr_Saleschannel as $item)
+                                    <option value="{{ $item->name }}"> {{ ($item->name) }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-1 row">
+                        <P class="col-5 col-form-label"> Выберите проект:  </P>
+                        <div class="col-7">
+                            <select id="Project" name="Project" class="form-select text-black " >
+                                <option value="0"> Не выбирать  </option>
+                                @foreach($arr_Project as $item)
+                                    <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="mt-3">
+                        <div style="font-size: 20px">Статусы заказов</div>
+                        <div class="row">
+                            <label class="col-5 col-form-label"> 1) Новый заказ </label>
+                            <div class="col-7">
+                                <select id="NEW" name="NEW" class="form-select text-black">
+                                    <option value="0"> Статус МойСклад   </option>
+                                    @foreach($arr_Customerorder as $item)
+                                            <option value="{{ $item->name }}"> {{ ($item->name) }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-5 col-form-label"> 2) Завершенный </label>
+                            <div class="col-7 ">
+                                <select id="COMPLETED" name="COMPLETED" class="form-select text-black">
+                                    <option value="0"> Статус МойСклад   </option>
+                                    @foreach($arr_Customerorder as $item)
+                                        <option value="{{ $item->name }}"> {{ ($item->name) }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-5 col-form-label"> 3) Отменный </label>
+                            <div class="col-7 ">
+                                <select id="DELETED" name="DELETED" class="form-select text-black">
+                                    <option value="0"> Статус МойСклад   </option>
+                                    @foreach($arr_Customerorder as $item)
+                                        <option value="{{ $item->name }}"> {{ ($item->name) }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
 
-
-
-
+                <div class="mt-1 buttons-container-head rounded"></div>
+                <button class="mt-2 btn btn-outline-dark gradient_focus"> Сохранить </button>
+            </form>
             </div>
-
-                <hr class="href_padding">
-                <button class="btn btn-outline-dark textHover" data-bs-toggle="modal" data-bs-target="#modal">
-                    <i class="fa-solid fa-arrow-down-to-arc"></i> Сохранить
-                </button>
-
-        </form>
+        </div>
     </div>
 
-    <script>
-        function myWebXyk1() {
-            var WebXyk = document.querySelector('.myWebXyk1');
 
-            var range = document.createRange();
+    <script>
+
+        let message = "{{ $message }}"
+
+        console.log(message)
+
+        let creatDocument = "{{ $creatDocument }}"
+        let Organization = @json($Organization);
+        let Document = '{{ $Document }}'
+        let PaymentDocument = '{{ $PaymentDocument }}'
+        let PaymentAccount = '{{ $PaymentAccount }}'
+
+        let Saleschannel = '{{ $Saleschannel }}'
+        let Project = '{{ $Project }}'
+        let NEW = '{{ $NEW }}'
+        let COMPLETED = '{{ $COMPLETED }}'
+        let DELETED = '{{ $DELETED }}'
+
+        window.document.getElementById('creatDocument').value = creatDocument
+        window.document.getElementById('Document').value = Document
+        window.document.getElementById('PaymentDocument').value = PaymentDocument
+        //проверка
+        if(Organization !== "0"){
+            window.document.getElementById('select_Organization').value = Organization.id
+            window.document.getElementById('PaymentAccount_' + Organization.id).style.display = 'block'
+            window.document.getElementById('select_PaymentAccount_' + Organization.id).value = PaymentAccount
+        }
+
+        if(message !== "0"){
+           window.document.getElementById('div_message').style.display = 'block'
+           window.document.getElementById('message').innerText= message
+        }
+        window.document.getElementById('Saleschannel').value = Saleschannel
+        window.document.getElementById('Project').value = Project
+        window.document.getElementById('NEW').value = NEW
+        window.document.getElementById('COMPLETED').value = COMPLETED
+        window.document.getElementById('DELETED').value = DELETED
+
+        creatDocumentView(creatDocument)
+
+
+        function Organization_PaymentAccount(params){
+            for (let option of document.getElementById("select_Organization").options) {
+                window.document.getElementById('PaymentAccount_'+option.value).style.display = 'none'
+            }
+            window.document.getElementById('PaymentAccount_'+params).style.display = 'block'
+        }
+
+
+        function myWebXyk1() {
+            let WebXyk = document.querySelector('.myWebXyk1');
+
+            let range = document.createRange();
             range.selectNode(WebXyk);
             window.getSelection().addRange(range);
 
             try {
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
+                let successful = document.execCommand('copy');
+                let msg = successful ? 'successful' : 'unsuccessful';
                 console.log('Copy WebXyk command was ' + msg);
             } catch(err) {
                 console.log('Oops, unable to copy');
@@ -241,14 +299,14 @@
         }
 
         function myWebXyk2() {
-            var WebXyk = document.querySelector('.myWebXyk2');
-            var range = document.createRange();
+            let WebXyk = document.querySelector('.myWebXyk2');
+            let range = document.createRange();
             range.selectNode(WebXyk);
             window.getSelection().addRange(range);
 
             try {
-                var successful = document.execCommand('copy');
-                var msg = successful ? 'successful' : 'unsuccessful';
+                let successful = document.execCommand('copy');
+                let msg = successful ? 'successful' : 'unsuccessful';
                 console.log('Copy WebXyk command was ' + msg);
             } catch(err) {
                 console.log('Oops, unable to copy');
@@ -256,17 +314,9 @@
             window.getSelection().removeAllRanges();
         }
 
-        function PaymentAccountFun(){
-            var select = document.getElementById('hidden_Organization');
-            var option = select.options[select.selectedIndex];
-            $(".Payment").hide();
-            $("#Payment_" + option.value).show();
-        }
-        PaymentAccountFun();
-
         function PaymentDocumentFun(){
-            var select = document.getElementById('PaymentDocument');
-            var option = select.options[select.selectedIndex];
+            let select = document.getElementById('PaymentDocument');
+            let option = select.options[select.selectedIndex];
             if (option.value == 2){
                 document.getElementById("hidden_PaymentAccount").style.display = "block";
             }else {
@@ -274,143 +324,98 @@
             }
         }
         PaymentDocumentFun()
-
+        $('.myPopover1').popover();
     </script>
 
 
 @endsection
 
 <script>
-    function showDiv(divId, element)
-    {
-        document.getElementById(divId).style.display = element.value == 1 ? 'block' : 'none';
+
+    function creatDocumentView(params){
+        let view = window.document.getElementById('DocumentView')
+        if (params === 1 || params === '1') {
+            view.style.display = 'block'
+            if (window.document.getElementById('T2').style.display == 'none'){
+                toggleClick(2)
+                toggleClick(3)
+            }
+        } else {
+            view.style.display = 'none'
+            if (window.document.getElementById('T2').style.display == 'block'){
+                toggleClick(2)
+                toggleClick(3)
+            }
+        }
     }
-    function showPaymentAccount(divId, element)
-    {
+
+
+
+
+    function showPaymentAccount(divId, element) {
         document.getElementById(divId).style.display = element.value == 2 ? 'block' : 'none';
     }
 
+
+
+    function toggleClick(id){
+
+        if (id === 1){
+            let toggle_off = window.document.getElementById('toggle_off')
+            let toggle_on = window.document.getElementById('toggle_on')
+
+            let T1 = window.document.getElementById('T1')
+
+            if (toggle_off.style.display == "none"){
+                toggle_on.style.display = "none"
+                toggle_off.style.display = "block"
+
+                T1.style.display = 'block'
+            } else {
+                toggle_on.style.display = "block"
+                toggle_off.style.display = "none"
+
+                T1.style.display = 'none'
+            }
+        }
+
+        if (id === 2) {
+            let toggle_off_2 = window.document.getElementById('toggle_off_2')
+            let toggle_on_2 = window.document.getElementById('toggle_on_2')
+
+            let  T2 = window.document.getElementById('T2')
+            if (toggle_off_2.style.display == 'none'){
+                toggle_on_2.style.display = "none"
+                toggle_off_2.style.display = "block"
+
+                T2.style.display = 'block'
+            } else {
+                toggle_on_2.style.display = "block"
+                toggle_off_2.style.display = "none"
+
+                T2.style.display = 'none'
+            }
+        }
+
+        if (id === 3){
+            let toggle_off = window.document.getElementById('toggle_off_3')
+            let toggle_on = window.document.getElementById('toggle_on_3')
+
+            let T = window.document.getElementById('T3')
+
+            if (toggle_off.style.display == "none"){
+                toggle_on.style.display = "none"
+                toggle_off.style.display = "block"
+
+                T.style.display = 'block'
+            } else {
+                toggle_on.style.display = "block"
+                toggle_off.style.display = "none"
+
+                T.style.display = 'none'
+            }
+        }
+
+    }
+
 </script>
-
-<style>
-
-    #hidden_div {
-        display: none;
-    }
-
-    #anti_hidden_div {
-        display: block;
-    }
-
-    #hidden_PaymentAccount {
-        display: none;
-    }
-
-    .s-min-16 {
-        font-size: 16px;
-    }
-
-    .selected {
-        margin-right: 0px !important;
-        background-color: rgba(17, 17, 17, 0.14) !important;
-        border-radius: 3px !important;
-    }
-    .dropdown-item:active {
-        background-color: rgba(123, 123, 123, 0.14) !important;
-    }
-
-    .block {
-        display: none;
-        margin: 10px;
-        padding: 10px;
-        border: 2px solid orange;
-    }
-
-    .bg-myBlue {
-        color: black;
-        background-color: #ffffff;
-        border-radius: 20px;
-        border-width: 1px;
-        border-style: solid;
-        border-color: #ced4da;
-    }
-</style>
-
-{{--
-
-<div id="hidden_PaymentAccount">
-    <div class="row">
-        <P class="col-sm-5 col-form-label"> Выберите расчетный счет: </P>
-        <div class="col-sm-7">
-
-            @foreach($Body_organization as $row)
-
-                <div>
-                    @php
-                        $id = $row->id;
-                        $array_element = [];
-                        $url_accounts = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$id."/accounts";
-                        $clinet = new \App\Http\Controllers\GuzzleClient\ClientMC($url_accounts, $apiKey);
-                        $Body_accounts = $clinet->requestGet()->rows;
-
-                        if (array_key_exists(0, $Body_accounts)) {
-                            foreach ($Body_accounts as $item) { array_push($array_element, $item->accountNumber); } }
-                        else { $array_element = [ 0 => "Нету Расчетного счета"];
-                        }
-                    @endphp
-                    <select name="PaymentAccount" class="form-select text-black">
-                        <option selected></option>
-                        @foreach ($array_element as $array_element_item)
-                            <option value="{{$array_element_item}}"> {{ $array_element_item }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-            @endforeach
-
-
-
-            --}}
-{{--  @php
-            $param = 1;
-            @endphp
-            @foreach($Body_organization as $row)
-                @if($param == 1)
-                     <div class="some"  id="some_{{  $row->id }}"  style="display:block;">
-                @else
-                    <div class="some"  id="some_{{  $row->id }}"  style="display:none;">
-                @endif
-                @php
-                    $id = $row->id;
-                    $array_element = [];
-                    $url_accounts = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$id."/accounts";
-                    $clinet = new \App\Http\Controllers\GuzzleClient\ClientMC($url_accounts, $apiKey);
-                    $Body_accounts = $clinet->requestGet()->rows;
-
-                    if (array_key_exists(0, $Body_accounts)) {
-                        foreach ($Body_accounts as $item) { array_push($array_element, $item->accountNumber); } }
-                    else { $array_element = [ 0 => "Нету Расчетного счета"];
-                    }
-                @endphp
-                <select name="PaymentAccount" class="form-select text-black">
-                    <option selected></option>
-                    @foreach ($array_element as $array_element_item)
-                        <option value="{{$array_element_item}}"> {{ $array_element_item }}</option>
-                    @endforeach
-                </select>
-            </div>
-            @php
-                $param = $param+1;
-            @endphp
-        @endforeach--}}{{--
-
-
-        </div>
-    </div>
-    <script type="text/javascript">
-        $('#parent_id').on('change',function(){
-            $(".some").hide();
-            var some = $(this).find('option:selected').val();
-            $("#some_" + some).show();});
-    </script>
-</div>--}}
