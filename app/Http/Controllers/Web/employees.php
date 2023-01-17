@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Components\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
@@ -16,6 +17,7 @@ class employees extends Controller
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
         }
 
+
         $Setting = new getSettingVendorController($accountId);
         $companyId = $Setting->companyId;
         if ( $companyId == null ) {
@@ -26,37 +28,23 @@ class employees extends Controller
                 "message" => $message,
             ]);
         }
+
         $TokenMoySklad = $Setting->TokenMoySklad;
         $url_employee = 'https://online.moysklad.ru/api/remap/1.2/entity/employee';
-        $Client = new ClientMC($url_employee, $TokenMoySklad);
-        $Body_employee = $Client->requestGet()->rows;
+        $Client = new MsClient($TokenMoySklad);
+        $Body_employee = $Client->get($url_employee)->rows;
         $security = [];
 
-        $urls = [];
-        foreach ($Body_employee as $id=>$item){
-            $url_security = $url_employee.'/'.$item->id.'/security';
-            $urls [] = $url_security;
-        }
-
-        $pools = function (Pool $pool) use ($urls,$TokenMoySklad){
-            foreach ($urls as $url){
-                $arrPools [] = $pool->withToken($TokenMoySklad)->get($url);
-            }
-            return $arrPools;
-        };
-
-        $responses = Http::pool($pools);
-        $count = 0;
-        foreach ($Body_employee as $id=>$item){
-            if ( isset($responses[$count]->object()->role) ){
-                $Body_security = $responses[$count]->object()->role;
-                $security[$item->id] = mb_substr ($Body_security->meta->href, 53);
+        foreach ($Body_employee as $item){
+            $temp[$item->id] = $Client->get($url_employee.'/'.$item->id.'/security');
+            if (isset($temp[$item->id]->role)){
+                $security[$item->id] = mb_substr ($temp[$item->id]->role->meta->href, 53);
             } else {
                 $security[$item->id] = 'cashier';
             }
-
-            $count++;
         }
+
+
 
         return view('web.Setting.employees', [
             "accountId"=> $accountId,

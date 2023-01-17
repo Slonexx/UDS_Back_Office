@@ -6,7 +6,7 @@
     <script>
         function CopyPastIdEmployee(id) {
             console.log('id = ' + id)
-            var Copy = document.getElementById(id).innerText;
+            let Copy = document.getElementById(id).innerText;
 
             navigator.clipboard.writeText(Copy)
                 .then(() => {
@@ -18,7 +18,7 @@
         }
     </script>
 
-    <div class="content p-4 mt-2 bg-white text-Black rounded">
+    <div class="content p-4 mt-2 bg-white text-Black rounded main-container">
         <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
             <div class="col-10" style="margin-top: 1.2rem"> <span class="text-white" style="font-size: 20px">  Настройки &#8594; Сотрудники </span></div>
             <div class="col-2 text-center">
@@ -27,16 +27,7 @@
             </div>
         </div>
 
-        <br>
-        @isset($message)
-
-            <div class="{{$message['alert']}}"> {{ $message['message'] }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
-        @endisset
-
-        <div class=" alert alert-warning alert-dismissible fade show in text-center" style="font-size: 16px">
+        <div class="mt-1 alert alert-warning alert-dismissible fade show in text-center" style="font-size: 16px">
             Важно, сотрудники, которые есть в UDS их необходимо связать, для этого скопируйте внешний идентификатор из приложения и вставьте его в UDS (Сотрудники &#8594; кассир &#8594; нужный кассир &#8594; детальная страница &#8594; подробная информация о кассире &#8594; Внешний идентификатор (для интеграции) )
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -44,7 +35,7 @@
         <form action=" " method="post">
         @csrf <!-- {{ csrf_field() }} -->
 
-            <div id="Workers" class="border border-info">
+            <div id="Workers" class="content-container border border-info">
                 <div class="mx-1 row mt-2 p-1 text-black ">
                     <div class="col-1 mx-3  rounded">
                         №
@@ -82,7 +73,8 @@
                     @endif
                 @endforeach
             </div>
-
+            <div class="buttons-container">
+            </div>
         </form>
     </div>
 
