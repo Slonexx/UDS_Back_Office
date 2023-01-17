@@ -5,7 +5,7 @@
 <body>
 
 <script>
-        const url = 'https://smartuds.kz/'
+        const url = 'https://dev.smartuds.kz/'
         let accountId = "{{ $accountId }}"
         let GlobalobjectId
         let GlobalURL = "{{ $getObjectUrl }}"
