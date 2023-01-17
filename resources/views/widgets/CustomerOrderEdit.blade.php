@@ -3,7 +3,6 @@
 @include('head')
 
 <body>
-
 <script>
         const url = 'https://dev.smartuds.kz/'
         let accountId = "{{ $accountId }}"
@@ -29,7 +28,10 @@
         let operationsAccrue
         let operationsCancellation
 
-        window.addEventListener("message", function(event) { let receivedMessage = event.data
+        window.addEventListener("message", function(event) {
+            let receivedMessage = event.data
+            console.log(receivedMessage);
+
             GlobalobjectId = receivedMessage.objectId;
 
             if (receivedMessage.name === 'Open') { clearWidget()
@@ -329,8 +331,6 @@
         }
 
     </script>
-
-
 
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
