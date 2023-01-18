@@ -92,8 +92,6 @@ class indexController extends Controller
 
         $entity = 'customerorder';
 
-        $getObjectUrl = $baseURL->url_host() . "CustomerOrderEditObject/$accountId/$entity/";
-
 
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
@@ -101,7 +99,6 @@ class indexController extends Controller
             //'cashier_id' => "Сергей",
             //'cashier_name' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
             'cashier_name' => $employee->name,
-            'getObjectUrl' => $getObjectUrl,
         ] );
     }
 
