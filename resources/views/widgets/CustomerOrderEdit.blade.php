@@ -4,9 +4,9 @@
 
 <body>
 <script>
-        //const url = 'https://dev.smartuds.kz/'
+        const url = 'https://dev.smartuds.kz/'
 
-        const url = 'https://uds/'
+        //const url = 'https://uds/'
 
         let accountId = "{{ $accountId }}"
         let extensionPoint
