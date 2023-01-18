@@ -32,10 +32,10 @@
         let operationsAccrue
         let operationsCancellation
 
-        let receivedMessage = {"name":"Open","extensionPoint":"document.customerorder.edit","objectId":"a24fa7c2-962b-11ed-0a80-012d005a1f47","messageId":3,"displayMode":"expanded"}
+        //let receivedMessage = {"name":"Open","extensionPoint":"document.customerorder.edit","objectId":"a24fa7c2-962b-11ed-0a80-012d005a1f47","messageId":3,"displayMode":"expanded"}
 
         window.addEventListener("message", function(event) {
-            //let receivedMessage = event.data
+            let receivedMessage = event.data
 
             console.log(receivedMessage);
             GlobalobjectId = receivedMessage.objectId;
@@ -45,7 +45,7 @@
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                receivedMessage = null
+                //receivedMessage = null
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
