@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
@@ -45,8 +46,17 @@ class indexController extends Controller
     public function CheckSave(Request $request, $accountId){
 
         $Setting = new getSettingVendorController($accountId);
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $mainUrl = new mainURL();
 
-        dd($Setting);
+        $body = $Client->get($mainUrl->url_ms().'product')->rows;
+        $variant = [];
+        foreach ($body as $item){
+            if (isset($item->variantsCount) and $item->variantsCount > 0){
+                $variant[] = $Client->get($mainUrl->url_ms().'variant?filter=productid='.$item->id)->rows;
+            }
+        }
+        dd($variant);
 
     }
 
