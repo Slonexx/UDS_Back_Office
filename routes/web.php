@@ -71,7 +71,7 @@ Route::get('/Setting/Error/{accountId}/{isAdmin}/{message}', [SettingController:
 Route::get('/Setting/noAdmin/{accountId}/{isAdmin}/', [SettingController::class, 'indexNoAdmin'])->name('indexNoAdmin');
 
 
-Route::get('/CountProduct/', [ApplicationController::class, 'CountProduct']);
+Route::post('/CountProduct/', [ApplicationController::class, 'CountProduct']);
 
 
 
