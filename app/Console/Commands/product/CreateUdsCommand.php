@@ -26,6 +26,7 @@ class CreateUdsCommand extends Command
     {
         $allSettings = $this->settingsService->getSettings();
         foreach ($allSettings as $settings){
+            if ($settings->TokenUDS == null or $settings->companyId == null or $settings->UpdateProduct == "1"){ continue; }
             $ClientCheckMC = new MsClient($settings->TokenMoySklad);
             $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
 
@@ -36,7 +37,7 @@ class CreateUdsCommand extends Command
                 continue;
             }
 
-            if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
+
             if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
 
             $data = [

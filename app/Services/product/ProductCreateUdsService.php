@@ -362,7 +362,9 @@ class ProductCreateUdsService
             ],
         ];
 
-
+        if (property_exists($product, 'description')) {
+            $body['description'] = $product->description;
+        }
 
         if (property_exists($product,"attributes")){
 
