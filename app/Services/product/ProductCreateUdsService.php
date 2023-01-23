@@ -94,52 +94,37 @@ class ProductCreateUdsService
     private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $folderId, $storeName, $accountId): array
     {
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
-        //dd($productsUds);
-        //UPDATE if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }
-        /*if (!in_array('productIds', $productsUds)) { $productsUds['productIds'] = []; }*/
-        //dd($productsUds);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
-        //dd($folderName);
-        set_time_limit(3600);
 
         if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
         if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
-        //dd($productsMs);
-        foreach ($productsMs->rows as $row){
 
-            $isProductNotAdd = false;
+        foreach ($productsMs->rows as $row){
+            $isProductNotAdd = true;
 
             if (property_exists($row,"attributes")){
-                $foundedIdAttrib = false;
                 foreach ($row->attributes as $attribute){
                     if ($attribute->name == "id (UDS)"){
-                        $foundedIdAttrib = true;
-                        if (!in_array($attribute->value,$productsUds["productIds"])) {
-                            $isProductNotAdd = true;
-                        } break;
-                    }
+                        if (in_array($attribute->value,$productsUds["productIds"])) {
+                            $isProductNotAdd = false;
+                        }
+                    } else continue;
                 }
-                if (!$foundedIdAttrib) $isProductNotAdd = true;
-            }else{
-                $isProductNotAdd = true;
-                //dd($row);
             }
 
             if ($isProductNotAdd){
                 if (property_exists($row,"productFolder")){
                     $productFolderHref = $row->productFolder->meta->href;
                     $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
-                    //dd($idNodeCategory);
-                    //UPDATE
                     if (strlen($idNodeCategory) > 12) { $idNodeCategory = 0; };
 
                 } else {
                     $idNodeCategory = 0;
-                    //UPDATE
                 }
+
                 try {
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
                     if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
@@ -147,7 +132,7 @@ class ProductCreateUdsService
                 } catch (\Throwable $e){
                     continue;
                 }
-            }
+            } else continue;
 
         }
 
@@ -356,9 +341,9 @@ class ProductCreateUdsService
         }
 
 
-        //ДО делать get UoM
-        $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
-        if ($nameOumUds == ""){
+        if (property_exists($product, 'uom')){
+            $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
+        }else {
             $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
             return null;
         }
@@ -376,6 +361,8 @@ class ProductCreateUdsService
                 "measurement" => $nameOumUds,
             ],
         ];
+
+
 
         if (property_exists($product,"attributes")){
 
@@ -474,8 +461,7 @@ class ProductCreateUdsService
                 }
             }
 
-            if ($isFractionProduct){
-                $dPrice = explode('.',"".$body["data"]["price"]);
+            if ($isFractionProduct){ $dPrice = explode('.',"".$body["data"]["price"]);
                 if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
                     $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
                     return null;
@@ -489,21 +475,15 @@ class ProductCreateUdsService
 
         }
 
-        if (property_exists($product, "article")){
-            $body["data"]["sku"] = $product->article;
-        }
+        if (property_exists($product, "article")){ $body["data"]["sku"] = $product->article; }
 
-        if ($nodeId > 0){
-            $body["nodeId"] = intval($nodeId);
-        }
+        if ($nodeId > 0){ $body["nodeId"] = intval($nodeId); }
 
         if (property_exists($product,'images')){
-            //dd($product);
             $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
             $body["data"]["photos"] = $imgIds;
-            //dd($body);
         }
-        //dd(($client->post($url,$body)));
+
         try {
             return $client->post($url,$body);
         }catch (ClientException $e){

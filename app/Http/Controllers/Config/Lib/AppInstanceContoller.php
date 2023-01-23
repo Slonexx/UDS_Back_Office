@@ -69,11 +69,13 @@ class AppInstanceContoller
         @unlink($this->filename());
     }
 
-    private function filename() {
+    private function filename(): string
+    {
         return self::buildFilename($this->appId, $this->accountId);
     }
 
-    private static function buildFilename($appId, $accountId) {
+    private static function buildFilename($appId, $accountId): string
+    {
         $dir = public_path().'/Config/';
         return $dir . "data/$appId.$accountId.json";
     }
