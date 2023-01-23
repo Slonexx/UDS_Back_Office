@@ -5,6 +5,7 @@ namespace App\Console\Commands\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
+use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\EachPromise;
@@ -13,25 +14,11 @@ use Illuminate\Console\Command;
 
 class UpdateMsCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'msProduct:update';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     private SettingsService $settingsService;
 
     public function __construct(SettingsService $settingsService)
@@ -47,11 +34,11 @@ class UpdateMsCommand extends Command
             $settings = new getSettingVendorController($accountId);
             if ($settings->TokenUDS != null || $settings->companyId != null){
                 if ($settings->UpdateProduct != "0")
-                    $clientCheck = new MsClient($settings->TokenMoySklad);
                     try {
-                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                        $clientCheck = new MsClient($settings->TokenMoySklad);
+                        $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
                         $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                        $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                         $countSettings++;
                     } catch (\Throwable $e) {
 
@@ -64,12 +51,11 @@ class UpdateMsCommand extends Command
     public function handle()
     {
         $allSettings = $this->settingsService->getSettings();
-        //dd($allSettings);
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-        //dd($accountIds);
+
         if (count($accountIds) == 0) return;
 
         $client = new Client();
@@ -82,23 +68,22 @@ class UpdateMsCommand extends Command
                 //dd($settings);
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (\Throwable $e) { continue; }
                 if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"){ continue; }
-                //dd($allSettings);
+
+                $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "accountId" => $settings->accountId,
+                ];
+
                 try {
-                    yield $client->postAsync($url,[
-                        'headers' => ['Accept' => 'application/json'],
-                        'form_params' => [
-                            "tokenMs" => $settings->TokenMoySklad,
-                            "companyId" => $settings->companyId,
-                            "apiKeyUds" => $settings->TokenUDS,
-                            "accountId" => $settings->accountId,
-                        ],
-                    ]);
+                    yield app(ProductController::class)->updateMs_data($data);
                 } catch (\Throwable $e) {
                     continue;
                 }
