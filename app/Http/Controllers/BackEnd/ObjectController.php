@@ -149,16 +149,25 @@ class ObjectController extends Controller
     {
         $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
         try {
-            $body = $ClientUDS->get($url);
-            if ($body->points < 0) $points = $body->points * -1; else $points = $body->points ;
-            $status = true;
-            $data = [
-                'id'=> $body->id,
-                'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
-                'points'=> $points,
-                'state'=> "COMPLETED",
-                'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
-                'info'=> 'Operations',
+            if ((int) $externalCode > 0){
+                $body = $ClientUDS->get($url);
+                if ($body->points < 0) $points = $body->points * -1; else $points = $body->points ;
+                $status = true;
+                $data = [
+                    'id'=> $body->id,
+                    'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
+                    'points'=> $points,
+                    'state'=> "COMPLETED",
+                    'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
+                    'info'=> 'Operations',
+                ];
+            } else {
+                $status = false;
+                $data = null;
+            }
+            return [
+                'status' => $status,
+                'data' => $data,
             ];
         } catch (\Throwable $e) {
             $message = $e->getMessage();
@@ -166,13 +175,11 @@ class ObjectController extends Controller
                 'accountId' => $accountId,
                 'ErrorMessage' => $message,
             ]);
-            $status = false;
-            $data = null;
+            return [
+                'status' => false,
+                'data' => null,
+            ];
         }
-        return [
-            'status' => $status,
-            'data' => $data,
-        ];
     }
     public function AgentMCID($bodyMC, UdsClient $Client_UDS)
     {
