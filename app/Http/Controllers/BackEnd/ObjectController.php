@@ -21,10 +21,10 @@ class ObjectController extends Controller
 
         $UDSURL = "https://api.uds.app/partner/v2/customers/";
 
-        $cfg = new cfg();
+        $urlAll = new mainURL();
         $Setting = new getSettingVendorController($accountId);
 
-        $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
+        $urlCounterparty = $urlAll->url_ms()."/$entity/$objectId";
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
 
         $externalCode =  $BodyMC->requestGet()->externalCode;
