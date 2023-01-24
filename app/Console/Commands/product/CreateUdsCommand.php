@@ -73,14 +73,9 @@ class CreateUdsCommand extends Command
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-
         if (count($accountIds) == 0) return;
 
-        $client = new Client();
-        //Из Моего склада создание товаров в UDS
-        $url = "https://smartuds.kz/api/productUds";
-
-        $promises = (function () use ($accountIds, $client, $url){
+        $promises = (function () use ($accountIds){
             foreach ($accountIds as $accountId){
 
                 $settings = new getSettingVendorController($accountId);

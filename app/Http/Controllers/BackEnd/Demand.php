@@ -8,6 +8,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Http\Controllers\mainURL;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
@@ -17,36 +18,41 @@ class Demand extends Controller
 
     public function DemandObject($accountId, $entity, $objectId){
         $ObjectController = new ObjectController();
-        $SettingBD = new getSetting();
-        $SettingBD = $SettingBD->getSendSettingOperations($accountId);
         $Setting = new getSettingVendorController($accountId);
+        $SettingBD = app(getSetting::class)->getSendSettingOperations($accountId);
+        $urlAll = new mainURL();
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/$entity/$objectId";
-        $BodyMC = new ClientMC($url, $Setting->TokenMoySklad);
-        $href = $BodyMC->requestGet()->agent->meta->href;
-        $agentId = new ClientMC($href, $Setting->TokenMoySklad);
-        $agentId = $agentId->requestGet();
-        //Может и не быть
-        if (property_exists($agentId, 'phone')) {
-            $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
-        } else {
+
+        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
+        $urlCounterparty = $urlAll->url_ms()."$entity/$objectId";
+
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $Client_UDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+
+        $BodyMC = $Client->get($urlCounterparty);
+        $externalCode = $BodyMC->externalCode;
+        $body_agentId = $Client->get($BodyMC->agent->meta->href);
+        $agentId = $body_agentId;
+
+        if ( (int) $agentId->externalCode > 0) {
             $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
-            $StatusCode = 402;
-            $message = 'Отсутствует номер телефона у данного контрагента';
-            return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
-        }
-
-        $externalCode = $BodyMC->requestGet()->externalCode;
-        $Clint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-
-        try {
-            $data = $ObjectController->newPostOperations($accountId, $Clint, $externalCode, $agentId);
-            if ($data['status']) { $StatusCode = "200"; $message = $data['data'];
+        } else {
+            if (property_exists($agentId, 'phone')) {
+                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
             } else {
-                $StatusCode = "404";
-                $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($objectId, $Setting);
-                $availablePoints = $ObjectController->AgentMCID($href,  $Setting);
-                $phone = $ObjectController->AgentMCPhone($href, $Setting);
+                $StatusCode = 402;
+                $message = 'Отсутствует номер телефона у данного контрагента';
+                return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
+            }
+        }
+        try {
+            $data = $ObjectController->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
+            if ($data['status']) { $StatusCode = 200; $message = $data['data'];
+            } else {
+                $StatusCode = 404;
+                $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
+                $availablePoints = $ObjectController->AgentMCID($body_agentId,  $Client_UDS);
+                $phone = $ObjectController->AgentMCPhone($body_agentId, $Setting);
                 $operationsAccrue = $SettingBD->operationsAccrue;
                 $operationsCancellation = $SettingBD->operationsCancellation;
                 if ( $SettingBD->operationsAccrue == null ) $operationsAccrue = 0;
@@ -74,25 +80,27 @@ class Demand extends Controller
 
     }
 
-    private function TotalAndSkipLoyaltyTotal($objectId, $Setting){
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/demand/'.$objectId;
-        $Clinet = new MsClient($Setting->TokenMoySklad);
-        $bodyOrder = $Clinet->get($url);
+    private function TotalAndSkipLoyaltyTotal($bodyOrder, $Client): array
+    {
         $sum = $bodyOrder->sum / 100;
         $SkipLoyaltyTotal = 0;
         $href = $bodyOrder->positions->meta->href;
-        $BodyPositions = $Clinet->get($href)->rows;
+        $BodyPositions = $Client->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         foreach ($BodyPositions as $item){
             $url_item = $item->assortment->meta->href;
-            $body = $Clinet->get($url_item)->attributes;
+            $body = $Client->get($url_item);
+
             $BonusProgramm = false;
-            foreach ($body as $body_item){
-                if ('Не применять бонусную программу (UDS)' == $body_item->name){
-                    $BonusProgramm = $body_item->value;
-                    break;
+            if (property_exists($body, 'attributes')){
+                foreach ($body->attributes as $body_item){
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name){
+                        $BonusProgramm = $body_item->value;
+                        break;
+                    }
                 }
             }
+
             if ( $BonusProgramm == true ){
                 $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
