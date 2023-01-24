@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'appId' => '1e0e2609-2839-4667-a2f7-964f939c66d3',
-    'appUid' => 'udsbackoffice.smartinnovations',
-    'secretKey' => 'yrLVLeOAiAmtrI5K1HTCGano7VybaSVjPtqWBMnia53iStLaX8KXCET4VvM6INc2Nbz1NbeSTHv5KiCTe3UcEfok8gv8sFDkEqcBi9krAnCy7Rt1y1dIcbcaZPLxKfG5',
+    'appId' => 'ffbbc292-f532-4794-ad03-c861067e8708',
+    'appUid' => 'vendortest.smartinnovations',
+    'secretKey' => 'oU0z1z714cEaOPdyfjEgiWuf4JLsF9AQJhwJbZQvTr2EckE60JhCxH8uC49JIo1pVwnOIdDbf8J0FD4yDut1tdsZx93sorLLdNFp4kqzloQPXGsUGqcPtnn0QPluF5Q9',
     'appBaseUrl' => 'https://smartuds.kz/',
 ];

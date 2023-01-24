@@ -3,12 +3,15 @@
 @include('head')
 
 <body>
-
 <script>
-        const url = 'https://smartuds.kz/'
+        const url = 'https://dev.smartuds.kz/'
+
+        //const url = 'https://uds/'
+
         let accountId = "{{ $accountId }}"
+        let extensionPoint
         let GlobalobjectId
-        let GlobalURL = "{{ $getObjectUrl }}"
+
         let GlobalxRefURL
         let GlobalUDSOrderID
         let OLDPhone
@@ -29,13 +32,20 @@
         let operationsAccrue
         let operationsCancellation
 
-        window.addEventListener("message", function(event) { let receivedMessage = event.data
+        //let receivedMessage = {"name":"Open","extensionPoint":"document.customerorder.edit","objectId":"a24fa7c2-962b-11ed-0a80-012d005a1f47","messageId":3,"displayMode":"expanded"}
+
+        window.addEventListener("message", function(event) {
+            let receivedMessage = event.data
+
+            console.log(receivedMessage);
             GlobalobjectId = receivedMessage.objectId;
 
             if (receivedMessage.name === 'Open') { clearWidget()
-                let settings = ajax_settings(GlobalURL + receivedMessage.objectId, "GET", null)
+                let settings = ajax_settings(url + 'CustomerOrderEditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
+
+                //receivedMessage = null
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
@@ -113,29 +123,6 @@
                     document.getElementById("danger").style.display = "block";
                 }
             });
-        }
-
-        function CheckPhoneOrQR(Selector){
-           /* let option = Selector.options[Selector.selectedIndex];
-            document.getElementById("sendAccrue").style.display = "none"
-            document.getElementById('buttonOperations').style.display = 'none'
-            document.getElementById("labelCancellation").style.display = "block"
-            if (option.value === "0") {
-                /!*document.getElementById("sendQR").style.display = "none"
-                document.getElementById("labelAccrue").style.display = "block"
-                document.getElementById("QRCodePoint").value = ""
-                operations_points = 0
-                operations_user = OLDPhone
-
-                document.getElementById("Accrue").checked = true
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, 0, operations_availablePoints)*!/
-            }
-            if (option.value === "1") {
-                document.getElementById("sendQR").style.display = "block"
-                document.getElementById("QRCode").value = ''
-                document.getElementById("labelAccrue").style.display = "block"
-                operations_user = OLDQRCode
-            }*/
         }
 
         function sendAccrueFUNCTION(Val){
@@ -329,8 +316,6 @@
         }
 
     </script>
-
-
 
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
@@ -593,6 +578,31 @@
         if (event.keyCode < 48 || event.keyCode > 57){
             if ( event.keyCode === 46) event.returnValue = true; else  event.returnValue = false;
         }
+    }
+
+
+    function set_extensionPoint(params){
+        let result
+        switch (params){
+            case "document.customerorder.edit":{
+                result = "customerorder"
+                extensionPoint = "customerorder"
+                break
+            }
+
+            case "document.demand.edit":{
+                result = "demand"
+                extensionPoint = "demand"
+                break
+            }
+
+            case "document.salesreturn.edit":{
+                result = "salesreturn"
+                extensionPoint = "salesreturn"
+                break
+            }
+        }
+        return result
     }
 
 </script>

@@ -3,6 +3,7 @@
 namespace App\Components;
 
 use DateTime;
+use DateTimeInterface;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 
@@ -27,7 +28,7 @@ class UdsClient {
         $res = $this->client->get($url,[
                 "Accept" => "application/json",
                 "X-Origin-Request-Id" => $uuid_v4,
-                "X-Timestamp" => $date->format(DateTime::ATOM),
+                "X-Timestamp" => $date->format(DateTimeInterface::ATOM),
         ]
     );
         return json_decode($res->getBody());

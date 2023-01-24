@@ -84,91 +84,91 @@
             </div>
 
 
-            <div id="update_uds_data">
+           <div id="update_uds_data">
 
-                <div class="mt-2 row">
-                    <div class="col-6">
-                        <label class="row mx-1">
-                            <div class="col-9"> Выберите категорию: </div>
-                            <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover3 "
-                                    data-toggle="popover" data-placement="right" data-trigger="focus"
-                                    data-content="Выберите откуда будет браться товары">
-                            </button>
-                        </label>
-                        <div class="col-10">
-                            <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
+               <div class="mt-2 row">
+                   <div class="col-6">
+                       <label class="row mx-1">
+                           <div class="col-9"> Выберите категорию: </div>
+                           <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover3 "
+                                   data-toggle="popover" data-placement="right" data-trigger="focus"
+                                   data-content="Выберите откуда будет браться товары">
+                           </button>
+                       </label>
+                       <div class="col-10">
+                           <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="CountProduct()">
 
-                                @if($ProductFolder != null)
-                                    <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
-                                    @foreach ($Body_productFolder as $productFolderItem)
-                                        @if ($productFolderItem->id != $ProductFolder['value'])
-                                            <option value="{{$productFolderItem->id}}"> {{$productFolderItem->name}} </option>
-                                        @endif
-                                    @endforeach
-                                @else
-                                    @foreach ($Body_productFolder as $productFolderItem)
-                                        <option value="{{$productFolderItem->id}}" >{{$productFolderItem->name}} </option>
-                                    @endforeach
-                                @endif
+                               @if($ProductFolder != null)
+                                   <option value="{{ $ProductFolder['value'] }}"> {{ $ProductFolder['name'] }} </option>
+                                   @foreach ($Body_productFolder as $productFolderItem)
+                                       @if ($productFolderItem->id != $ProductFolder['value'])
+                                           <option value="{{$productFolderItem->id}}"> {{$productFolderItem->name}} </option>
+                                       @endif
+                                   @endforeach
+                               @else
+                                   @foreach ($Body_productFolder as $productFolderItem)
+                                       <option value="{{$productFolderItem->id}}" >{{$productFolderItem->name}} </option>
+                                   @endforeach
+                               @endif
 
-                            </select>
-                        </div>
-                    </div>
-                    <div id="VisibleCountProduct" class="col-sm-6 row mt-4" style="display: block">
-                        <div class="row">
-                            <div class="col-3 mt-2">
-                            </div>
-                            <div class="col-7 mt-2">
-                                Товаров в категории:
-                                <span id="CountProduct" class="mx-1 p-1 px-3 text-white bg-primary rounded-pill">  </span>
-                            </div>
-                            <div class="col-2 mt-2">
-                                <i onclick="Visible()" class="fa-solid fa-circle-xmark text-danger" style="cursor: pointer"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-2 row">
-                    <div class="col-6">
-                        <label class="row mx-1">
-                            <div class="col-9">  Изменение товаров: </div>
-                            <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover4 "
-                                    data-toggle="popover" data-placement="right" data-trigger="focus"
-                                    data-content="Выберите откуда будет изменяться товары">
-                            </button>
-                        </label>
-                        <div class="col-10">
-                            <select name="UpdateProduct" class="form-select text-black ">
-                                <option value="0">МойСклад</option>
-                                <option value="1">UDS</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-2 row">
-                    <div class="col-sm-6">
-                        <label class="row mx-1">
-                            <div class="col-9">  Выберите склад, для остатков товара: </div>
-                            <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover5 "
-                                    data-toggle="popover" data-placement="right" data-trigger="focus"
-                                    data-content="По данному складу будут отправляться остатки в UDS и на данный склад будет создаваться заказ">
-                            </button>
-                        </label>
-                        <div class="col-10">
-                            <select name="Store" class="form-select text-black " >
-                                @foreach($Body_store as $Body_store_item)
-                                    @if ( $Store == $Body_store_item->name )
-                                        <option selected value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
-                                    @else
-                                        <option value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                           </select>
+                       </div>
+                   </div>
+                   <div id="VisibleCountProduct" class="col-sm-6 row mt-4" style="display: block">
+                       <div class="row">
+                           <div class="col-3 mt-2">
+                           </div>
+                           <div class="col-7 mt-2">
+                               Товаров в категории:
+                               <span id="CountProduct" class="mx-1 p-1 px-3 text-white bg-primary rounded-pill">  </span>
+                           </div>
+                           <div class="col-2 mt-2">
+                               <i onclick="Visible()" class="fa-solid fa-circle-xmark text-danger" style="cursor: pointer"></i>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="mt-2 row">
+                   <div class="col-6">
+                       <label class="row mx-1">
+                           <div class="col-9">  Изменение товаров: </div>
+                           <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover4 "
+                                   data-toggle="popover" data-placement="right" data-trigger="focus"
+                                   data-content="Выберите откуда будет изменяться товары">
+                           </button>
+                       </label>
+                       <div class="col-10">
+                           <select name="UpdateProduct" class="form-select text-black ">
+                               <option value="0">МойСклад</option>
+                               <option value="1">UDS</option>
+                           </select>
+                       </div>
+                   </div>
+               </div>
+               <div class="mt-2 row">
+                   <div class="col-sm-6">
+                       <label class="row mx-1">
+                           <div class="col-9">  Выберите склад, для остатков товара: </div>
+                           <button type="button" class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover5 "
+                                   data-toggle="popover" data-placement="right" data-trigger="focus"
+                                   data-content="По данному складу будут отправляться остатки в UDS и на данный склад будет создаваться заказ">
+                           </button>
+                       </label>
+                       <div class="col-10">
+                           <select name="Store" class="form-select text-black " >
+                               @foreach($Body_store as $Body_store_item)
+                                   @if ( $Store == $Body_store_item->name )
+                                       <option selected value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
+                                   @else
+                                       <option value="{{ $Body_store_item->name }}"> {{ ($Body_store_item->name) }} </option>
+                                   @endif
+                               @endforeach
+                           </select>
+                       </div>
+                   </div>
+               </div>
 
-            </div>
+           </div>
 
             <hr class="href_padding">
 
