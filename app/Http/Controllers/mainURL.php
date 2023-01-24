@@ -7,7 +7,7 @@ class mainURL extends Controller
 
     public function url_host(): string
     {
-        return 'https://dev.smartuds.kz/';
+        return 'https://smartuds.kz/';
     }
 
     public function url_uds(): string
