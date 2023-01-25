@@ -304,7 +304,6 @@ class ObjectController extends Controller
         $sumMC = $OldBody->sum - $skipLoyaltyTotal;
         if ($sumMC > 0) $pointsPercent = ( $postUDS->points * -1 )  * 100 / ( $sumMC / 100 ) ;  else $pointsPercent = 0;
         foreach ($OldPositions as $item){
-            //$price = $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100));
             $Positions[] = [
                 'id' => $item->id,
                 'accountId' => $item->accountId,
@@ -315,7 +314,6 @@ class ObjectController extends Controller
                 'vatEnabled' => $item->vatEnabled,
                 'assortment' => $item->assortment,
                 'shipped' => $item->shipped,
-                'reserve' => $item->reserve,
             ];
         }
         return $Positions;
