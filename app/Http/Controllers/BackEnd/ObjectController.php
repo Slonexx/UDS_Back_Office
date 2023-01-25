@@ -314,6 +314,7 @@ class ObjectController extends Controller
                 'vatEnabled' => $item->vatEnabled,
                 'assortment' => $item->assortment,
                 'shipped' => $item->shipped,
+                'reserve' => 0,
             ];
         }
         return $Positions;
