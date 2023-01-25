@@ -21,10 +21,10 @@ class ObjectController extends Controller
 
         $UDSURL = "https://api.uds.app/partner/v2/customers/";
 
-        $urlAll = new mainURL();
+        $cfg = new cfg();
         $Setting = new getSettingVendorController($accountId);
 
-        $urlCounterparty = $urlAll->url_ms()."/$entity/$objectId";
+        $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl."/entity/$entity/$objectId";
         $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
 
         $externalCode =  $BodyMC->requestGet()->externalCode;
@@ -120,7 +120,7 @@ class ObjectController extends Controller
         return [
             'StatusCode' => $StatusCode,
             'message' => $message,
-            ];
+        ];
 
     }
 
@@ -149,25 +149,16 @@ class ObjectController extends Controller
     {
         $url = 'https://api.uds.app/partner/v2/operations/'.$externalCode;
         try {
-            if ((int) $externalCode > 0){
-                $body = $ClientUDS->get($url);
-                if ($body->points < 0) $points = $body->points * -1; else $points = $body->points ;
-                $status = true;
-                $data = [
-                    'id'=> $body->id,
-                    'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
-                    'points'=> $points,
-                    'state'=> "COMPLETED",
-                    'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
-                    'info'=> 'Operations',
-                ];
-            } else {
-                $status = false;
-                $data = null;
-            }
-            return [
-                'status' => $status,
-                'data' => $data,
+            $body = $ClientUDS->get($url);
+            if ($body->points < 0) $points = $body->points * -1; else $points = $body->points ;
+            $status = true;
+            $data = [
+                'id'=> $body->id,
+                'BonusPoint'=> $this->Calc($accountId, $ClientUDS, $body, $agentId),
+                'points'=> $points,
+                'state'=> "COMPLETED",
+                'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
+                'info'=> 'Operations',
             ];
         } catch (\Throwable $e) {
             $message = $e->getMessage();
@@ -175,11 +166,13 @@ class ObjectController extends Controller
                 'accountId' => $accountId,
                 'ErrorMessage' => $message,
             ]);
-            return [
-                'status' => false,
-                'data' => null,
-            ];
+            $status = false;
+            $data = null;
         }
+        return [
+            'status' => $status,
+            'data' => $data,
+        ];
     }
     public function AgentMCID($bodyMC, UdsClient $Client_UDS)
     {
@@ -311,7 +304,6 @@ class ObjectController extends Controller
         $sumMC = $OldBody->sum - $skipLoyaltyTotal;
         if ($sumMC > 0) $pointsPercent = ( $postUDS->points * -1 )  * 100 / ( $sumMC / 100 ) ;  else $pointsPercent = 0;
         foreach ($OldPositions as $item){
-            //$price = $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100));
             $Positions[] = [
                 'id' => $item->id,
                 'accountId' => $item->accountId,
@@ -322,7 +314,7 @@ class ObjectController extends Controller
                 'vatEnabled' => $item->vatEnabled,
                 'assortment' => $item->assortment,
                 'shipped' => $item->shipped,
-                'reserve' => $item->reserve,
+                'reserve' => 0,
             ];
         }
         return $Positions;
@@ -660,35 +652,35 @@ class ObjectController extends Controller
         ];
 
         try {
-        $post = $Client->post($url, $body);
+            $post = $Client->post($url, $body);
 
-        $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
-        $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
-        $OldBody = $ClientMC->requestGet();
+            $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
+            $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+            $OldBody = $ClientMC->requestGet();
 
-        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
-        $setAttributes = $this->Attributes($post, $Setting);
+            $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+            $setAttributes = $this->Attributes($post, $Setting);
 
-        $OldBody->externalCode = $post->id;
-        $putBody = $ClientMC->requestPut([
-            'externalCode'=>(string) $post->id,
-            'positions'=> $setPositions,
-            'attributes' => $setAttributes,
-        ]);
-        $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
-        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
-        $post = [
-            'code' => 200,
-            'id' => $post->id,
-            'points' => $post->points,
-            'total' => $post->total,
-            'message' => 'The operation was successful',
-        ];
+            $OldBody->externalCode = $post->id;
+            $putBody = $ClientMC->requestPut([
+                'externalCode'=>(string) $post->id,
+                'positions'=> $setPositions,
+                'attributes' => $setAttributes,
+            ]);
+            $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
+            $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+            $post = [
+                'code' => 200,
+                'id' => $post->id,
+                'points' => $post->points,
+                'total' => $post->total,
+                'message' => 'The operation was successful',
+            ];
 
         } catch ( \Throwable $e){
             $post = [
-               'code' =>  $e->getCode(),
-               'message' =>  $e->getMessage(),
+                'code' =>  $e->getCode(),
+                'message' =>  $e->getMessage(),
             ];
         }
 
