@@ -125,15 +125,14 @@ class ProductCreateUdsService
                 } else {
                     $idNodeCategory = 0;
                 }
-
-                try {
+                //try {
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
                     if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
                     else continue;
-                } catch (\Throwable $e){
+              //  } catch (\Throwable $e){
                     continue;
                 }
-            } else continue;
+           // } else continue;
 
         }
 
@@ -256,6 +255,7 @@ class ProductCreateUdsService
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idMs;
         $client = new MsClient($apiKeyMs);
 
+        try {
             $body = [
                 "attributes" => [
                     0 => [
@@ -265,6 +265,9 @@ class ProductCreateUdsService
                     ],
                 ],
             ];
+        } catch (\Throwable $e){
+            dd($createdProduct);
+        }
 
             $nameOumUds = $createdProduct->data->measurement;
 
@@ -288,7 +291,6 @@ class ProductCreateUdsService
                 $offerPrice = $createdProduct->data->offer->offerPrice;
                 if ($createdProduct->data->increment != null && $createdProduct->data->minQuantity != null){
                     if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                        // offer price 1000
                         $offerPrice /= 1000.0;
                     } elseif($nameOumUds == "CENTIMETRE"){
                         //offer price 100
@@ -314,7 +316,6 @@ class ProductCreateUdsService
     }
 
     private function createProductUds(mixed $product, string $apiKeyMs, string $companyId, string $apiKeyUds, string $storeHref, string $accountId,$nodeId = 0){
-
         $url = "https://api.uds.app/partner/v2/goods";
         $mainUrl = new mainURL();
         $Client_UDS = new UdsClient($companyId,$apiKeyUds);
@@ -355,14 +356,14 @@ class ProductCreateUdsService
 
                     } else { continue; }
                 }
-                if ($variants[$id]['price'] < 0 or $variants[$id]['price'] == null) { continue; }
+                if ($variants[$id]['price'] < 0 or $variants[$id]['price'] == null) { unset($variants[$id]); continue; }
                 if (property_exists($product,"attributes")){
                     foreach ($product->attributes as $attribute)
                     {
                         if ($attribute->name == "Акционный товар (UDS)" && $attribute->value == true){
-                            foreach ($item->salePrices as $item_price){
-                                if ($item_price->name == 'Акционный'){
-                                    $variants[$id]['offer']['offerPrice'] = $item_price->value;
+                            foreach ($item->salePrices as $salePrices){
+                                if ($salePrices->priceType->name == "Акционный"){
+                                    $variants[$id]['offer']['offerPrice'] = $salePrices->value / 100;
                                 }
                             }
                         }
@@ -375,16 +376,11 @@ class ProductCreateUdsService
                         }
                     }
                 }
-
-
-
-
             }
 
             if ($variants){
                 $body['data']['variants'] = $variants;
-            }
-
+            }else { return null; }
             if ($nodeId > 0){ $body["nodeId"] = intval($nodeId); }
 
             if (property_exists($product,'images')){
@@ -392,11 +388,8 @@ class ProductCreateUdsService
                 $body["data"]["photos"] = $imgIds;
             }
 
-
-
-
-
-        } else {
+        }
+        else {
             $prices = [];
 
             foreach ($product->salePrices as $price){
@@ -427,11 +420,11 @@ class ProductCreateUdsService
                 return null;
             }
 
-            if (strlen($product->name) > 100){
-                $name = mb_substr($product->name,0,100);
-            } else {
-                $name = $product->name;
-            }
+            if (strlen($product->name) > 100){ $name = mb_substr($product->name,0,100); } else { $name = $product->name; }
+
+            if (property_exists($product, 'description')) {
+                $description = $product->description;
+            } else $description = "";
 
             $body = [
                 "name" => $name,
@@ -439,6 +432,7 @@ class ProductCreateUdsService
                     "type" => "ITEM",
                     "price" => $prices["salePrice"],
                     "measurement" => $nameOumUds,
+                    "description" => $description,
                 ],
             ];
 
