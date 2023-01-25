@@ -369,11 +369,14 @@ class ProductCreateUdsService
                         if ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == true){
                             $variants[$id]['offer']['skipLoyalty'] = $attribute->value;
                         }
+                        if ($attribute->name == "Товар неограничен (UDS)" && $attribute->value == false){
+                            $inStock = $Client_MS->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?"."filter=store=".$storeHref.";search=".$item->name)->rows;
+                            if ($inStock) { $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity; }
+                        }
                     }
                 }
 
-               $inStock = $Client_MS->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?"."filter=store=".$storeHref.";search=".$item->name)->rows;
-                if ($inStock) { $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity; }
+
 
 
             }
