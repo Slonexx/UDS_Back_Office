@@ -14,6 +14,7 @@ use Illuminate\Console\Command;
 
 class UpdateMsCommand extends Command
 {
+    //Из UDS обновление товаров в Моем Складе
 
     protected $signature = 'msProduct:update';
 
@@ -32,17 +33,16 @@ class UpdateMsCommand extends Command
         $countSettings = 0;
         foreach ($accountIds as $accountId){
             $settings = new getSettingVendorController($accountId);
-            if ($settings->TokenUDS != null || $settings->companyId != null){
-                if ($settings->UpdateProduct != "0")
-                    try {
-                        $clientCheck = new MsClient($settings->TokenMoySklad);
-                        $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
-                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                        $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                        $countSettings++;
-                    } catch (\Throwable $e) {
+            if ($settings->TokenUDS != null or $settings->companyId != null or $settings->UpdateProduct != "0"){
+                try {
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
+                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                    $countSettings++;
+                } catch (\Throwable $e) {
 
-                    }
+                }
             }
         }
         return $countSettings;
@@ -55,17 +55,14 @@ class UpdateMsCommand extends Command
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-
         if (count($accountIds) == 0) return;
 
-        $client = new Client();
-        //Из UDS обновление товаров в Моем Складе
-        $url = "https://smartuds.kz/api/updateProductMs";
 
-        $promises = (function () use ($accountIds, $client, $url){
+
+        $promises = (function () use ($accountIds){
             foreach ($accountIds as $accountId){
                 $settings = new getSettingVendorController($accountId);
-                //dd($settings);
+                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"){ continue; }
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
                     $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
@@ -73,7 +70,6 @@ class UpdateMsCommand extends Command
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (\Throwable $e) { continue; }
-                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0"){ continue; }
 
                 $data = [
                     "tokenMs" => $settings->TokenMoySklad,
@@ -94,16 +90,16 @@ class UpdateMsCommand extends Command
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                    //dd($response);
+                    dd($response->getBody());
                 } else {
                     //dd($response);
                 }
             },
             'rejected' => function ($reason) {
-                //dd($reason);
+
             }
         ]);
-        //dd($eachPromise);
+
         $eachPromise->promise()->wait();
     }
 }
