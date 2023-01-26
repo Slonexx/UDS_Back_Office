@@ -97,7 +97,7 @@ class ProductCreateUdsService
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
-
+        set_time_limit(600);
         if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
         if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
