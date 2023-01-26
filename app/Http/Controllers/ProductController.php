@@ -62,9 +62,9 @@ class ProductController extends Controller
             "accountId" => "required|string",
         ]);
 
-       return response(
-           $this->productCreateUdsService->insertToUds($data)
-       );
+        return response(
+            $this->productCreateUdsService->insertToUds($data)
+        );
     }
 
     public function insertUds_data($data): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
@@ -83,7 +83,7 @@ class ProductController extends Controller
             "accountId" => "required|string",
         ]);
 
-       // dd(100/10.0);
+        // dd(100/10.0);
 
         return response(
             $this->productUpdateMsService->updateProductsMs($data)
@@ -108,9 +108,9 @@ class ProductController extends Controller
             "accountId" => "required|string"
         ]);
 
-       return response(
-           $this->productUpdateUdsService->updateProductsUds($data)
-       );
+        return response(
+            $this->productUpdateUdsService->updateProductsUds($data)
+        );
     }
 
     public function updateUds_data($data): \Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
