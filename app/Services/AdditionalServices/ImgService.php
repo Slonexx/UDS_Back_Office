@@ -28,20 +28,22 @@ class ImgService
         $images = $clientMs->get($urlImages);
 
         foreach ($images->rows as $image){
-            if(property_exists($image, 'meta')){
-                $imgHref = $image->meta->downloadHref;
-                $imageType = 'image/png';
+            try {
+                if(property_exists($image, 'meta')){
+                    $imgHref = $image->meta->downloadHref;
+                    $imageType = 'image/png';
 
-                $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
-                $dataImgUds = json_decode($response_Image_UDS['result']);
+                    $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
+                    $dataImgUds = json_decode($response_Image_UDS['result']);
 
-                //dd($response_Image_UDS,$dataImgUds);
+                    $imageId_to_UDS = $dataImgUds->imageId;
+                    $url_to_UDS = $dataImgUds->url;
+                    $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
 
-                $imageId_to_UDS = $dataImgUds->imageId;
-                $url_to_UDS = $dataImgUds->url;
-                $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
-                //dd($response_Image_UDS,$downloadImage_S3UDS);
-                $imgIds [] = $imageId_to_UDS;
+                    $imgIds [] = $imageId_to_UDS;
+                }
+            } catch (\Throwable $e){
+
             }
         }
 

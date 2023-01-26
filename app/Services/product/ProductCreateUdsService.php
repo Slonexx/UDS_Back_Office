@@ -125,14 +125,14 @@ class ProductCreateUdsService
                 } else {
                     $idNodeCategory = 0;
                 }
-                //try {
+                try {
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
                     if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
                     else continue;
-              //  } catch (\Throwable $e){
+                } catch (\Throwable $e){
                     continue;
                 }
-           // } else continue;
+            } else continue;
 
         }
 
