@@ -5,6 +5,7 @@ namespace App\Services\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
+use App\Http\Controllers\mainURL;
 use App\Services\AdditionalServices\ImgService;
 use App\Services\AdditionalServices\StockProductService;
 use App\Services\MetaServices\Entity\StoreService;
@@ -44,23 +45,10 @@ class ProductUpdateUdsService
         $accountId = $data['accountId'];
 
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
-
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
-
-        set_time_limit(3600);
-
         $msProducts = $this->getMs($folderName,$apiKeyMs);
 
         foreach ($msProducts->rows as $row){
-           /*if (property_exists($row, 'attributes')){
-               foreach ($row->attributes as $attribute){
-                   if ($attribute->name == "id (UDS)"){
-                       $productId[] = $attribute->value;
-                       break;
-                   } else continue;
-               }
-           }*/
-
              try {
                 $productId = null;
                 if (property_exists($row, 'attributes')){
@@ -89,216 +77,270 @@ class ProductUpdateUdsService
             }
 
         }
-        //dd($productId);
         return [
             'message' => 'Updated products in UDS'
         ];
 
     }
 
-    private function updateProductInUds($msProduct,$storeHref,$goodId, $apiKeyMs, $companyId, $apiKeyUds,$accountId, $nodeId = 0)
+    private function updateProductInUds(mixed $msProduct,string $storeHref,string $goodId, string $apiKeyMs, string $companyId, string $apiKeyUds, string $accountId, $nodeId = 0)
     {
         $url = "https://api.uds.app/partner/v2/goods/".$goodId;
+        $mainUrl = new mainURL();
         $client = new UdsClient($companyId,$apiKeyUds);
+        $Client_UDS = new UdsClient($companyId,$apiKeyUds);
+        $Client_MS = new MsClient($apiKeyMs);
         $error_log = "Не удалось обновить товар ".$msProduct->name." в UDS.";
+        $bd = new BDController();
 
         try {
-            $json = $client->get($url);
-
-            if ($json->data->type != "ITEM"){
-                return null;
-            }
-
+            $body_json_by_UDS = $client->get($url);
             $prices = [];
+            if ($msProduct->variantsCount > 0){
+                if (strlen($msProduct->name) > 100){ $name = mb_substr($msProduct->name,0,100); } else { $name = $msProduct->name; }
 
-            foreach ($msProduct->salePrices as $price){
-                if ($price->priceType->name == "Цена продажи"){
-                    $prices["salePrice"] = ($price->value / 100);
-                } else continue;
-            }
+                $body = [
+                    "name" => $name,
+                    "data" => [
+                        "type" => "VARYING_ITEM",
+                        "description" => "",
+                        "photos" => [],
+                        "variants" => [],
+                    ],
+                ];
 
-            if ($prices == []){
-                $prices["salePrice"] = 0;
-                for ($index = 0; $index < count($msProduct->salePrices); $index++){
-                    if ($prices["salePrice"] > 0) break;
-                    else $prices["salePrice"] = $msProduct->salePrices[$index]->value / 100;
-                }
-            }
+                $variant = $Client_MS->get($mainUrl->url_ms().'variant?filter=productid='.$msProduct->id)->rows;
+                foreach ($variant as $id=>$item){
+                    $price = null;
+                    $variants[$id] = [
+                        'name' => $item->name,
+                        'sku' => null,
+                        'price' => null,
+                        'offer' => [
+                            'offerPrice' => null,
+                            'skipLoyalty' => false,
+                        ],
+                        'inventory' => [
+                            'inStock' => null,
+                        ],
+                    ];
+                    foreach ($item->salePrices as $item_price){
+                        if ($item_price->value > 0){ $variants[$id]['price'] = $item_price->value / 100; break;
 
-
-            if ($prices["salePrice"] <= 0){
-                $bd = new BDController();
-                $bd->errorProductLog($accountId,$error_log." Не была указана цена товара в MS");
-                return null;
-            }
-
-            $nameOumUds = $this->getUomUdsByMs($msProduct->uom->meta->href,$apiKeyMs);
-            if ($nameOumUds == ""){
-                $bd = new BDController();
-                $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
-                return null;
-            }
-
-            if (strlen($msProduct->name) > 100){
-                $name = mb_substr($msProduct->name,0,100);
-            } else {
-                $name = $msProduct->name;
-            }
-            if (property_exists($msProduct, 'description')) {
-                $description = $msProduct->description;
-            } else $description = "";
-
-            $body = [
-                "name" => $name,
-                "data" => [
-                    "type" => "ITEM",
-                    "price" => $prices["salePrice"],
-                    "measurement" => $nameOumUds,
-                    "description" => $description,
-                ],
-            ];
-
-            if (property_exists($msProduct,"attributes")){
-
-                $isFractionProduct = false;
-
-                foreach ($msProduct->attributes as $attribute){
-                    if ($attribute->name == "Дробное значение товара (UDS)"){
-                        if ($attribute->value == 1){
-                            $isFractionProduct = true;
+                        } else { continue; }
+                    }
+                    if ($variants[$id]['price'] < 0 or $variants[$id]['price'] == null) { unset($variants[$id]); continue; }
+                    if (property_exists($msProduct,"attributes")){
+                        foreach ($msProduct->attributes as $attribute)
+                        {
+                            if ($attribute->name == "Акционный товар (UDS)" && $attribute->value == true){
+                                foreach ($item->salePrices as $salePrices){
+                                    if ($salePrices->priceType->name == "Акционный"){
+                                        $variants[$id]['offer']['offerPrice'] = $salePrices->value / 100;
+                                    }
+                                }
+                            }
+                            if ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value == true){
+                                $variants[$id]['offer']['skipLoyalty'] = $attribute->value;
+                            }
+                            if ($attribute->name == "Товар неограничен (UDS)" && $attribute->value == false){
+                                $inStock = $Client_MS->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?"."filter=store=".$storeHref.";search=".$item->name)->rows;
+                                if ($inStock) { $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity; }
+                            }
                         }
-                        else {
-                            $body["data"]["minQuantity"] = null;
-                            $body["data"]["increment"] = null;
-                        }
-                        //break;
                     }
                 }
 
-                if ($isFractionProduct && (
-                        $nameOumUds == "KILOGRAM"
-                        || $nameOumUds == "LITRE"
-                        || $nameOumUds == "METRE")
-                ){
-                    $bd = new BDController();
-                    $bd->errorProductLog($accountId,$error_log." Выбранная ед.изм товара в MS, не может быть дробным товаром в UDS.");
+                if ($variants){
+                    $body['data']['variants'] = $variants;
+                }else { return null; }
+                if ($nodeId > 0){ $body["nodeId"] = intval($nodeId); }
+
+                if (property_exists($msProduct,'images')){
+                    $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                    $body["data"]["photos"] = $imgIds;
+                }
+
+            }
+            else {
+
+                foreach ($msProduct->salePrices as $price){
+                    if ($price->priceType->name == "Цена продажи"){ $prices["salePrice"] = ($price->value / 100);
+                    } else {
+                        if ($price->priceType->name == "Акционный") $prices["offerPrice"] = ($price->value / 100);
+                    }
+                }
+                if ($prices == []){
+                    $prices["salePrice"] = 0;
+                    for ($index = 0; $index < count($msProduct->salePrices); $index++){
+                        if ($prices["salePrice"] > 0) break;
+                        else $prices["salePrice"] = $msProduct->salePrices[$index]->value / 100;
+                    }
+                }
+                if ($prices["salePrice"] <= 0){
+                    $bd->errorProductLog($accountId, $error_log." Не была указана цена товара в MS");
                     return null;
                 }
 
-                foreach ($msProduct->attributes as $attribute){
-                    if ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
-                        //if ($attribute->value <= 0 || $attribute->value == null) return null;
-                        $body["data"]["increment"] = intval($attribute->value);
-                        if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                            $body["data"]["increment"] *= 1000.0;
-                            if ($body["data"]["increment"] >= 10000000){
-                                //dd($body["data"]["increment"]);
-                                $bd = new BDController();
-                                $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
-                                return null;
+                //ДО делать get UoM
+                $nameOumUds = $this->getUomUdsByMs($msProduct->uom->meta->href,$apiKeyMs);
+                if ($nameOumUds == ""){
+                    $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
+                    return null;
+                }
+                if (strlen($msProduct->name) > 100){ $name = mb_substr($msProduct->name,0,100); } else { $name = $msProduct->name; }
+                if (property_exists($msProduct, 'description')) {
+                    $description = $msProduct->description;
+                } else $description = "";
+                $body = [
+                    "name" => $name,
+                    "data" => [
+                        "type" => "ITEM",
+                        "price" => $prices["salePrice"],
+                        "measurement" => $nameOumUds,
+                        "description" => $description,
+                    ],
+                ];
+                if (property_exists($msProduct,"attributes")){
+
+                    $isFractionProduct = false;
+
+                    foreach ($msProduct->attributes as $attribute){
+                        if ($attribute->name == "Дробное значение товара (UDS)"){
+                            if ($attribute->value == 1){
+                                $isFractionProduct = true;
                             }
-                        } elseif ($nameOumUds == "CENTIMETRE"){
-                            $body["data"]["increment"] *= 100.0;
-                            if ($body["data"]["increment"] >= 1000000){
-                                //dd($body["data"]["increment"]);
-                                $bd = new BDController();
-                                $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
-                                return null;
+                            else {
+                                $body["data"]["minQuantity"] = null;
+                                $body["data"]["increment"] = null;
                             }
+                            //break;
                         }
                     }
-                    elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
-                        //if ($attribute->value <= 0 || $attribute->value == null) return null;
-                        $body["data"]["minQuantity"] = intval($attribute->value);
-                        if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
-                            $body["data"]["price"] /= 1000;
-                            $body["data"]["minQuantity"] *= 1000.0;
-                            if ($body["data"]["minQuantity"] >= 10000000){
-                                $bd = new BDController();
-                                $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
-                                return null;
-                            }
-                        } elseif ($nameOumUds == "CENTIMETRE"){
-                            $body["data"]["price"] /= 100;
-                            $body["data"]["minQuantity"] *= 100.0;
-                            if ($body["data"]["minQuantity"] >= 1000000){
-                                $bd = new BDController();
-                                $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
-                                return null;
+
+                    if ($isFractionProduct && (
+                            $nameOumUds == "KILOGRAM"
+                            || $nameOumUds == "LITRE"
+                            || $nameOumUds == "METRE")
+                    ){
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." Выбранная ед.изм товара в MS, не может быть дробным товаром в UDS.");
+                        return null;
+                    }
+
+                    foreach ($msProduct->attributes as $attribute){
+                        if ($attribute->name == "Шаг дробного значения (UDS)" && $isFractionProduct){
+                            //if ($attribute->value <= 0 || $attribute->value == null) return null;
+                            $body["data"]["increment"] = intval($attribute->value);
+                            if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                                $body["data"]["increment"] *= 1000.0;
+                                if ($body["data"]["increment"] >= 10000000){
+                                    //dd($body["data"]["increment"]);
+                                    $bd = new BDController();
+                                    $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
+                                    return null;
+                                }
+                            } elseif ($nameOumUds == "CENTIMETRE"){
+                                $body["data"]["increment"] *= 100.0;
+                                if ($body["data"]["increment"] >= 1000000){
+                                    //dd($body["data"]["increment"]);
+                                    $bd = new BDController();
+                                    $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
+                                    return null;
+                                }
                             }
                         }
+                        elseif ($attribute->name == "Минимальный размер заказа дробного товара (UDS)" && $isFractionProduct){
+                            //if ($attribute->value <= 0 || $attribute->value == null) return null;
+                            $body["data"]["minQuantity"] = intval($attribute->value);
+                            if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
+                                $body["data"]["price"] /= 1000;
+                                $body["data"]["minQuantity"] *= 1000.0;
+                                if ($body["data"]["minQuantity"] >= 10000000){
+                                    $bd = new BDController();
+                                    $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
+                                    return null;
+                                }
+                            } elseif ($nameOumUds == "CENTIMETRE"){
+                                $body["data"]["price"] /= 100;
+                                $body["data"]["minQuantity"] *= 100.0;
+                                if ($body["data"]["minQuantity"] >= 1000000){
+                                    $bd = new BDController();
+                                    $bd->errorProductLog($accountId,$error_log." Минимальный размер заказа дробного товара (UDS) введен некорректно");
+                                    return null;
+                                }
+                            }
+                        }
+                        elseif ($attribute->name == "Товар неограничен (UDS)"){
+                            if ($attribute->value == 1){
+                                $stock = null;
+                            }else {
+                                $stock = $this->stockProductService->getProductStockMs(
+                                    $msProduct->externalCode,$storeHref,$apiKeyMs
+                                );
+                            }
+                            $body["data"]["inventory"]["inStock"] = $stock;
+                        }
                     }
-                    elseif ($attribute->name == "Товар неограничен (UDS)"){
-                        if ($attribute->value == 1){
-                            $stock = null;
-                        }else {
-                            $stock = $this->stockProductService->getProductStockMs(
-                                $msProduct->externalCode,$storeHref,$apiKeyMs
+
+                    if (!array_key_exists("inventory",$body["data"])){
+                        $body["data"]["inventory"]["inStock"] = $this->stockProductService
+                            ->getProductStockMs($msProduct->externalCode,
+                                $storeHref,
+                                $apiKeyMs
                             );
+                    }
+
+                    if (
+                        $isFractionProduct
+                        && (
+                            !array_key_exists("increment",$body["data"])
+                            || !array_key_exists("minQuantity", $body["data"])
+                        )
+                    ){
+                        //dd(($body));
+                        $bd = new BDController();
+                        $bd->errorProductLog($accountId,$error_log." У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
+                        return null;
+                    }
+
+                    if($isFractionProduct) {
+                        if ($body["data"]["minQuantity"] < $body["data"]["increment"]){
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." У дробного товара Шаг дробного значения, не может быть больше Минимального размера заказа");
+                            return null;
                         }
-                        $body["data"]["inventory"]["inStock"] = $stock;
                     }
-                }
 
-                if (!array_key_exists("inventory",$body["data"])){
-                    $body["data"]["inventory"]["inStock"] = $this->stockProductService
-                        ->getProductStockMs($msProduct->externalCode,
-                            $storeHref,
-                            $apiKeyMs
-                        );
-                }
-
-                if (
-                    $isFractionProduct
-                    && (
-                        !array_key_exists("increment",$body["data"])
-                        || !array_key_exists("minQuantity", $body["data"])
-                    )
-                ){
-                    //dd(($body));
-                    $bd = new BDController();
-                    $bd->errorProductLog($accountId,$error_log." У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
-                    return null;
-                }
-
-                if($isFractionProduct) {
-                    if ($body["data"]["minQuantity"] < $body["data"]["increment"]){
-                        $bd = new BDController();
-                        $bd->errorProductLog($accountId,$error_log." У дробного товара Шаг дробного значения, не может быть больше Минимального размера заказа");
-                        return null;
+                    if ($isFractionProduct){
+                        //if ($body["name"] == "Мешок с негром"){
+                        $dPrice = explode('.',"".$body["data"]["price"]);
+                        //dd($dPrice);
+                        if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
+                            $bd = new BDController();
+                            $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
+                            return null;
+                        }
+                        // }
                     }
-                }
 
-                if ($isFractionProduct){
-                    //if ($body["name"] == "Мешок с негром"){
-                    $dPrice = explode('.',"".$body["data"]["price"]);
-                    //dd($dPrice);
-                    if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
-                        $bd = new BDController();
-                        $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
-                        return null;
+                    if ($nameOumUds == "PIECE"){
+                        $body["data"]["minQuantity"] = null;
+                        $body["data"]["increment"] = null;
                     }
-                    // }
+
+                }
+                if (property_exists($msProduct, "article")){
+                    $body["data"]["sku"] = $msProduct->article;
+                }
+                if ($nodeId > 0){
+                    $body["nodeId"] = intval($nodeId);
+                }
+                if (property_exists($msProduct,"images")){
+                    $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                    $body["data"]["photos"] = $imgIds;
                 }
 
-                if ($nameOumUds == "PIECE"){
-                    $body["data"]["minQuantity"] = null;
-                    $body["data"]["increment"] = null;
-                }
-
-            }
-
-            if (property_exists($msProduct, "article")){
-                $body["data"]["sku"] = $msProduct->article;
-            }
-
-            if ($nodeId > 0){
-                $body["nodeId"] = intval($nodeId);
-            }
-
-            if (property_exists($msProduct,"images")){
-                $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                $body["data"]["photos"] = $imgIds;
             }
 
         } catch (\Throwable $e){
@@ -315,12 +357,18 @@ class ProductUpdateUdsService
     }
 
     private function getMs($folderName,$apiKeyMs){
+        $client = new MsClient($apiKeyMs);
+        $attributes = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes')->rows;
+        foreach ($attributes as $item){
+            if ($item->name == 'id (UDS)') {
+                $attributes = $item->meta->href;
+            } else continue;
+        }
         if ($folderName == null) {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=".$attributes.'!=';
         } else {
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
         }
-        $client = new MsClient($apiKeyMs);
         return $client->get($url);
     }
 
