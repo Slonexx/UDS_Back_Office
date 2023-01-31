@@ -76,7 +76,7 @@ class ObjectController extends Controller
         }
 
         try {
-            if ((int) $externalCode > 0){
+            if ((int) $externalCode > 10000 ){
                 try {
                     $goods_orders = $this->goods_orders($externalCode, $Client_UDS);
                     $StatusCode = $goods_orders['StatusCode'];
