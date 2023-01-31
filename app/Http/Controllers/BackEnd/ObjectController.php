@@ -11,6 +11,7 @@ use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
 use App\Models\errorLog;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
@@ -61,6 +62,11 @@ class ObjectController extends Controller
         } else {
             if (property_exists($agentId, 'phone')) {
                 $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
+                if (mb_strlen($agentId->phone) >  13) {
+                    $StatusCode = 402;
+                    $message = 'Некорректный номер телефона: '.$agentId->phone;
+                    return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
+                }
             } else {
                 $StatusCode = 402;
                 $message = 'Отсутствует номер телефона у данного контрагента';
@@ -70,7 +76,13 @@ class ObjectController extends Controller
 
         try {
             if ((int) $externalCode > 0){
-                $body = $Client_UDS->get($UDSURL.$externalCode);
+                try {
+                    $body = $Client_UDS->get($UDSURL.$externalCode);
+                } catch (BadResponseException $e) {
+                    $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
+                    $StatusCode = $operation['StatusCode'];
+                    $message = $operation['message'];
+                }
                 $StatusCode = 200;
                 $state = $body->state;
                 $icon = "";
@@ -87,30 +99,9 @@ class ObjectController extends Controller
                     'info'=> 'Order',
                 ];
             } else {
-                $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
-                if ($data['status']) { $StatusCode = 200; $message = $data['data'];
-                } else {
-                    $StatusCode = 404;
-                    $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
-                    $availablePoints = $this->AgentMCID($body_agentId,  $Client_UDS);
-                    $phone = $this->AgentMCPhone($body_agentId, $Setting);
-                    $operationsAccrue = $SettingBD->operationsAccrue;
-                    $operationsCancellation = $SettingBD->operationsCancellation;
-                    if ( $SettingBD->operationsAccrue == null ) $operationsAccrue = 0;
-                    if ( $SettingBD->operationsCancellation == 1 ){ $availablePoints = 0;
-                    } else  $operationsCancellation = 0;
-
-                    $message = [
-                        'total' => $info_total_and_SkipLoyaltyTotal['total'],
-                        'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                        'availablePoints' => $availablePoints,
-                        'points' => 0,
-                        'phone' => $phone,
-                        'operationsAccrue' => (int) $operationsAccrue,
-                        'operationsCancellation' => (int) $operationsCancellation,
-                    ];
-                }
-
+                $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
+                $StatusCode = $operation['StatusCode'];
+                $message = $operation['message'];
             }
         } catch (ClientException $exception) {
             $StatusCode = 405;
@@ -685,5 +676,37 @@ class ObjectController extends Controller
         }
 
         return response()->json($post);
+    }
+
+    private function operation_to_post($accountId, UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD)
+    {
+        $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
+        if ($data['status']) { $StatusCode = 200; $message = $data['data'];
+        } else {
+            $StatusCode = 404;
+            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
+            $availablePoints = $this->AgentMCID($body_agentId,  $Client_UDS);
+            $phone = $this->AgentMCPhone($body_agentId, $Setting);
+            $operationsAccrue = $SettingBD->operationsAccrue;
+            $operationsCancellation = $SettingBD->operationsCancellation;
+            if ( $SettingBD->operationsAccrue == null ) $operationsAccrue = 0;
+            if ( $SettingBD->operationsCancellation == 1 ){ $availablePoints = 0;
+            } else  $operationsCancellation = 0;
+
+            $message = [
+                'total' => $info_total_and_SkipLoyaltyTotal['total'],
+                'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
+                'availablePoints' => $availablePoints,
+                'points' => 0,
+                'phone' => $phone,
+                'operationsAccrue' => (int) $operationsAccrue,
+                'operationsCancellation' => (int) $operationsCancellation,
+            ];
+        }
+
+        return [
+          'StatusCode' => $StatusCode,
+          'message' => $message,
+        ];
     }
 }
