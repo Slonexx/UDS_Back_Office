@@ -14,6 +14,7 @@ use App\Models\errorLog;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ObjectController extends Controller
 {
@@ -46,7 +47,6 @@ class ObjectController extends Controller
         $urlAll = new mainURL();
 
 
-        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
         $urlCounterparty = $urlAll->url_ms()."$entity/$objectId";
 
         $Client = new MsClient($Setting->TokenMoySklad);
@@ -78,28 +78,16 @@ class ObjectController extends Controller
         try {
             if ((int) $externalCode > 0){
                 try {
-                    $body = $Client_UDS->get($UDSURL.$externalCode);
+                    $goods_orders = $this->goods_orders($externalCode, $Client_UDS);
+                    $StatusCode = $goods_orders['StatusCode'];
+                    $message = $goods_orders['message'];
                 } catch (BadResponseException $e) {
                     $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
                     $StatusCode = $operation['StatusCode'];
                     $message = $operation['message'];
                 }
-                $StatusCode = 200;
-                $state = $body->state;
-                $icon = "";
-                if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
-                if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
-                if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
-
-                $message = [
-                    'id'=> $body->id,
-                    'BonusPoint'=>  $body->purchase->cashBack,
-                    'points'=> $body->purchase->points,
-                    'state'=> $state,
-                    'icon'=> $icon,
-                    'info'=> 'Order',
-                ];
-            } else {
+            }
+            else {
                 $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
                 $StatusCode = $operation['StatusCode'];
                 $message = $operation['message'];
@@ -679,7 +667,7 @@ class ObjectController extends Controller
         return response()->json($post);
     }
 
-    private function operation_to_post($accountId, UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD)
+    #[ArrayShape(['StatusCode' => "int", 'message' => "array|mixed"])] private function operation_to_post($accountId, UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
     {
         $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
         if ($data['status']) { $StatusCode = 200; $message = $data['data'];
@@ -708,6 +696,31 @@ class ObjectController extends Controller
         return [
           'StatusCode' => $StatusCode,
           'message' => $message,
+        ];
+    }
+
+    #[ArrayShape(['StatusCode' => "int", 'message' => "array"])] private function goods_orders($externalCode, UdsClient $Client_UDS): array
+    {
+        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
+        $body = $Client_UDS->get($UDSURL.$externalCode);
+        $StatusCode = 200;
+        $state = $body->state;
+        $icon = "";
+        if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
+        if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
+        if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
+
+        $message = [
+            'id'=> $body->id,
+            'BonusPoint'=>  $body->purchase->cashBack,
+            'points'=> $body->purchase->points,
+            'state'=> $state,
+            'icon'=> $icon,
+            'info'=> 'Order',
+        ];
+        return [
+            'StatusCode' => $StatusCode,
+            'message' => $message,
         ];
     }
 }
