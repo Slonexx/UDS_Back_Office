@@ -5,7 +5,9 @@ use App\Http\Controllers\BackEnd\ObjectController;
 use App\Http\Controllers\BackEnd\Salesreturn;
 use App\Http\Controllers\Web\ADD\ApplicationController;
 use App\Http\Controllers\Web\employees;
+use App\Http\Controllers\Web\GET\getAutomationController;
 use App\Http\Controllers\Web\GET\getController;
+use App\Http\Controllers\Web\POST\postAutomationController;
 use App\Http\Controllers\Web\POST\postController;
 use App\Http\Controllers\Web\sendOperations;
 use App\Http\Controllers\Web\SettingController;
@@ -58,6 +60,10 @@ Route::post('/setSetting/Document/{accountId}/{isAdmin}', [postController::class
 
 Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'indexAdd'])->name('indexAdd');
 Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
+
+
+Route::get('/Setting/Automation/{accountId}/{isAdmin}', [getAutomationController::class, 'getAutomation'])->name('getAutomation');
+Route::post('/setSetting/Automation/{accountId}/{isAdmin}', [postAutomationController::class, 'postSettingAdd'])->name('postAutomation');
 
 
 Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);

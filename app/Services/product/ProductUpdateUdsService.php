@@ -43,7 +43,7 @@ class ProductUpdateUdsService
         $folderId = $data['folder_id'];
         $storeName = $data['store'];
         $accountId = $data['accountId'];
-
+        set_time_limit(3600);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $msProducts = $this->getMs($folderName,$apiKeyMs);
