@@ -62,11 +62,11 @@ class ObjectController extends Controller
         } else {
             if (property_exists($agentId, 'phone')) {
                 $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
-                if (mb_strlen($agentId->phone) >  13) {
+              /*  if (mb_strlen($agentId->phone) >  13) {
                     $StatusCode = 402;
                     $message = 'Некорректный номер телефона: '.$agentId->phone;
                     return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
-                }
+                }*/
             } else {
                 $StatusCode = 402;
                 $message = 'Отсутствует номер телефона у данного контрагента';
