@@ -93,7 +93,7 @@ class ObjectController extends Controller
                 $message = $operation['message'];
             }
         } catch (ClientException $exception) {
-            $StatusCode = 405;
+            $StatusCode = 402;
             $message = $exception->getMessage();
         }
 
