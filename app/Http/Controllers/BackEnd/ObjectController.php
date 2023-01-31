@@ -61,12 +61,13 @@ class ObjectController extends Controller
             $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
         } else {
             if (property_exists($agentId, 'phone')) {
-                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
-              /*  if (mb_strlen($agentId->phone) >  13) {
+                $phone = $this->AgentMCPhone($agentId, $Setting);
+                if (mb_strlen($phone) > 14) {
                     $StatusCode = 402;
                     $message = 'Некорректный номер телефона: '.$agentId->phone;
                     return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
-                }*/
+                }
+                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => '+'.$phone,];
             } else {
                 $StatusCode = 402;
                 $message = 'Отсутствует номер телефона у данного контрагента';
