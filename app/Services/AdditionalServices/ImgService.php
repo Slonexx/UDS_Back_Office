@@ -22,8 +22,6 @@ class ImgService
 
         $imgIds = [];
 
-        //dd($urlImages);
-
         $clientMs = new MsClient($apiKeyMs);
         $images = $clientMs->get($urlImages);
 
@@ -46,8 +44,6 @@ class ImgService
 
             }
         }
-
-        //dd($imgIds);
 
         return $imgIds;
     }
