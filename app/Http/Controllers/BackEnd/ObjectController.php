@@ -234,6 +234,7 @@ class ObjectController extends Controller
         ];
         try {
             $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
+            return $postBody;
         } catch (\Throwable $e) {
             $message = $e->getMessage();
             errorLog::create([
@@ -241,7 +242,7 @@ class ObjectController extends Controller
                 'ErrorMessage' => $message,
             ]);
         }
-        return $postBody;
+
     }
 
     public function customers(Request $request): \Illuminate\Http\JsonResponse
@@ -456,7 +457,7 @@ class ObjectController extends Controller
                     $postBodyCreateFactureout = $client->post($urlFacture, $body);
                 }
             } catch (\Throwable $e) {
-                dd($e);
+                //dd($e);
             }
         }
     }
