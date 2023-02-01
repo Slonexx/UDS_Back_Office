@@ -28,8 +28,9 @@ class ImgService
         foreach ($images->rows as $image){
             try {
                 if(property_exists($image, 'meta')){
+
                     $imgHref = $image->meta->downloadHref;
-                    $imageType = 'image/png';
+                    $imageType = 'image/jpeg';
 
                     $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
                     $dataImgUds = json_decode($response_Image_UDS['result']);
@@ -38,12 +39,6 @@ class ImgService
                     $url_to_UDS = $dataImgUds->url;
                     $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
                     dd(
-                        $imgHref,
-                        $imageType,
-                        $response_Image_UDS,
-                        $dataImgUds,
-                        $imageId_to_UDS,
-                        $url_to_UDS,
                         $downloadImage_S3UDS
                     );
                     $imgIds [] = $imageId_to_UDS;
