@@ -16,7 +16,10 @@ use JetBrains\PhpStorm\ArrayShape;
 class ImgService
 {
 
-    public function setImgUDS($urlImages,$apiKeyMs,$companyId,$password): array
+    /**
+     * @throws GuzzleException
+     */
+    public function setImgUDS($urlImages, $apiKeyMs, $companyId, $password): array
     {
         //$urlGood = "https://api.uds.app/partner/v2/goods/".$item_good->id;
 
@@ -26,7 +29,7 @@ class ImgService
         $images = $clientMs->get($urlImages);
 
         foreach ($images->rows as $image){
-            try {
+
                 if(property_exists($image, 'meta')){
                     $imgHref = $image->meta->downloadHref;
                     $imageType = 'image/png';
@@ -40,9 +43,7 @@ class ImgService
 
                     $imgIds [] = $imageId_to_UDS;
                 }
-            } catch (\Throwable $e){
 
-            }
         }
 
         return $imgIds;
