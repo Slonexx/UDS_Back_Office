@@ -34,7 +34,7 @@ class ImgService
                     $dataImgUds = json_decode($response_Image_UDS['result']);
 
                     $url_to_UDS = $dataImgUds->url;
-                    $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
+                    $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
                     $imgIds [] = $dataImgUds->imageId;
                 }
             } catch (\Throwable $e){
@@ -91,7 +91,7 @@ class ImgService
     /**
      * @throws GuzzleException
      */
-    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): array
+    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs)
     {
         $clientMs = new Client([
             'headers' => [
@@ -101,10 +101,9 @@ class ImgService
         ]);
 
         $res = $clientMs->get($imageHref);
-        //dd($res->getBody()->getContents());
         $image = $res->getBody()->getContents();
 
-       /* $opts = array(
+        $opts = array(
             'http' => array(
                 'method' => 'PUT',
                 'header' =>
@@ -117,29 +116,12 @@ class ImgService
         $context = stream_context_create($opts);
         $result = file_get_contents($url,false, $context);
 
-       preg_match('/([0-9])\d+/',$http_response_header[0],$matches);
-       $responsecode = intval($matches[0]);
 
-        //dd($responsecode);
-       */
-
-        $client = new Client();
+        /*$client = new Client();
         $res = $client->put($url,[
             'headers'=> ['Content-Type' => "image/png"],
             'form_params' => [ $image ]
-        ]);
-
-
-        if ($res->getStatusCode() == 200){
-            $message = "Image sent to UDS";
-        } else {
-            $message = " 0_0 Error ".$res->getBody()->getContents();
-        }
-
-        $out["message"] = $message;
-        $out["code"] = $res->getStatusCode();
-
-        return $out;
+        ]);*/
     }
 
     private function setUrlToUds($img_type,$companyId,$apiKey): array
