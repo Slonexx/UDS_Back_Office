@@ -30,18 +30,14 @@ class ImgService
                 if(property_exists($image, 'meta')){
 
                     $imgHref = $image->meta->downloadHref;
-                    $imageType = 'image/jpeg';
+                    $imageType = 'image/png';
 
                     $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
                     $dataImgUds = json_decode($response_Image_UDS['result']);
 
-                    $imageId_to_UDS = $dataImgUds->imageId;
                     $url_to_UDS = $dataImgUds->url;
                     $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
-                    dd(
-                        $downloadImage_S3UDS
-                    );
-                    $imgIds [] = $imageId_to_UDS;
+                    $imgIds [] = $dataImgUds->imageId;
                 }
             } catch (\Throwable $e){
                 dd($e->getMessage());
@@ -109,8 +105,7 @@ class ImgService
         //dd($res->getBody()->getContents());
         $image = $res->getBody()->getContents();
 
-
-        $opts = array(
+       /* $opts = array(
             'http' => array(
                 'method' => 'PUT',
                 'header' =>
@@ -120,24 +115,30 @@ class ImgService
             )
         );
 
-        //dd($image);
-
         $context = stream_context_create($opts);
         $result = file_get_contents($url,false, $context);
 
-        preg_match('/([0-9])\d+/',$http_response_header[0],$matches);
-        $responsecode = intval($matches[0]);
+       preg_match('/([0-9])\d+/',$http_response_header[0],$matches);
+       $responsecode = intval($matches[0]);
 
         //dd($responsecode);
+       */
 
-        if ($responsecode == 200){
+        $client = new Client();
+        $res = $client->put($url,[
+            'headers'=> ['Content-Type' => "image/png"],
+            'form_params' => [ $image ]
+        ]);
+
+
+        if ($res->getStatusCode() == 200){
             $message = "Image sent to UDS";
         } else {
-            $message = " 0_0 Error $responsecode";
+            $message = " 0_0 Error ".$res->getBody()->getContents();
         }
 
         $out["message"] = $message;
-        $out["code"] = $responsecode;
+        $out["code"] = $res->getStatusCode();
 
         return $out;
     }
