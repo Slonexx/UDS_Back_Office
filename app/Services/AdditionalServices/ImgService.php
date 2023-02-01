@@ -26,6 +26,7 @@ class ImgService
         $images = $clientMs->get($urlImages);
 
         foreach ($images->rows as $image){
+            try {
                 if(property_exists($image, 'meta')){
                     $imgHref = $image->meta->downloadHref;
                     $imageType = 'image/png';
@@ -39,6 +40,9 @@ class ImgService
 
                     $imgIds [] = $imageId_to_UDS;
                 }
+            } catch (\Throwable $e){
+
+            }
         }
 
         return $imgIds;
