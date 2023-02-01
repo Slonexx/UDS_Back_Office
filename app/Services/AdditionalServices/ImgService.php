@@ -3,16 +3,13 @@
 namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
-use App\Components\UdsClient;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
-//use Nette\Utils\DateTime;
 
 class ImgService
 {
@@ -41,7 +38,7 @@ class ImgService
                     $imgIds [] = $dataImgUds->imageId;
                 }
             } catch (\Throwable $e){
-                Storage::disk('local')->put('Error_to_S3_Image.txt',$url_to_UDS.'Server                 \r\n'. $e);
+                Storage::disk('local')->put('Error_to_S3_Image.txt',$url_to_UDS."                                                    \r\n". $e);
                 dd($e->getMessage());
             }
         }

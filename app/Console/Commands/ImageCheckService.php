@@ -2,17 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Components\MsClient;
-use App\Components\UdsClient;
-use App\Http\Controllers\AgentController;
-use App\Http\Controllers\BackEnd\BDController;
-use App\Http\Controllers\Config\getSettingVendorController;
-use App\Models\counterparty_add;
+
 use App\Services\AdditionalServices\ImgService;
 use GuzzleHttp\Client;
-use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
 
 class ImageCheckService extends Command
