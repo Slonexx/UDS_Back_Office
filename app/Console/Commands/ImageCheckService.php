@@ -60,8 +60,6 @@ class ImageCheckService extends Command
                     'contents' => 'МАГАЗИН'
                 ]
             ]];
-        $request = new Request('POST', 'https://smartuds.kz/api/productUds', $headers);
-        $res = $client->sendAsync($request, $options)->wait();
-        dd($res);
+        return $client->post('https://smartuds.kz/api/productUds', $options);
     }
 }
