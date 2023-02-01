@@ -80,7 +80,8 @@ class ProductUpdateUdsService
 
         }
         return [
-            'message' => 'Updated products in UDS'
+            'message' => 'Updated products in UDS',
+            'createdProduct' => $createdProduct
         ];
 
     }
