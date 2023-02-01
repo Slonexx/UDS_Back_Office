@@ -93,14 +93,14 @@ class ImgService
      */
     private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs)
     {
-        $clientMs = new Client([
+        $clientMs = new Client();
+
+        $res = $clientMs->get($imageHref,[
             'headers' => [
                 'Authorization' => $apiKeyMs,
                 'Content-Type' => 'application/json',
             ]
         ]);
-
-        $res = $clientMs->get($imageHref);
         $image = $res->getBody()->getContents();
 
         $opts = array(
