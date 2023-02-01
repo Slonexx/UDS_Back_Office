@@ -388,7 +388,6 @@ class ProductCreateUdsService
 
             if (property_exists($product,'images')){
                 $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                if ($imgIds) usleep(2000);
                 $body["data"]["photos"] = $imgIds;
             }
 
@@ -561,11 +560,8 @@ class ProductCreateUdsService
             }
 
             if (property_exists($product,'images')){
-                //dd($product);
                 $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                if ($imgIds) usleep(2000);
                 $body["data"]["photos"] = $imgIds;
-                //dd($body);
             }
         }
 

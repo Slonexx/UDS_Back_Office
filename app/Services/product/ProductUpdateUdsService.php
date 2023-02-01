@@ -44,7 +44,7 @@ class ProductUpdateUdsService
         $storeName = $data['store'];
         $accountId = $data['accountId'];
 
-        set_time_limit(600);
+        set_time_limit(1200);
 
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
@@ -63,6 +63,9 @@ class ProductUpdateUdsService
                         } else continue;
                     }
                 }
+
+                if ($productId == 2462706 or $productId == 2462708) continue;
+
                 if ($productId != null){
                     if (property_exists($row,"productFolder")){
                         $productFolderHref = $row->productFolder->meta->href;
@@ -162,20 +165,14 @@ class ProductUpdateUdsService
                 }else { return null; }
                 if ($nodeId > 0){ $body["nodeId"] = intval($nodeId); }
 
-                if (property_exists($msProduct,'images')){
-                    if (property_exists($body_json_by_UDS, 'photos')){
-                        if (count($body_json_by_UDS->photos) > 0) {
-                            $body["data"]["photos"] = $body_json_by_UDS->photos;
-                        } else {
-                            $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
-                            $body["data"]["photos"] = $imgIds;
-                        }
+                if (property_exists($msProduct,'images') and property_exists($body_json_by_UDS->data, 'photos')){
+                    if (count($body_json_by_UDS->data->photos) > 0) {
+                        $body["data"]["photos"] = $body_json_by_UDS->data->photos;
+                    } else {
+                        $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
+                        $body["data"]["photos"] = $imgIds;
                     }
-
-
-
                 }
-
             }
             else {
 
@@ -351,12 +348,12 @@ class ProductUpdateUdsService
                 if ($nodeId > 0){
                     $body["nodeId"] = intval($nodeId);
                 }
-                if (property_exists($msProduct,"images")){
-                    if (property_exists($body_json_by_UDS, 'imageUrls')){
-                        if (count($body_json_by_UDS->imageUrls) <= 0) {
-                            $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
-                            $body["data"]["photos"] = $imgIds;
-                        }
+                if (property_exists($msProduct,'images') and property_exists($body_json_by_UDS->data, 'photos')){
+                    if (count($body_json_by_UDS->data->photos) > 0) {
+                        $body["data"]["photos"] = $body_json_by_UDS->data->photos;
+                    } else {
+                        $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
+                        $body["data"]["photos"] = $imgIds;
                     }
                 }
 
