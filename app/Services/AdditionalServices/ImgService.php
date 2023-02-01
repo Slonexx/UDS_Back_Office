@@ -44,7 +44,7 @@ class ImgService
                     $imgIds [] = $imageId_to_UDS;
                 }
             } catch (\Throwable $e){
-
+                dd($e->getMessage());
             }
         }
         /*dd($imgIds);*/
