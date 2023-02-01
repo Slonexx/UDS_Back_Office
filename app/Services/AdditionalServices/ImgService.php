@@ -37,7 +37,15 @@ class ImgService
                     $imageId_to_UDS = $dataImgUds->imageId;
                     $url_to_UDS = $dataImgUds->url;
                     $downloadImage_S3UDS = $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
-
+                    dd(
+                        $imgHref,
+                        $imageType,
+                        $response_Image_UDS,
+                        $dataImgUds,
+                        $imageId_to_UDS,
+                        $url_to_UDS,
+                        $downloadImage_S3UDS
+                    );
                     $imgIds [] = $imageId_to_UDS;
                 }
             } catch (\Throwable $e){
