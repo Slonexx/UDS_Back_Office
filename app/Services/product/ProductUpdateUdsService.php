@@ -64,8 +64,6 @@ class ProductUpdateUdsService
                     }
                 }
 
-                if ($productId == 2462706 or $productId == 2462708) continue;
-
                 if ($productId != null){
                     if (property_exists($row,"productFolder")){
                         $productFolderHref = $row->productFolder->meta->href;
