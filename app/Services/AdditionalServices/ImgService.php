@@ -44,7 +44,7 @@ class ImgService
 
             }
         }
-        dd($imgIds);
+        /*dd($imgIds);*/
         return $imgIds;
     }
 
