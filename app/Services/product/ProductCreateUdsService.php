@@ -565,6 +565,7 @@ class ProductCreateUdsService
         }
 
         try {
+            usleep(2000);
             return $Client_UDS->post($url,$body);
         }catch (ClientException $e){
             $bd->errorProductLog($accountId,$e->getMessage());
