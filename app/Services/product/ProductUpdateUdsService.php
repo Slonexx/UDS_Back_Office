@@ -159,8 +159,12 @@ class ProductUpdateUdsService
                 if ($nodeId > 0){ $body["nodeId"] = intval($nodeId); }
 
                 if (property_exists($msProduct,'images')){
-                    $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                    $body["data"]["photos"] = $imgIds;
+                    if (property_exists($body_json_by_UDS, 'imageUrls')){
+                        if (count($body_json_by_UDS->imageUrls) <= 0) {
+                            $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
+                            $body["data"]["photos"] = $imgIds;
+                        }
+                    }
                 }
 
             }
@@ -339,8 +343,12 @@ class ProductUpdateUdsService
                     $body["nodeId"] = intval($nodeId);
                 }
                 if (property_exists($msProduct,"images")){
-                    $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
-                    $body["data"]["photos"] = $imgIds;
+                    if (property_exists($body_json_by_UDS, 'imageUrls')){
+                        if (count($body_json_by_UDS->imageUrls) <= 0) {
+                            $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
+                            $body["data"]["photos"] = $imgIds;
+                        }
+                    }
                 }
 
             }
