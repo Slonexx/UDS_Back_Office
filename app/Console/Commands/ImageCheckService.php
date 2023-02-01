@@ -29,7 +29,7 @@ class ImageCheckService extends Command
     public function handle()
     {
 
-        $client = new Client(['base_uri' => 'https://smartuds.kz/api/productUds']);
+        $client = new Client(['base_uri' => 'https://smartuds.kz/api/updateProductUds']);
         $res = $client->post('',[
             'headers'=> ['Accept' => 'application/json'],
             'form_params' => [

@@ -164,11 +164,16 @@ class ProductUpdateUdsService
 
                 if (property_exists($msProduct,'images')){
                     if (property_exists($body_json_by_UDS, 'imageUrls')){
-                        if (count($body_json_by_UDS->imageUrls) <= 0) {
+                        if (count($body_json_by_UDS->imageUrls) > 0) {
+                            $body["data"]["photos"] = $body_json_by_UDS->imageUrls;
+                        } else {
                             $imgIds = $this->imgService->setImgUDS($msProduct->images->meta->href, $apiKeyMs, $companyId, $apiKeyUds);
                             $body["data"]["photos"] = $imgIds;
                         }
                     }
+
+
+
                 }
 
             }
