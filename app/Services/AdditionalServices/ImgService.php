@@ -9,6 +9,7 @@ use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 //use Nette\Utils\DateTime;
@@ -40,6 +41,7 @@ class ImgService
                     $imgIds [] = $dataImgUds->imageId;
                 }
             } catch (\Throwable $e){
+                Storage::disk('local')->put('Error_to_S3_Image.txt', $e);
                 dd($e->getMessage());
             }
         }
