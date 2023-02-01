@@ -41,7 +41,7 @@ class ImgService
                     $imgIds [] = $dataImgUds->imageId;
                 }
             } catch (\Throwable $e){
-                Storage::disk('local')->put('Error_to_S3_Image.txt', $e);
+                Storage::disk('local')->put('Error_to_S3_Image.txt',$url_to_UDS.'Server                 \r\n'. $e);
                 dd($e->getMessage());
             }
         }
