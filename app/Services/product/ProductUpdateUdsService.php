@@ -50,6 +50,8 @@ class ProductUpdateUdsService
         $folderName = $this->getFolderNameById($folderId,$apiKeyMs);
         $msProducts = $this->getMs($folderName,$apiKeyMs);
 
+        $ARR_PRODUCT[] = null;
+
         foreach ($msProducts->rows as $row){
              try {
                 $productId = null;
@@ -73,6 +75,7 @@ class ProductUpdateUdsService
                     if ($updatedProduct != null){
                         $this->updateProduct($updatedProduct,$row->id,$apiKeyMs);
                     }
+                    $ARR_PRODUCT[] = $updatedProduct;
                 } else continue;
             } catch (BadResponseException $e){
                 continue;
@@ -81,7 +84,7 @@ class ProductUpdateUdsService
         }
         return [
             'message' => 'Updated products in UDS',
-            'updatedProduct' => $updatedProduct
+            'Массив товаров' => $ARR_PRODUCT
         ];
 
     }
