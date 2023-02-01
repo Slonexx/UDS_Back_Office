@@ -102,6 +102,7 @@ class ProductCreateUdsService
         if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
         $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
         $productsMs = $this->getMs($folderName,$apiKeyMs);
+        $ARR_PRODUCT[] = null;
 
         foreach ($productsMs->rows as $row){
             $isProductNotAdd = true;
@@ -129,6 +130,7 @@ class ProductCreateUdsService
                     $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
                     if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
                     else continue;
+                    $ARR_PRODUCT[] = $createdProduct;
                 } catch (\Throwable $e){
                     continue;
                 }
@@ -138,7 +140,7 @@ class ProductCreateUdsService
 
         return [
             "message" => "Successful export products to UDS",
-            'createdProduct' => $createdProduct
+            'Массив товаров' => $ARR_PRODUCT
         ];
     }
 
