@@ -388,6 +388,7 @@ class ProductCreateUdsService
 
             if (property_exists($product,'images')){
                 $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
+                dd($imgIds);
                 if ($imgIds) usleep(2000);
                 $body["data"]["photos"] = $imgIds;
             }
