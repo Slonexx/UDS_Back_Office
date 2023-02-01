@@ -7,34 +7,17 @@ use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
-use Dflydev\DotAccessData\Data;
-use GuzzleHttp\Client;
-use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Pool;
 use Illuminate\Console\Command;
-use function Symfony\Component\Translation\t;
+
 
 class CreateUdsCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'udsProduct:create';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
     private SettingsService $settingsService;
 
     public function __construct(SettingsService $settingsService)
@@ -68,7 +51,40 @@ class CreateUdsCommand extends Command
     public function handle()
     {
 
+        $client = new \GuzzleHttp\Client();
         $allSettings = $this->settingsService->getSettings();
+
+        $requests = function ($allSettings) {
+            foreach ($allSettings as $settings){
+                try {
+                    $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+
+                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                } catch (\Throwable $e) { continue; }
+
+                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
+                if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
+
+                $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "folder_id" => $folder_id,
+                    "store" => $settings->Store,
+                    "accountId" => $settings->accountId,
+                ];
+
+                yield function() use ($data) {
+                    app(ProductController::class)->insertUds_data($data);
+                };
+            }
+        };
+
+        $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
+
+        /*$allSettings = $this->settingsService->getSettings();
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
@@ -112,7 +128,7 @@ class CreateUdsCommand extends Command
         $eachPromise = new EachPromise($promises,[
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
-                dd($response->getBody());
+                dd($response);
                 //dd($response->getStatusCode());
             },
             'rejected' => function ($reason) {
@@ -120,6 +136,6 @@ class CreateUdsCommand extends Command
             }
         ]);
         //dd($eachPromise);
-        $eachPromise->promise()->wait();
+        $eachPromise->promise()->wait();*/
     }
 }
