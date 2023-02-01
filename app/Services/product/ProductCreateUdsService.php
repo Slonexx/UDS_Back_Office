@@ -137,7 +137,8 @@ class ProductCreateUdsService
         }
 
         return [
-            "message" => "Successful export products to UDS"
+            "message" => "Successful export products to UDS",
+            'createdProduct' => $createdProduct
         ];
     }
 
