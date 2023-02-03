@@ -27,6 +27,7 @@
                         <a class="mt-1" id="link_3" href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
                         <a class="mt-1" id="link_4" href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
                         <a class="mt-1" id="link_5" href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
+                        <a class="mt-1" id="link_6" href="/Setting/Automation/{{$accountId}}/{{$isAdmin}}"> Автоматизация </a>
                         {{--<a class="mt-1" id="link_6" href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>--}}
                     </div>
                 </div>
