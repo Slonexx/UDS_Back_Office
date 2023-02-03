@@ -35,7 +35,7 @@ switch ($method) {
     case 'GET':
         break;
     case 'DELETE':
-        $url = 'https://smartuds.kz/DeleteVendorApi/'.$accountId;
+        $url = 'https://smartuds.kz/Web/DeleteVendorApi/'.$accountId;
         $install = file_get_contents($url);
         $replyStatus = false;
         break;
