@@ -13,7 +13,7 @@
                     </div>
                 </div>
 
-                <form action="  " method="post">
+                <form action="/setSetting/Automation/{{ $accountId }}/{{ $isAdmin }}" method="post">
                 @csrf <!-- {{ csrf_field() }} -->
                     <div class="mt-2 row p-1 gradient_invert rounded text-black">
                         <div class="col-11">

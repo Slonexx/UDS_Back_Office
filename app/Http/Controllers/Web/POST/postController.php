@@ -24,6 +24,7 @@ class postController extends Controller
     public function postSettingIndex(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         $cfg = new cfg();
+        $BD = new BDController();
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
 
@@ -50,35 +51,17 @@ class postController extends Controller
             }
         }
 
-
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
         if ($body == 200){
+            $this->Setting_Main_Create_Or_Update( $accountId, $TokenMS, $request->companyId, $request->TokenUDS, $request->ProductFolder, $request->UpdateProduct, $request->Store,);
 
-            $this->Setting_Main_Create_Or_Update(
-                $TokenMS,
-                $accountId, $TokenMS,
-                $request->companyId,
-                $request->TokenUDS,
-                $request->ProductFolder,
-                $request->UpdateProduct,
-                $request->Store,
-            );
-
-
-            $app->companyId = $request->companyId;
-            $app->TokenUDS = $request->TokenUDS;
-
-            $app->ProductFolder = $request->ProductFolder;
-            $app->UpdateProduct = $request->UpdateProduct;
-            $app->Store = $request->Store;
+            $app->companyId = $request->companyId; $app->TokenUDS = $request->TokenUDS;
+            $app->ProductFolder = $request->ProductFolder; $app->UpdateProduct = $request->UpdateProduct; $app->Store = $request->Store;
             $app->status = AppInstanceContoller::ACTIVATED;
-
             app(VendorApiController::class)->updateAppStatus($appId, $accountId, $app->getStatusName());
 
-            $BD = new BDController();
             $BD->createCounterparty($accountId, $TokenMS, $request->companyId,  $request->TokenUDS);
-
             $app->persist();
 
             $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
@@ -168,22 +151,27 @@ class postController extends Controller
 
 
 
-    private function Setting_Main_Create_Or_Update($TokenMoySklad, $accountId, $TokenMS, mixed $companyId, mixed $TokenUDS, mixed $ProductFolder, mixed $UpdateProduct, mixed $Store)
+    private function Setting_Main_Create_Or_Update($accountId, $TokenMS, mixed $companyId, mixed $TokenUDS, mixed $ProductFolder, mixed $UpdateProduct, mixed $Store)
     {
-        if ($TokenMoySklad == null) { app(create::class)->SettingMainCreate( $accountId, $TokenMS,
+        $Create = new create();
+        $update = new update();
+        if ($TokenMS == null) { $Create->SettingMainCreate(
+            $accountId,
+            $TokenMS,
             $companyId,
             $TokenUDS,
             $ProductFolder,
             $UpdateProduct,
             $Store,
         );
-        } else { app(update::class)->SettingMainUpdate( $accountId, $TokenMS,
+        } else {
+            $update->SettingMainUpdate( $accountId, $TokenMS,
             $companyId,
             $TokenUDS,
             $ProductFolder,
             $UpdateProduct,
             $Store,
-        );
+            );
         }
     }
 }
