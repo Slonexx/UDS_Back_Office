@@ -83,4 +83,4 @@ Route::post('/CountProduct/', [ApplicationController::class, 'CountProduct']);
 
 
 
-Route::get('DeleteVendorApi/{accountId}', [DeleteVendorApiController::class, 'Delete']);
+Route::get('Web/DeleteVendorApi/{accountId}', [DeleteVendorApiController::class, 'Delete']);
