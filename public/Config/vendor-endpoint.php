@@ -1,14 +1,13 @@
 <?php
-
 require_once 'lib.php';
-
 $method = $_SERVER['REQUEST_METHOD'];
-$path = $_SERVER['PATH_INFO'];
 
-$pp = explode('/', $path);
+$url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$pp = explode('/', $url);
 $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
+
 
 
 $app = AppInstanceContoller::load($appId, $accountId);

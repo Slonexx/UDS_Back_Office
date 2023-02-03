@@ -20,6 +20,9 @@ class ImageCheckService extends Command
 
     public function handle()
     {
+
+        dd($_SERVER);
+
         /*$imgIds = app(ImgService::class)->setImgUDS(
         "https://online.moysklad.ru/api/remap/1.2/entity/product/80ca390b-97b4-11ed-0a80-0721008c6f63/images",
         "320a1fdf9222b8f40c968d0df757a30165a2b9fe",
