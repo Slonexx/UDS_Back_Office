@@ -37,7 +37,7 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
 
 
 
-    Route::post('/webhook/customerorder/{requestId}',[WebhookMSController::class, 'postOrder']);
+    Route::post('/webhook/customerorder/',[WebhookMSController::class, 'postOrder']);
 
     //Route::get('img',[ImgService::class,'getImgContent']);
 
