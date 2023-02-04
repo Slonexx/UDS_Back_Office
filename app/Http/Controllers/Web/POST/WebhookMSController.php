@@ -9,6 +9,6 @@ class WebhookMSController extends Controller
 {
     public function customerorder(Request $request, $requestId){
 
-        return response('',200)->json();
+        return response()->json();
     }
 }
