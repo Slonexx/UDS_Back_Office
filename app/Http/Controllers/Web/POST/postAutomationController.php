@@ -62,7 +62,7 @@ class postAutomationController extends Controller
 
         try {
             $Client = new MsClient($Setting->TokenMoySklad);
-            $url_check ='https://dev.smartuds.kz/webhook/customerorder' ;
+            $url_check ='https://dev.smartuds.kz/api/webhook/customerorder' ;
             $Webhook_check = true;
             $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
             if ($Webhook_body != []){
