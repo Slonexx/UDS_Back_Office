@@ -1,14 +1,13 @@
 <?php
-
 require_once 'lib.php';
-
 $method = $_SERVER['REQUEST_METHOD'];
-$path = $_SERVER['PATH_INFO'];
 
-$pp = explode('/', $path);
+$url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$pp = explode('/', $url);
 $n = count($pp);
 $appId = $pp[$n - 2];
 $accountId = $pp[$n - 1];
+
 
 
 $app = AppInstanceContoller::load($appId, $accountId);
@@ -28,7 +27,7 @@ switch ($method) {
             $app->status = AppInstanceContoller::SETTINGS_REQUIRED;
             $app->persist();
 
-            $url = 'https://dev.smartuds.kz/api/install/'.$accountId;
+            $url = 'https://smartuds.kz/api/install/'.$accountId;
             $install = file_get_contents($url);
         }
 
@@ -36,7 +35,7 @@ switch ($method) {
     case 'GET':
         break;
     case 'DELETE':
-        $url = 'https://dev.smartuds.kz/DeleteVendorApi/'.$accountId;
+        $url = 'https://smartuds.kz/Web/DeleteVendorApi/'.$accountId;
         $install = file_get_contents($url);
         $replyStatus = false;
         break;

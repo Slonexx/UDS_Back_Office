@@ -11,8 +11,6 @@ use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\getData\getSetting;
-use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\orderSettingModel;
 use App\Models\SettingMain;
 use Illuminate\Http\Client\Pool;
@@ -155,7 +153,9 @@ class postController extends Controller
     {
         $Create = new create();
         $update = new update();
-        if ($TokenMS == null) { $Create->SettingMainCreate(
+        $Setting =  SettingMain::query()->where('accountId', $accountId)->get()->all();
+
+        if ($Setting == []) { $Create->SettingMainCreate(
             $accountId,
             $TokenMS,
             $companyId,

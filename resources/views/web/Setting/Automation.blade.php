@@ -13,6 +13,10 @@
                     </div>
                 </div>
 
+                @if($message == true)
+                    <div class="{{$class}}"> {{$message}}</div>
+                @endif
+
                 <form action="/setSetting/Automation/{{ $accountId }}/{{ $isAdmin }}" method="post">
                 @csrf <!-- {{ csrf_field() }} -->
                     <div class="mt-2 row p-1 gradient_invert rounded text-black">
@@ -87,7 +91,7 @@
                             <i id="toggle_on_2"  class="fa-solid fa-toggle-on  text_gradient" style="display: none"></i>
                         </div>
                     </div>
-                    <div id="T2">
+                    <div id="T2" style="display: block">
                         <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"> После автоматизации будут создаваться документы и дополнительные поля
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
@@ -106,7 +110,7 @@
                             <div class="mt-1 row" >
                                 <P class="col-sm-5 col-form-label"> Выберите на какую организацию создавать заказы: </P>
                                 <div class="col-sm-7">
-                                    <select name="add_automationOrganization"  id="add_automationOrganization" class="form-select text-black" onchange="Organization_PaymentAccount(this.value)">{{--onclick="PaymentAccountFun()" >--}}
+                                    <select name="add_automationOrganization"  id="add_automationOrganization" class="form-select text-black">
                                         @foreach($arr_organization as $bodyItem)
                                             <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
                                         @endforeach
@@ -116,42 +120,37 @@
                             <div class="mt-1 row">
                                 <P class="col-sm-5 col-form-label"> Выберите какой тип платежного документа создавать: </P>
                                 <div class="col-sm-7">
-                                    <select id="add_automationPaymentDocument" name="add_automationPaymentDocument" class="form-select text-black"  onclick="PaymentDocumentFun()">
+                                    <select id="add_automationPaymentDocument" name="add_automationPaymentDocument" class="form-select text-black">
                                         <option value="0">Не создавать</option>
                                         <option value="1">Приходной ордер</option>
                                         <option value="2">Входящий платёж </option>
                                     </select>
                                 </div>
                             </div>
-                        </div>
 
-
-
-
-
-                        <div class="row">
-                            <label class="col-5 col-form-label"> Выберите канал продаж</label>
-                            <div class="col-7 ">
-                                <select id="add_saleschannelAutomation" name="saleschannelAutomation" class="form-select text-black " >
-                                    <option value="0"> Не выбирать  </option>
-                                    @foreach($arr_saleschannel as $item)
-                                        <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
-                                    @endforeach
-                                </select>
+                            <div class="row">
+                                <label class="col-5 col-form-label"> Выберите канал продаж</label>
+                                <div class="col-7 ">
+                                    <select id="add_saleschannelAutomation" name="add_saleschannelAutomation" class="form-select text-black " >
+                                        <option value="0"> Не выбирать  </option>
+                                        @foreach($arr_saleschannel as $item)
+                                            <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label class="col-5 col-form-label"> Выберите проект</label>
+                                <div class="col-7 ">
+                                    <select id="add_projectAutomation" name="add_projectAutomation" class="form-select text-black " >
+                                        <option value="0"> Не выбирать  </option>
+                                        @foreach($arr_project as $item)
+                                            <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <label class="col-5 col-form-label"> Выберите проект</label>
-                            <div class="col-7 ">
-                                <select id="add_projectAutomation" name="projectAutomation" class="form-select text-black " >
-                                    <option value="0"> Не выбирать  </option>
-                                    @foreach($arr_project as $item)
-                                        <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="mt-1 buttons-container-head rounded"></div>
@@ -188,8 +187,10 @@
             let view = window.document.getElementById('T1View')
             if (params === 1 || params === '1') {
                 view.style.display = 'block'
+                if(window.document.getElementById('T2').style.display === 'none') toggleClick(2)
             } else {
                 view.style.display = 'none'
+                if(window.document.getElementById('T2').style.display === 'block') toggleClick(2)
             }
         }
 

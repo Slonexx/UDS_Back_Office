@@ -9,10 +9,21 @@ use Illuminate\Http\Request;
 
 class getAutomationController extends Controller
 {
-    public function getAutomation(Request $request,  $accountId, $isAdmin){
+    public function getAutomation(Request $request,  $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
+    {
         if ($isAdmin == "NO"){
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
         }
+
+        if (isset($request->message)){
+            $message = $request->message;
+            if ($message == "Настройки сохранились") {
+                $class = "mt-1 alert alert-success alert-dismissible fade show in text-center";
+            } else $class = "mt-1 alert alert-warning alert-danger fade show in text-center";
+        } else {
+            $message = '';
+            $class = '';
+        };
 
         $Setting = new getSettingVendorController($accountId);
         $Client = new MsClient($Setting->TokenMoySklad);
@@ -35,6 +46,9 @@ class getAutomationController extends Controller
             'arr_project'=> $body_project,
             'arr_saleschannel'=> $body_saleschannel,
             'arr_organization'=> $body_organization,
+
+            "message"=> $message,
+            "class"=> $class,
 
             "accountId"=> $accountId,
             "isAdmin" => $isAdmin,
