@@ -57,28 +57,33 @@ class CreateUdsCommand extends Command
         $requests = function ($allSettings) {
             foreach ($allSettings as $settings){
                 try {
-                    $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                    try {
+                        $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                        $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
-                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                } catch (\Throwable $e) { continue; }
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                    } catch (\Throwable $e) { continue; }
 
-                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
-                if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
+                    if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
+                    if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
 
-                $data = [
-                    "tokenMs" => $settings->TokenMoySklad,
-                    "companyId" => $settings->companyId,
-                    "apiKeyUds" => $settings->TokenUDS,
-                    "folder_id" => $folder_id,
-                    "store" => $settings->Store,
-                    "accountId" => $settings->accountId,
-                ];
+                    $data = [
+                        "tokenMs" => $settings->TokenMoySklad,
+                        "companyId" => $settings->companyId,
+                        "apiKeyUds" => $settings->TokenUDS,
+                        "folder_id" => $folder_id,
+                        "store" => $settings->Store,
+                        "accountId" => $settings->accountId,
+                    ];
 
-                yield function() use ($data) {
-                    app(ProductController::class)->insertUds_data($data);
-                };
+                    yield function() use ($data) {
+                        app(ProductController::class)->insertUds_data($data);
+                    };
+                } catch (\Throwable $e) {
+
+                }
+
             }
         };
 
