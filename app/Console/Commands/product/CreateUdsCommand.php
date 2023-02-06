@@ -6,11 +6,11 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\ProductController;
-use App\Services\product\ProductCreateUdsService;
 use App\Services\Settings\SettingsService;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
+
 
 
 class CreateUdsCommand extends Command
@@ -32,11 +32,8 @@ class CreateUdsCommand extends Command
 
     public function handle()
     {
-
-       /* $client = new \GuzzleHttp\Client();
         $allSettings = $this->settingsService->getSettings();
-
-        $requests = function ($allSettings) {
+        $promises  = function ($allSettings) {
             foreach ($allSettings as $settings){
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
@@ -68,8 +65,21 @@ class CreateUdsCommand extends Command
             }
         };
 
-        $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);*/
 
+
+
+       $all  = new EachPromise($promises($allSettings), [
+            'concurrency' => count($allSettings),
+            'fulfilled' => function () {
+
+            },
+        ]);
+        $all->promise()->wait();
+        //$responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
+
+
+
+        /*
         $allSettings = $this->settingsService->getSettings();
         $accountIds = [];
         foreach ($allSettings as $setting){
@@ -122,7 +132,10 @@ class CreateUdsCommand extends Command
             }
         ]);
         //dd($eachPromise);
-        $eachPromise->promise()->wait();
+        $eachPromise->promise()->wait();*/
+
+
+
     }
 
 
