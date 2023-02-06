@@ -9,7 +9,9 @@ use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Pool;
+use GuzzleHttp\Promise\EachPromise;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Response;
 
 
 class CreateUdsCommand extends Command
@@ -32,7 +34,7 @@ class CreateUdsCommand extends Command
     public function handle()
     {
 
-        $client = new \GuzzleHttp\Client();
+       /* $client = new \GuzzleHttp\Client();
         $allSettings = $this->settingsService->getSettings();
 
         $requests = function ($allSettings) {
@@ -67,9 +69,9 @@ class CreateUdsCommand extends Command
             }
         };
 
-        $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
+        $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);*/
 
-        /*$allSettings = $this->settingsService->getSettings();
+        $allSettings = $this->settingsService->getSettings();
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
@@ -121,7 +123,7 @@ class CreateUdsCommand extends Command
             }
         ]);
         //dd($eachPromise);
-        $eachPromise->promise()->wait();*/
+        $eachPromise->promise()->wait();
     }
 
 
