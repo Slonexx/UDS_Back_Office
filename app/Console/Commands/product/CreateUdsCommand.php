@@ -7,6 +7,7 @@ use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\ProductController;
 use App\Services\Settings\SettingsService;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Pool;
 use Illuminate\Console\Command;
 
@@ -37,38 +38,36 @@ class CreateUdsCommand extends Command
         $requests = function ($allSettings) {
             foreach ($allSettings as $settings){
                 try {
+                    $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+
+                    $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                    $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                } catch (\Throwable $e) { continue; }
+
+                if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
+                if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
+
+                $data = [
+                    "tokenMs" => $settings->TokenMoySklad,
+                    "companyId" => $settings->companyId,
+                    "apiKeyUds" => $settings->TokenUDS,
+                    "folder_id" => $folder_id,
+                    "store" => $settings->Store,
+                    "accountId" => $settings->accountId,
+                ];
+
+                yield function() use ($data) {
                     try {
-                        $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                        $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
-
-                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                    } catch (\Throwable $e) { continue; }
-
-                    if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
-                    if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
-
-                    $data = [
-                        "tokenMs" => $settings->TokenMoySklad,
-                        "companyId" => $settings->companyId,
-                        "apiKeyUds" => $settings->TokenUDS,
-                        "folder_id" => $folder_id,
-                        "store" => $settings->Store,
-                        "accountId" => $settings->accountId,
-                    ];
-
-                    yield function() use ($data) {
                         app(ProductController::class)->insertUds_data($data);
-                    };
-                } catch (\Throwable $e) {
+                    } catch (BadResponseException $e){
 
-                }
-
+                    }
+                };
             }
         };
 
         $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
-
 
         /*$allSettings = $this->settingsService->getSettings();
         $accountIds = [];
@@ -124,6 +123,7 @@ class CreateUdsCommand extends Command
         //dd($eachPromise);
         $eachPromise->promise()->wait();*/
     }
+
 
     public function checkSettings($accountIds): int
     {
