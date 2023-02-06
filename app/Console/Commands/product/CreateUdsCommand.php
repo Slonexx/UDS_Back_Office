@@ -6,12 +6,11 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\ProductController;
+use App\Services\product\ProductCreateUdsService;
 use App\Services\Settings\SettingsService;
-use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Pool;
 use GuzzleHttp\Promise\EachPromise;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Response;
 
 
 class CreateUdsCommand extends Command
@@ -103,7 +102,7 @@ class CreateUdsCommand extends Command
                 ];
 
                 try {
-                    yield app(ProductController::class)->insertUds_data($data);
+                    yield app(ProductCreateUdsService::class)->insertToUds($data);
                 } catch (\Throwable $e) {
                     continue;
                 }

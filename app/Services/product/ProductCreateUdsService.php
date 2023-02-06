@@ -269,7 +269,7 @@ class ProductCreateUdsService
                 ],
             ];
         } catch (\Throwable $e){
-            dd($createdProduct);
+
         }
 
             $nameOumUds = $createdProduct->data->measurement;
