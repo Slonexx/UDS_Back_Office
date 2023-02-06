@@ -36,7 +36,7 @@ class UpdateMsCommand extends Command
             if ($settings->TokenUDS != null or $settings->companyId != null or $settings->UpdateProduct != "0"){
                 try {
                     $clientCheck = new MsClient($settings->TokenMoySklad);
-                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                     $countSettings++;
