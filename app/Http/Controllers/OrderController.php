@@ -32,4 +32,10 @@ class OrderController extends Controller
 
     }
 
+    public function updateMs_data($data)
+    {
+        $this->orderService->updateOrdersMs($data);
+
+    }
+
 }

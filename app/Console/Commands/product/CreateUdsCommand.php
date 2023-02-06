@@ -26,27 +26,7 @@ class CreateUdsCommand extends Command
         parent::__construct();
     }
 
-    public function checkSettings($accountIds): int
-    {
-        $countSettings = 0;
-        foreach ($accountIds as $accountId){
-            $settings = new getSettingVendorController($accountId);
-            if ($settings->TokenUDS != null || $settings->companyId != null){
-                if ($settings->UpdateProduct != "1"){
-                    $clientCheck = new MsClient($settings->TokenMoySklad);
-                    try {
-                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
-                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                        $countSettings++;
-                    } catch (\Throwable $e) {
 
-                    }
-                }
-            }
-        }
-        return $countSettings;
-    }
 
     public function handle()
     {
@@ -88,6 +68,7 @@ class CreateUdsCommand extends Command
         };
 
         $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
+
 
         /*$allSettings = $this->settingsService->getSettings();
         $accountIds = [];
@@ -143,4 +124,27 @@ class CreateUdsCommand extends Command
         //dd($eachPromise);
         $eachPromise->promise()->wait();*/
     }
+
+    public function checkSettings($accountIds): int
+    {
+        $countSettings = 0;
+        foreach ($accountIds as $accountId){
+            $settings = new getSettingVendorController($accountId);
+            if ($settings->TokenUDS != null || $settings->companyId != null){
+                if ($settings->UpdateProduct != "1"){
+                    $clientCheck = new MsClient($settings->TokenMoySklad);
+                    try {
+                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                        $countSettings++;
+                    } catch (\Throwable $e) {
+
+                    }
+                }
+            }
+        }
+        return $countSettings;
+    }
+
 }

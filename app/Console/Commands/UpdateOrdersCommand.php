@@ -2,35 +2,21 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Config\getSettingVendorController;
+use App\Components\MsClient;
+use App\Components\UdsClient;
+use App\Services\order\OrderUpdateMsService;
 use App\Services\Settings\SettingsService;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Pool;
 use Illuminate\Console\Command;
-use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Promise;
+
 
 class UpdateOrdersCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'orders:update';
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
+
     protected $description = 'Command description';
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
+
     private SettingsService $settingsService;
 
     public function __construct(SettingsService $settingsService)
@@ -38,65 +24,47 @@ class UpdateOrdersCommand extends Command
         $this->settingsService = $settingsService;
         parent::__construct();
     }
-    /**
-     * @throws GuzzleException
-     * @throws \Throwable
-     */
+
+
     public function handle()
     {
+
+        $client = new \GuzzleHttp\Client();
         $allSettings = $this->settingsService->getSettings();
-        //dd($allSettings);
-        $accountIds = [];
-        foreach ($allSettings as $setting){
-            $accountIds[] = $setting->accountId;
-        }
-        //dd($accountIds);
 
-        if (count($accountIds) == 0) return;
+        $requests = function ($allSettings) {
+            foreach ($allSettings as $settings){
+                try {
+                    try {
+                        $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                        $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
-        $client = new Client();
-        $url = "https://smartuds.kz/api/updateOrdersMs";
-        //$url = "https://online.moysklad.ru/api/remap/1.2/entity/currency";
-        $countFailSettings = 0;
-        $promises = (function () use ($accountIds, $client, $url, &$countFailSettings){
-                    foreach ($accountIds as $accountId){
-                        $settings = new getSettingVendorController($accountId);
-                        //dd($settings);
-                        if (
-                            $settings->TokenUDS == null || $settings->companyId == null
-                        ){
-                            $countFailSettings++;
-                            continue;
-                        }
-                        //dd($allSettings);
-                        yield $client->postAsync($url,[
-                            'form_params' => [
-                                "tokenMs" => $settings->TokenMoySklad,
-                                "companyId" => $settings->companyId,
-                                "apiKeyUds" => $settings->TokenUDS,
-                                "accountId" => $settings->accountId,
-                                "paymentOpt" => $settings->PaymentDocument,
-                                "demandOpt" => $settings->Document,
-                            ],
-                        ]);
-                    }
-        })();
-        //dd($promises);
-        //dd(count($accountIds) - $countFailSettings);
-        $eachPromise = new EachPromise($promises,[
-            'concurrency' => count($accountIds) - $countFailSettings,
-            'fulfilled' => function (Response $response) {
-                if ($response->getStatusCode() == 200) {
-                    //dd($response);
-                } else {
-                    dd($response);
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                    } catch (\Throwable $e) { continue; }
+
+                    if ($settings->TokenUDS == null || $settings->companyId == null){ continue; }
+
+                    $data = [
+                        "tokenMs" => $settings->TokenMoySklad,
+                        "companyId" => $settings->companyId,
+                        "apiKeyUds" => $settings->TokenUDS,
+                        "accountId" => $settings->accountId,
+                        "paymentOpt" => $settings->PaymentDocument,
+                        "demandOpt" => $settings->Document,
+                    ];
+
+                    yield function() use ($data) {
+                        app(OrderUpdateMsService::class)->updateOrdersMs($data);
+                    };
+                } catch (\Throwable $e) {
+
                 }
-            },
-            'rejected' => function ($reason) {
-               dd($reason);
+
             }
-        ]);
-        //dd($eachPromise);
-        $eachPromise->promise()->wait();
+        };
+
+        $responses  = Pool::batch($client, $requests($allSettings), ['concurrency' => count($allSettings)]);
+
     }
 }
