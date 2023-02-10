@@ -22,7 +22,7 @@ class update extends Controller
     }
 
     public function AutomationUpdate($accountId, $activateAutomation, $statusAutomation, $projectAutomation,
-                                     $saleschannelAutomation, $automationDocument, $add_automationOrganization,
+                                     $saleschannelAutomation, $automationDocument, $add_automationOrganization, $add_automationStore,
                                      $add_automationPaymentDocument, $add_saleschannelAutomation, $add_projectAutomation ){
 
         $Automation_new_update_MODEL = Automation_new_update_MODEL::query()->where('accountId', $accountId);
@@ -36,6 +36,7 @@ class update extends Controller
 
             'automationDocument' => $automationDocument,
             'add_automationOrganization' => $add_automationOrganization,
+            'add_automationStore' => $add_automationStore,
             'add_automationPaymentDocument' => $add_automationPaymentDocument,
             'add_saleschannelAutomation' => $add_saleschannelAutomation,
             'add_projectAutomation' => $add_projectAutomation,

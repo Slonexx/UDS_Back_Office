@@ -21,6 +21,7 @@ class CreateAutomationNewUpdateMODELSTable extends Migration
 
             $table->string('automationDocument')->nullable();
             $table->string('add_automationOrganization')->nullable();
+            $table->string('add_automationStore')->nullable();
             $table->string('add_automationPaymentDocument')->nullable();
             $table->string('add_saleschannelAutomation')->nullable();
             $table->string('add_projectAutomation')->nullable();
