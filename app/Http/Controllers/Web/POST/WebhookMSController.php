@@ -365,7 +365,19 @@ class WebhookMSController extends Controller
         if ($body['salesChannel'] == null) unset($body['salesChannel']);
 
         try {
-            $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/demand", $body);
+            $Demands = $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/demand", $body);
+            if ($BDFFirst['automationDocument'] == '3'){
+                $this->msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/factureout', [
+                    'demands' => [
+                        'meta'=> [
+                            'href' => 'https://online.moysklad.ru/api/remap/1.2/entity/demand/'.$Demands->id,
+                            'metadataHref' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata",
+                            'type' => "demand",
+                            'mediaType' => "application/json",
+                        ]
+                    ]
+                ]);
+            }
         } catch (BadResponseException $e){
             dd($body,$e->getMessage());
         }
