@@ -92,6 +92,7 @@ class WebhookMSController extends Controller
         //dd($this->msClient->get($ObjectBODY->project->meta->href)->name);
         try {
             $state = $this->msClient->get($ObjectBODY->state->meta->href)->name;
+            //dd($state, $find->getAttributes()['statusAutomation']);
             if ($state == $find->getAttributes()['statusAutomation']) {
                 $boolProject = false;
                 $boolSaleschannel= false;
@@ -117,12 +118,12 @@ class WebhookMSController extends Controller
                 else {
                     return response()->json([
                         'code' => 203,
-                        'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Статус не соответствует настройкам, скрипт прекращён!"),
+                        'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Проект или Канал продажи не соответствует настройкам, скрипт прекращён!"),
                     ]);
                 }
             } else  return response()->json([
                 'code' => 203,
-                'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Проект или Канал продажи не соответствует настройкам, скрипт прекращён!"),
+                'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Статус не соответствует настройкам, скрипт прекращён!"),
             ]);
         } catch (BadResponseException $e) {
             return response()->json([
@@ -366,21 +367,24 @@ class WebhookMSController extends Controller
 
         try {
             $Demands = $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/demand", $body);
+            //dd();
             if ($BDFFirst['automationDocument'] == '3'){
                 $this->msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/factureout', [
                     'demands' => [
-                        'meta'=> [
-                            'href' => $Demands->meta->href,
-                            'metadataHref' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata",
-                            'type' => "demand",
-                            'mediaType' => "application/json",
+                        '0' => [
+                            'meta'=> [
+                                'href' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/".$Demands->id,
+                                'metadataHref' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata",
+                                'type' => "demand",
+                                'mediaType' => "application/json",
+                            ]
                         ]
                     ]
                 ]);
             }
-            dd($Demands);
+
         } catch (BadResponseException $e){
-            dd($body,$e->getMessage());
+            dd($body,$e->getMessage(), $e->getResponse()->getBody()->getContents());
         }
     }
 
