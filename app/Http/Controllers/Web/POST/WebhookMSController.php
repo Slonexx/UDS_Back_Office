@@ -370,7 +370,7 @@ class WebhookMSController extends Controller
                 $this->msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/factureout', [
                     'demands' => [
                         'meta'=> [
-                            'href' => 'https://online.moysklad.ru/api/remap/1.2/entity/demand/'.$Demands->id,
+                            'href' => $Demands->meta->href,
                             'metadataHref' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata",
                             'type' => "demand",
                             'mediaType' => "application/json",
@@ -378,6 +378,7 @@ class WebhookMSController extends Controller
                     ]
                 ]);
             }
+            dd($Demands);
         } catch (BadResponseException $e){
             dd($body,$e->getMessage());
         }
