@@ -82,9 +82,8 @@ class ObjectController extends Controller
                     $StatusCode = $goods_orders['StatusCode'];
                     $message = $goods_orders['message'];
                 } catch (BadResponseException $e) {
-                    $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
-                    $StatusCode = $operation['StatusCode'];
-                    $message = $operation['message'];
+                    $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
+                    $StatusCode = 200; $message = $data['data'];
                 }
             }
             else {
@@ -140,7 +139,8 @@ class ObjectController extends Controller
                 'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info'=> 'Operations',
             ];
-        } catch (\Throwable $e) {
+        } catch (BadResponseException $e) {
+            //dd($e->getResponse()->getBody()->getContents());
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
@@ -218,14 +218,31 @@ class ObjectController extends Controller
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
-    public function Calc($accountId, $ClientUDS, $body, $agentId){
+    public function Calc($accountId,UdsClient $ClientUDS, $body, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/calc';
+        if ($agentId['phone'] != null){
+            $participant = [
+                'uid' => null,
+                'phone' => "+7".mb_substr(str_replace('+7', '', str_replace(" ", '', $agentId['phone'])), -10),
+            ];
+        } else {
+            $infoClientByExternalCode = $ClientUDS->get('https://api.uds.app/partner/v2/customers/'.$agentId['externalCode']);
+            if ($infoClientByExternalCode->uid != null) {
+                $participant = [
+                    'uid' => $infoClientByExternalCode->uid,
+                    'phone' => null,
+                ];
+            } else {
+                $participant = [
+                    'uid' => null,
+                    'phone' => $infoClientByExternalCode->phone,
+                ];
+            }
+        }
+
         $body = [
             'code' => null,
-            'participant' => [
-                'uid' => null,
-                'phone' => '+7' . str_replace('+7','',str_replace(" ", '', $agentId['phone'])),
-            ],
+            'participant' => $participant,
             'receipt' => [
                 'total' => $body->total,
                 'points' => ($body->points * -1),
@@ -235,14 +252,15 @@ class ObjectController extends Controller
         try {
             $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
             return $postBody;
-        } catch (\Throwable $e) {
+        } catch (BadResponseException $e) {
+            //dd($e->getResponse()->getBody()->getContents());
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
                 'ErrorMessage' => $message,
             ]);
+            return null;
         }
-
     }
 
     public function customers(Request $request): \Illuminate\Http\JsonResponse
@@ -695,8 +713,8 @@ class ObjectController extends Controller
         }
 
         return [
-          'StatusCode' => $StatusCode,
-          'message' => $message,
+            'StatusCode' => $StatusCode,
+            'message' => $message,
         ];
     }
 
