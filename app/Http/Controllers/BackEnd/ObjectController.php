@@ -11,6 +11,7 @@ use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
 use App\Models\errorLog;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
@@ -57,10 +58,15 @@ class ObjectController extends Controller
         $agentId = $body_agentId;
 
         if ( (int) $agentId->externalCode > 0) {
-            $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
+            if (property_exists($agentId, 'phone')) {
+                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => $agentId->phone, 'dontPhone' => true, ];
+            } else {
+                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => false, ];
+            }
+
         } else {
             if (property_exists($agentId, 'phone')) {
-                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone,];
+                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => false, ];
             } else {
                 $StatusCode = 402;
                 $message = 'Отсутствует номер телефона у данного контрагента';
@@ -70,26 +76,31 @@ class ObjectController extends Controller
 
         try {
             if ((int) $externalCode > 0){
-                $body = $Client_UDS->get($UDSURL.$externalCode);
-                $StatusCode = 200;
-                $state = $body->state;
-                $icon = "";
-                if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
-                if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
-                if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
+                try {
+                    $body = $Client_UDS->get($UDSURL.$externalCode);
+                    $StatusCode = 200;
+                    $state = $body->state;
+                    $icon = "";
+                    if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
+                    if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
+                    if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
 
-                $message = [
-                    'id'=> $body->id,
-                    'BonusPoint'=>  $body->purchase->cashBack,
-                    'points'=> $body->purchase->points,
-                    'state'=> $state,
-                    'icon'=> $icon,
-                    'info'=> 'Order',
-                ];
+                    $message = [
+                        'id'=> $body->id,
+                        'BonusPoint'=>  $body->purchase->cashBack,
+                        'points'=> $body->purchase->points,
+                        'state'=> $state,
+                        'icon'=> $icon,
+                        'info'=> 'Order',
+                    ];
+                } catch (BadResponseException $e) {
+                    $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
+                    $StatusCode = 200; $message = $data['data'];
+                }
             } else {
                 $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
-                if ($data['status']) { $StatusCode = 200; $message = $data['data'];
-                } else {
+                if ($data['status']) { $StatusCode = 200; $message = $data['data']; }
+                else {
                     $StatusCode = 404;
                     $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
                     $availablePoints = $this->AgentMCID($body_agentId,  $Client_UDS);
@@ -160,7 +171,8 @@ class ObjectController extends Controller
                 'icon'=> '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info'=> 'Operations',
             ];
-        } catch (\Throwable $e) {
+        } catch (BadResponseException $e) {
+            //dd($e->getResponse()->getBody()->getContents());
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
@@ -238,14 +250,31 @@ class ObjectController extends Controller
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
-    public function Calc($accountId, $ClientUDS, $body, $agentId){
+    public function Calc($accountId,UdsClient $ClientUDS, $body, $agentId){
         $url = 'https://api.uds.app/partner/v2/operations/calc';
+        if ($agentId['phone'] != null){
+            $participant = [
+                'uid' => null,
+                'phone' => "+7".mb_substr(str_replace('+7', '', str_replace(" ", '', $agentId['phone'])), -10),
+            ];
+        } else {
+            $infoClientByExternalCode = $ClientUDS->get('https://api.uds.app/partner/v2/customers/'.$agentId['externalCode']);
+            if ($infoClientByExternalCode->uid != null) {
+                $participant = [
+                    'uid' => $infoClientByExternalCode->uid,
+                    'phone' => null,
+                ];
+            } else {
+                $participant = [
+                    'uid' => null,
+                    'phone' => $infoClientByExternalCode->phone,
+                ];
+            }
+        }
+
         $body = [
             'code' => null,
-            'participant' => [
-                'uid' => null,
-                'phone' => '+7' . str_replace('+7','',str_replace(" ", '', $agentId['phone'])),
-            ],
+            'participant' => $participant,
             'receipt' => [
                 'total' => $body->total,
                 'points' => ($body->points * -1),
@@ -254,14 +283,16 @@ class ObjectController extends Controller
         ];
         try {
             $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
-        } catch (\Throwable $e) {
+            return $postBody;
+        } catch (BadResponseException $e) {
+            dd($e->getResponse()->getBody()->getContents());
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
                 'ErrorMessage' => $message,
             ]);
+            return null;
         }
-        return $postBody;
     }
 
     public function customers(Request $request): \Illuminate\Http\JsonResponse
