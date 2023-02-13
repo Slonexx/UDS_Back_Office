@@ -14,6 +14,7 @@ use App\Models\errorLog;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
+use JetBrains\PhpStorm\ArrayShape;
 
 class ObjectController extends Controller
 {
@@ -46,7 +47,6 @@ class ObjectController extends Controller
         $urlAll = new mainURL();
 
 
-        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
         $urlCounterparty = $urlAll->url_ms()."$entity/$objectId";
 
         $Client = new MsClient($Setting->TokenMoySklad);
@@ -58,15 +58,16 @@ class ObjectController extends Controller
         $agentId = $body_agentId;
 
         if ( (int) $agentId->externalCode > 0) {
-            if (property_exists($agentId, 'phone')) {
-                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => $agentId->phone, 'dontPhone' => true, ];
-            } else {
-                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => false, ];
-            }
-
+            $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
         } else {
             if (property_exists($agentId, 'phone')) {
-                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => false, ];
+                $phone = $this->AgentMCPhone($agentId, $Setting);
+                if (mb_strlen($phone) > 14) {
+                    $StatusCode = 402;
+                    $message = 'Некорректный номер телефона: '.$agentId->phone;
+                    return [ 'StatusCode' => $StatusCode,  'message' => $message, ];
+                }
+                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => '+'.$phone,];
             } else {
                 $StatusCode = 402;
                 $message = 'Отсутствует номер телефона у данного контрагента';
@@ -75,63 +76,30 @@ class ObjectController extends Controller
         }
 
         try {
-            if ((int) $externalCode > 0){
+            if ((int) $externalCode > 10000 ){
                 try {
-                    $body = $Client_UDS->get($UDSURL.$externalCode);
-                    $StatusCode = 200;
-                    $state = $body->state;
-                    $icon = "";
-                    if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
-                    if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
-                    if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
-
-                    $message = [
-                        'id'=> $body->id,
-                        'BonusPoint'=>  $body->purchase->cashBack,
-                        'points'=> $body->purchase->points,
-                        'state'=> $state,
-                        'icon'=> $icon,
-                        'info'=> 'Order',
-                    ];
+                    $goods_orders = $this->goods_orders($externalCode, $Client_UDS);
+                    $StatusCode = $goods_orders['StatusCode'];
+                    $message = $goods_orders['message'];
                 } catch (BadResponseException $e) {
                     $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
                     $StatusCode = 200; $message = $data['data'];
                 }
-            } else {
-                $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
-                if ($data['status']) { $StatusCode = 200; $message = $data['data']; }
-                else {
-                    $StatusCode = 404;
-                    $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
-                    $availablePoints = $this->AgentMCID($body_agentId,  $Client_UDS);
-                    $phone = $this->AgentMCPhone($body_agentId, $Setting);
-                    $operationsAccrue = $SettingBD->operationsAccrue;
-                    $operationsCancellation = $SettingBD->operationsCancellation;
-                    if ( $SettingBD->operationsAccrue == null ) $operationsAccrue = 0;
-                    if ( $SettingBD->operationsCancellation == 1 ){ $availablePoints = 0;
-                    } else  $operationsCancellation = 0;
-
-                    $message = [
-                        'total' => $info_total_and_SkipLoyaltyTotal['total'],
-                        'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                        'availablePoints' => $availablePoints,
-                        'points' => 0,
-                        'phone' => $phone,
-                        'operationsAccrue' => (int) $operationsAccrue,
-                        'operationsCancellation' => (int) $operationsCancellation,
-                    ];
-                }
-
+            }
+            else {
+                $operation = $this->operation_to_post($accountId, $Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
+                $StatusCode = $operation['StatusCode'];
+                $message = $operation['message'];
             }
         } catch (ClientException $exception) {
-            $StatusCode = 405;
+            $StatusCode = 402;
             $message = $exception->getMessage();
         }
 
         return [
             'StatusCode' => $StatusCode,
             'message' => $message,
-            ];
+        ];
 
     }
 
@@ -285,7 +253,7 @@ class ObjectController extends Controller
             $postBody = $ClientUDS->post($url, $body)->purchase->cashBack;
             return $postBody;
         } catch (BadResponseException $e) {
-            dd($e->getResponse()->getBody()->getContents());
+            //dd($e->getResponse()->getBody()->getContents());
             $message = $e->getMessage();
             errorLog::create([
                 'accountId' => $accountId,
@@ -507,7 +475,7 @@ class ObjectController extends Controller
                     $postBodyCreateFactureout = $client->post($urlFacture, $body);
                 }
             } catch (\Throwable $e) {
-                dd($e);
+                //dd($e);
             }
         }
     }
@@ -683,38 +651,95 @@ class ObjectController extends Controller
         ];
 
         try {
-        $post = $Client->post($url, $body);
+            $post = $Client->post($url, $body);
 
-        $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
-        $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
-        $OldBody = $ClientMC->requestGet();
+            $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/customerorder/' . $data['objectId'];
+            $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+            $OldBody = $ClientMC->requestGet();
 
-        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
-        $setAttributes = $this->Attributes($post, $Setting);
+            $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+            $setAttributes = $this->Attributes($post, $Setting);
 
-        $OldBody->externalCode = $post->id;
-        $putBody = $ClientMC->requestPut([
-            'externalCode'=>(string) $post->id,
-            'positions'=> $setPositions,
-            'attributes' => $setAttributes,
-        ]);
-        $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
-        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
-        $post = [
-            'code' => 200,
-            'id' => $post->id,
-            'points' => $post->points,
-            'total' => $post->total,
-            'message' => 'The operation was successful',
-        ];
+            $OldBody->externalCode = $post->id;
+            $putBody = $ClientMC->requestPut([
+                'externalCode'=>(string) $post->id,
+                'positions'=> $setPositions,
+                'attributes' => $setAttributes,
+            ]);
+            $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
+            $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+            $post = [
+                'code' => 200,
+                'id' => $post->id,
+                'points' => $post->points,
+                'total' => $post->total,
+                'message' => 'The operation was successful',
+            ];
 
         } catch ( \Throwable $e){
             $post = [
-               'code' =>  $e->getCode(),
-               'message' =>  $e->getMessage(),
+                'code' =>  $e->getCode(),
+                'message' =>  $e->getMessage(),
             ];
         }
 
         return response()->json($post);
+    }
+
+    #[ArrayShape(['StatusCode' => "int", 'message' => "array|mixed"])] private function operation_to_post($accountId, UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
+    {
+        $data = $this->newPostOperations($accountId, $Client_UDS, $externalCode, $agentId);
+        if ($data['status']) { $StatusCode = 200; $message = $data['data'];
+        } else {
+            $StatusCode = 404;
+            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
+            $availablePoints = $this->AgentMCID($body_agentId,  $Client_UDS);
+            $phone = $this->AgentMCPhone($body_agentId, $Setting);
+            $operationsAccrue = $SettingBD->operationsAccrue;
+            $operationsCancellation = $SettingBD->operationsCancellation;
+            if ( $SettingBD->operationsAccrue == null ) $operationsAccrue = 0;
+            if ( $SettingBD->operationsCancellation == 1 ){ $availablePoints = 0;
+            } else  $operationsCancellation = 0;
+
+            $message = [
+                'total' => $info_total_and_SkipLoyaltyTotal['total'],
+                'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
+                'availablePoints' => $availablePoints,
+                'points' => 0,
+                'phone' => $phone,
+                'operationsAccrue' => (int) $operationsAccrue,
+                'operationsCancellation' => (int) $operationsCancellation,
+            ];
+        }
+
+        return [
+            'StatusCode' => $StatusCode,
+            'message' => $message,
+        ];
+    }
+
+    #[ArrayShape(['StatusCode' => "int", 'message' => "array"])] private function goods_orders($externalCode, UdsClient $Client_UDS): array
+    {
+        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
+        $body = $Client_UDS->get($UDSURL.$externalCode);
+        $StatusCode = 200;
+        $state = $body->state;
+        $icon = "";
+        if ($state == "NEW") $icon = '<i class="fa-solid fa-circle-exclamation text-primary">  <span class="text-dark">НОВЫЙ</span> </i>';
+        if ($state == "COMPLETED") $icon = '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Завершённый</span> </i>';
+        if ($state == "DELETED") $icon = '<i class="fa-solid fa-circle-xmark text-danger"> <span class="text-dark">Отменённый</span> </i>';
+
+        $message = [
+            'id'=> $body->id,
+            'BonusPoint'=>  $body->purchase->cashBack,
+            'points'=> $body->purchase->points,
+            'state'=> $state,
+            'icon'=> $icon,
+            'info'=> 'Order',
+        ];
+        return [
+            'StatusCode' => $StatusCode,
+            'message' => $message,
+        ];
     }
 }
