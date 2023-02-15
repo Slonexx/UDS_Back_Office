@@ -502,7 +502,7 @@
                     </div>
                 </div>
             </div>
-            <div id="buttonOperations">
+            <div id="buttonOperations" style="display: none">
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
