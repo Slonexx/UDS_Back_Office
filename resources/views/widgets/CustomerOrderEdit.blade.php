@@ -4,9 +4,9 @@
 
 <body>
 <script>
-        const url = 'https://dev.smartuds.kz/'
+        //const url = 'https://dev.smartuds.kz/'
 
-        //const url = 'https://uds/'
+        const url = 'https://uds/'
 
         let accountId = "{{ $accountId }}"
         let extensionPoint
@@ -32,10 +32,16 @@
         let operationsAccrue
         let operationsCancellation
 
-        //let receivedMessage = {"name":"Open","extensionPoint":"document.customerorder.edit","objectId":"a24fa7c2-962b-11ed-0a80-012d005a1f47","messageId":3,"displayMode":"expanded"}
+        let receivedMessage = {
+            "name":"Open",
+            "extensionPoint":"document.customerorder.edit",
+            "objectId":"0ef81502-a90d-11ed-0a80-0cad0005d6df",
+            "messageId":3,
+            "displayMode":"expanded"
+        }
 
         window.addEventListener("message", function(event) {
-            let receivedMessage = event.data
+            //let receivedMessage = event.data
 
             console.log(receivedMessage);
             GlobalobjectId = receivedMessage.objectId;
@@ -45,7 +51,7 @@
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                //receivedMessage = null
+                receivedMessage = null
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
@@ -270,7 +276,8 @@
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
             window.document.getElementById('buttonOperations').style.display = 'none'
-            $('#downL').modal('toggle')
+            window.document.getElementById('outLoud').style.display = 'block'
+            window.document.getElementById('outLoud_1').style.display = 'block'
 
             let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
             console.log('send operations parameters  ↓ ')
@@ -279,13 +286,16 @@
             $.ajax(settings).done(function (response) {
                 console.log('send operations response  ↓ ')
                 console.log(response)
+                window.document.getElementById('outLoud_2').style.display = 'block'
 
                 if (response.code == 200) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";
                 } else window.document.getElementById('buttonOperations').style.display = 'block'
+
+                window.document.getElementById('outLoud_3').style.display = 'block'
             })
-            $('#downL').modal('hide')
+            window.document.getElementById('outLoud').style.display = 'none'
         }
 
 
@@ -510,18 +520,11 @@
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>
             </div>
-            <div id="downL" class="modal fade bd-example-modal-sm" data-bs-keyboard="false" data-bs-backdrop="static"
-                 tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"> <i class="fa-solid fa-circle-exclamation text-danger"></i> Отправка </h5>
-                        </div>
-                        <div class="modal-body text-center" style="background-color: #e5eff1">
-                            <div class="row"> <img style="width: 100%" src="https://i.gifer.com/1uoA.gif" alt=""> </div>
-                        </div>
-                    </div>
-                </div>
+            <div id="outLoud" class="text-center">
+                Отправка
+                <div id="outLoud_1" style="display: none">.</div>
+                <div id="outLoud_2" style="display: none">.</div>
+                <div id="outLoud_3" style="display: none">.</div>
             </div>
         </div>
 
