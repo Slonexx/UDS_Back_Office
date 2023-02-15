@@ -272,10 +272,9 @@ class WebhookMSController extends Controller
 
 
     public function createDemands(mixed $BDFFirst, mixed $OldBody, string $externalCode){
+        $store = null;
         $attributes = null;
         $positions = null;
-        $project = null;
-        $salesChannel = null;
 
         foreach ($this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows as $item) {
             if ($item->name == "Начисление баллов (UDS)") {
@@ -302,34 +301,25 @@ class WebhookMSController extends Controller
                 ] ],
             ];
         }
-        foreach ($this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/project")->rows as $item) {
-            if ($item->name == $BDFFirst["add_projectAutomation"]){
-                $project = [
-                    'meta' => [
-                        'href' => $item->meta->href,
-                        'type' => "project",
-                        'mediaType' => "application/json",
-                    ]
-                ];
-            }
-        }
-        foreach ($this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/saleschannel")->rows as $item) {
-            if ($item->name == $BDFFirst["add_saleschannelAutomation"]){
-                $salesChannel = [
-                    'meta' => [
-                        'href' => $item->meta->href,
-                        'type' => "saleschannel",
-                        'mediaType' => "application/json",
-                    ]
-                ];
-            }
-        }
+
+        //dd($BDFFirst, $OldBody);
+
+        if ($BDFFirst['add_automationStore'] == 0 or $BDFFirst['add_automationStore'] == null) {
+            $store = $OldBody->store->meta->href;
+        } else $store = 'https://online.moysklad.ru/api/remap/1.2/entity/store/'.$BDFFirst['add_automationStore'];
 
         $body = [
             'organization' => [
                 'meta' => [
-                    'href' => "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$BDFFirst['add_automationOrganization'],
+                    'href' => $OldBody->organization->meta->href,
                     'type' => "organization",
+                    'mediaType' => "application/json",
+                    ]
+            ],
+            'organizationAccount' => [
+                'meta' => [
+                    'href' => null,
+                    'type' => "account",
                     'mediaType' => "application/json",
                     ]
             ],
@@ -342,7 +332,7 @@ class WebhookMSController extends Controller
             ],
             'store' => [
                 'meta'=> [
-                    'href' => 'https://online.moysklad.ru/api/remap/1.2/entity/store/'.$BDFFirst['add_automationStore'],
+                    'href' => $store,
                     'type' => 'store',
                     'mediaType' => 'application/json',
                     ]
@@ -350,8 +340,20 @@ class WebhookMSController extends Controller
             'externalCode' => $externalCode,
             'attributes' => $attributes,
             'positions' => $positions,
-            'project' => $project,
-            'salesChannel' => $salesChannel,
+            'project' => [
+                'meta'=> [
+                    'href' => null,
+                    'type' => 'project',
+                    'mediaType' => 'application/json',
+                ]
+            ],
+            'salesChannel' =>  [
+                'meta'=> [
+                    'href' => null,
+                    'type' => 'saleschannel',
+                    'mediaType' => 'application/json',
+                ]
+            ],
             'customerOrder' => [
                 'meta'=> [
                     'href' => $OldBody->meta->href,
@@ -362,12 +364,15 @@ class WebhookMSController extends Controller
                 ] ],
         ];
 
-        if ($body['project'] == null) unset($body['project']);
-        if ($body['salesChannel'] == null) unset($body['salesChannel']);
+        if (property_exists($OldBody, 'organizationAccount')) $body['organizationAccount']['meta']['href'] = $OldBody->organizationAccount->meta->href;
+        else unset($body['organizationAccount']);
+        if (property_exists($OldBody, 'salesChannel')) $body['salesChannel']['meta']['href'] = $OldBody->salesChannel->meta->href;
+        else unset($body['salesChannel']);
+        if (property_exists($OldBody, 'project')) $body['project']['meta']['href'] = $OldBody->project->meta->href;
+        else unset($body['project']);
 
         try {
             $Demands = $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/demand", $body);
-            //dd();
             if ($BDFFirst['automationDocument'] == '3'){
                 $this->msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/factureout', [
                     'demands' => [

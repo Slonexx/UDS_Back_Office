@@ -17,6 +17,10 @@
                     <div class="{{$class}}"> {{$message}}</div>
                 @endif
 
+                <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"> Данный раздел предлагает автоматизировать начисление баллов из "Заказа покупателя", путем смены статуса.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <form action="/setSetting/Automation/{{ $accountId }}/{{ $isAdmin }}" method="post">
                 @csrf <!-- {{ csrf_field() }} -->
                     <div class="mt-2 row p-1 gradient_invert rounded text-black">
@@ -92,7 +96,7 @@
                         </div>
                     </div>
                     <div id="T2" style="display: block">
-                        <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"> После автоматизации будут создаваться документы и дополнительные поля
+                        <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"> После автоматизации будут создаваться документы
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
 
