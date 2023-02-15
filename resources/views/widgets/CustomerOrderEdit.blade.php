@@ -269,6 +269,7 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
+            window.document.getElementById('buttonOperations').style.display = 'none'
 
             let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
             console.log('send operations parameters  ↓ ')
@@ -281,7 +282,7 @@
                 if (response.code == 200) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";
-                }
+                } else window.document.getElementById('buttonOperations').style.display = 'block'
             })
         }
 
