@@ -17,6 +17,7 @@ class AttributeService
                 "name" => "Акционный товар (UDS)",
                 "type" => "boolean",
                 "required" => false,
+                "show" => false,
                 "description" => "Акционный товар (UDS)",
             ],
             1 => [
@@ -190,38 +191,24 @@ class AttributeService
                 "name" => "Списание баллов (UDS)",
                 "type" => "boolean",
                 "required" => false,
+                "show" => false,
                 "description" => "Списание баллов (UDS)",
             ],
             1 => [
                 "name" => "Начисление баллов (UDS)",
                 "type" => "boolean",
                 "required" => false,
+                "show" => false,
                 "description" => "Начисление баллов (UDS)",
             ],
             2 => [
                 "name" => "Использование сертификата (UDS)",
                 "type" => "boolean",
                 "required" => false,
+                "show" => false,
                 "description" => "Использование сертификата (UDS)",
             ],
         ];
-
-       /*
-       2 => [
-                "name" => "Покупка сертификата (UDS)",
-                "type" => "boolean",
-                "required" => false,
-                "description" => "Покупка сертификата (UDS)",
-            ],
-       4 => [
-        "name" => "Ссылка на операцию (UDS)",
-        "type" => "link",
-        "required" => false,
-        "description" => "Ссылка на операцию (UDS)",
-        ],
-
-       */
-
     }
 
     /**
@@ -248,13 +235,6 @@ class AttributeService
                 //array_push($bodyToAdd, $body);
             }
         }
-
-        //dd($bodyToAdd);
-
-//        if (count($bodyToAdd) > 0) {
-//            $client->multiPost($url, $bodyToAdd);
-//        }
-        //return $bodyToAdd;
     }
 
 }

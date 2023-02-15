@@ -24,43 +24,34 @@ class postAutomationController extends Controller
        $saleschannelAutomation = $request->saleschannelAutomation;
 
        $automationDocument = $request->automationDocument;
-       $add_automationOrganization = $request->add_automationOrganization;
        $add_automationStore = $request->add_automationStore;
        $add_automationPaymentDocument = $request->add_automationPaymentDocument;
-       $add_saleschannelAutomation = $request->add_saleschannelAutomation;
-       $add_projectAutomation = $request->add_projectAutomation;
 
         if ($activateAutomation == 0){
             $statusAutomation = null;
             $projectAutomation = null;
             $saleschannelAutomation = null;
 
-            $add_automationOrganization = null;
             $add_automationStore = null;
             $add_automationPaymentDocument = null;
-            $add_saleschannelAutomation = null;
-            $add_projectAutomation = null;
         }
 
        if ($automationDocument == 1) {
-           $add_automationOrganization = null;
            $add_automationStore = null;
            $add_automationPaymentDocument = null;
-           $add_saleschannelAutomation = null;
-           $add_projectAutomation = null;
        }
 
        $find = Automation_new_update_MODEL::query()->where('accountId', $accountId)->get()->all();
        if ($find == []){
            $create = new create();
            $create->AutomationCreate($accountId, $activateAutomation, $statusAutomation,
-               $projectAutomation, $saleschannelAutomation, $automationDocument, $add_automationOrganization,
-               $add_automationStore, $add_automationPaymentDocument, $add_saleschannelAutomation,$add_projectAutomation );
+               $projectAutomation, $saleschannelAutomation, $automationDocument,
+               $add_automationStore, $add_automationPaymentDocument );
        } else {
            $update = new update();
            $update->AutomationUpdate($accountId, $activateAutomation, $statusAutomation,
-               $projectAutomation, $saleschannelAutomation, $automationDocument, $add_automationOrganization,
-               $add_automationStore, $add_automationPaymentDocument, $add_saleschannelAutomation,$add_projectAutomation );
+               $projectAutomation, $saleschannelAutomation, $automationDocument,
+               $add_automationStore, $add_automationPaymentDocument );
        }
 
         try {

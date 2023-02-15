@@ -47,22 +47,16 @@ class getAutomationController extends Controller
             $projectAutomation = 0;
             $saleschannelAutomation = 0;
             $automationDocument = 1;
-            $add_automationOrganization = 0;
             $add_automationStore = 0;
             $add_automationPaymentDocument = 0;
-            $add_saleschannelAutomation = 0;
-            $add_projectAutomation = 0;
         } else {
             $activateAutomation = $find->getAttributes()['activateAutomation'];
             $statusAutomation = $find->getAttributes()['statusAutomation'];
             $projectAutomation = $find->getAttributes()['projectAutomation'];
             $saleschannelAutomation = $find->getAttributes()['saleschannelAutomation'];
             $automationDocument = $find->getAttributes()['automationDocument'];
-            $add_automationOrganization = $find->getAttributes()['add_automationOrganization'];
             $add_automationStore = $find->getAttributes()['add_automationStore'];
             $add_automationPaymentDocument = $find->getAttributes()['add_automationPaymentDocument'];
-            $add_saleschannelAutomation = $find->getAttributes()['add_saleschannelAutomation'];
-            $add_projectAutomation = $find->getAttributes()['add_projectAutomation'];
         }
 
         return view('web.Setting.Automation', [
@@ -78,11 +72,9 @@ class getAutomationController extends Controller
             'saleschannelAutomation'=> $saleschannelAutomation,
 
             'automationDocument'=> $automationDocument,
-            'add_automationOrganization'=> $add_automationOrganization,
             'add_automationStore'=> $add_automationStore,
             'add_automationPaymentDocument'=> $add_automationPaymentDocument,
-            'add_saleschannelAutomation'=> $add_saleschannelAutomation,
-            'add_projectAutomation'=> $add_projectAutomation,
+
 
 
             "message"=> $message,

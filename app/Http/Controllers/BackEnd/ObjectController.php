@@ -57,8 +57,10 @@ class ObjectController extends Controller
         $body_agentId = $Client->get($BodyMC->agent->meta->href);
         $agentId = $body_agentId;
 
-        if ( (int) $agentId->externalCode > 0) {
-            $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
+        if ( (int) $agentId->externalCode > 10000) {
+            if (property_exists($agentId, 'phone')) {
+                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone, 'dontPhone' => true,];
+            } else  $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true, ];
         } else {
             if (property_exists($agentId, 'phone')) {
                 $phone = $this->AgentMCPhone($agentId, $Setting);
@@ -157,7 +159,7 @@ class ObjectController extends Controller
     public function AgentMCID($bodyMC, UdsClient $Client_UDS)
     {
 
-        if ((int) $bodyMC->externalCode > 0){
+        if ((int) $bodyMC->externalCode > 1000){
             $url_UDS = 'https://api.uds.app/partner/v2/customers/'.$bodyMC->externalCode;
             $body = $Client_UDS->get($url_UDS)->participant;
             return $body->points ;
@@ -179,11 +181,17 @@ class ObjectController extends Controller
     }
     public function AgentMCPhone($bodyMC, getSettingVendorController $Setting): string
     {
-        $phone = preg_replace('/[^0-9]/', '', $bodyMC->phone);
-        if($phone[0]==8)$phone[0] = 7;
-        if ( strlen($phone) == 10 ) $phone = '7'.$phone;
-        return '+'.$phone;
-
+        $phone = null;
+        if (property_exists($bodyMC, 'phone')){
+            $phone = "+7".mb_substr(str_replace('+7', '', str_replace(" ", '', $bodyMC->phone)), -10);
+        } else {
+            if ((int) $bodyMC->externalCode > 1000) {
+                $UdsClient = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+                $body = $UdsClient->get('https://api.uds.app/partner/v2/customers/'.$bodyMC->externalCode);
+                if ($body->phone != null) $phone = $body->phone ;
+            }
+        }
+        return $phone;
     }
     private function TotalAndSkipLoyaltyTotal($bodyOrder, $Client): array
     {

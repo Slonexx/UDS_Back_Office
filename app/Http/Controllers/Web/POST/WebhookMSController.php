@@ -210,7 +210,7 @@ class WebhookMSController extends Controller
                                 'mediaType' => $OldBody->meta->mediaType,
                                 'uuidHref' => $OldBody->meta->uuidHref,
                             ],
-                            'linkedSum' => 0
+                            'linkedSum' => $OldBody->sum,
                         ], ]
                 ];
                 $this->msClient->post($url, $body);

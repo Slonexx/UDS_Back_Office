@@ -108,19 +108,10 @@
                         </div>
                         <div id="T2View" style="display: none">
                             <div class="mt-1 row" >
-                                <P class="col-sm-5 col-form-label"> Выберите на какую организацию создавать заказы: </P>
-                                <div class="col-sm-7">
-                                    <select name="add_automationOrganization"  id="add_automationOrganization" class="form-select text-black">
-                                        @foreach($arr_organization as $bodyItem)
-                                            <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="mt-1 row" >
                                 <P class="col-sm-5 col-form-label"> Выберите на какой склад создавать отгрузку: </P>
                                 <div class="col-sm-7">
                                     <select name="add_automationStore"  id="add_automationStore" class="form-select text-black">
+                                        <option value="0"> Взять склад из заказа покупателя </option>
                                         @foreach($arr_store as $bodyItem)
                                             <option value="{{ $bodyItem->id }}"> {{ ($bodyItem->name) }} </option>
                                         @endforeach
@@ -137,30 +128,6 @@
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="row">
-                                <label class="col-5 col-form-label"> Выберите канал продаж</label>
-                                <div class="col-7 ">
-                                    <select id="add_saleschannelAutomation" name="add_saleschannelAutomation" class="form-select text-black " >
-                                        <option value="0"> Не выбирать  </option>
-                                        @foreach($arr_saleschannel as $item)
-                                            <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label class="col-5 col-form-label"> Выберите проект</label>
-                                <div class="col-7 ">
-                                    <select id="add_projectAutomation" name="add_projectAutomation" class="form-select text-black " >
-                                        <option value="0"> Не выбирать  </option>
-                                        @foreach($arr_project as $item)
-                                            <option value="{{ $item->name}}"> {{ ($item->name) }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="mt-1 buttons-container-head rounded"></div>
@@ -178,11 +145,8 @@
         let saleschannelAutomation = "{{$saleschannelAutomation}}";
 
         let automationDocument = "{{$automationDocument}}";
-        let add_automationOrganization = "{{$add_automationOrganization}}";
         let add_automationStore = "{{$add_automationStore}}";
         let add_automationPaymentDocument = "{{$add_automationPaymentDocument}}";
-        let add_saleschannelAutomation = "{{$add_saleschannelAutomation}}";
-        let add_projectAutomation = "{{$add_projectAutomation}}";
 
         window.document.getElementById('activateAutomation').value = activateAutomation
         if (statusAutomation != "0") window.document.getElementById('statusAutomation').value = statusAutomation
@@ -190,12 +154,8 @@
         window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
 
         window.document.getElementById('automationDocument').value = automationDocument
-        if (add_automationOrganization != "") window.document.getElementById('add_automationOrganization').value = add_automationOrganization
         if (add_automationStore != "") window.document.getElementById('add_automationStore').value = add_automationStore
         if (add_automationPaymentDocument != "") window.document.getElementById('add_automationPaymentDocument').value = add_automationPaymentDocument
-
-        if (add_saleschannelAutomation != "") window.document.getElementById('add_saleschannelAutomation').value = add_saleschannelAutomation
-        if (add_projectAutomation != "") window.document.getElementById('add_projectAutomation').value = add_projectAutomation
 
         FU_activateAutomation(activateAutomation)
         FU_automationDocument(automationDocument)
