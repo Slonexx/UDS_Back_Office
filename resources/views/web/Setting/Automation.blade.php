@@ -140,7 +140,6 @@
             </div>
         </div>
     </div>
-
     <script>
 
         let activateAutomation = "{{$activateAutomation}}";

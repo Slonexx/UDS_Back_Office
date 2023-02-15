@@ -270,6 +270,7 @@
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
             window.document.getElementById('buttonOperations').style.display = 'none'
+            $('#downL').modal('toggle')
 
             let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
             console.log('send operations parameters  ↓ ')
@@ -284,6 +285,7 @@
                     document.getElementById("buttonOperations").style.display = "none";
                 } else window.document.getElementById('buttonOperations').style.display = 'block'
             })
+            $('#downL').modal('hide')
         }
 
 
@@ -506,6 +508,19 @@
                 <div class="mt-2 row mx-2">
                     <div class="col-1"></div>
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
+                </div>
+            </div>
+            <div id="downL" class="modal fade bd-example-modal-sm" data-bs-keyboard="false" data-bs-backdrop="static"
+                 tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"> <i class="fa-solid fa-circle-exclamation text-danger"></i> Отправка </h5>
+                        </div>
+                        <div class="modal-body text-center" style="background-color: #e5eff1">
+                            <div class="row"> <img style="width: 100%" src="https://i.gifer.com/1uoA.gif" alt=""> </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
