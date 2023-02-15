@@ -106,8 +106,6 @@ class indexController extends Controller
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
             'cashier_id' => $employee->id,
-            //'cashier_id' => "Сергей",
-            //'cashier_name' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
             'cashier_name' => $employee->name,
         ] );
     }
@@ -117,7 +115,7 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        $getObjectUrl = "https://smartuds.kz/Demand/$accountId/demand/";
+        $getObjectUrl = "https://dev.smartuds.kz/Demand/$accountId/demand/";
 
 
         return view( 'widgets.Demand', [
