@@ -97,9 +97,9 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
+
         //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
         //$isAdmin = $employee->permissions->admin->view;
-
         $entity = 'customerorder';
 
 
@@ -107,6 +107,10 @@ class indexController extends Controller
             'accountId' => $accountId,
             'cashier_id' => $employee->id,
             'cashier_name' => $employee->name,
+            //'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+            //'cashier_id' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
+            //'cashier_name' => "Сергей",
+
         ] );
     }
 

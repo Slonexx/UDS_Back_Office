@@ -32,16 +32,16 @@
         let operationsAccrue
         let operationsCancellation
 
-        let receivedMessage = {
+        /*let receivedMessage = {
             "name":"Open",
             "extensionPoint":"document.customerorder.edit",
             "objectId":"0ef81502-a90d-11ed-0a80-0cad0005d6df",
             "messageId":3,
             "displayMode":"expanded"
-        }
+        }*/
 
         window.addEventListener("message", function(event) {
-            //let receivedMessage = event.data
+            let receivedMessage = event.data
 
             console.log(receivedMessage);
             GlobalobjectId = receivedMessage.objectId;
@@ -51,7 +51,7 @@
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                receivedMessage = null
+                //receivedMessage = null
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
@@ -261,9 +261,10 @@
         }
 
         function sendOperations(){
-            if (parseFloat(operations_points) > 0) {
-                operations_cash = operations_cash - operations_points
-            }
+            window.document.getElementById('buttonOperations').style.display = 'none'
+            window.document.getElementById('outLoud').style.display = 'block'
+
+            if (parseFloat(operations_points) > 0) { operations_cash = operations_cash - operations_points }
             let data = {
                 accountId: accountId,
                 objectId: GlobalobjectId,
@@ -275,9 +276,6 @@
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
             };
-            window.document.getElementById('buttonOperations').style.display = 'none'
-            window.document.getElementById('outLoud').style.display = 'block'
-            window.document.getElementById('outLoud_1').style.display = 'block'
 
             let settings = ajax_settings( url + '/CompletesOrder/operations/', "GET", data );
             console.log('send operations parameters  ↓ ')
@@ -286,16 +284,14 @@
             $.ajax(settings).done(function (response) {
                 console.log('send operations response  ↓ ')
                 console.log(response)
-                window.document.getElementById('outLoud_2').style.display = 'block'
 
                 if (response.code == 200) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";
                 } else window.document.getElementById('buttonOperations').style.display = 'block'
-
-                window.document.getElementById('outLoud_3').style.display = 'block'
+                window.document.getElementById('outLoud').style.display = 'none'
             })
-            window.document.getElementById('outLoud').style.display = 'none'
+
         }
 
 
@@ -520,11 +516,11 @@
                     <button onclick="sendOperations()" class="btn btn-success col-10"> Провести операцию </button>
                 </div>
             </div>
-            <div id="outLoud" class="text-center">
-                Отправка
-                <div id="outLoud_1" style="display: none">.</div>
-                <div id="outLoud_2" style="display: none">.</div>
-                <div id="outLoud_3" style="display: none">.</div>
+            <div id="outLoud" class="text-center" style="display: none">
+                <div class="row mt-2 row mx-2">
+                    <div class="col-1"></div>
+                    <div id="outLoud_message" class="col-10 alert alert-danger fade show in text-center "> Отправка </div>
+                </div>
             </div>
         </div>
 
