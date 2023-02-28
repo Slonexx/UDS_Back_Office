@@ -241,7 +241,7 @@ class postController extends Controller
         if ($Webhook_check) {
             $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock', [
                 'url' => "https://dev.smartuds.kz/api/webhook/stock/",
-                'enabled' => "true",
+                'enabled' => true,
                 'reportType' => "bystore",
                 'stockType' => "stock",
             ]);
@@ -250,7 +250,7 @@ class postController extends Controller
         if ($WebhookID != 0) {
             $Client->put('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock/'.$WebhookID, [
                 'url' => "https://dev.smartuds.kz/api/webhook/stock/",
-                'enabled' => "true",
+                'enabled' => true,
                 'reportType' => "bystore",
                 'stockType' => "stock",
             ]);
