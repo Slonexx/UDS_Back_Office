@@ -21,17 +21,6 @@ class ProductCreateMsService
     private UomHook $uomHookService;
     private ImgService $imgService;
 
-
-
-    //Add products to MS from UDS
-
-    /**
-     * @param AttributeHook $attributeHookService
-     * @param CurrencyHook $currencyHookService
-     * @param PriceTypeHook $priceTypeHookService
-     * @param UomHook $uomHookService
-     * @param ImgService $imgService
-     */
     public function __construct(AttributeHook $attributeHookService, CurrencyHook $currencyHookService, PriceTypeHook $priceTypeHookService, UomHook $uomHookService, ImgService $imgService)
     {
         $this->attributeHookService = $attributeHookService;

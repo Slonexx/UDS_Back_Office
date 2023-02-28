@@ -7,6 +7,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
+use App\Models\ProductFoldersByAccountID;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
@@ -17,9 +18,7 @@ class getController extends Controller
 
     public function mainSetting(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        if ($isAdmin == "NO"){
-            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
-        }
+        if ($isAdmin == "NO"){ return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] ); }
 
         $Setting = new getSettingVendorController($accountId);
 
@@ -28,30 +27,39 @@ class getController extends Controller
         $TokenUDS = $Setting->TokenUDS;
         $ProductFolder = $Setting->ProductFolder;
         $Store = $Setting->Store;
+        $arrFolders = [];
 
-        $Client = new MsClient($TokenMoySklad);
-        $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
+        if (isset($request->message)){
+        $message = [
+            'status'=> true,
+            'message'=> $request->message['message'],
+            'alert'=> $request->message['alert'],
+        ];
+        } else $message = [
+            'status'=> false,
+            'message'=> "",
+            'alert'=> "",
+        ];
 
-        if ($Setting->ProductFolder != null) {
-            try {
-                $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$Setting->ProductFolder;
-                $FolderName = $Client->get($urlFolder)->name;
-                $ProductFolder = [ 'value' => $Setting->ProductFolder, 'name' => $FolderName ];
-            } catch (ClientException $exception) {
-                $ProductFolder = null;
-                $cfg = new cfg();
-                $app = AppInstanceContoller::loadApp($cfg->appId, $accountId);
-                $app->ProductFolder = null;
-                $app->persist();
+
+        if ($ProductFolder != null) {
+            if ($ProductFolder == "1"){
+                $Folders = ProductFoldersByAccountID::query()->where('accountId', $Setting->accountId)->get();
+                foreach ($Folders as $index=>$item){
+                    $arrFolders[$index] = [
+                        'id'=> $item->getModel()->getAttributes()['FolderID'],
+                        'Name'=> $item->getModel()->getAttributes()['FolderName']
+                    ];
+                }
+            } else {
+                $ProductFolder = "0";
             }
-        }
-
-        $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
+        } else $ProductFolder = "0";
         if ($Store == null) $Store = "0";
 
         $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
-            $pool->as('body_store')->withToken($TokenMoySklad)->get($url_store),
-            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get($url_productFolder),
+            $pool->as('body_store')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/store"),
+            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
         ]);
 
         $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name'=>'Корневая папка' ]));
@@ -64,14 +72,17 @@ class getController extends Controller
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
             "Body_productFolder" => $body_productFolder,
-
-            "ProductFolder" => $ProductFolder,
-            "Store" => $Store,
-            "accountId"=> $accountId,
-            "isAdmin" => $isAdmin,
+            "Folders" => $arrFolders,
 
             "companyId"=> $companyId,
             "TokenUDS"=> $TokenUDS,
+
+            "ProductFolder" => $ProductFolder,
+            "Store" => $Store,
+
+            "accountId"=> $accountId,
+            "message"=> $message,
+            "isAdmin" => $isAdmin,
         ]);
     }
 

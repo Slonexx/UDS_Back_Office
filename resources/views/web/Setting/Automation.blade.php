@@ -135,7 +135,8 @@
                     </div>
 
                     <div class="mt-1 buttons-container-head rounded"></div>
-                    <button class="mt-2 btn btn-outline-dark gradient_focus"> Сохранить </button>
+                        <button class="mt-2 btn btn-outline-dark gradient_focus"> Сохранить </button>
+                    </div>
                 </form>
             </div>
         </div>
