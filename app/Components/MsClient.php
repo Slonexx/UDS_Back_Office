@@ -44,6 +44,14 @@ class MsClient{
          return json_decode($res->getBody());
     }
 
+    public function delete($url, $body){
+        $res = $this->client->delete($url,[
+            'Accept' => 'application/json',
+            'body' => json_encode($body),
+        ]);
+        return json_decode($res->getBody());
+    }
+
 /*    public function multiPost($url,$bodyArr)
     {
         try {
