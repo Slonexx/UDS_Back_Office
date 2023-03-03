@@ -11,7 +11,7 @@ class CreateAutomationNewUpdateMODELSTable extends Migration
     {
         Schema::create('automation_new_update__m_o_d_e_l_s', function (Blueprint $table) {
             $table->id();
-            $table->string('accountId');
+            $table->string('accountId')->nullable();
             $table->foreign('accountId')->references('accountId')->on('setting_mains')->cascadeOnDelete();
 
             $table->string('activateAutomation')->nullable();

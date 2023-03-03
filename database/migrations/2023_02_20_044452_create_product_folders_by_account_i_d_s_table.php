@@ -11,7 +11,7 @@ class CreateProductFoldersByAccountIDSTable extends Migration
     {
         Schema::create('product_folders_by_account_i_d_s', function (Blueprint $table) {
             $table->id();
-            $table->string('accountId');
+            $table->string('accountId')->nullable();
             $table->foreign('accountId')->references('accountId')->on('setting_mains')->cascadeOnDelete();
             $table->string('FolderName')->nullable();
             $table->string('FolderID')->nullable();
