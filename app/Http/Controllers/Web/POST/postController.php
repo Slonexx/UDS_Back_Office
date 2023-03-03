@@ -7,13 +7,13 @@ use App\Components\UdsClient;
 use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\BD\create;
 use App\Http\Controllers\BD\update;
+use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\getData\getSetting;
-use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\orderSettingModel;
+use App\Models\ProductFoldersByAccountID;
 use App\Models\SettingMain;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
@@ -21,49 +21,27 @@ use Illuminate\Support\Facades\Http;
 
 class postController extends Controller
 {
-    public function postSettingIndex(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function postSettingIndex(Request $request, $accountId, $isAdmin)
     {
+
         $cfg = new cfg();
-        $BD = new BDController();
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($appId, $accountId);
-
-
-        $TokenMS = $app->TokenMoySklad;
-        $Client = new MsClient($TokenMS);
-        $url_store = "https://online.moysklad.ru/api/remap/1.2/entity/store";
-        $url_productFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=";
-        $urlFolder = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$request->ProductFolder;
-
-        $responses = Http::withToken($TokenMS)->pool(fn (Pool $pool) => [
-            $pool->as('body_store')->withToken($TokenMS)->get($url_store),
-            $pool->as('body_productFolder')->withToken($TokenMS)->get($url_productFolder),
-        ]);
-        if ($request->ProductFolder == '0') {
-            $ProductFolder = ['value' => $request->ProductFolder, 'name'=>'Корневая папка' ];
-            $body_productFolder = $responses['body_productFolder']->object()->rows;
-        } else {
-            $FolderName = $Client->get($urlFolder)->name;
-            $ProductFolder = ['value' => $request->ProductFolder, 'name' => $FolderName ];
-            $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name'=>'Корневая папка' ]));
-            foreach ($responses['body_productFolder']->object()->rows as $item){
-                $body_productFolder[] = $item;
-            }
-        }
+        $Setting = new getSettingVendorController($accountId);
 
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
         $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
         if ($body == 200){
-            $this->Setting_Main_Create_Or_Update( $accountId, $TokenMS, $request->companyId, $request->TokenUDS, $request->ProductFolder, $request->UpdateProduct, $request->Store,);
-
+            $this->Setting_Main_Create_Or_Update( $accountId, $Setting->TokenMoySklad, $request->companyId, $request->TokenUDS, $request->ProductFolder, $request->UpdateProduct, $request->Store,);
+            $this->ProductFolderSettingCreateOrUpdate($request, $Setting);
+                $this->CreateWebhookByProductMS($request, $Setting);
+                $this->CreateWebhookStockByProductMS($request, $Setting);
             $app->companyId = $request->companyId; $app->TokenUDS = $request->TokenUDS;
             $app->ProductFolder = $request->ProductFolder; $app->UpdateProduct = $request->UpdateProduct; $app->Store = $request->Store;
             $app->status = AppInstanceContoller::ACTIVATED;
             app(VendorApiController::class)->updateAppStatus($appId, $accountId, $app->getStatusName());
 
-            $BD->createCounterparty($accountId, $TokenMS, $request->companyId,  $request->TokenUDS);
             $app->persist();
-
             $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
             $message["message"] = "Настройки сохранились!";
         } else {
@@ -71,18 +49,10 @@ class postController extends Controller
             $message["message"] = "Не верный ID Компании или API Key";
         }
 
-        return view('web.Setting.index', [
-            "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $body_productFolder,
+        return  redirect()->route('indexSetting', [
+            'message' => $message,
 
-            "ProductFolder" => $ProductFolder,
-            "Store" => $request->Store,
-
-            "companyId"=> $request->companyId,
-            "TokenUDS"=> $request->TokenUDS,
-
-            "message" => $message,
-            "accountId"=> $accountId,
+            'accountId' => $accountId,
             'isAdmin' => $isAdmin,
         ]);
     }
@@ -155,7 +125,9 @@ class postController extends Controller
     {
         $Create = new create();
         $update = new update();
-        if ($TokenMS == null) { $Create->SettingMainCreate(
+        $Setting =  SettingMain::query()->where('accountId', $accountId)->get()->all();
+
+        if ($Setting == []) { $Create->SettingMainCreate(
             $accountId,
             $TokenMS,
             $companyId,
@@ -173,5 +145,100 @@ class postController extends Controller
             $Store,
             );
         }
+    }
+
+    private function ProductFolderSettingCreateOrUpdate(Request $request, getSettingVendorController $Setting)
+    {
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $find = ProductFoldersByAccountID::query()->where('accountId', $Setting->accountId);
+        $find->delete();
+
+        foreach ($request->all() as $item){
+            if (mb_substr($item, 0, 6) == "Folder"){
+                $id = mb_substr($item, 6, 120);
+                if ($id == "0") {
+                    $FolderName = "Корневая папка";
+                    $FolderID = "0";
+                    $FolderURLs = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+                } else {
+                    $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$id);
+                    $FolderName = $body->name;
+                    $FolderID = $body->id;
+                    $FolderURLs = $body->meta->href;
+                }
+                ProductFoldersByAccountID::create([
+                    'accountId' => $Setting->accountId,
+                    'FolderName' => $FolderName,
+                    'FolderID' => $FolderID,
+                    'FolderURLs' => $FolderURLs,
+                ]);
+            }
+        }
+
+    }
+
+    private function CreateWebhookByProductMS(Request $request, getSettingVendorController $Setting)
+    {
+        $ProductFolder = 0;
+        if ($request->ProductFolder == "1"){ $ProductFolder = 1; }
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $WebhookProduct = true;
+        $WebhookProductFolder = true;
+        $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
+        if ($Webhook_body != []){
+            foreach ($Webhook_body as $item){
+                if ($item->url == "https://dev.smartuds.kz/api/webhook/product/"){
+                    $WebhookProduct = false;
+                    if ($ProductFolder != 1) $Client->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/'.$item->id, null);
+                }
+
+                if ($item->url == "https://dev.smartuds.kz/api/webhook/productfolder/"){
+                    $WebhookProductFolder = false;
+                    if ($ProductFolder != 1) $Client->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/'.$item->id, null);
+                }
+            }
+        }
+        if ($WebhookProduct and $ProductFolder == 1) {
+            $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
+                'url' => "https://dev.smartuds.kz/api/webhook/product/",
+                'action' => "UPDATE",
+                'entityType' => "product",
+            ]);
+        }
+        if ($WebhookProductFolder and $ProductFolder == 1) {
+            $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
+                'url' => "https://dev.smartuds.kz/api/webhook/productfolder/",
+                'action' => "UPDATE",
+                'entityType' => "productfolder",
+            ]);
+        }
+
+    }
+    private function CreateWebhookStockByProductMS(Request $request, getSettingVendorController $Setting)
+    {
+        $ProductFolder = 0;
+        if ($request->ProductFolder == "1"){ $ProductFolder = 1; }
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $body = [
+            'url' => "https://dev.smartuds.kz/api/webhook/stock/",
+            'enabled' => true,
+            'reportType' => "bystore",
+            'stockType' => "stock",
+        ];
+        $Webhook_check = true;
+
+        $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock')->rows;
+        if ($Webhook_body != []){
+            foreach ($Webhook_body as $item){
+                if ($item->url == "https://dev.smartuds.kz/api/webhook/stock/"){
+                    $Webhook_check = false;
+
+                    if ($ProductFolder != 1) {
+                        $Client->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock/'. $item->id, []);
+                    }
+                }
+            }
+        }
+        if ($Webhook_check and $ProductFolder == 1) $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock', $body);
     }
 }

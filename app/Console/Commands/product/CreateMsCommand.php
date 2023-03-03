@@ -13,25 +13,10 @@ use Illuminate\Console\Command;
 
 class CreateMsCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'msProduct:create';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
 
     private SettingsService $settingsService;
 
@@ -50,7 +35,7 @@ class CreateMsCommand extends Command
                 if ($settings->UpdateProduct != "0")
                 try {
                     $clientCheck = new MsClient($settings->TokenMoySklad);
-                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook');
+                    $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                     $countSettings++;

@@ -1,7 +1,7 @@
 
 @extends('widgets.index')
 
-@section('counterparty')
+@section('content')
 
     <script>
         let ObjectID

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\BD;
 
 use App\Http\Controllers\Controller;
+use App\Models\Automation_new_update_MODEL;
 use App\Models\SettingMain;
 use Illuminate\Http\Request;
 
@@ -19,4 +20,24 @@ class create extends Controller
             'Store' => $Store,
         ]);
     }
+
+
+    public function AutomationCreate($accountId, $activateAutomation, $statusAutomation, $projectAutomation,
+                                     $saleschannelAutomation, $automationDocument, $add_automationStore,
+                                     $add_automationPaymentDocument  ){
+
+        Automation_new_update_MODEL::create([
+            'accountId' => $accountId,
+
+            'activateAutomation' => $activateAutomation,
+            'statusAutomation' => $statusAutomation,
+            'projectAutomation' => $projectAutomation,
+            'saleschannelAutomation' => $saleschannelAutomation,
+
+            'automationDocument' => $automationDocument,
+            'add_automationStore' => $add_automationStore,
+            'add_automationPaymentDocument' => $add_automationPaymentDocument,
+        ]);
+    }
+
 }

@@ -89,6 +89,29 @@ class indexController extends Controller
             'getObjectUrl' => $getObjectUrl,
             ] );
     }
+    public function product(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
+        //$contextKey = $request->contextKey;
+        //$vendorAPI = new VendorApiController();
+        //$employee = $vendorAPI->context($contextKey);
+        //$accountId = $employee->accountId;
+        //$isAdmin = $employee->permissions->admin->view;
+        $accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
+        $isAdmin = "ALL";
+
+        if ($isAdmin == "NO"){
+            return view( 'widgets.counterparty', [
+                'accountId' => $accountId,
+                'admin' => "NO",
+            ] );
+        }
+
+        return view( 'widgets.product', [
+            'accountId' => $accountId,
+            ] );
+    }
+
+
 
     public function CustomerOrderEdit(Request $request){
         $baseURL = new mainURL();
@@ -97,18 +120,20 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
+
         //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
         //$isAdmin = $employee->permissions->admin->view;
-
         $entity = 'customerorder';
 
 
         return view( 'widgets.CustomerOrderEdit', [
             'accountId' => $accountId,
             'cashier_id' => $employee->id,
-            //'cashier_id' => "Сергей",
-            //'cashier_name' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
             'cashier_name' => $employee->name,
+            //'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+            //'cashier_id' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
+            //'cashier_name' => "Сергей",
+
         ] );
     }
 
@@ -117,7 +142,7 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        $getObjectUrl = "https://smartuds.kz/Demand/$accountId/demand/";
+        $getObjectUrl = "https://dev.smartuds.kz/Demand/$accountId/demand/";
 
 
         return view( 'widgets.Demand', [

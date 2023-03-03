@@ -17,7 +17,7 @@ class Automation_new_update_MODEL extends Model
         'saleschannelAutomation',
 
         'automationDocument',
-        'add_automationOrganization',
+        'add_automationStore',
         'add_automationPaymentDocument',
     ];
 
