@@ -187,12 +187,12 @@ class postController extends Controller
         $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
         if ($Webhook_body != []){
             foreach ($Webhook_body as $item){
-                if ($item->url == "https://smartuds.kz/api/webhook/product/"){
+                if ($item->url == "https://smartuds.kz/api/webhook/product"){
                     $WebhookProduct = false;
                     if ($ProductFolder != 1) $Client->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/'.$item->id, null);
                 }
 
-                if ($item->url == "https://smartuds.kz/api/webhook/productfolder/"){
+                if ($item->url == "https://smartuds.kz/api/webhook/productfolder"){
                     $WebhookProductFolder = false;
                     if ($ProductFolder != 1) $Client->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/'.$item->id, null);
                 }
@@ -200,14 +200,14 @@ class postController extends Controller
         }
         if ($WebhookProduct and $ProductFolder == 1) {
             $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
-                'url' => "https://smartuds.kz/api/webhook/product/",
+                'url' => "https://smartuds.kz/api/webhook/product",
                 'action' => "UPDATE",
                 'entityType' => "product",
             ]);
         }
         if ($WebhookProductFolder and $ProductFolder == 1) {
             $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
-                'url' => "https://smartuds.kz/api/webhook/productfolder/",
+                'url' => "https://smartuds.kz/api/webhook/productfolder",
                 'action' => "UPDATE",
                 'entityType' => "productfolder",
             ]);
@@ -220,7 +220,7 @@ class postController extends Controller
         if ($request->ProductFolder == "1"){ $ProductFolder = 1; }
         $Client = new MsClient($Setting->TokenMoySklad);
         $body = [
-            'url' => "https://smartuds.kz/api/webhook/stock/",
+            'url' => "https://smartuds.kz/api/webhook/stock",
             'enabled' => true,
             'reportType' => "bystore",
             'stockType' => "stock",
@@ -230,7 +230,7 @@ class postController extends Controller
         $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock')->rows;
         if ($Webhook_body != []){
             foreach ($Webhook_body as $item){
-                if ($item->url == "https://smartuds.kz/api/webhook/stock/"){
+                if ($item->url == "https://smartuds.kz/api/webhook/stock"){
                     $Webhook_check = false;
 
                     if ($ProductFolder != 1) {
