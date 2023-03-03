@@ -142,7 +142,7 @@ class indexController extends Controller
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
-        $getObjectUrl = "https://dev.smartuds.kz/Demand/$accountId/demand/";
+        $getObjectUrl = "https://smartuds.kz/Demand/$accountId/demand/";
 
 
         return view( 'widgets.Demand', [

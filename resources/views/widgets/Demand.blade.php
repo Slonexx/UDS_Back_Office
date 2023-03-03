@@ -5,7 +5,7 @@
 <body>
 
 <script>
-    const url = 'https://dev.smartuds.kz/'
+    const url = 'https://smartuds.kz/'
     let GlobalobjectId
     let GlobalURL
     let GlobalxRefURL
@@ -114,7 +114,7 @@
 
             }
         });
-        xmlHttpRequest.open("GET", "https://dev.smartuds.kz/ompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
+        xmlHttpRequest.open("GET", "https://smartuds.kz/ompletesOrder/{{$accountId}}/" + GlobalUDSOrderID);
         xmlHttpRequest.send();
     }
 

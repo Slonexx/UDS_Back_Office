@@ -4,7 +4,7 @@
 
 <body>
 <script>
-        const url = 'https://dev.smartuds.kz/'
+        const url = 'https://smartuds.kz/'
 
         //const url = 'https://uds/'
 

@@ -207,8 +207,8 @@
             }
         }
 
-        //let URL = "https://dev.smartuds.kz/CountProduct/"
-        let URL = "https://uds/CountProduct"
+        let URL = "https://smartuds.kz/CountProduct/"
+        //let URL = "https://uds/CountProduct"
         let accountId = "{{ $accountId }}"
         let companyId = "{{ $companyId }}"
         let TokenUDS = "{{ $TokenUDS }}"

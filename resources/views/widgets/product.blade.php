@@ -31,13 +31,13 @@
                     productID: productID,
                 };
 
-                //let settings = ajax_settings('https://dev.smartuds.kz/Product/Info', 'GET', data)
-                let settings = ajax_settings('https://uds/Product/Info', 'GET', data)
+                let settings = ajax_settings('https://smartuds.kz/Product/Info', 'GET', data)
+                //let settings = ajax_settings('https://uds/Product/Info', 'GET', data)
                 console.log('widget setting attributes: ↓')
                 console.log(settings)
 
                 $.ajax(settings).done(function (response) {
-                    console.log("https://dev.smartuds.kz/Product/Info" + ' response ↓ ')
+                    console.log("https://smartuds.kz/Product/Info" + ' response ↓ ')
                     console.log(response)
                     window.document.getElementById('download').style.display = "none"
                     window.document.getElementById('activated').style.display = "block"
