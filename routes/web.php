@@ -25,6 +25,9 @@ Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
 Route::get('/DemandEdit', [indexController::class, 'DemandEdit']);
 Route::get('/SalesreturnEdit', [indexController::class, 'SalesreturnEdit']);
 
+Route::get('/Product', [indexController::class, 'product']);
+Route::get('/Product/Info', [\App\Http\Controllers\Web\ADD\ProductController::class, 'infoProduct']);
+
 
 Route::get('/CounterpartyObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CounterpartyObject']);
 Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::class, 'Accrue']);

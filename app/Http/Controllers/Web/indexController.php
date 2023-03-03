@@ -89,6 +89,29 @@ class indexController extends Controller
             'getObjectUrl' => $getObjectUrl,
             ] );
     }
+    public function product(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
+        //$contextKey = $request->contextKey;
+        //$vendorAPI = new VendorApiController();
+        //$employee = $vendorAPI->context($contextKey);
+        //$accountId = $employee->accountId;
+        //$isAdmin = $employee->permissions->admin->view;
+        $accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
+        $isAdmin = "ALL";
+
+        if ($isAdmin == "NO"){
+            return view( 'widgets.counterparty', [
+                'accountId' => $accountId,
+                'admin' => "NO",
+            ] );
+        }
+
+        return view( 'widgets.product', [
+            'accountId' => $accountId,
+            ] );
+    }
+
+
 
     public function CustomerOrderEdit(Request $request){
         $baseURL = new mainURL();
