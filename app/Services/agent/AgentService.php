@@ -60,7 +60,7 @@ class AgentService
 
         set_time_limit(3600);
 
-       // try {
+        try {
             while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
                 $customersFromUds = $this->getUds($url,$companyId,$apiKeyUds);
                 foreach ($customersFromUds->rows as $customerFromUds){
@@ -80,11 +80,10 @@ class AgentService
                 $offset += 50;
                 $bd->throwToRetryAgent($accountId,$url, $offset);
             }
-       // } catch (\Throwable $exception){
+        } catch (\Throwable $exception){
             //$bd = new BDController();
            // $bd->errorLog($accountId,$exception->getMessage());
-
-       // }
+        }
 
 
 

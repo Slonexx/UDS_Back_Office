@@ -19,14 +19,8 @@
     </script>
 
     <div class="content p-4 mt-2 bg-white text-Black rounded main-container">
-        <div class="row gradient rounded p-2 pb-2" style="margin-top: -1rem">
-            <div class="col-10" style="margin-top: 1.2rem"> <span class="text-white" style="font-size: 20px">  Настройки &#8594; Сотрудники </span></div>
-            <div class="col-2 text-center">
-                <img src="https://smarttis.kz/Config/logo.png" width="40%"  alt="">
-                <div class="text-white" style="font-size: 11px; margin-top: 8px"> Топ партнёр сервиса МойСклад </div>
-            </div>
-        </div>
-
+            @include('div.TopServicePartner')
+            <script> NAME_HEADER_TOP_SERVICE("Настройки → Сотрудники") </script>
         <div class="mt-1 alert alert-warning alert-dismissible fade show in text-center" style="font-size: 16px">
             Важно, сотрудники, которые есть в UDS их необходимо связать, для этого скопируйте внешний идентификатор из приложения и вставьте его в UDS (Сотрудники &#8594; кассир &#8594; нужный кассир &#8594; детальная страница &#8594; подробная информация о кассире &#8594; Внешний идентификатор (для интеграции) )
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
