@@ -34,11 +34,7 @@ class getAutomationController extends Controller
         $body_project = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/project')->rows;
         $body_saleschannel = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/saleschannel')->rows;
 
-        if($Setting->Organization != null){
-            $body_organization = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/" . $Setting->Organization)->rows;
-        } else {
-            $body_organization = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/")->rows;
-        }
+        $body_organization = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/")->rows;
 
         $find = Automation_new_update_MODEL::query()->where('accountId', $accountId)->first();
         if ($find == null) {
