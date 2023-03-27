@@ -111,6 +111,14 @@ class WebhookMSController extends Controller
                     }
                 } else $boolSaleschannel = true;
 
+                if ((int) $ObjectBODY->externalCode > 10000) {
+                    return response()->json([
+                        'code' => 203,
+                        'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Внешний код был изменён, операция ранее уже проводилась, скрипт прекращён!"),
+                    ]);
+                }
+
+
                 if ($boolProject == true and $boolSaleschannel == true) return response()->json([
                     'code' => 200,
                     'message' => $this->WebHookUpdateState($ObjectBODY, $request['events'][0]['meta'],  $request['auditContext']['moment'], $request['auditContext']['uid'], $find->getAttributes() ),
