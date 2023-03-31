@@ -637,16 +637,18 @@ class ProductCreateUdsService
         $client = new MsClient($apiKeyMs);
         $json = $client->get($href);
 
-        return match ($json->description) {
-            "Штука" => "PIECE",
-            "Сантиметр" => "CENTIMETRE",
-            "Метр" => "METRE",
-            "Миллиметр" => "MILLILITRE",
-            "Литр; кубический дециметр" => "LITRE",
-            "Грамм" => "GRAM",
-            "Килограмм" => "KILOGRAM",
-            default => "",
-        };
+        if (property_exists($json, 'description')){
+            return match ($json->description) {
+                "Штука" => "PIECE",
+                "Сантиметр" => "CENTIMETRE",
+                "Метр" => "METRE",
+                "Миллиметр" => "MILLILITRE",
+                "Литр; кубический дециметр" => "LITRE",
+                "Грамм" => "GRAM",
+                "Килограмм" => "KILOGRAM",
+                default => "",
+            };
+        } else return "";
     }
 
 }

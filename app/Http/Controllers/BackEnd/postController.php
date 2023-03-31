@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\BackEnd;
 
+use App\Components\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Models\webhookClintLog;
 use App\Models\webhookOrderLog;
+use App\Services\agent\AgentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
@@ -99,7 +101,7 @@ class postController extends Controller
                 try {
                     $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
                     $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
-                    $agent = $this->metaAgent($TokenMC, $request->customer['id']);
+                    $agent = $this->metaAgent($TokenMC, json_decode(json_encode( $request->customer)));
                     $state = $this->metaState($TokenMC, $Setting->NEW);
                     $store = $this->metaStore($TokenMC, $Setting->Store);
                     $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
@@ -231,9 +233,21 @@ class postController extends Controller
     }
 
     public function metaAgent($apiKey, $agent){
-        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~".$agent;
-        $Clint = new ClientMC($url_organization, $apiKey);
-        $Body = $Clint->requestGet()->rows[0]->meta; //Может не быть
+
+        $Clint = new MsClient($apiKey);
+        $Body = $Clint->get("https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~".$agent->id)->rows;
+        if ($Body == []) {
+            $agent = [
+                "name" => $agent->displayName,
+                "externalCode" => (string) $agent->id,
+            ];
+
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
+            $client = new MsClient($apiKey);
+            $Body = $client->post($url,$agent)->meta;
+        } else {
+            $Body = $Body[0]->meta;
+        }
 
         $href = $Body->href;
         $type = $Body->type;

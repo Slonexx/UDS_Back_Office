@@ -93,13 +93,11 @@ class AgentService
         ];
     }
 
-    private function createAgent($apiKeyMs,$customer)
+    public function createAgent($apiKeyMs,$customer)
     {
-
         $agent = [
             "name" => $customer->displayName,
-            "companyType" => "individual",
-            "externalCode" => "".$customer->participant->id,
+            "externalCode" => (string) $customer->participant->id,
         ];
 
         if ($customer->email != null){
