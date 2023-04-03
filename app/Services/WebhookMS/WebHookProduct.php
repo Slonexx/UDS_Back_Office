@@ -31,11 +31,12 @@ class WebHookProduct
             return 'Отсутствует изменения товара';
         }
         $href = $events['0']['meta']['href'];
+        $updatedFields = $events['0']['updatedFields'];
 
-        return $this->createBodyForUDS($href);
+        return $this->createBodyForUDS($href, $updatedFields);
     }
 
-    private function createBodyForUDS(mixed $href): string
+    private function createBodyForUDS(mixed $href, mixed $updatedFields): string
     {
         $BodyProduct = $this->msClient->get($href);
         //dd($BodyProduct);
@@ -131,7 +132,7 @@ class WebHookProduct
             if (property_exists($BodyProduct, 'article')){
                 $Body['data']['sku'] = $BodyProduct->article;
             }
-
+            if (in_array('salePrices', $updatedFields)){
                 $prices = [];
                 foreach ($BodyProduct->salePrices as $price){
                     if ($price->priceType->name == "Цена продажи"){ $prices["salePrice"] = ($price->value / 100);
@@ -155,7 +156,9 @@ class WebHookProduct
                         'skipLoyalty' => false,
                     ];
                 }
-
+            } else {
+                $Body['data']['offer'] = $BodyUDS->data->price;
+            }
             if ($BodyUDS->data->inventory->inStock != null) {
                 $Body['data']['inventory']['inStock'] = $BodyUDS->data->inventory->inStock;
             }
@@ -207,12 +210,15 @@ class WebHookProduct
             }
         } else unset($Body['nodeId']);
 
-
-        if (property_exists($BodyProduct,'images')){
+        if (in_array('image', $updatedFields)){
+           if (property_exists($BodyProduct,'images')){
                $imgIds = $this->imgService->setImgUDS($BodyProduct->images->meta->href,
                    $this->Setting->TokenMoySklad, $this->Setting->companyId, $this->Setting->TokenUDS );
                $Body["data"]["photos"] = $imgIds;
-        } else unset( $Body["data"]["photos"]);
+           } else unset( $Body["data"]["photos"]);
+       } else {
+           $Body['data']['photos'] = $BodyUDS->data->photos;
+       }
 
 
         try {

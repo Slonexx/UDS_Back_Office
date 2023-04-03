@@ -202,6 +202,7 @@ class postController extends Controller
             $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
                 'url' => "https://smartuds.kz/api/webhook/product",
                 'action' => "UPDATE",
+                'diffType' => "FIELDS",
                 'entityType' => "product",
             ]);
         }
@@ -209,6 +210,7 @@ class postController extends Controller
             $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
                 'url' => "https://smartuds.kz/api/webhook/productfolder",
                 'action' => "UPDATE",
+                'diffType' => "FIELDS",
                 'entityType' => "productfolder",
             ]);
         }
