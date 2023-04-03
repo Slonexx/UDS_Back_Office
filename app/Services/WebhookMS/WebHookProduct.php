@@ -159,7 +159,7 @@ class WebHookProduct
             } else {
                 $Body['data']['offer'] = $BodyUDS->data->price;
             }
-            if (property_exists($BodyUDS->data, 'inventory'))
+            //if (property_exists($BodyUDS->data, 'inventory'))
             if ($BodyUDS->data->inventory->inStock != null) {
                 $Body['data']['inventory']['inStock'] = $BodyUDS->data->inventory->inStock;
             }
