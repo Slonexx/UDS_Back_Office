@@ -53,7 +53,7 @@ class ProductCreateUdsService
         );
     }
 
-    private function getUdsCheck($companyId, $apiKeyUds,$accountId): array
+    public function getUdsCheck($companyId, $apiKeyUds,$accountId): array
     {
         set_time_limit(3600);
         $this->findNodesUds($nodeIds,$companyId,$apiKeyUds,$accountId);

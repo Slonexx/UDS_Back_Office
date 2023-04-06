@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller\V1\UploadController;
 use App\Http\Controllers\installContoller;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Web\ADD\DeleteALLProductForUDSController;
 use App\Http\Controllers\Web\POST\WebhookMSController;
 use App\Http\Controllers\Web\POST\WebhookMSProductController;
 use App\Services\AdditionalServices\ImgService;
@@ -42,6 +43,8 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
     Route::post('/webhook/product/',[WebhookMSProductController::class, 'productUpdate']);
     Route::post('/webhook/productfolder/',[WebhookMSProductController::class, 'productFolderUpdate']);
     Route::post('/webhook/stock/',[WebhookMSProductController::class, 'productStock']);
+
+    Route::post('/DeleteALLProductForUDSController/{password}/{accountId}',[DeleteALLProductForUDSController::class, 'DeleteALLProductForUDSController']);
 
     //Route::get('img',[ImgService::class,'getImgContent']);
 

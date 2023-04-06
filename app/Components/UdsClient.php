@@ -86,4 +86,15 @@ class UdsClient {
         return json_decode($res->getBody());
     }
 
+    public function delete($url){
+        $date = new DateTime();
+        $uuid_v4 = Str::uuid();
+        $res = $this->client->delete($url,[
+                "Accept" => "application/json",
+                "X-Origin-Request-Id" => $uuid_v4,
+                "X-Timestamp" => $date->format(DateTimeInterface::ATOM),
+            ]
+        );
+        return json_decode($res->getBody());
+    }
 }

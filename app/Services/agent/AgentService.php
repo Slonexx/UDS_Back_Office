@@ -36,7 +36,6 @@ class AgentService
 
     private function getUds($url,$companyId, $apiKeyUds)
     {
-         //= "https://api.uds.app/partner/v2/customers";
         $client = new UdsClient($companyId,$apiKeyUds);
         return $client->get($url);
     }
@@ -44,19 +43,14 @@ class AgentService
     private function notAddedInMs($apiKeyMs,$apiKeyUds, $companyId, $accountId)
     {
 
-       // $customersFromMs = $this->getMs($apiKeyMs);
-
         $count = 0;
         $offset = 0;
 
         $bd = new BDController();
 
-        $check = DB::table('agent_503s')
-            ->where('accountId',$accountId)->first();
+        $check = DB::table('agent_503s')->where('accountId',$accountId)->first();
 
-        if (!is_null($check)){
-            $offset = $check->offset;
-        }
+        if (!is_null($check)){ $offset = $check->offset; }
 
         set_time_limit(3600);
 
@@ -95,27 +89,43 @@ class AgentService
 
     public function createAgent($apiKeyMs,$customer)
     {
-        $agent = [
-            "name" => $customer->displayName,
-            "externalCode" => (string) $customer->participant->id,
-        ];
-
-        if ($customer->email != null){
-            $agent["email"] = $customer->email;
-        }
+        $client = new MsClient($apiKeyMs);
 
         if ($customer->phone != null){
-            /*$cellPhone = "  ".$customer->phone;
-            $toPhone = sprintf("%s %s %s",
-                substr($cellPhone, 2, 3),
-                substr($cellPhone, 5, 3),
-                substr($cellPhone, 8));*/
-            $agent["phone"] = $customer->phone;
+            $BodyAgentMS = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/counterparty?search=".$customer->phone)->rows;
+        } else $BodyAgentMS = [];
+        if ($BodyAgentMS != []){
+            $agent = [
+                "name" => $customer->displayName,
+                "externalCode" => (string) $customer->participant->id,
+            ];
+
+            if ($customer->email != null){
+                $agent["email"] = $customer->email;
+            }
+
+            if ($customer->phone != null){
+                $agent["phone"] = $customer->phone;
+            }
+            $client->post("https://online.moysklad.ru/api/remap/1.2/entity/counterparty",$agent);
+        } else {
+            $agent = [
+                "name" => $customer->displayName,
+                "externalCode" => (string) $customer->participant->id,
+            ];
+
+            if ($customer->email != null){
+                $agent["email"] = $customer->email;
+            }
+
+            if ($customer->phone != null){
+                $agent["phone"] = $customer->phone;
+            }
+            $client->put("https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$BodyAgentMS[0]->id, $agent);
         }
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
-        $client = new MsClient($apiKeyMs);
-        $client->post($url,$agent);
+
+
     }
 
     private function haveRowsInResponse(&$url,$offset,$companyId,$apiKeyUds,$nodeId=0): bool
