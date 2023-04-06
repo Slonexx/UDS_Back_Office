@@ -44,7 +44,7 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
     Route::post('/webhook/productfolder/',[WebhookMSProductController::class, 'productFolderUpdate']);
     Route::post('/webhook/stock/',[WebhookMSProductController::class, 'productStock']);
 
-    Route::post('/DeleteALLProductForUDSController/{password}/{accountId}',[DeleteALLProductForUDSController::class, 'DeleteALLProductForUDSController']);
+    Route::post('/DeleteALLProductForUDSController/{as}/{accountId}',[DeleteALLProductForUDSController::class, 'DeleteALLProductForUDSController']);
 
     //Route::get('img',[ImgService::class,'getImgContent']);
 

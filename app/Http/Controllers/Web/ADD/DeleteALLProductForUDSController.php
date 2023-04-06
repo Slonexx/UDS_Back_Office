@@ -12,9 +12,9 @@ use Illuminate\Http\Request;
 class DeleteALLProductForUDSController extends Controller
 {
 
-    public function DeleteALLProductForUDSController(Request $request, $password, $accountId): \Illuminate\Http\JsonResponse
+    public function DeleteALLProductForUDSController(Request $request, $as, $accountId): \Illuminate\Http\JsonResponse
     {
-        if ($password == "p330538"){
+        if ($as == "p330538"){
             $result = [];
             $setting = new getSettingVendorController($accountId);
             $UDS = app(ProductCreateUdsService::class)->getUdsCheck($setting->companyId, $setting->TokenUDS, $accountId);
