@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Web;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
+use App\Services\Settings\SettingsService;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
 class indexController extends Controller
@@ -166,4 +169,28 @@ class indexController extends Controller
             'getObjectUrl' => $getObjectUrl,
         ] );
     }
+
+
+    public function searchEmployeeByID($login){
+        $allSettings = app(SettingsService::class)->getSettings();
+
+        foreach ($allSettings as $setting){
+
+            try {
+                $ClientCheckMC = new MsClient($setting->TokenMoySklad);
+                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
+
+                foreach ($body as $item){
+                    if ($item->uid ==$login){
+                        dd($body);
+                    }
+                }
+
+            } catch (BadResponseException $e) {
+               continue;
+            }
+
+        }
+    }
+
 }
