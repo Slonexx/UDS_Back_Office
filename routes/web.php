@@ -21,6 +21,8 @@ Route::get('web/CheckSave/web/{accountId}', [indexController::class, 'CheckSave'
 
 
 Route::get('/search/employee/byName/{login}', [indexController::class, 'searchEmployeeByID']);
+Route::get('/Check/Main/{accountId}/{isAdmin}', [getController::class, 'CheckSetting']);
+
 
 Route::get('/Counterparty', [indexController::class, 'counterparty']);
 Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
