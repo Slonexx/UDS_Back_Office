@@ -91,6 +91,7 @@ class getController extends Controller
         if ($isAdmin == "NO"){ return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] ); }
 
         $Setting = new getSettingVendorController($accountId);
+        dd($Setting);
 
         $TokenMoySklad = $Setting->TokenMoySklad;
         $companyId = $Setting->companyId;
