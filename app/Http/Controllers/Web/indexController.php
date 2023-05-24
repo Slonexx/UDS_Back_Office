@@ -178,12 +178,10 @@ class indexController extends Controller
 
             try {
                 $ClientCheckMC = new MsClient($setting->TokenMoySklad);
-                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
+                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee?filter=uid~'.$login)->rows;
 
-                foreach ($body as $item){
-                    if ($item->uid ==$login){
-                        dd($body);
-                    }
+                if ($body!=[]){
+                    dd($body);
                 }
 
             } catch (BadResponseException $e) {
