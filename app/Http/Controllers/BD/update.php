@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class update extends Controller
 {
-    public function SettingMainUpdate($accountId, $TokenMS, $companyId, $TokenUDS, $ProductFolder, $UpdateProduct, $Store){
+    public function SettingMainUpdate($accountId, $TokenMS, $companyId, $TokenUDS, $ProductFolder, $UpdateProduct, $Store, $productHidden){
         $SettingMain_update = SettingMain::query()->where('accountId', $accountId);
         $SettingMain_update->update([
             'TokenMoySklad' => $TokenMS,
@@ -18,6 +18,7 @@ class update extends Controller
             'ProductFolder' => $ProductFolder,
             'UpdateProduct' => $UpdateProduct,
             'Store' => $Store,
+            'hiddenProduct' => $productHidden,
         ]);
     }
 

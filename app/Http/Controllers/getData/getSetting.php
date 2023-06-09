@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\sendOperationsModel;
 use App\Models\SettingMain;
 use App\Observers\sendOperationsSetttingObserver;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
 class getSetting extends Controller
@@ -14,7 +15,7 @@ class getSetting extends Controller
         $find = sendOperationsModel::query()->where('accountId', $accountId)->first();
         try {
             $result = $find->getAttributes();
-        } catch (\Throwable $e) {
+        } catch (BadResponseException $e) {
             $result = [
                 "accountId" => $accountId,
                 "operationsAccrue" => null,
@@ -29,7 +30,7 @@ class getSetting extends Controller
         $find = SettingMain::query()->where('accountId', $accountId)->first();
         try {
             $result = $find->getAttributes();
-        } catch (\Throwable $e) {
+        } catch (BadResponseException $e) {
             $result = [
                 "accountId" => $accountId,
                 "TokenMoySklad" => null,

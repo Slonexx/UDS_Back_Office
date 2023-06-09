@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\product\ProductCreateMsService;
 use App\Services\product\ProductCreateUdsService;
 use App\Services\product\ProductUpdateMsService;
+use App\Services\product\ProductUpdateUdsHiddenService;
 use App\Services\product\ProductUpdateUdsService;
 use Illuminate\Http\Request;
 
@@ -16,23 +17,23 @@ class ProductController extends Controller
     private ProductUpdateMsService $productUpdateMsService;
     private ProductUpdateUdsService $productUpdateUdsService;
 
-    /**
-     * @param ProductCreateMsService $productCreateMsService
-     * @param ProductCreateUdsService $productCreateUdsService
-     * @param ProductUpdateMsService $productUpdateMsService
-     * @param ProductUpdateUdsService $productUpdateUdsService
-     */
+    private ProductUpdateUdsHiddenService $ProductUpdateUdsHiddenService;
+
+
+
     public function __construct(
         ProductCreateMsService $productCreateMsService,
         ProductCreateUdsService $productCreateUdsService,
         ProductUpdateMsService $productUpdateMsService,
-        ProductUpdateUdsService $productUpdateUdsService
+        ProductUpdateUdsService $productUpdateUdsService,
+        ProductUpdateUdsHiddenService $ProductUpdateUdsHiddenService
     )
     {
         $this->productCreateMsService = $productCreateMsService;
         $this->productCreateUdsService = $productCreateUdsService;
         $this->productUpdateMsService = $productUpdateMsService;
         $this->productUpdateUdsService = $productUpdateUdsService;
+        $this->ProductUpdateUdsHiddenService = $ProductUpdateUdsHiddenService;
     }
 
 
@@ -118,6 +119,18 @@ class ProductController extends Controller
         return response(
             $this->productUpdateUdsService->updateProductsUds($data)
         );
+    }
+
+    public function productUdsHidden(Request $request){
+        $data = $request->validate([
+            "tokenMs" => 'required|string',
+            "companyId" => "required|string",
+            "apiKeyUds" => "required|string",
+            "folder_id" => "required|string",
+            "store" => "required|string",
+            "accountId" => "required|string"
+        ]);
+        $this->ProductUpdateUdsHiddenService->insertUpdate($data);
     }
 
 }

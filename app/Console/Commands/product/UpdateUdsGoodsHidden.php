@@ -4,39 +4,39 @@ namespace App\Console\Commands\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
+use App\Http\Controllers\Config\getSettingVendorController;
 use App\Services\product\ProductCreateUdsService;
+use App\Services\product\ProductUpdateUdsHiddenService;
 use App\Services\Settings\SettingsService;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Promise\Each;
+use GuzzleHttp\Promise\EachPromise;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
-use Generator;
 
-class CreateUdsCommand extends Command
+class UpdateUdsGoodsHidden extends Command
 {
 
-    protected $signature = 'udsProduct:create';
+    protected $signature = 'udsGood:hidden';
 
-    protected $description = 'Command description';
+    protected $description = 'udsGood';
 
     private SettingsService $settingsService;
 
-
     public function __construct(SettingsService $settingsService)
     {
-        parent::__construct();
         $this->settingsService = $settingsService;
+        parent::__construct();
     }
-
-
 
     public function handle()
     {
         $allSettings = $this->settingsService->getSettings();
 
         foreach ($allSettings as $settings) {
+            $settingBD = new getMainSettingBD($settings->accountId);
+
             try {
                 $ClientCheckMC = new MsClient($settings->TokenMoySklad);
                 $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
@@ -47,7 +47,7 @@ class CreateUdsCommand extends Command
 
             if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
             if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
-
+            if ($settingBD->hiddenProduct == 0 or $settingBD->hiddenProduct == null){ continue; }
             $data = [
                 "tokenMs" => $settings->TokenMoySklad,
                 "companyId" => $settings->companyId,
@@ -58,12 +58,12 @@ class CreateUdsCommand extends Command
             ];
 
             dispatch(function () use ($data) {
-                app(ProductCreateUdsService::class)->insertToUds($data);
+                app(ProductUpdateUdsHiddenService::class)->insertUpdate($data);
             })->onQueue('default');
 
             // Продолжение выполнения команды
             $this->info('Command executed successfully.');
-          /* dd( app(ProductCreateUdsService::class)->insertToUds($data));*/
+            /* dd( app(ProductCreateUdsService::class)->insertToUds($data));*/
         }
 
     }

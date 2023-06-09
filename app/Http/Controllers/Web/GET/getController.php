@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Web\GET;
 
 use App\Components\MsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Config\getSettingVendorController;
-use App\Http\Controllers\Config\Lib\AppInstanceContoller;
-use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
 use App\Models\ProductFoldersByAccountID;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -18,37 +16,41 @@ class getController extends Controller
 
     public function mainSetting(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        if ($isAdmin == "NO"){ return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] ); }
+        if ($isAdmin == "NO") {
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
+        }
 
         $Setting = new getSettingVendorController($accountId);
+        $SettingBD = new getMainSettingBD($accountId);
 
         $TokenMoySklad = $Setting->TokenMoySklad;
-        $companyId = $Setting->companyId;
-        $TokenUDS = $Setting->TokenUDS;
-        $ProductFolder = $Setting->ProductFolder;
-        $Store = $Setting->Store;
+        $companyId = $SettingBD->companyId;
+        $TokenUDS = $SettingBD->TokenUDS;
+        $ProductFolder = $SettingBD->ProductFolder;
+        $Store = $SettingBD->Store;
+        $HiddenProduct = $SettingBD->hiddenProduct;
         $arrFolders = [];
 
-        if (isset($request->message)){
-        $message = [
-            'status'=> true,
-            'message'=> $request->message['message'],
-            'alert'=> $request->message['alert'],
-        ];
+        if (isset($request->message)) {
+            $message = [
+                'status' => true,
+                'message' => $request->message['message'],
+                'alert' => $request->message['alert'],
+            ];
         } else $message = [
-            'status'=> false,
-            'message'=> "",
-            'alert'=> "",
+            'status' => false,
+            'message' => "",
+            'alert' => "",
         ];
 
 
         if ($ProductFolder != null) {
-            if ($ProductFolder == "1"){
+            if ($ProductFolder == "1") {
                 $Folders = ProductFoldersByAccountID::query()->where('accountId', $Setting->accountId)->get();
-                foreach ($Folders as $index=>$item){
+                foreach ($Folders as $index => $item) {
                     $arrFolders[$index] = [
-                        'id'=> $item->getModel()->getAttributes()['FolderID'],
-                        'Name'=> $item->getModel()->getAttributes()['FolderName']
+                        'id' => $item->getModel()->getAttributes()['FolderID'],
+                        'Name' => $item->getModel()->getAttributes()['FolderName']
                     ];
                 }
             } else {
@@ -57,38 +59,43 @@ class getController extends Controller
         } else $ProductFolder = "0";
         if ($Store == null) $Store = "0";
 
-        $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+        $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/store"),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
         ]);
 
-        $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name'=>'Корневая папка' ]));
-        if (array_key_exists(0,$responses['body_productFolder']->object()->rows)){
-            foreach ($responses['body_productFolder']->object()->rows as $item){
+        $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name' => 'Корневая папка']));
+        if (array_key_exists(0, $responses['body_productFolder']->object()->rows)) {
+            foreach ($responses['body_productFolder']->object()->rows as $item) {
                 $body_productFolder[] = $item;
             }
         }
+
+        if ($HiddenProduct == null) $HiddenProduct = 1;
 
         return view('web.Setting.index', [
             "Body_store" => $responses['body_store']->object()->rows,
             "Body_productFolder" => $body_productFolder,
             "Folders" => $arrFolders,
 
-            "companyId"=> $companyId,
-            "TokenUDS"=> $TokenUDS,
+            "companyId" => $companyId,
+            "TokenUDS" => $TokenUDS,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $Store,
+            "hiddenProduct" => $HiddenProduct,
 
-            "accountId"=> $accountId,
-            "message"=> $message,
+            "accountId" => $accountId,
+            "message" => $message,
             "isAdmin" => $isAdmin,
         ]);
     }
 
     public function CheckSetting(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        if ($isAdmin == "NO"){ return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] ); }
+        if ($isAdmin == "NO") {
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
+        }
 
         $Setting = new getSettingVendorController($accountId);
         dd($Setting);
@@ -100,26 +107,26 @@ class getController extends Controller
         $Store = $Setting->Store;
         $arrFolders = [];
 
-        if (isset($request->message)){
+        if (isset($request->message)) {
             $message = [
-                'status'=> true,
-                'message'=> $request->message['message'],
-                'alert'=> $request->message['alert'],
+                'status' => true,
+                'message' => $request->message['message'],
+                'alert' => $request->message['alert'],
             ];
         } else $message = [
-            'status'=> false,
-            'message'=> "",
-            'alert'=> "",
+            'status' => false,
+            'message' => "",
+            'alert' => "",
         ];
 
 
         if ($ProductFolder != null) {
-            if ($ProductFolder == "1"){
+            if ($ProductFolder == "1") {
                 $Folders = ProductFoldersByAccountID::query()->where('accountId', $Setting->accountId)->get();
-                foreach ($Folders as $index=>$item){
+                foreach ($Folders as $index => $item) {
                     $arrFolders[$index] = [
-                        'id'=> $item->getModel()->getAttributes()['FolderID'],
-                        'Name'=> $item->getModel()->getAttributes()['FolderName']
+                        'id' => $item->getModel()->getAttributes()['FolderID'],
+                        'Name' => $item->getModel()->getAttributes()['FolderName']
                     ];
                 }
             } else {
@@ -128,16 +135,16 @@ class getController extends Controller
         } else $ProductFolder = "0";
         if ($Store == null) $Store = "0";
 
-        $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+        $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
             $pool->as('body_store')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/store"),
             $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
         ]);
 
         dd($responses['body_productFolder']->object());
 
-        $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name'=>'Корневая папка' ]));
-        if (array_key_exists(0,$responses['body_productFolder']->object()->rows)){
-            foreach ($responses['body_productFolder']->object()->rows as $item){
+        $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name' => 'Корневая папка']));
+        if (array_key_exists(0, $responses['body_productFolder']->object()->rows)) {
+            foreach ($responses['body_productFolder']->object()->rows as $item) {
                 $body_productFolder[] = $item;
             }
         }
@@ -147,14 +154,14 @@ class getController extends Controller
             "Body_productFolder" => $body_productFolder,
             "Folders" => $arrFolders,
 
-            "companyId"=> $companyId,
-            "TokenUDS"=> $TokenUDS,
+            "companyId" => $companyId,
+            "TokenUDS" => $TokenUDS,
 
             "ProductFolder" => $ProductFolder,
             "Store" => $Store,
 
-            "accountId"=> $accountId,
-            "message"=> $message,
+            "accountId" => $accountId,
+            "message" => $message,
             "isAdmin" => $isAdmin,
         ]);
     }
@@ -163,13 +170,13 @@ class getController extends Controller
     public function indexDocument(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
 
-        if ($isAdmin == "NO"){
-            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
+        if ($isAdmin == "NO") {
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
         $Setting = new getSettingVendorController($accountId);
         $companyId = $Setting->companyId;
-        if ( $companyId == null ) {
+        if ($companyId == null) {
             $message = " Основные настройки не были установлены ";
             return redirect()->route('indexError', [
                 "accountId" => $accountId,
@@ -178,7 +185,9 @@ class getController extends Controller
             ]);
         }
         $message = '0';
-        if (isset($request->message)){ $message = $request->message; }
+        if (isset($request->message)) {
+            $message = $request->message;
+        }
 
         $Client = new MsClient($Setting->TokenMoySklad);
         $TokenMoySklad = $Setting->TokenMoySklad;
@@ -212,9 +221,9 @@ class getController extends Controller
         $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
         $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
 
-        if($Organization != null){
+        if ($Organization != null) {
             $urlCheck = $url_organization . "/" . $Organization;
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+            $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
                 $pool->as('organization')->withToken($TokenMoySklad)->get($urlCheck),
                 $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
 
@@ -225,7 +234,7 @@ class getController extends Controller
             $Organization = $responses['organization']->object();
         } else {
             $Organization = "0";
-            $responses = Http::withToken($TokenMoySklad)->pool(fn (Pool $pool) => [
+            $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
                 $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
 
                 $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
@@ -237,8 +246,8 @@ class getController extends Controller
         $arr_Organization = $responses['body_organization']->object()->rows;
 
         $arr_PaymentAccount = [];
-        foreach ($arr_Organization as $item){
-            $arr_PaymentAccount[$item->id] = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/".$item->id."/accounts")->rows;
+        foreach ($arr_Organization as $item) {
+            $arr_PaymentAccount[$item->id] = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/" . $item->id . "/accounts")->rows;
         }
 
         return view('web.Setting.document', [

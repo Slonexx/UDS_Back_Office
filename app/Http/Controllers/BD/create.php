@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class create extends Controller
 {
-    public function SettingMainCreate($accountId, $TokenMS, $companyId, $TokenUDS, $ProductFolder, $UpdateProduct, $Store){
+    public function SettingMainCreate($accountId, $TokenMS, $companyId, $TokenUDS, $ProductFolder, $UpdateProduct, $Store, $productHidden){
         SettingMain::create([
             'accountId' => $accountId,
             'TokenMoySklad' => $TokenMS,
@@ -18,6 +18,7 @@ class create extends Controller
             'ProductFolder' => $ProductFolder,
             'UpdateProduct' => $UpdateProduct,
             'Store' => $Store,
+            'productHidden' => $productHidden,
         ]);
     }
 

@@ -14,6 +14,7 @@ use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\CurrencyHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
 use App\Services\MetaServices\MetaHook\UomHook;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use JetBrains\PhpStorm\ArrayShape;
 
@@ -91,11 +92,18 @@ class ProductCreateUdsService
                 $folderName = $item->getAttributes()['FolderName'];
                 if ($folderName == "Корневая папка") $folderName = null;
                 $this->addCategoriesToUds($productsUds["categoryIds"],$folderName,$apiKeyMs,$companyId,$apiKeyUds,$accountId,'');
+                $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
+                if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
+                if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
+
                 $productsMs = $this->getMs($folderName,$apiKeyMs);
                 foreach ($productsMs->rows as $row){
                     $isProductNotAdd = true;
+                    if (property_exists($row, 'pathName')){
+                        if (count(explode('/', $row->pathName)) <= 2){} else $isProductNotAdd = false;
+                    } else $isProductNotAdd = false;
 
-                    if (property_exists($row,"attributes")){
+                    if (property_exists($row,"attributes") and $isProductNotAdd == true){
                         foreach ($row->attributes as $attribute){
                             if ($attribute->name == "id (UDS)"){
                                 if (in_array($attribute->value,$productsUds["productIds"])) {
@@ -110,18 +118,16 @@ class ProductCreateUdsService
                             $productFolderHref = $row->productFolder->meta->href;
                             $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
                             if (!in_array($idNodeCategory,$productsUds["categoryIds"])) { $idNodeCategory = 0; };
-
                         } else {
                             $idNodeCategory = 0;
                         }
-
                         try {
                             $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
 
                             if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
                             else continue;
                             $ARR_PRODUCT[] = $createdProduct;
-                        } catch (\Throwable $e){
+                        } catch (BadResponseException $e){
                             continue;
                         }
                     } else continue;
@@ -141,25 +147,24 @@ class ProductCreateUdsService
         if (!$this->getCategoriesMs($categoriesMs,$pathName,$apiKeyMs)) return;
         if ($pathName == null) $pathName = '';
 
-//UPDATE
         if ($categoriesMs != null){
-            try {
                 foreach ($categoriesMs as $categoryMs){
                     $nameCategory = $categoryMs->name;
-                    if (!in_array($categoryMs->externalCode,$check)){
+                    //dd($categoriesMs, $categoryMs->externalCode, $check, in_array($categoryMs->externalCode,$check));
+
+                    if (in_array($categoryMs->externalCode,$check)){
+                        $newNodeId = $categoryMs->externalCode;
+                    } else {
                         if ($nodeId == ""){
-                            $createdCategory = $this->createCategoryUds($nameCategory,$companyId,$apiKeyUds,$accountId);
+                            $createdCategory = $this->createCategoryUds($nameCategory, $companyId, $apiKeyUds, $accountId);
                         } else {
-                            $folderHref = $categoryMs->productFolder->meta->href;
-                            $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
-                            //dd($idNodeCategory);
-                            $createdCategory = $this->createCategoryUds(
-                                $nameCategory,
-                                $companyId,
-                                $apiKeyUds,
-                                $accountId,
-                                $idNodeCategory);
+                            if (count(explode('/', $categoryMs->pathName)) <= 2){
+                                $folderHref = $categoryMs->productFolder->meta->href;
+                                $idNodeCategory = $this->getCategoryIdByMetaHref($folderHref,$apiKeyMs);
+                                $createdCategory = $this->createCategoryUds($nameCategory, $companyId, $apiKeyUds, $accountId, $idNodeCategory);
+                            } else $createdCategory = null;
                         }
+
                         if ($createdCategory != null){
                             $createdCategoryId = $createdCategory->id;
                             $newNodeId = "".$createdCategoryId;
@@ -168,9 +173,6 @@ class ProductCreateUdsService
                         } else {
                             $newNodeId = $categoryMs->externalCode;
                         }
-
-                    } else {
-                        $newNodeId = $categoryMs->externalCode;
                     }
                     if ($pathName == '') $newPath = $pathName."".$nameCategory;
                     else $newPath = $pathName."/".$nameCategory;
@@ -186,10 +188,6 @@ class ProductCreateUdsService
                     );
                     //UPDATE
                 }
-            } catch (\Throwable $e){
-                $BD = new BDController();
-                $BD->errorProductLog($accountId, $e->getMessage());
-            }
         }
     }
 
@@ -554,6 +552,11 @@ class ProductCreateUdsService
                 $imgIds = $this->imgService->setImgUDS($product->images->meta->href,$apiKeyMs,$companyId,$apiKeyUds);
                 $body["data"]["photos"] = $imgIds;
             }
+
+            if ($body['data']['inventory']['inStock'] == 0){
+                $body['hidden'] = true;
+            } else $body['hidden'] = false;
+
         }
 
         try {
