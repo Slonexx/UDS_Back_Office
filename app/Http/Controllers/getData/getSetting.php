@@ -13,6 +13,15 @@ class getSetting extends Controller
 {
     public function getSendSettingOperations($accountId){
         $find = sendOperationsModel::query()->where('accountId', $accountId)->first();
+        if ($find == null) {
+            $result = [
+                "accountId" => $accountId,
+                "operationsAccrue" => null,
+                "operationsCancellation" => null,
+                "operationsDocument" => null,
+                "operationsPaymentDocument" => null,
+            ];
+        } else
         try {
             $result = $find->getAttributes();
         } catch (BadResponseException $e) {

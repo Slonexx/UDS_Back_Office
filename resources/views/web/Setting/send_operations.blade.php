@@ -15,7 +15,9 @@
             </div>
 
         @endisset
-
+        <div class=" alert alert-warning alert-dismissible fade show in text-center" style="font-size: 16px">
+          Данный раздел отвечает за ручное проведение операций.
+        </div>
         <div class=" alert alert-info alert-dismissible fade show in text-center" style="font-size: 16px">
             По умолчанию операции на списание бонусных баллов по номеру телефона недоступны, необходимо писать на почту ( <u>support@uds.app</u> ) о включении данного функционала
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
