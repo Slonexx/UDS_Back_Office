@@ -249,13 +249,13 @@
         let operationsAccrue
         let operationsCancellation
 
-        let receivedMessage = {
+        /*let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.demand.edit",
             "objectId": "6521a2c7-0c08-11ee-0a80-1148001aa435",
             "messageId": 1,
             "displayMode": "expanded"
-        }
+        }*/
         /*let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.customerorder.edit",
@@ -265,7 +265,7 @@
         }*/
 
         window.addEventListener("message", function (event) {
-            //let receivedMessage = event.data
+            let receivedMessage = event.data
 
             console.log(receivedMessage);
             GlobalobjectId = receivedMessage.objectId;

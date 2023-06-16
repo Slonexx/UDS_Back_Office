@@ -27,6 +27,9 @@ class AttributeController extends Controller
         $this->attributeService->setAllAttributesMs($data);
 
     }
-
+    public function setAllAttributesOfData($data)
+    {
+        $this->attributeService->setAllAttributesMs($data);
+    }
 
 }

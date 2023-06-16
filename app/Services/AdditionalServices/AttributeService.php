@@ -20,62 +20,65 @@ class AttributeService
                 "show" => false,
                 "description" => "Акционный товар (UDS)",
             ],
+
             1 => [
+                "name" => "Процент начисления (UDS)",
+                "type" => "long",
+                "required" => false,
+                "show" => false,
+                "description" => "Это поле будет использоваться для расчета бонуса клиента, который будет зависеть от суммы товара (UDS)",
+            ],
+            2 => [
+                "name" => "Процент списания (UDS)",
+                "type" => "long",
+                "required" => false,
+                "show" => false,
+                "description" => "Это поле будет использоваться для расчета бонуса клиента, который будет зависеть от суммы товара (UDS)",
+            ],
+
+            3 => [
                 "name" => "Не применять бонусную программу (UDS)",
                 "type" => "boolean",
                 "required" => false,
-                "description" => "Не применять бонусную программу (UDS)",
+                "description" => "Этот товар не будете участвовать в бонусной программе (UDS).",
             ],
-            2 => [
+            4 => [
                 "name" => "Товар неограничен (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Товар неограничен (UDS)",
             ],
-            3 => [
+            5 => [
                 "name" => "Дробное значение товара (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Дробное значение товара (UDS)",
             ],
-            4 => [
+            6 => [
                 "name" => "Шаг дробного значения (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Шаг дробного значения (UDS)",
             ],
-            5 => [
+            7 => [
                 "name" => "Минимальный размер заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Минимальный размер заказа дробного товара (UDS)",
             ],
-            6 => [
+            8 => [
                 "name" => "Цена минимального размера заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
-            7 => [
+            9 => [
                 "name" => "id (UDS)",
                 "type" => "string",
                 "required" => false,
                 "description" => "id (UDS)",
             ],
         ];
-
-     /*           0 => [
-                "name" => "% списания (UDS)",
-                "type" => "double",
-                "required" => false,
-                "description" => "Процент списания (UDS)",
-            ],
-                    1 => [
-                "name" => "% начисления (UDS)",
-                "type" => "double",
-                "required" => false,
-                "description" => "Процент начисления (UDS)",
-            ],*/
 
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
         $client = new MsClient($apiKeyMs);
@@ -102,13 +105,6 @@ class AttributeService
     private function createOrderAttributes($apiKeyMs): void
     {
         $bodyAttributes = $this->getDocAttributes();
-/*        $bodyAttributes[5] = [
-            "name" => "Ссылка на заказ (UDS)",
-            "type" => "link",
-            "required" => false,
-            "description" => "Ссылка на заказ (UDS)",
-        ];*/
-
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes";
         $client = new MsClient($apiKeyMs);
         $this->getBodyToAdd($client, $url, $bodyAttributes);
@@ -169,18 +165,12 @@ class AttributeService
 
         try {
             $this->createProductAttributes($apiKeyMs);
-            //$this->createAgentAttributes($apiKeyMs);
             $this->createOrderAttributes($apiKeyMs);
             $this->createDemandAttributes($apiKeyMs);
             $this->createPaymentInAttributes($apiKeyMs);
-            //$this->createPaymentOutAttributes($apiKeyMs);
             $this->createCashInAttributes($apiKeyMs);
-            //$this->createCashOutAttributes($apiKeyMs);
             $this->createInvoiceOutAttributes($apiKeyMs);
-        } catch (ClientException $e){
-            $bd = new BDController();
-            $bd->errorLog($accountId,$e->getMessage());
-        }
+        } catch (ClientException $e){}
     }
 
     //returns doc attribute values
