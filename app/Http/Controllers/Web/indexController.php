@@ -115,7 +115,8 @@ class indexController extends Controller
     }
 
 
-    public function ObjectEdit(Request $request){
+    public function ObjectEdit(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    {
         try {
             $contextKey = $request->contextKey;
             $vendorAPI = new VendorApiController();
@@ -153,57 +154,15 @@ class indexController extends Controller
     }
 
     public function CustomerOrderEdit(Request $request){
-        $baseURL = new mainURL();
-
-        $contextKey = $request->contextKey;
-        $vendorAPI = new VendorApiController();
-        $employee = $vendorAPI->context($contextKey);
-        $accountId = $employee->accountId;
-
-        //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
-        //$isAdmin = $employee->permissions->admin->view;
-        $entity = 'customerorder';
-
-
-        return view( 'widgets.CustomerOrderEdit', [
-            'accountId' => $accountId,
-            'cashier_id' => $employee->id,
-            'cashier_name' => $employee->name,
-            //'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
-            //'cashier_id' => "e793faeb-e63a-11ec-0a80-0b4800079eb3",
-            //'cashier_name' => "Сергей",
-
-        ] );
+        $this->ObjectEdit($request);
     }
 
     public function DemandEdit(Request $request){
-        $contextKey = $request->contextKey;
-        $vendorAPI = new VendorApiController();
-        $employee = $vendorAPI->context($contextKey);
-        $accountId = $employee->accountId;
-        $getObjectUrl = "https://smartuds.kz/Demand/$accountId/demand/";
-
-
-        return view( 'widgets.Demand', [
-            'accountId' => $accountId,
-            'cashier_id' => $employee->id,
-            'cashier_name' => $employee->name,
-            'getObjectUrl' => $getObjectUrl,
-        ] );
+        $this->ObjectEdit($request);
     }
 
     public function SalesreturnEdit(Request $request){
-        $contextKey = $request->contextKey;
-        $vendorAPI = new VendorApiController();
-        $employee = $vendorAPI->context($contextKey);
-        $accountId = $employee->accountId;
-        $getObjectUrl = "https://smartuds.kz/Salesreturn/$accountId/salesreturn/";
-
-
-        return view( 'widgets.Salesreturn', [
-            'accountId' => $accountId,
-            'getObjectUrl' => $getObjectUrl,
-        ] );
+        $this->ObjectEdit($request);
     }
 
 
