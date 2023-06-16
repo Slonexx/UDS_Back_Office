@@ -20,5 +20,9 @@ class mainURL extends Controller
         return 'https://online.moysklad.ru/api/remap/1.2/entity/';
     }
 
+    public function me_url_host(): string
+    {
+        return 'https://uds/';
+    }
 
 }

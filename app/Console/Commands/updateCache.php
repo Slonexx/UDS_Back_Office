@@ -2,40 +2,48 @@
 
 namespace App\Console\Commands;
 
+use App\Components\MsClient;
+use App\Http\Controllers\AttributeController;
+use App\Services\Settings\SettingsService;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class updateCache extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'updateCache:cache';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'updateCache';
+    private SettingsService $settingsService;
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(settingsService $settingsService)
     {
+        $this->settingsService = $settingsService;
         parent::__construct();
     }
 
-    public function handle(): string
+    public function handle()
     {
-        Artisan::call('optimize');
-        Artisan::call('route:cache');
-        Artisan::call('view:clear');
-        return "Кэш очищен.";
+        $allSettings = $this->settingsService->getSettings();
+        foreach ($allSettings as $settings) {
+            try {
+                $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+            } catch (BadResponseException $e) {continue;}
+
+            $data = [
+                "tokenMs" => $settings->TokenMoySklad,
+                "accountId" => $settings->accountId,
+            ];
+
+            dispatch(function () use ($data) {
+                app(AttributeController::class)->setAllAttributesOfData($data);
+            })->onQueue('default');
+
+            $this->info('Command executed successfully.');
+        }
+
+
     }
+
 }

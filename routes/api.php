@@ -48,8 +48,6 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
 
     Route::post('/DeleteALLProductForUDSController/{as}/{accountId}',[DeleteALLProductForUDSController::class, 'DeleteALLProductForUDSController']);
 
-    //Route::get('img',[ImgService::class,'getImgContent']);
 
-//Route::get('/Goods', [getApi::class, 'index']);
 
 

@@ -11,13 +11,13 @@ use Illuminate\Http\Request;
 class sendOperations extends Controller
 {
     public function index(Request $request, $accountId, $isAdmin){
-        if ($isAdmin == "NO"){
-            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
+        if ($isAdmin == "NO") {
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
         $Setting = new getSettingVendorController($accountId);
         $companyId = $Setting->companyId;
-        if ( $companyId == null ) {
+        if ($companyId == null) {
             $message = " Основные настройки не были установлены ";
             return redirect()->route('indexError', [
                 "accountId" => $accountId,
@@ -26,18 +26,16 @@ class sendOperations extends Controller
             ]);
         }
 
-        $SettingBD = new getSetting();
-        $SettingBD = $SettingBD->getSendSettingOperations($accountId);
-        //dd($SettingBD);
-        if ($SettingBD->operationsAccrue != null) $operationsAccrue = $SettingBD->operationsAccrue; else $operationsAccrue = 0 ;
-        if ($SettingBD->operationsCancellation != null) $operationsCancellation = $SettingBD->operationsCancellation; else $operationsCancellation = 0 ;
-        if ($SettingBD->operationsDocument != null) $operationsDocument = $SettingBD->operationsDocument; else $operationsDocument = 0 ;
-        if ($SettingBD->operationsPaymentDocument != null) $operationsPaymentDocument = $SettingBD->operationsPaymentDocument; else $operationsPaymentDocument = 0 ;
+        $SettingBD = (new getSetting())->getSendSettingOperations($accountId);
+//dd($SettingBD);
+        $operationsAccrue = $SettingBD->operationsAccrue ?? 0;
+        $operationsCancellation = $SettingBD->operationsCancellation ?? 0;
+        $operationsDocument = $SettingBD->operationsDocument ?? 0;
+        $operationsPaymentDocument = $SettingBD->operationsPaymentDocument ?? 0;
 
         return view('web.Setting.send_operations', [
-            "accountId"=> $accountId,
+            "accountId" => $accountId,
             "isAdmin" => $isAdmin,
-
             'operationsAccrue' => $operationsAccrue,
             'operationsCancellation' => $operationsCancellation,
             'operationsDocument' => $operationsDocument,

@@ -25,9 +25,8 @@ Route::get('/Check/Main/{accountId}/{isAdmin}', [getController::class, 'CheckSet
 
 
 Route::get('/Counterparty', [indexController::class, 'counterparty']);
-Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
-Route::get('/DemandEdit', [indexController::class, 'DemandEdit']);
-Route::get('/SalesreturnEdit', [indexController::class, 'SalesreturnEdit']);
+
+Route::get('/ObjectEdit', [indexController::class, 'ObjectEdit']);
 
 Route::get('/Product', [indexController::class, 'product']);
 Route::get('/Product/Info', [\App\Http\Controllers\Web\ADD\ProductController::class, 'infoProduct']);
