@@ -131,7 +131,6 @@ class indexController extends Controller
                 /*'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
                 'cashier_name' => "Сергей",*/
-
             ] );
 
         } catch (BadResponseException $e){
@@ -153,16 +152,19 @@ class indexController extends Controller
         }
     }
 
-    public function CustomerOrderEdit(Request $request){
-        $this->ObjectEdit($request);
+    public function CustomerOrderEdit(Request $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        return $this->ObjectEdit($request);
     }
 
-    public function DemandEdit(Request $request){
-        $this->ObjectEdit($request);
+    public function DemandEdit(Request $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        return $this->ObjectEdit($request);
     }
 
-    public function SalesreturnEdit(Request $request){
-        $this->ObjectEdit($request);
+    public function SalesreturnEdit(Request $request): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    {
+        return $this->ObjectEdit($request);
     }
 
 
