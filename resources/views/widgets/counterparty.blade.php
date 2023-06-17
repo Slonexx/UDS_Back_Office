@@ -53,7 +53,7 @@
             <div class="col-1"></div>
             <div class="col-10">
                 <div class="input-group">
-                    <div class="input-group-text" id="btnGroupAddon">Количество баллов</div>
+                    <div class="input-group-text" id="btnGroupAddon">Введите баллы</div>
                     <input type="text" name="Accrue" id="inputAccrue" class="form-control" required maxlength="10" oninput="handleInput(event)" onkeydown="handleKeyDown(event)">
                     <button onclick="BonusProgramme('inputAccrue')" class="btn btn-success rounded-end">Начислить
                     </button>
@@ -65,7 +65,7 @@
             <div class="col-1"></div>
             <div class="col-10">
                 <div class="input-group">
-                    <div class="input-group-text" id="CancellationAddon">Количество баллов</div>
+                    <div class="input-group-text" id="CancellationAddon">Введите баллы</div>
                     <input type="text" name="Cancellation" id="inputCancellation" class="form-control" required
                            maxlength="10" oninput="handleInput(event)" onkeydown="handleKeyDown(event)">
                     <button onclick="BonusProgramme('inputCancellation')" class="btn btn-danger rounded-end">Списать
