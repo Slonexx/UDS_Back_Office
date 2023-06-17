@@ -24,11 +24,9 @@ class RewardController extends Controller
         $UDSClint = new UdsClient($Setting->companyId,$Setting->TokenUDS);
         try {
             $resultBOdy = $UDSClint->post($url,$body);
-            return response()->json(
-                200,201);
+            return response()->json(['Bool'=>true]);
         } catch (Throwable $exception){
-            return response()->json(
-                400,201);
+            return response()->json(['Bool'=>false]);
         }
 
     }
@@ -49,11 +47,9 @@ class RewardController extends Controller
         $UDSClint = new UdsClient($Setting->companyId,$Setting->TokenUDS);
         try {
             $resultBOdy = $UDSClint->post($url,$body);
-            return response()->json(
-                200,201);
+            return response()->json(['Bool'=>true]);
         } catch (Throwable $exception){
-            return response()->json(
-                400,201);
+            return response()->json(['Bool'=>false]);
         }
 
     }

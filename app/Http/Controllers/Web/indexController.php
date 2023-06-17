@@ -67,29 +67,28 @@ class indexController extends Controller
     {
         $baseURL = new mainURL();
 
-        $contextKey = $request->contextKey;
+     /*   $contextKey = $request->contextKey;
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        $isAdmin = $employee->permissions->admin->view;
-
-        $entity = 'counterparty';
-
-        $getObjectUrl = $baseURL->url_host() . "CounterpartyObject/$accountId/$entity/";
+        $isAdmin = $employee->permissions->admin->view;*/
+        $isAdmin = "ALL";
 
         if ($isAdmin == "NO"){
             return view( 'widgets.counterparty', [
-                'accountId' => $accountId,
-                'getObjectUrl' => $getObjectUrl,
+                //'accountId' => $accountId,
+
+                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'admin' => "NO",
             ] );
         }
 
         return view( 'widgets.counterparty', [
-            'accountId' => $accountId,
+            //'accountId' => $accountId,
 
-            'getObjectUrl' => $getObjectUrl,
+            'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+            'admin' => "ALL",
             ] );
     }
     public function product(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
@@ -166,7 +165,6 @@ class indexController extends Controller
     {
         return $this->ObjectEdit($request);
     }
-
 
     public function searchEmployeeByID($login){
         $allSettings = app(SettingsService::class)->getSettings();

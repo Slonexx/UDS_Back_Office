@@ -9,6 +9,7 @@ use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
+use App\Services\counterparty\widgetCounterparty;
 use App\Services\Operation\WidgetInfo;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
@@ -20,24 +21,9 @@ class ObjectController extends Controller
     private MsClient $Client;
     private UdsClient $Client_UDS;
 
-    public function CounterpartyObject($accountId, $entity, $objectId): \Illuminate\Http\JsonResponse
+    public function CounterpartyObject($accountId, $objectId)
     {
-
-        $UDSURL = "https://api.uds.app/partner/v2/customers/";
-
-        $cfg = new cfg();
-        $Setting = new getSettingVendorController($accountId);
-
-        $urlCounterparty = $cfg->moyskladJsonApiEndpointUrl . "/entity/$entity/$objectId";
-        $BodyMC = new ClientMC($urlCounterparty, $Setting->TokenMoySklad);
-
-        $externalCode = $BodyMC->requestGet()->externalCode;
-
-        $body = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-        $last = $body->get($UDSURL . $externalCode);
-
-        return response()->json(
-            $last, 201);
+        return ((new widgetCounterparty())->getInformation($accountId, $objectId));
 
     }
 
