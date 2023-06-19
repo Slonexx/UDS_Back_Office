@@ -7,12 +7,8 @@
             window.open(url);
         }
     </script>
-    {{--<form action="  {{ route( 'CheckSave' , ['accountId' => $accountId] ) }} " method="post">
-    @csrf <!-- {{ csrf_field() }} -->
-        <button class="btn btn-outline-dark textHover"> check </button>
 
-    </form>--}}
-    <div class="content p-4 mt-2 bg-white text-Black rounded">
+    <div class=" p-4 mt-2 bg-white text-Black rounded">
 
         @include('div.TopServicePartner')
         <script> NAME_HEADER_TOP_SERVICE("Возможности интеграции") </script>
