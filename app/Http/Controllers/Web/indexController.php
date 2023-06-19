@@ -118,9 +118,17 @@ class indexController extends Controller
     {
         try {
             $contextKey = $request->contextKey;
-            $vendorAPI = new VendorApiController();
-            $employee = $vendorAPI->context($contextKey);
-            $accountId = $employee->accountId;
+            try {
+                $vendorAPI = new VendorApiController();
+                $employee = $vendorAPI->context($contextKey);
+                $accountId = $employee->accountId;
+            } catch (BadResponseException) {
+                return view( 'widget.Error', [
+                    'status' => false,
+                    'code' => 400,
+                    'message' => "Ошибка получения контекста приложения! Обновите страницу (F5)",
+                ] );
+            }
 
             return view( ' widget.object', [
                 'accountId' => $accountId,
