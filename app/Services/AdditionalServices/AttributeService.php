@@ -28,6 +28,7 @@ class AttributeService
                 "show" => false,
                 "description" => "Это поле будет использоваться для расчета бонуса клиента, который будет зависеть от суммы товара (UDS)",
             ],
+
             2 => [
                 "name" => "Процент списания (UDS)",
                 "type" => "long",
@@ -42,37 +43,46 @@ class AttributeService
                 "required" => false,
                 "description" => "Этот товар не будете участвовать в бонусной программе (UDS).",
             ],
+
             4 => [
                 "name" => "Товар неограничен (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Товар неограничен (UDS)",
             ],
+
             5 => [
+                "name" => "Не выгружать товар в UDS ? (UDS)",
+                "type" => "boolean",
+                "required" => false,
+                "description" => "данный товар не будет выгружаться в UDS)",
+            ],
+
+            6 => [
                 "name" => "Дробное значение товара (UDS)",
                 "type" => "boolean",
                 "required" => false,
                 "description" => "Дробное значение товара (UDS)",
             ],
-            6 => [
+            7 => [
                 "name" => "Шаг дробного значения (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Шаг дробного значения (UDS)",
             ],
-            7 => [
+            8 => [
                 "name" => "Минимальный размер заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Минимальный размер заказа дробного товара (UDS)",
             ],
-            8 => [
+            9 => [
                 "name" => "Цена минимального размера заказа дробного товара (UDS)",
                 "type" => "double",
                 "required" => false,
                 "description" => "Цена минимального размера заказа дробного товара (UDS)",
             ],
-            9 => [
+            10 => [
                 "name" => "id (UDS)",
                 "type" => "string",
                 "required" => false,

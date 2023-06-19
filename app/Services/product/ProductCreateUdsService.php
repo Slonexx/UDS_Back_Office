@@ -109,6 +109,8 @@ class ProductCreateUdsService
                                 if (in_array($attribute->value,$productsUds["productIds"])) {
                                     $isProductNotAdd = false;
                                 }
+                            } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)"){
+                                $isProductNotAdd = false;
                             } else continue;
                         }
                     }
