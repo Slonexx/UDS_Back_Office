@@ -42,6 +42,7 @@ Route::get('/Input', [InputMcController::class, 'inputJsonMc']);
 
 
     Route::post('/webhook/customerorder/',[WebhookMSController::class, 'customerorder']);
+    Route::post('/webhook/demand/',[WebhookMSController::class, 'customerorder']);
     Route::post('/webhook/product/',[WebhookMSProductController::class, 'productUpdate']);
     Route::post('/webhook/productfolder/',[WebhookMSProductController::class, 'productFolderUpdate']);
     Route::post('/webhook/stock/',[WebhookMSProductController::class, 'productStock']);

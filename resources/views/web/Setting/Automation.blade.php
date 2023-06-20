@@ -184,7 +184,7 @@
         window.document.getElementById('automationDocument').value = automationDocument
         if (add_automationStore != "") window.document.getElementById('add_automationStore').value = add_automationStore
         if (add_automationPaymentDocument != "") window.document.getElementById('add_automationPaymentDocument').value = add_automationPaymentDocument
-        window.document.getElementById('documentAutomation').value = documentAutomation
+        if (documentAutomation != "") window.document.getElementById('documentAutomation').value = documentAutomation
 
         FU_activateAutomation(activateAutomation)
         FU_automationDocument(automationDocument)
