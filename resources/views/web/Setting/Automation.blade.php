@@ -13,7 +13,7 @@
                 <div class="mt-3 alert alert-warning alert-dismissible fade show in text-center"
                      style="font-size: 16px">
                     Данный раздел предлагает автоматизировать <b>начисление баллов</b> (Раздел "Операция" в UDS) из
-                    "<b>Заказа покупателя</b>", путем смены статуса.
+                    "<b>Заказа покупателя или отгрузки</b>", путем смены статуса.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
