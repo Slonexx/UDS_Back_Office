@@ -178,8 +178,8 @@
 
         window.document.getElementById('activateAutomation').value = activateAutomation
         if (statusAutomation != "") window.document.getElementById('statusAutomation').value = statusAutomation
-        window.document.getElementById('projectAutomation').value = projectAutomation
-        window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
+        if (statusAutomation != "") window.document.getElementById('projectAutomation').value = projectAutomation
+        if (statusAutomation != "") window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
 
         window.document.getElementById('automationDocument').value = automationDocument
         if (add_automationStore != "") window.document.getElementById('add_automationStore').value = add_automationStore
