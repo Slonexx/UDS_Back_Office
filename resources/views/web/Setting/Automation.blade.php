@@ -18,7 +18,7 @@
                 </div>
 
                 <form action="/setSetting/Automation/{{ $accountId }}/{{ $isAdmin }}" method="post">
-                @csrf <!-- {{ csrf_field() }} -->
+                    @csrf <!-- {{ csrf_field() }} -->
                     <div class="mt-2 row p-1 gradient_invert rounded text-black">
                         <div class="col-11">
                             <div style="font-size: 20px"> Основное</div>
@@ -48,8 +48,7 @@
                                 <label class="mt-1 from-label">Автоматизация в документе:</label>
                             </div>
                             <div class="col-2">
-                                <select id="documentAutomation" name="documentAutomation" class="form-select text-black"
-                                        onchange="">
+                                <select onchange="documentChangeDemand(this.value)" id="documentAutomation" name="documentAutomation" class="form-select text-black">
                                     <option value="0">Заказ покупателя</option>
                                     <option value="1">Отгрузка</option>
                                 </select>
@@ -120,7 +119,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
 
-                        <div class="mt-1 row">
+                        <div id="ChangeDemand" class="mt-1 row">
                             <P class="col-5 col-form-label"> Выберите какой тип документов создавать: </P>
                             <div class="col-7">
                                 <select id="automationDocument" name="automationDocument" class="form-select text-black"
@@ -132,7 +131,7 @@
                             </div>
                         </div>
                         <div id="T2View" style="display: none">
-                            <div class="mt-1 row">
+                            <div id="ChangeDemand_children" class="mt-1 row">
                                 <P class="col-sm-5 col-form-label"> Выберите на какой склад создавать отгрузку: </P>
                                 <div class="col-sm-7">
                                     <select name="add_automationStore" id="add_automationStore"
@@ -171,6 +170,7 @@
         let statusAutomation = "{{$statusAutomation}}";
         let projectAutomation = "{{$projectAutomation}}";
         let saleschannelAutomation = "{{$saleschannelAutomation}}";
+        let documentAutomation = "{{$documentAutomation}}";
 
         let automationDocument = "{{$automationDocument}}";
         let add_automationStore = "{{$add_automationStore}}";
@@ -184,6 +184,7 @@
         window.document.getElementById('automationDocument').value = automationDocument
         if (add_automationStore != "") window.document.getElementById('add_automationStore').value = add_automationStore
         if (add_automationPaymentDocument != "") window.document.getElementById('add_automationPaymentDocument').value = add_automationPaymentDocument
+        window.document.getElementById('documentAutomation').value = documentAutomation
 
         FU_activateAutomation(activateAutomation)
         FU_automationDocument(automationDocument)
@@ -205,6 +206,19 @@
                 view.style.display = 'block'
             } else {
                 view.style.display = 'none'
+            }
+        }
+
+        function documentChangeDemand(params){
+            console.log(params)
+            if (params === "1"){
+                window.document.getElementById('ChangeDemand').style.display = "none"
+                window.document.getElementById('ChangeDemand_children').style.display = "none"
+                window.document.getElementById('T2View').style.display = "block"
+            }else {
+                window.document.getElementById('ChangeDemand').style.display = "flex"
+                window.document.getElementById('ChangeDemand_children').style.display = "flex"
+                window.document.getElementById('T2View').style.display = "none"
             }
         }
 

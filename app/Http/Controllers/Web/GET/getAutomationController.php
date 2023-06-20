@@ -10,13 +10,13 @@ use Illuminate\Http\Request;
 
 class getAutomationController extends Controller
 {
-    public function getAutomation(Request $request,  $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
+    public function getAutomation(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
-        if ($isAdmin == "NO"){
-            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin] );
+        if ($isAdmin == "NO") {
+            return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
-        if (isset($request->message)){
+        if (isset($request->message)) {
             $message = $request->message;
             if ($message == "Настройки сохранились") {
                 $class = "mt-1 alert alert-success alert-dismissible fade show in text-center";
@@ -45,6 +45,7 @@ class getAutomationController extends Controller
             $automationDocument = 1;
             $add_automationStore = 0;
             $add_automationPaymentDocument = 0;
+            $documentAutomation = 0;
         } else {
             $activateAutomation = $find->getAttributes()['activateAutomation'];
             $statusAutomation = $find->getAttributes()['statusAutomation'];
@@ -53,30 +54,31 @@ class getAutomationController extends Controller
             $automationDocument = $find->getAttributes()['automationDocument'];
             $add_automationStore = $find->getAttributes()['add_automationStore'];
             $add_automationPaymentDocument = $find->getAttributes()['add_automationPaymentDocument'];
+            $documentAutomation = $find->getAttributes()['documentAutomation'];
         }
 
         return view('web.Setting.Automation', [
-            'arr_meta'=> $body_meta,
-            'arr_project'=> $body_project,
-            'arr_store'=> $body_store,
-            'arr_saleschannel'=> $body_saleschannel,
-            'arr_organization'=> $body_organization,
+            'arr_meta' => $body_meta,
+            'arr_project' => $body_project,
+            'arr_store' => $body_store,
+            'arr_saleschannel' => $body_saleschannel,
+            'arr_organization' => $body_organization,
 
-            'activateAutomation'=> $activateAutomation,
-            'statusAutomation'=> $statusAutomation,
-            'projectAutomation'=> $projectAutomation,
-            'saleschannelAutomation'=> $saleschannelAutomation,
+            'activateAutomation' => $activateAutomation,
+            'statusAutomation' => $statusAutomation,
+            'projectAutomation' => $projectAutomation,
+            'saleschannelAutomation' => $saleschannelAutomation,
 
-            'automationDocument'=> $automationDocument,
-            'add_automationStore'=> $add_automationStore,
-            'add_automationPaymentDocument'=> $add_automationPaymentDocument,
+            'automationDocument' => $automationDocument,
+            'add_automationStore' => $add_automationStore,
+            'add_automationPaymentDocument' => $add_automationPaymentDocument,
+            'documentAutomation' => $documentAutomation,
 
 
+            "message" => $message,
+            "class" => $class,
 
-            "message"=> $message,
-            "class"=> $class,
-
-            "accountId"=> $accountId,
+            "accountId" => $accountId,
             "isAdmin" => $isAdmin,
         ]);
     }

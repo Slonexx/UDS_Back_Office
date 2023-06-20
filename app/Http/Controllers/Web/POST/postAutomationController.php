@@ -9,11 +9,12 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Models\Automation_new_update_MODEL;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class postAutomationController extends Controller
 {
-    public function postSettingAdd(Request $request,  $accountId, $isAdmin): \Illuminate\Http\RedirectResponse
+    public function postSettingAdd(Request $request,  $accountId, $isAdmin): RedirectResponse
     {
        //dd($request->all());
         $Setting = new getSettingVendorController($accountId);
@@ -67,10 +68,13 @@ class postAutomationController extends Controller
                 }
             }
             if ($Webhook_check) {
+                if ($request->documentAutomation == 0){
+                    $entity = 'customerorder';
+                } else  $entity = 'demand';
                 $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
                     'url' => $url_check,
                     'action' => "UPDATE",
-                    'entityType' => "customerorder",
+                    'entityType' => $entity,
                     'diffType' => "FIELDS",
                 ]);
             }

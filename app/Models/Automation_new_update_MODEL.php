@@ -19,6 +19,7 @@ class Automation_new_update_MODEL extends Model
         'automationDocument',
         'add_automationStore',
         'add_automationPaymentDocument',
+        'documentAutomation',
     ];
 
     use HasFactory;

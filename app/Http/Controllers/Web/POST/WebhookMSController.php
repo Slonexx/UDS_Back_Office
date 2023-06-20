@@ -184,6 +184,9 @@ class WebhookMSController extends Controller
 
         //АВТОМАТИЗАЦИЯ
         //dd($BDFFirst);
+        if ($BDFFirst['documentAutomation'] == '1' or $BDFFirst['documentAutomation'] == 1){
+            $this->createPaymentDocument($BDFFirst['add_automationPaymentDocument'],$ObjectBODY);
+        } else
         if ($BDFFirst['automationDocument'] != 1 and $BDFFirst['automationDocument'] != null) {
             $this->createDemands($BDFFirst,$ObjectBODY, $postUDS->id);
             $this->createPaymentDocument($BDFFirst['add_automationPaymentDocument'],$ObjectBODY);
