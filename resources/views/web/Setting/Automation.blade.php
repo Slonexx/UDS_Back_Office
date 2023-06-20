@@ -177,7 +177,7 @@
         let add_automationPaymentDocument = "{{$add_automationPaymentDocument}}";
 
         window.document.getElementById('activateAutomation').value = activateAutomation
-        if (statusAutomation != "0") window.document.getElementById('statusAutomation').value = statusAutomation
+        if (statusAutomation != "") window.document.getElementById('statusAutomation').value = statusAutomation
         window.document.getElementById('projectAutomation').value = projectAutomation
         window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
 
@@ -210,7 +210,6 @@
         }
 
         function documentChangeDemand(params){
-            console.log(params)
             if (params === "1"){
                 window.document.getElementById('ChangeDemand').style.display = "none"
                 window.document.getElementById('ChangeDemand_children').style.display = "none"
