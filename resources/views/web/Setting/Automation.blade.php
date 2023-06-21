@@ -230,7 +230,7 @@
                 for (let index = 0; index < (status_arr_meta.customerorder).length; index++){
                     let option1 = document.createElement("option")
                     option1.text = status_arr_meta.customerorder[index].name
-                    option1.value = status_arr_meta.customerorder[index].id
+                    option1.value = status_arr_meta.customerorder[index].name
                     selectElement.appendChild(option1);
                 }
             }
@@ -239,7 +239,7 @@
                     for (let index = 0; index < (status_arr_meta.demand).length; index++){
                         let option1 = document.createElement("option")
                         option1.text = status_arr_meta.demand[index].name
-                        option1.value = status_arr_meta.demand[index].id
+                        option1.value = status_arr_meta.demand[index].name
                         selectElement.appendChild(option1);
                     }
                 }

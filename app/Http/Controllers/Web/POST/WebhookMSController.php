@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Automation_new_update_MODEL;
 use App\Services\MyWarehouse\Сounterparty\getAgentByHrefService\getAgentByHrefService;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class WebhookMSController extends Controller
@@ -48,7 +49,7 @@ class WebhookMSController extends Controller
         }
         return $result;
     }
-    public function customerorder(Request $request): \Illuminate\Http\JsonResponse
+    public function customerorder(Request $request): JsonResponse
     {
         //if (property_exists($request['events'], 'updatedFields')){
         if (isset($request['events'][0]['updatedFields'])){
@@ -66,7 +67,6 @@ class WebhookMSController extends Controller
         }
 
         $find = Automation_new_update_MODEL::query()->where('accountId', $request['events'][0]['accountId'])->first();
-        //dd($find->getAttributes());
         if ($find == [] or $find == null) {
             return response()->json([
                 'code' => 203,
@@ -87,13 +87,9 @@ class WebhookMSController extends Controller
                 'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], $e->getMessage()),
             ]);
         }
-        //dd($ObjectBODY);
-        //dd($find->getAttributes());
-        //dd($this->msClient->get($ObjectBODY->project->meta->href)->name);
+
         try {
             $state = $this->msClient->get($ObjectBODY->state->meta->href)->name;
-            //dd($state, $find->getAttributes()['statusAutomation']);
-            dd($state, $find->getAttributes());
             if ($state == $find->getAttributes()['statusAutomation']) {
                 $boolProject = false;
                 $boolSaleschannel= false;
@@ -120,7 +116,7 @@ class WebhookMSController extends Controller
                 }
 
 
-                if ($boolProject == true and $boolSaleschannel == true) return response()->json([
+                if ($boolProject and $boolSaleschannel) return response()->json([
                     'code' => 200,
                     'message' => $this->WebHookUpdateState($ObjectBODY, $request['events'][0]['meta'],  $request['auditContext']['moment'], $request['auditContext']['uid'], $find->getAttributes() ),
                 ]);
@@ -196,7 +192,7 @@ class WebhookMSController extends Controller
         return $this->returnMessage("SUCCESS", $moment, "Успешное выполнение, все данные обновлены");
     }
 
-    private function createPaymentDocument( string $paymentDocument, mixed $OldBody)
+    private function createPaymentDocument( string $paymentDocument, mixed $OldBody): void
     {
         switch ($paymentDocument){
             case "1": {
@@ -283,8 +279,8 @@ class WebhookMSController extends Controller
     }
 
 
-    public function createDemands(mixed $BDFFirst, mixed $OldBody, string $externalCode){
-        $store = null;
+    public function createDemands(mixed $BDFFirst, mixed $OldBody, string $externalCode): void
+    {
         $attributes = null;
         $positions = null;
 
@@ -313,8 +309,6 @@ class WebhookMSController extends Controller
                 ] ],
             ];
         }
-
-        //dd($BDFFirst, $OldBody);
 
         if ($BDFFirst['add_automationStore'] == 0 or $BDFFirst['add_automationStore'] == null) {
             $store = $OldBody->store->meta->href;
@@ -471,7 +465,7 @@ class WebhookMSController extends Controller
                     }
                 }
             }
-            if ( $BonusProgramm == true ){
+            if ($BonusProgramm){
                 $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
