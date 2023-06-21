@@ -93,6 +93,7 @@ class WebhookMSController extends Controller
         try {
             $state = $this->msClient->get($ObjectBODY->state->meta->href)->name;
             //dd($state, $find->getAttributes()['statusAutomation']);
+            dd($state, $find->getAttributes());
             if ($state == $find->getAttributes()['statusAutomation']) {
                 $boolProject = false;
                 $boolSaleschannel= false;
