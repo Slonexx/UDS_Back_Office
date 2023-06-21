@@ -27,6 +27,7 @@ class postAutomationController extends Controller
        $automationDocument = $request->automationDocument;
        $add_automationStore = $request->add_automationStore;
        $add_automationPaymentDocument = $request->add_automationPaymentDocument;
+       $documentAutomation = $request->documentAutomation;
 
         if ($activateAutomation == 0){
             $statusAutomation = null;
@@ -47,12 +48,12 @@ class postAutomationController extends Controller
            $create = new create();
            $create->AutomationCreate($accountId, $activateAutomation, $statusAutomation,
                $projectAutomation, $saleschannelAutomation, $automationDocument,
-               $add_automationStore, $add_automationPaymentDocument );
+               $add_automationStore, $add_automationPaymentDocument, $documentAutomation );
        } else {
            $update = new update();
            $update->AutomationUpdate($accountId, $activateAutomation, $statusAutomation,
                $projectAutomation, $saleschannelAutomation, $automationDocument,
-               $add_automationStore, $add_automationPaymentDocument );
+               $add_automationStore, $add_automationPaymentDocument, $documentAutomation );
        }
 
         try {

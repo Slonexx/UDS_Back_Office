@@ -25,7 +25,7 @@ class create extends Controller
 
     public function AutomationCreate($accountId, $activateAutomation, $statusAutomation, $projectAutomation,
                                      $saleschannelAutomation, $automationDocument, $add_automationStore,
-                                     $add_automationPaymentDocument  ){
+                                     $add_automationPaymentDocument, $documentAutomation  ){
 
         Automation_new_update_MODEL::create([
             'accountId' => $accountId,
@@ -38,6 +38,7 @@ class create extends Controller
             'automationDocument' => $automationDocument,
             'add_automationStore' => $add_automationStore,
             'add_automationPaymentDocument' => $add_automationPaymentDocument,
+            'documentAutomation' => $documentAutomation,
         ]);
     }
 

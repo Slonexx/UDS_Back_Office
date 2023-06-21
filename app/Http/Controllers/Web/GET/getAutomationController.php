@@ -29,7 +29,10 @@ class getAutomationController extends Controller
         $Setting = new getSettingVendorController($accountId);
         $Client = new MsClient($Setting->TokenMoySklad);
 
-        $body_meta = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata')->states;
+        $body_meta = [
+            'customerorder' => $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata')->states,
+            'demand' => $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata')->states,
+            ];
         $body_store = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/store')->rows;
         $body_project = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/project')->rows;
         $body_saleschannel = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/saleschannel')->rows;

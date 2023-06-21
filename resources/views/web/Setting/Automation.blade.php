@@ -65,11 +65,7 @@
                                 <label class="col-5 col-form-label"> Выберите статус на котором будет
                                     автоматизация </label>
                                 <div class="col-7 ">
-                                    <select id="statusAutomation" name="statusAutomation"
-                                            class="form-select text-black">
-                                        @foreach($arr_meta as $item)
-                                            <option value="{{ $item->name }}"> {{ ($item->name) }} </option>
-                                        @endforeach
+                                    <select id="statusAutomation" name="statusAutomation" class="form-select text-black">
                                     </select>
                                 </div>
                             </div>
@@ -165,6 +161,7 @@
         </div>
     </div>
     <script>
+        let status_arr_meta = @json($arr_meta);
 
         let activateAutomation = "{{$activateAutomation}}";
         let statusAutomation = "{{$statusAutomation}}";
@@ -177,14 +174,29 @@
         let add_automationPaymentDocument = "{{$add_automationPaymentDocument}}";
 
         window.document.getElementById('activateAutomation').value = activateAutomation
-        if (statusAutomation != "") window.document.getElementById('statusAutomation').value = statusAutomation
-        if (statusAutomation != "") window.document.getElementById('projectAutomation').value = projectAutomation
-        if (statusAutomation != "") window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
+
+
+
+        if (projectAutomation != "") window.document.getElementById('projectAutomation').value = projectAutomation
+        if (saleschannelAutomation != "") window.document.getElementById('saleschannelAutomation').value = saleschannelAutomation
 
         window.document.getElementById('automationDocument').value = automationDocument
         if (add_automationStore != "") window.document.getElementById('add_automationStore').value = add_automationStore
         if (add_automationPaymentDocument != "") window.document.getElementById('add_automationPaymentDocument').value = add_automationPaymentDocument
-        if (documentAutomation != "") window.document.getElementById('documentAutomation').value = documentAutomation
+
+        if (documentAutomation != "") {
+            window.document.getElementById('documentAutomation').value = documentAutomation
+            if (documentAutomation == 1 || documentAutomation == "1"){
+                FU_statusAutomation('demand')
+            } else {
+                FU_statusAutomation('customerorder')
+            }
+        } else {
+            FU_statusAutomation('customerorder')
+        }
+
+        if (statusAutomation != "") { window.document.getElementById('statusAutomation').value = statusAutomation }
+
 
         FU_activateAutomation(activateAutomation)
         FU_automationDocument(automationDocument)
@@ -209,15 +221,43 @@
             }
         }
 
+        function FU_statusAutomation(params) {
+            let selectElement = document.getElementById("statusAutomation")
+            while (selectElement.firstChild) {
+                selectElement.removeChild(selectElement.firstChild);
+            }
+            if (params == 'customerorder') {
+                for (let index = 0; index < (status_arr_meta.customerorder).length; index++){
+                    let option1 = document.createElement("option")
+                    option1.text = status_arr_meta.customerorder[index].name
+                    option1.value = status_arr_meta.customerorder[index].id
+                    selectElement.appendChild(option1);
+                }
+            }
+            else {
+                if (params == 'demand') {
+                    for (let index = 0; index < (status_arr_meta.demand).length; index++){
+                        let option1 = document.createElement("option")
+                        option1.text = status_arr_meta.demand[index].name
+                        option1.value = status_arr_meta.demand[index].id
+                        selectElement.appendChild(option1);
+                    }
+                }
+            }
+        }
+
+
         function documentChangeDemand(params){
             if (params === "1"){
                 window.document.getElementById('ChangeDemand').style.display = "none"
                 window.document.getElementById('ChangeDemand_children').style.display = "none"
                 window.document.getElementById('T2View').style.display = "block"
+                FU_statusAutomation('demand')
             }else {
                 window.document.getElementById('ChangeDemand').style.display = "flex"
                 window.document.getElementById('ChangeDemand_children').style.display = "flex"
                 window.document.getElementById('T2View').style.display = "none"
+                FU_statusAutomation('customerorder')
             }
         }
 
