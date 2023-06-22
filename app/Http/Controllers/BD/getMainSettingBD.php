@@ -22,8 +22,9 @@ class getMainSettingBD extends Controller
 
         $find = SettingMain::query()->where('accountId', $accountId)->first();
         try {
-            $result = $find->getAttributes();
-            if ($result != []){
+
+            if ($find != []){
+                $result = $find->getAttributes();
                 $this->tokenMs = $result['TokenMoySklad'];
                 $this->companyId = $result['companyId'];
                 $this->TokenUDS = $result['TokenUDS'];
