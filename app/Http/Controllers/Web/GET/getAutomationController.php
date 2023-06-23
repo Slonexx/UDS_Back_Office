@@ -31,7 +31,7 @@ class getAutomationController extends Controller
 
         $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata');
         if (!property_exists($demand,'states')) {
-            $demand = [0=>['name'=>'Отсутствуют статусы в отгрузках']];
+            $demand = [0=>['name'=>'Отсутствуют статусы в отгрузках, автоматизация не будет работать']];
         } else $demand = $demand->states;
 
         $body_meta = [
