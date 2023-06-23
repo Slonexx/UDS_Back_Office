@@ -162,6 +162,7 @@
     </div>
     <script>
         let status_arr_meta = @json($arr_meta);
+        console.log(status_arr_meta)
 
         let activateAutomation = "{{$activateAutomation}}";
         let statusAutomation = "{{$statusAutomation}}";
