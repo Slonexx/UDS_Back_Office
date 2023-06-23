@@ -30,7 +30,7 @@ class getAutomationController extends Controller
         $Client = new MsClient($Setting->TokenMoySklad);
 
         $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata');
-        if (property_exists($demand,'states')) {
+        if (!property_exists($demand,'states')) {
             $demand = [0=>['name'=>'Отсутствуют статусы в отгрузках']];
         }
 
