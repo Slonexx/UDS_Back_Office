@@ -5,28 +5,22 @@ namespace App\Http\Controllers\BackEnd;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
-use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Services\counterparty\widgetCounterparty;
 use App\Services\Operation\WidgetInfo;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ObjectController extends Controller
 {
 
-    private getSettingVendorController $getSettingVendorController;
-    private MsClient $Client;
-    private UdsClient $Client_UDS;
-
-    public function CounterpartyObject($accountId, $objectId)
+    public function CounterpartyObject($accountId, $objectId): JsonResponse
     {
         return ((new widgetCounterparty())->getInformation($accountId, $objectId));
-
     }
-
 
     public function CustomerOrderEditObject($accountId, $entity, $objectId): array
     {
@@ -35,23 +29,13 @@ class ObjectController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
     public function CompletesOrder($accountId, $objectId): array
     {
         $Setting = new getSettingVendorController($accountId);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         try {
             $url = 'https://api.uds.app/partner/v2/goods-orders/' . $objectId . '/complete';
-            $body = $Client->post($url, null);
+            $Client->post($url, null);
             $StatusCode = "200";
             $message = "Заказ завершён";
             return [
@@ -66,7 +50,7 @@ class ObjectController extends Controller
         }
     }
 
-    public function customers(Request $request): \Illuminate\Http\JsonResponse
+    public function customers(Request $request): JsonResponse
     {
         $data = $request->validate([
             "accountId" => 'required|string',
@@ -75,7 +59,6 @@ class ObjectController extends Controller
 
         $Setting = new getSettingVendorController($data['accountId']);
         $url = 'https://api.uds.app/partner/v2/customers/find?code=' . $data['code'];
-        $result = null;
         try {
             $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
             $Body = $Client->get($url)->user;
@@ -84,7 +67,7 @@ class ObjectController extends Controller
                 'availablePoints' => $Body->participant->points,
                 'displayName' => $Body->displayName,
             ];
-        } catch (\Throwable $exception) {
+        } catch (BadResponseException) {
             $result = [
                 'id' => 0,
                 'availablePoints' => 0,
@@ -96,15 +79,16 @@ class ObjectController extends Controller
 
     }
 
-    public function operationsCalc(Request $request): \Illuminate\Http\JsonResponse
+    public function operationsCalc(Request $request): JsonResponse
     {
-
         $data = $request->validate([
             "accountId" => 'required|string',
             "user" => "required|string",
             "total" => "required|string",
             "SkipLoyaltyTotal" => "required|string",
             "points" => "required|string",
+            "entity_type" => "required|string",
+            "object_Id" => "required|string",
         ]);
 
         if (strlen(str_replace(' ', '', $data['user'])) > 6) {
@@ -120,6 +104,9 @@ class ObjectController extends Controller
         }
 
         $Setting = new getSettingVendorController($data['accountId']);
+        $ClientMS = new MsClient($Setting->TokenMoySklad);
+        $unredeemableTotal = $this->unredeemableTotal($ClientMS, $data['entity_type'], $data['object_Id']);
+
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $url = 'https://api.uds.app/partner/v2/operations/calc';
         $body = [
@@ -132,19 +119,22 @@ class ObjectController extends Controller
                 'total' => $data['total'],
                 'points' => $data['points'],
                 'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
+                'unredeemableTotal' => $unredeemableTotal,
             ],
         ];
-        try {
-            $postBody = $Client->post($url, $body)->purchase;
-            return response()->json($postBody);
-        } catch (\Throwable $e) {
-            return response()->json(['Status' => $e->getCode(), 'Message' => $e->getMessage()]);
-        }
+
+
+            $postBody = $Client->post($url, $body);
+            if (property_exists($postBody, 'purchase')){
+                return response()->json($postBody->purchase);
+            } else {
+                return response()->json(['Status' => "", 'Message' => "Ошибка попробуйте позже"]);
+            }
 
 
     }
 
-    public function operations(Request $request): \Illuminate\Http\JsonResponse
+    public function operations(Request $request): JsonResponse
     {
         $data = $request->validate([
             "accountId" => 'required|string',
@@ -311,11 +301,12 @@ class ObjectController extends Controller
         return $Attributes;
     }
 
-    public function createDemands($Setting, $SettingBD, $OldBody, $externalCode)
+    public function createDemands($Setting, $SettingBD, $OldBody, $externalCode): void
     {
         if ($SettingBD->operationsDocument != 0 and $SettingBD->operationsDocument != null) {
             $client = new MsClient($Setting->TokenMoySklad);
             $attributes = null;
+            $positions = null;
             $attributes_value = null;
             $Store = $Setting->Store;
             $bodyStore = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Store)->rows;
@@ -420,7 +411,7 @@ class ObjectController extends Controller
         }
     }
 
-    public function createPaymentDocument($Setting, $SettingBD, $OldBody)
+    public function createPaymentDocument($Setting, $SettingBD, $OldBody): void
     {
         if ($SettingBD->operationsPaymentDocument == 0 or $SettingBD->operationsPaymentDocument == null) {
 
@@ -485,5 +476,41 @@ class ObjectController extends Controller
                 $client->post($url, $body);
             }
         }
+    }
+
+    private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id)
+    {
+        $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$object_Id);
+        $unredeemableTotal = null;
+        $href = $bodyOrder->positions->meta->href;
+        $BodyPositions = $ClientMS->get($href)->rows;
+        foreach ($BodyPositions as $id=>$item) {
+            $url_item = $item->assortment->meta->href;
+            $body = $ClientMS->get($url_item);
+
+            $BonusProgramm = false;
+            if (property_exists($body, 'attributes')) {
+                foreach ($body->attributes as $body_item) {
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) {
+                        $BonusProgramm = $body_item->value;
+                    }
+                    if ('Процент списания (UDS)' == $body_item->name) {
+                        $minPrice = 0;
+                        if (property_exists($body, "minPrice")){ $minPrice = $body->minPrice->value; }
+                        if ($body_item->value < 100){
+                            $unredeemableTotal =  ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100 ;
+                        } else $unredeemableTotal = ($BodyPositions[$id]->price - $minPrice ) / 100;
+                    }
+                }
+            }
+
+            if ($BonusProgramm) {
+                $price = ($item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100))) / 100;
+                $unredeemableTotal = $unredeemableTotal + $price;
+            }
+
+        }
+
+        return $unredeemableTotal;
     }
 }

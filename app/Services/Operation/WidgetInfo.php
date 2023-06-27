@@ -9,7 +9,6 @@ use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\mainURL;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
-use JetBrains\PhpStorm\ArrayShape;
 
 class WidgetInfo
 {
@@ -104,7 +103,7 @@ class WidgetInfo
         }
         return $phone;
     }
-    #[ArrayShape(['StatusCode' => "int", 'message' => "array"])] private function goods_orders($externalCode, UdsClient $Client_UDS): array
+    private function goods_orders($externalCode, UdsClient $Client_UDS): array
     {
         $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
         $body = $Client_UDS->get($UDSURL . $externalCode);
@@ -128,7 +127,7 @@ class WidgetInfo
             'message' => $message,
         ];
     }
-    #[ArrayShape(['status' => "bool", 'data' => "array|null"])] public function newPostOperations($ClientUDS, $externalCode, $agentId): array
+    public function newPostOperations($ClientUDS, $externalCode, $agentId): array
     {
         $url = 'https://api.uds.app/partner/v2/operations/' . $externalCode;
         try {
@@ -234,7 +233,8 @@ class WidgetInfo
         $href = $bodyOrder->positions->meta->href;
         $BodyPositions = $Client->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
-        foreach ($BodyPositions as $item) {
+        //dd($bodyOrder, $BodyPositions);
+        foreach ($BodyPositions as $id=>$item) {
             $url_item = $item->assortment->meta->href;
             $body = $Client->get($url_item);
 
@@ -243,7 +243,13 @@ class WidgetInfo
                 foreach ($body->attributes as $body_item) {
                     if ('Не применять бонусную программу (UDS)' == $body_item->name) {
                         $BonusProgramm = $body_item->value;
-                        break;
+                    }
+                    if ('Процент начисления (UDS)' == $body_item->name) {
+                        $minPrice = 0;
+                        if (property_exists($body, "minPrice")){ $minPrice = $body->minPrice->value; }
+                        if ($body_item->value < 100){
+                            $SkipLoyaltyTotal = ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100;
+                        } else $SkipLoyaltyTotal = ($BodyPositions[$id]->price - $minPrice ) / 100;
                     }
                 }
             }

@@ -1,10 +1,11 @@
+@php use App\Http\Controllers\mainURL; @endphp
 @extends('widget.widget')
 @section('content')
     <div class="main-container">
         <div id="activated" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35">
+                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" alt="">
                 </div>
                 <div class="col-10 text-white mt-1 row">
                     <div class="col-11">
@@ -97,7 +98,7 @@
         <div id="undefined" class="bg-white text-Black rounded content-container" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35">
+                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" alt="">
                 </div>
                 <div class="col-10 text-white mt-1 row">
                     Провести операцию
@@ -207,7 +208,7 @@
         <div id="Error402" class="content bg-white text-Black rounded" style="display: none">
             <div class="row uds-gradient p-2">
                 <div class="col-2">
-                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35">
+                    <img src="https://smartuds.kz/Config/UDS.png" width="35" height="35" alt="">
                 </div>
                 <div class="col-10 text-white mt-1 row">
                     Ошибка
@@ -223,7 +224,7 @@
     </div>
 
     <script>
-        const url = "{{ app(\App\Http\Controllers\mainURL::class)->me_url_host() }}"
+        const url = "{{ app(mainURL::class)->me_url_host() }}"
         let accountId = "{{ $accountId }}"
 
         let extensionPoint
@@ -249,20 +250,14 @@
         let operationsAccrue
         let operationsCancellation
 
-        /*let receivedMessage = {
-            "name": "Open",
-            "extensionPoint": "document.demand.edit",
-            "objectId": "6521a2c7-0c08-11ee-0a80-1148001aa435",
-            "messageId": 1,
-            "displayMode": "expanded"
-        }*/
-        /*let receivedMessage = {
+       /* let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.customerorder.edit",
             "objectId": "5f3023e9-05b3-11ee-0a80-06f20001197a",
             "messageId": 1,
             "displayMode": "expanded"
         }*/
+
 
         window.addEventListener("message", function (event) {
             let receivedMessage = event.data
@@ -276,7 +271,7 @@
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                //receivedMessage = null
+                //receivedMessage = [];
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
@@ -466,6 +461,8 @@
         function info_operations(user, total, skipTotal, point, availablePoints) {
             let data = {
                 accountId: accountId,
+                entity_type: extensionPoint,
+                object_Id: GlobalobjectId,
                 user: user,
                 total: total,
                 SkipLoyaltyTotal: skipTotal,
@@ -479,6 +476,9 @@
                 console.log('info operations request response  ↓ ')
                 console.log(response)
                 if (typeof response.Status != 'undefined') {
+                    document.getElementById("undefined").style.display = "none"
+                    document.getElementById("Error402").style.display = "block"
+                    document.getElementById("ErrorMessage").innerText = response.Message
                 } else {
                     document.getElementById("sendQRErrorID").style.display = "none";
                     operations_cash = response.cash;
@@ -617,7 +617,7 @@
 
         function only_float() {
             if (event.keyCode < 48 || event.keyCode > 57) {
-                if (event.keyCode === 46) event.returnValue = true; else event.returnValue = false;
+                event.returnValue = event.keyCode === 46;
             }
         }
 
@@ -648,12 +648,4 @@
 
     </script>
 
-
-
-    <script>
-        function Define() {
-
-        }
-
-    </script>
 @endsection
