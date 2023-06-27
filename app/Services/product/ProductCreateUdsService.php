@@ -157,7 +157,7 @@ class ProductCreateUdsService
                             } else $createdCategory = null;
                         }
 
-                        if ($createdCategory != null){
+                        if ($createdCategory != null and property_exists($createdCategory,'id')){
                             $createdCategoryId = $createdCategory->id;
                             $newNodeId = "".$createdCategoryId;
                             $check[] = "".$createdCategoryId;
