@@ -68,6 +68,8 @@ class WidgetInfo
                     $message = $data['data'];
                 }
             } else {
+
+
                 $operation = $this->operation_to_post($Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
                 $StatusCode = "operation";
                 $message = $operation['message'];
@@ -150,15 +152,14 @@ class WidgetInfo
             'data' => $data,
         ];
     }
-    #[ArrayShape(['StatusCode' => "int", 'message' => "array|\array|null|mixed"])] private function operation_to_post(UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
+    private function operation_to_post(UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
     {
         $data = $this->newPostOperations($Client_UDS, $externalCode, $agentId);
-        if ($data['status']) {
-            $StatusCode = 200;
-            $message = $data['data'];
+        if ($data['status']) { $StatusCode = 200; $message = $data['data'];
         } else {
             $StatusCode = 404;
             $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
+
             $availablePoints = $this->AgentMCID($body_agentId, $Client_UDS);
             $phone = $this->AgentMCPhone($body_agentId, $Setting);
             $operationsAccrue = $SettingBD->operationsAccrue;
@@ -168,6 +169,7 @@ class WidgetInfo
                 $availablePoints = 0;
             } else  $operationsCancellation = 0;
 
+            dd($info_total_and_SkipLoyaltyTotal, $availablePoints, $phone, $operationsAccrue, $operationsCancellation, $SettingBD);
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
                 'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
@@ -224,7 +226,8 @@ class WidgetInfo
             return null;
         }
     }
-    #[ArrayShape(['total' => "float|int", 'SkipLoyaltyTotal' => "float|int|mixed"])] private function TotalAndSkipLoyaltyTotal($bodyOrder, $Client): array
+
+    private function TotalAndSkipLoyaltyTotal($bodyOrder, $Client): array
     {
         $sum = $bodyOrder->sum / 100;
         $SkipLoyaltyTotal = 0;
@@ -245,7 +248,7 @@ class WidgetInfo
                 }
             }
 
-            if ($BonusProgramm == true) {
+            if ($BonusProgramm) {
                 $price = ($item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100))) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
