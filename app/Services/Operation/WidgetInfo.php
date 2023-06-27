@@ -86,9 +86,6 @@ class WidgetInfo
     }
 
 
-
-
-
     public function AgentMCPhone($bodyMC, getSettingVendorController $Setting): string
     {
         $phone = null;
@@ -103,6 +100,7 @@ class WidgetInfo
         }
         return $phone;
     }
+
     private function goods_orders($externalCode, UdsClient $Client_UDS): array
     {
         $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
@@ -127,6 +125,7 @@ class WidgetInfo
             'message' => $message,
         ];
     }
+
     public function newPostOperations($ClientUDS, $externalCode, $agentId): array
     {
         $url = 'https://api.uds.app/partner/v2/operations/' . $externalCode;
@@ -151,10 +150,13 @@ class WidgetInfo
             'data' => $data,
         ];
     }
+
     private function operation_to_post(UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
     {
         $data = $this->newPostOperations($Client_UDS, $externalCode, $agentId);
-        if ($data['status']) { $StatusCode = 200; $message = $data['data'];
+        if ($data['status']) {
+            $StatusCode = 200;
+            $message = $data['data'];
         } else {
             $StatusCode = 404;
             $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
@@ -234,7 +236,7 @@ class WidgetInfo
         $BodyPositions = $Client->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         //dd($bodyOrder, $BodyPositions);
-        foreach ($BodyPositions as $id=>$item) {
+        foreach ($BodyPositions as $id => $item) {
             $url_item = $item->assortment->meta->href;
             $body = $Client->get($url_item);
 
@@ -246,10 +248,12 @@ class WidgetInfo
                     }
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
-                        if (property_exists($body, "minPrice")){ $minPrice = $body->minPrice->value; }
-                        if ($body_item->value < 100){
-                            $SkipLoyaltyTotal = ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100;
-                        } else $SkipLoyaltyTotal = ($BodyPositions[$id]->price - $minPrice ) / 100;
+                        if (property_exists($body, "minPrice")) {
+                            $minPrice = $body->minPrice->value;
+                        }
+                        if ($body_item->value < 100) {
+                            $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100;
+                        } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($BodyPositions[$id]->price - $minPrice) / 100;
                     }
                 }
             }
@@ -266,6 +270,7 @@ class WidgetInfo
             'SkipLoyaltyTotal' => $SkipLoyaltyTotal,
         ];
     }
+
     public function AgentMCID($bodyMC, UdsClient $Client_UDS): int
     {
 
@@ -290,6 +295,7 @@ class WidgetInfo
         }
 
     }
+
     public function phone_number($phone): array|string|null
     {
         $phone = preg_replace('/[^0-9]/', '', $phone);

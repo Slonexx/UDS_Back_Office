@@ -498,8 +498,8 @@ class ObjectController extends Controller
                         $minPrice = 0;
                         if (property_exists($body, "minPrice")){ $minPrice = $body->minPrice->value; }
                         if ($body_item->value < 100){
-                            $unredeemableTotal =+  ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100 ;
-                        } else $unredeemableTotal =+ ($BodyPositions[$id]->price - $minPrice ) / 100;
+                            $unredeemableTotal = $unredeemableTotal +  ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100 ;
+                        } else $unredeemableTotal = $unredeemableTotal + ($BodyPositions[$id]->price - $minPrice ) / 100;
                     }
                 }
             }
