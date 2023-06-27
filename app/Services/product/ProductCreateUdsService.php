@@ -230,6 +230,10 @@ class ProductCreateUdsService
         try {
             $meta = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs);
 
+            if (property_exists($createdProduct, 'id')){
+                return;
+            }
+
             $body = [
                 "attributes" => [
                     0 => [
