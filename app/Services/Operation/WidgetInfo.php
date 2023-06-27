@@ -169,7 +169,7 @@ class WidgetInfo
                 $availablePoints = 0;
             } else  $operationsCancellation = 0;
 
-            dd($info_total_and_SkipLoyaltyTotal, $availablePoints, $phone, $operationsAccrue, $operationsCancellation, $SettingBD);
+            //dd($info_total_and_SkipLoyaltyTotal, $availablePoints, $phone, $operationsAccrue, $operationsCancellation, $SettingBD);
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
                 'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
