@@ -382,7 +382,9 @@ class ProductCreateUdsService
 
 
             //ДО делать get UoM
-            $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
+            if (property_exists($product,'uom')) $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href,$apiKeyMs);
+            else $nameOumUds = "";
+
             if ($nameOumUds == ""){
                 $bd->errorProductLog($accountId,$error_log." Была указана некорректная ед.изм товара в MS");
                 return null;
