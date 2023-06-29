@@ -103,6 +103,8 @@ class ObjectController extends Controller
             $data['SkipLoyaltyTotal'] = null;
         }
 
+        //$data['SkipLoyaltyTotal'] =  $data['SkipLoyaltyTotal'] * 100 / 90;
+
         $Setting = new getSettingVendorController($data['accountId']);
         $ClientMS = new MsClient($Setting->TokenMoySklad);
         $unredeemableTotal = $this->unredeemableTotal($ClientMS, $data['entity_type'], $data['object_Id']);
@@ -123,13 +125,14 @@ class ObjectController extends Controller
             ],
         ];
 
+        ///dd($body);
 
-            $postBody = $Client->post($url, $body);
-            if (property_exists($postBody, 'purchase')){
-                return response()->json($postBody->purchase);
-            } else {
-                return response()->json(['Status' => "", 'Message' => "Ошибка попробуйте позже"]);
-            }
+        $postBody = $Client->post($url, $body);
+        if (property_exists($postBody, 'purchase')) {
+            return response()->json($postBody->purchase);
+        } else {
+            return response()->json(['Status' => "", 'Message' => "Ошибка попробуйте позже"]);
+        }
 
 
     }
@@ -187,39 +190,39 @@ class ObjectController extends Controller
         ];
 
         //try {
-            $post = $Client->post($url, $body);
+        $post = $Client->post($url, $body);
 
-            $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/'.$data['entity'].'/' . $data['objectId'];
-            $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
-            $OldBody = $ClientMC->requestGet();
+        $urlMC = 'https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'];
+        $ClientMC = new ClientMC($urlMC, $Setting->TokenMoySklad);
+        $OldBody = $ClientMC->requestGet();
 
-            $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
-            $setAttributes = $this->Attributes($data, $post, $Setting);
+        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+        $setAttributes = $this->Attributes($data, $post, $Setting);
 
-            $OldBody->externalCode = $post->id;
-            $putBody = $ClientMC->requestPut([
-                'externalCode' => (string)$post->id,
-                'positions' => $setPositions,
-                'attributes' => $setAttributes,
-            ]);
-            if ($data['entity']=='customerorder'){
-                $this->createDemands($Setting, $SettingBD, $putBody, (string)$post->id);
-            }
-            $this->createPaymentDocument($Setting, $SettingBD, $putBody);
-            $post = [
-                'code' => 200,
-                'id' => $post->id,
-                'points' => $post->points,
-                'total' => $post->total,
-                'message' => 'The operation was successful',
-            ];
+        $OldBody->externalCode = $post->id;
+        $putBody = $ClientMC->requestPut([
+            'externalCode' => (string)$post->id,
+            'positions' => $setPositions,
+            'attributes' => $setAttributes,
+        ]);
+        if ($data['entity'] == 'customerorder') {
+            $this->createDemands($Setting, $SettingBD, $putBody, (string)$post->id);
+        }
+        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+        $post = [
+            'code' => 200,
+            'id' => $post->id,
+            'points' => $post->points,
+            'total' => $post->total,
+            'message' => 'The operation was successful',
+        ];
 
-       /* } catch (BadResponseException $e) {
-            $post = [
-                'code' => $e->getCode(),
-                'message' => $e->getMessage(),
-            ];
-        }*/
+        /* } catch (BadResponseException $e) {
+             $post = [
+                 'code' => $e->getCode(),
+                 'message' => $e->getMessage(),
+             ];
+         }*/
 
         return response()->json($post);
     }
@@ -250,7 +253,7 @@ class ObjectController extends Controller
 
     public function Attributes($data, $postUDS, $Setting): array
     {
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/'.$data['entity'].'/metadata/attributes';
+        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/metadata/attributes';
         $Client = new ClientMC($url, $Setting->TokenMoySklad);
         $metadata = $Client->requestGet()->rows;
         $Attributes = null;
@@ -480,11 +483,11 @@ class ObjectController extends Controller
 
     private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id)
     {
-        $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/'.$entity_type.'/'.$object_Id);
+        $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
         $unredeemableTotal = null;
         $href = $bodyOrder->positions->meta->href;
         $BodyPositions = $ClientMS->get($href)->rows;
-        foreach ($BodyPositions as $id=>$item) {
+        foreach ($BodyPositions as $id => $item) {
             $url_item = $item->assortment->meta->href;
             $body = $ClientMS->get($url_item);
 
@@ -496,10 +499,13 @@ class ObjectController extends Controller
                     }
                     if ('Процент списания (UDS)' == $body_item->name) {
                         $minPrice = 0;
-                        if (property_exists($body, "minPrice")){ $minPrice = $body->minPrice->value; }
-                        if ($body_item->value < 100){
-                            $unredeemableTotal = $unredeemableTotal +  ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100 ;
-                        } else $unredeemableTotal = $unredeemableTotal + ($BodyPositions[$id]->price - $minPrice ) / 100;
+                        if (property_exists($body, "minPrice")) {
+                            $minPrice = $body->minPrice->value;
+                        }
+                        if ($body_item->value < 100) {
+                            $PresentBonus = (($item->price - ($item->price * $body_item->value / 90)) / 100);
+                            $unredeemableTotal = $unredeemableTotal + round($PresentBonus, 2);
+                        } else $unredeemableTotal = $unredeemableTotal + (($item->price - $minPrice) / 100);
                     }
                 }
             }
@@ -510,7 +516,6 @@ class ObjectController extends Controller
             }
 
         }
-
-        return $unredeemableTotal;
+        return round($unredeemableTotal, 2);
     }
 }

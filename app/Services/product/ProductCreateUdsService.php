@@ -429,7 +429,7 @@ class ProductCreateUdsService
                     return null;
                 }
 
-                if (!isset($prices['offerPrice'])) {
+                if (isset($prices['offerPrice'])) {
                     if ($isOfferProduct && ($prices['offerPrice'] <= 0 || $prices['offerPrice'] > $prices['salePrice'])){
                         $bd->errorProductLog($accountId,$error_log." Акционная цена не может быть равна 0, также не может быть больше Цены продажи");
                         return null;

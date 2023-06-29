@@ -236,7 +236,7 @@ class WidgetInfo
         $BodyPositions = $Client->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         //dd($bodyOrder, $BodyPositions);
-        foreach ($BodyPositions as $id => $item) {
+        foreach ($BodyPositions as $item) {
             $url_item = $item->assortment->meta->href;
             $body = $Client->get($url_item);
 
@@ -248,12 +248,11 @@ class WidgetInfo
                     }
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
-                        if (property_exists($body, "minPrice")) {
-                            $minPrice = $body->minPrice->value;
-                        }
+                        if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
                         if ($body_item->value < 100) {
-                            $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($BodyPositions[$id]->price - ($BodyPositions[$id]->price * $body_item->value / 100)) / 100;
-                        } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($BodyPositions[$id]->price - $minPrice) / 100;
+                            $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
+                            $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
+                        } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
                     }
                 }
             }
