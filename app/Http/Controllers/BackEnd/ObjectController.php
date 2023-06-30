@@ -125,7 +125,9 @@ class ObjectController extends Controller
             ],
         ];
 
-        ///dd($body);
+        if ($body['receipt']['unredeemableTotal'] == null){
+            unset($body['receipt']['unredeemableTotal']);
+        }
 
         $postBody = $Client->post($url, $body);
         if (property_exists($postBody, 'purchase')) {
@@ -481,7 +483,7 @@ class ObjectController extends Controller
         }
     }
 
-    private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id)
+    private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id): float
     {
         $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
         $unredeemableTotal = null;
@@ -516,6 +518,7 @@ class ObjectController extends Controller
             }
 
         }
-        return round($unredeemableTotal, 2);
+        if ($unredeemableTotal!=null) round($unredeemableTotal, 2);
+        return $unredeemableTotal;
     }
 }
