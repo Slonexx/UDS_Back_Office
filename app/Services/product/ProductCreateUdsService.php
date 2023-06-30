@@ -89,7 +89,7 @@ class ProductCreateUdsService
                 foreach ($productsMs->rows as $row){
                     $isProductNotAdd = true;
                     if (property_exists($row, 'pathName')){
-                        if (count(explode('/', $row->pathName)) < 4){} else $isProductNotAdd = false;
+                        if (count(explode('/', $row->pathName)) < 3){} else $isProductNotAdd = false;
                     } else $isProductNotAdd = false;
 
                     if (property_exists($row,"attributes") and $isProductNotAdd){
