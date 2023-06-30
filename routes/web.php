@@ -44,11 +44,6 @@ Route::get('/CompletesOrder/operationsCalc/', [ObjectController::class, 'operati
 Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations']);
 Route::get('/customers/find', [ObjectController::class, 'customers']);
 
-
-Route::get('/Demand/{accountId}/{entity}/{objectId}', [Demand::class, 'DemandObject']);
-Route::get('/postDemand/operations/', [Demand::class, 'operations']);
-
-
 Route::get('/Salesreturn/{accountId}/{entity}/{objectId}', [Salesreturn::class, 'SalesreturnObject']);
 Route::get('/postSalesreturn/operations', [Salesreturn::class, 'sReturn']);
 
