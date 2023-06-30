@@ -89,7 +89,7 @@ class ProductCreateUdsService
                 foreach ($productsMs->rows as $row){
                     $isProductNotAdd = true;
                     if (property_exists($row, 'pathName')){
-                        if (count(explode('/', $row->pathName)) <= 2){} else $isProductNotAdd = false;
+                        if (count(explode('/', $row->pathName)) < 4){} else $isProductNotAdd = false;
                     } else $isProductNotAdd = false;
 
                     if (property_exists($row,"attributes") and $isProductNotAdd){
@@ -316,6 +316,7 @@ class ProductCreateUdsService
             ];
 
             $variant = $Client_MS->get($mainUrl->url_ms().'variant?filter=productid='.$product->id)->rows;
+            $variants=[];
             foreach ($variant as $id=>$item){
                 $variants[$id] = [
                     'name' => $item->name,
@@ -356,7 +357,7 @@ class ProductCreateUdsService
                 }
             }
 
-            if ($variants){
+            if ($variants!=[]){
                 $body['data']['variants'] = $variants;
             }else { return null; }
 
