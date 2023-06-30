@@ -61,7 +61,6 @@ class CreateUdsCommand extends Command
                 try {
                     app(ProductCreateUdsService::class)->insertToUds($data);
                 }catch (BadResponseException){
-                    $this->info('error: '. $data['accountId']);
                 }
             })->onQueue('default');
 
