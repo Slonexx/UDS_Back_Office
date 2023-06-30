@@ -54,14 +54,14 @@ class CreateUdsCommand extends Command
                 "apiKeyUds" => $settings->TokenUDS,
                 "folder_id" => $folder_id,
                 "store" => $settings->Store,
-                "" => $settings->accountId,
+                "accountId" => $settings->accountId,
             ];
 
             dispatch(function () use ($data) {
                 try {
                     app(ProductCreateUdsService::class)->insertToUds($data);
                 }catch (BadResponseException){
-
+                    $this->info('error: '. $data['accountId']);
                 }
             })->onQueue('default');
 
