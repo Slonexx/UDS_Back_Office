@@ -36,7 +36,7 @@ class CreateUdsCommand extends Command
     public function handle()
     {
 
-        $mutex = Cache::lock('process_data_mutex', 150); // Задаем мьютекс с временем жизни 150 секунд (2,5 часа)
+        $mutex = Cache::lock('process_CreateProductToUDS', 9000);
 
 
         if ($mutex->get()) {
