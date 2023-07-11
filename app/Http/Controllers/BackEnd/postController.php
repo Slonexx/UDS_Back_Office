@@ -347,8 +347,9 @@ class postController extends Controller
         ];
     }
 
-    public function metaAttributes($apiKey, $purchase){
-        if ($purchase['points'] > 0 )
+    public function metaAttributes($apiKey, $purchase): array
+    {
+        if ($purchase['points'] >= 0 )
             $DeductionOfPoints = [
                 'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)', $apiKey),
                 'value' => true,
