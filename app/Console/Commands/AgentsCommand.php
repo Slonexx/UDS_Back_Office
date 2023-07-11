@@ -9,6 +9,7 @@ use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Models\counterparty_add;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Promise\EachPromise;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Console\Command;
@@ -63,7 +64,7 @@ class AgentsCommand extends Command
                 try {
                     yield app(AgentController::class)->insert($data);
 
-                } catch (\Throwable $e) {
+                } catch (BadResponseException) {
                     continue;
                 }
             }
