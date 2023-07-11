@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('agents:start')->everyFiveMinutes();
+        $schedule->command('agents:start')->everyFiveMinutes();
+        $schedule->command('udsProduct:create')->everyTwoHours();
     }
 
     /**

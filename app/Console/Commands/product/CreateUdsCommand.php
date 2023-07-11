@@ -34,40 +34,57 @@ class CreateUdsCommand extends Command
 
     public function handle()
     {
-        $allSettings = $this->settingsService->getSettings();
 
-        foreach ($allSettings as $settings) {
+        $mutex = Cache::lock('process_data_mutex', 150); // Задаем мьютекс с временем жизни 150 секунд (2,5 часа)
+
+
+        if ($mutex->get()) {
+            // Мьютекс успешно получен, выполняем задачу
             try {
-                $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                $allSettings = $this->settingsService->getSettings();
+                foreach ($allSettings as $settings) {
+                    try {
+                        $ClientCheckMC = new MsClient($settings->TokenMoySklad);
+                        $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
 
-                $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
-                $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-            } catch (BadResponseException $e) { continue; }
+                        $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
+                        $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                    } catch (BadResponseException $e) { continue; }
 
-            if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
-            if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
+                    if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "1"){ continue; }
+                    if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
 
-            $data = [
-                "tokenMs" => $settings->TokenMoySklad,
-                "companyId" => $settings->companyId,
-                "apiKeyUds" => $settings->TokenUDS,
-                "folder_id" => $folder_id,
-                "store" => $settings->Store,
-                "accountId" => $settings->accountId,
-            ];
+                    $data = [
+                        "tokenMs" => $settings->TokenMoySklad,
+                        "companyId" => $settings->companyId,
+                        "apiKeyUds" => $settings->TokenUDS,
+                        "folder_id" => $folder_id,
+                        "store" => $settings->Store,
+                        "accountId" => $settings->accountId,
+                    ];
 
-            dispatch(function () use ($data) {
-                try {
-                    app(ProductCreateUdsService::class)->insertToUds($data);
-                }catch (BadResponseException){
+                    dispatch(function () use ($data) {
+                        try {
+                            app(ProductCreateUdsService::class)->insertToUds($data);
+                        }catch (BadResponseException){
+                        }
+                    })->onQueue('default');
+
+                    // Продолжение выполнения команды
+                    $this->info('successfully.');
+                    /* dd( app(ProductCreateUdsService::class)->insertToUds($data));*/
                 }
-            })->onQueue('default');
-
-            // Продолжение выполнения команды
-            $this->info('successfully.');
-          /* dd( app(ProductCreateUdsService::class)->insertToUds($data));*/
+            } finally {
+                $mutex->release(); // Освобождаем мьютекс
+            }
+        } else {
+            // Задача уже выполняется, пропускаем запуск
+            $this->info('Previous task is still running. Skipping the current run.');
         }
+
+
+
+
 
     }
 
