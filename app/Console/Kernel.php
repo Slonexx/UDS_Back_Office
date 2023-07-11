@@ -12,7 +12,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('agents:start')->everyFiveMinutes();
         $schedule->command('udsProduct:create')->everyTwoHours();
-        $schedule->command('test:cron')->everyTwoHours();
+        $schedule->command('test:cron')->everyMinute();
     }
 
     protected function commands(): void
