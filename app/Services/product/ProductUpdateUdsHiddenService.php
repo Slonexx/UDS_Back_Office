@@ -18,7 +18,7 @@ class ProductUpdateUdsHiddenService
 
     private getSettingVendorController $getSettingVendor;
 
-    public function insertUpdate($data)
+    public function insertUpdate($data): void
     {
         $this->setting = new getMainSettingBD($data['accountId']);
         $this->getSettingVendor = new getSettingVendorController($data['accountId']);
@@ -28,7 +28,7 @@ class ProductUpdateUdsHiddenService
     }
 
 
-    private function startUpdate()
+    private function startUpdate(): void
     {
         set_time_limit(3600);
         if (true) {

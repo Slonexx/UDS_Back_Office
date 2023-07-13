@@ -58,7 +58,9 @@ class UpdateUdsGoodsHidden extends Command
             ];
 
             dispatch(function () use ($data) {
-                app(ProductUpdateUdsHiddenService::class)->insertUpdate($data);
+                try {
+                    app(ProductUpdateUdsHiddenService::class)->insertUpdate($data);
+                } catch (BadResponseException){}
             })->onQueue('default');
 
             // Продолжение выполнения команды
