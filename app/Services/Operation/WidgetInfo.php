@@ -170,7 +170,6 @@ class WidgetInfo
                 $availablePoints = 0;
             } else  $operationsCancellation = 0;
 
-            //dd($info_total_and_SkipLoyaltyTotal, $availablePoints, $phone, $operationsAccrue, $operationsCancellation, $SettingBD);
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
                 'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
@@ -235,7 +234,6 @@ class WidgetInfo
         $href = $bodyOrder->positions->meta->href;
         $BodyPositions = $Client->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
-        //dd($bodyOrder, $BodyPositions);
         foreach ($BodyPositions as $item) {
             $url_item = $item->assortment->meta->href;
             $body = $Client->get($url_item);
