@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 
 class installContoller extends Controller
 {
-    public function install($accountId){
+    public function install($accountId): void
+    {
         try {
             $Setting = new getSettingVendorController($accountId);
 

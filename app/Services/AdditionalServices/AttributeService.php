@@ -208,6 +208,13 @@ class AttributeService
                 "show" => false,
                 "description" => "Использование сертификата (UDS)",
             ],
+            3 => [
+                "name" => "Количество списанных баллов (UDS)",
+                "type" => "long",
+                "required" => false,
+                "show" => false,
+                "description" => "Количество списанных баллов (UDS)",
+            ],
         ];
     }
 

@@ -68,7 +68,7 @@ class ProductCreateUdsService
 
     private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $ProductFolder, $storeName, $accountId): array
     {
-        set_time_limit(3600);
+        set_time_limit(7200);
         $ARR_PRODUCT[] = null;
         $productsUds = $this->getUdsCheck($companyId,$apiKeyUds,$accountId);
         $storeHref = $this->storeService->getStore($storeName,$apiKeyMs)->href;

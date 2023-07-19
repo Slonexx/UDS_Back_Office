@@ -20,6 +20,7 @@ class getSetting extends Controller
                 "operationsCancellation" => null,
                 "operationsDocument" => null,
                 "operationsPaymentDocument" => null,
+                "customOperation" => null,
             ];
         } else
         try {

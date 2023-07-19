@@ -36,7 +36,8 @@ class ProductUpdateUdsService
     }
 
 
-    public function updateProductsUds($data){
+    public function updateProductsUds($data): array
+    {
         $apiKeyMs = $data['tokenMs'];
         $companyId = $data['companyId'];
         $apiKeyUds = $data['apiKeyUds'];

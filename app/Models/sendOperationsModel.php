@@ -13,6 +13,7 @@ class sendOperationsModel extends Model
         'operationsCancellation',
         'operationsDocument',
         'operationsPaymentDocument',
+        'customOperation',
     ];
 
     use HasFactory;

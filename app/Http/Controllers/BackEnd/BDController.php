@@ -9,7 +9,6 @@ use App\Models\errorLog;
 use App\Models\order_id;
 use App\Models\order_update;
 use App\Models\ProductModel;
-use App\Models\webhookOrderLog;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,12 +21,8 @@ class BDController extends Controller
                 'accountId' => $accountId,
                 'orderID' => $orderID,
             ]);
-        } catch (ClientException $exception){
-            webhookOrderLog::create([
-                'accountId' => $accountId,
-                'message' => $exception->getMessage(),
-                'companyId' => $companyId,
-                ]);
+        } catch (ClientException){
+
         }
     }
 

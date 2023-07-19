@@ -135,7 +135,7 @@ class indexController extends Controller
                 'cashier_id' => $employee->id,
                 'cashier_name' => $employee->name,
 
-                /*'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+               /* 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
                 'cashier_name' => "Сергей",*/
             ] );

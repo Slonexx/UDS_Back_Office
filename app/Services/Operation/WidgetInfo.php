@@ -12,70 +12,77 @@ use GuzzleHttp\Exception\ClientException;
 
 class WidgetInfo
 {
+
+    private getSettingVendorController $settingVendorController;
+    private mixed $setting;
+    private MsClient $msClient;
+    private UdsClient $udsClient;
+
     public function getInformation($accountId, $entity, $objectId): array
     {
 
-        $Setting = new getSettingVendorController($accountId);
-        $SettingBD = app(getSetting::class)->getSendSettingOperations($accountId);
+        $this->settingVendorController = new getSettingVendorController($accountId);
+        $this->setting = (new getSetting())->getSendSettingOperations($accountId);
+        $this->msClient = new MsClient($this->settingVendorController->TokenMoySklad);
+        $this->udsClient = new UdsClient($this->settingVendorController->companyId, $this->settingVendorController->TokenUDS);
+
         $urlAll = new mainURL();
-
-
         $urlCounterparty = $urlAll->url_ms() . "$entity/$objectId";
-
-        $Client = new MsClient($Setting->TokenMoySklad);
-        $Client_UDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
-
         try {
-            $BodyMC = $Client->get($urlCounterparty);
+            $BodyMC = $this->msClient->get($urlCounterparty);
         } catch (BadResponseException $e) {
-            $StatusCode = 'error';
-            return ['StatusCode' => $StatusCode, 'message' => $e->getMessage(),];
+            return ['StatusCode' => 'error', 'message' => $e->getMessage()];
         }
 
         $externalCode = $BodyMC->externalCode;
-        $body_agentId = $Client->get($BodyMC->agent->meta->href);
+        $body_agentId = $this->msClient->get($BodyMC->agent->meta->href);
         $agentId = $body_agentId;
 
         if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
-            if (property_exists($agentId, 'phone')) $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $agentId->phone, 'dontPhone' => true,];
-            else  $agentId = ['externalCode' => $agentId->externalCode, 'phone' => null, 'dontPhone' => true,];
+            $agentId = [
+                'externalCode' => $agentId->externalCode,
+                'phone' => property_exists($agentId, 'phone') ? $agentId->phone : null,
+                'dontPhone' => true,
+            ];
         } else {
             if (property_exists($agentId, 'phone')) {
-                $phone = $this->AgentMCPhone($agentId, $Setting);
+                $phone = $this->AgentMCPhone($agentId);
                 if (mb_strlen($phone) > 14) {
-                    $StatusCode = 'error';
-                    $message = 'Некорректный номер телефона: ' . $agentId->phone;
-                    return ['StatusCode' => $StatusCode, 'message' => $message,];
+                    return [
+                        'StatusCode' => 'error',
+                        'message' => 'Некорректный номер телефона: ' . $agentId->phone,
+                    ];
                 }
-                $agentId = ['externalCode' => $agentId->externalCode, 'phone' => '+' . $phone,];
+                $agentId = [
+                    'externalCode' => $agentId->externalCode,
+                    'phone' => '+' . $phone,
+                ];
             } else {
-                $StatusCode = "error";
-                $message = 'Отсутствует номер телефона у данного контрагента';
-                return ['StatusCode' => $StatusCode, 'message' => $message,];
+                return [
+                    'StatusCode' => 'error',
+                    'message' => 'Отсутствует номер телефона у данного контрагента',
+                ];
             }
         }
 
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
                 try {
-                    $goods_orders = $this->goods_orders($externalCode, $Client_UDS);
-                    $StatusCode = "orders";
+                    $goods_orders = $this->goods_orders($externalCode);
+                    $StatusCode = 'orders';
                     $message = $goods_orders['message'];
                 } catch (BadResponseException) {
-                    $data = $this->newPostOperations($Client_UDS, $externalCode, $agentId);
-                    $StatusCode = "successfulOperation";
+                    $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
+                    $StatusCode = 'successfulOperation';
                     $message = $data['data'];
                 }
             } else {
-
-
-                $operation = $this->operation_to_post($Client_UDS, $externalCode, $agentId, $BodyMC, $Client, $body_agentId, $Setting, $SettingBD);
-                $StatusCode = "operation";
+                $operation = $this->operation_to_post($externalCode, $agentId, $BodyMC, $body_agentId);
+                $StatusCode = 'operation';
                 $message = $operation['message'];
             }
         } catch (ClientException $e) {
-            $StatusCode = 'error';
-            return ['StatusCode' => $StatusCode, 'message' => $e->getMessage(),];
+            return ['StatusCode' => 'error', 'message' => $e->getMessage()];
         }
 
         return [
@@ -86,14 +93,14 @@ class WidgetInfo
     }
 
 
-    public function AgentMCPhone($bodyMC, getSettingVendorController $Setting): string
+    public function AgentMCPhone(mixed $bodyMC): string
     {
         $phone = null;
         if (property_exists($bodyMC, 'phone')) {
             $phone = "+7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $bodyMC->phone)), -10);
         } else {
             if ((int)$bodyMC->externalCode > 1000) {
-                $UdsClient = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+                $UdsClient = new UdsClient($this->settingVendorController->companyId, $this->settingVendorController->TokenUDS);
                 $body = $UdsClient->get('https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode);
                 if ($body->phone != null) $phone = $body->phone;
             }
@@ -101,10 +108,10 @@ class WidgetInfo
         return $phone;
     }
 
-    private function goods_orders($externalCode, UdsClient $Client_UDS): array
+    private function goods_orders(mixed $externalCode): array
     {
         $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
-        $body = $Client_UDS->get($UDSURL . $externalCode);
+        $body =  $this->udsClient->get($UDSURL . $externalCode);
         $StatusCode = 200;
         $state = $body->state;
         $icon = "";
@@ -126,16 +133,23 @@ class WidgetInfo
         ];
     }
 
-    public function newPostOperations($ClientUDS, $externalCode, $agentId): array
+    public function newPostOperations(mixed $externalCode, mixed $agentId, mixed $BodyMC): array
     {
         $url = 'https://api.uds.app/partner/v2/operations/' . $externalCode;
         try {
-            $body = $ClientUDS->get($url);
-            if ($body->points < 0) $points = $body->points * -1; else $points = $body->points;
+            $body = $this->udsClient->get($url);
+            if ($body->points < 0) $points = $body->points * -1; else {
+                foreach ($BodyMC->attributes as $item){
+                    if ($item->name == "Количество списанных баллов (UDS)") {
+                        $points = $item->value;
+                    }
+                }
+            }
+
             $status = true;
             $data = [
                 'id' => $body->id,
-                'BonusPoint' => $this->Calc($ClientUDS, $body, $agentId),
+                'BonusPoint' => $this->Calc($body, $agentId),
                 'points' => $points,
                 'state' => "COMPLETED",
                 'icon' => '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
@@ -151,24 +165,20 @@ class WidgetInfo
         ];
     }
 
-    private function operation_to_post(UdsClient $Client_UDS, $externalCode, array $agentId, mixed $BodyMC, MsClient $Client, mixed $body_agentId, getSettingVendorController $Setting, $SettingBD): array
+    private function operation_to_post(mixed $externalCode, array $agentId, mixed $BodyMC, mixed $body_agentId): array
     {
-        $data = $this->newPostOperations($Client_UDS, $externalCode, $agentId);
+        $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
+
         if ($data['status']) {
             $StatusCode = 200;
             $message = $data['data'];
         } else {
             $StatusCode = 404;
-            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC, $Client);
-
-            $availablePoints = $this->AgentMCID($body_agentId, $Client_UDS);
-            $phone = $this->AgentMCPhone($body_agentId, $Setting);
-            $operationsAccrue = $SettingBD->operationsAccrue;
-            $operationsCancellation = $SettingBD->operationsCancellation;
-            if ($SettingBD->operationsAccrue == null) $operationsAccrue = 0;
-            if ($SettingBD->operationsCancellation == 1) {
-                $availablePoints = 0;
-            } else  $operationsCancellation = 0;
+            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
+            $availablePoints = $this->AgentMCID($body_agentId);
+            $phone = $this->AgentMCPhone($body_agentId);
+            $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
+            $operationsCancellation = (int) $this->setting->operationsCancellation == 1 ? 0 : 0;
 
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
@@ -176,8 +186,8 @@ class WidgetInfo
                 'availablePoints' => $availablePoints,
                 'points' => 0,
                 'phone' => $phone,
-                'operationsAccrue' => (int)$operationsAccrue,
-                'operationsCancellation' => (int)$operationsCancellation,
+                'operationsAccrue' => $operationsAccrue,
+                'operationsCancellation' => $operationsCancellation,
             ];
         }
 
@@ -187,8 +197,7 @@ class WidgetInfo
         ];
     }
 
-
-    public function Calc(UdsClient $ClientUDS, $body, $agentId)
+    public function Calc($body, $agentId)
     {
         $url = 'https://api.uds.app/partner/v2/operations/calc';
         if ($agentId['phone'] != null) {
@@ -197,7 +206,7 @@ class WidgetInfo
                 'phone' => "+7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $agentId['phone'])), -10),
             ];
         } else {
-            $infoClientByExternalCode = $ClientUDS->get('https://api.uds.app/partner/v2/customers/' . $agentId['externalCode']);
+            $infoClientByExternalCode = $this->udsClient->get('https://api.uds.app/partner/v2/customers/' . $agentId['externalCode']);
             if ($infoClientByExternalCode->uid != null) {
                 $participant = [
                     'uid' => $infoClientByExternalCode->uid,
@@ -221,22 +230,22 @@ class WidgetInfo
             ],
         ];
         try {
-            return $ClientUDS->post($url, $body)->purchase->cashBack;
+            return $this->udsClient->post($url, $body)->purchase->cashBack;
         } catch (BadResponseException) {
             return null;
         }
     }
 
-    private function TotalAndSkipLoyaltyTotal($bodyOrder, $Client): array
+    private function TotalAndSkipLoyaltyTotal(mixed $bodyOrder): array
     {
         $sum = $bodyOrder->sum / 100;
         $SkipLoyaltyTotal = 0;
         $href = $bodyOrder->positions->meta->href;
-        $BodyPositions = $Client->get($href)->rows;
+        $BodyPositions = $this->msClient->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         foreach ($BodyPositions as $item) {
             $url_item = $item->assortment->meta->href;
-            $body = $Client->get($url_item);
+            $body =  $this->msClient->get($url_item);
 
             $BonusProgramm = false;
             if (property_exists($body, 'attributes')) {
@@ -247,10 +256,15 @@ class WidgetInfo
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
                         if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
-                        if ($body_item->value < 100) {
-                            $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
-                            $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
-                        } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
+                        if ($this->setting->customOperation == 1) {
+                            $BonusProgramm = $body_item->value;
+                        } else {
+                            if ($body_item->value < 100) {
+                                $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
+                                $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
+                            } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
+                        }
+
                     }
                 }
             }
@@ -268,12 +282,12 @@ class WidgetInfo
         ];
     }
 
-    public function AgentMCID($bodyMC, UdsClient $Client_UDS): int
+    public function AgentMCID($bodyMC): int
     {
 
         if ((int)$bodyMC->externalCode > 1000) {
             $url_UDS = 'https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode;
-            $body = $Client_UDS->get($url_UDS)->participant;
+            $body = $this->udsClient->get($url_UDS)->participant;
             return $body->points;
         } else {
             $result = 0;
@@ -281,7 +295,7 @@ class WidgetInfo
                 $phone = urlencode('+' . $this->phone_number($bodyMC->phone));
                 $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $phone;
                 try {
-                    $Body = $Client_UDS->get($url)->user;
+                    $Body = $this->udsClient->get($url)->user;
                     $result = $Body->participant->points;
                 } catch (BadResponseException) {
                 }

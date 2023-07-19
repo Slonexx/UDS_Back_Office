@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\BackEnd;
 
 use App\Components\MsClient;
+use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
-use App\Models\webhookClintLog;
-use App\Models\webhookOrderLog;
-use App\Services\agent\AgentService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
+use App\Services\WebhookMS\WebHookNewClientMS;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 
@@ -26,65 +26,29 @@ class postController extends Controller
     }
 
 
-    public function postClint(Request $request, $accountId){
+    public function postClint(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    {
         $Setting = new getSettingVendorController($accountId);
         $TokenMC = $Setting->TokenMoySklad;
         $companyId = $Setting->companyId;
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
-        $Clint = new ClientMC($url, $TokenMC);
+        try {
+            $Client = new MsClient($Setting->TokenMoySklad);
+            $search = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty?search='.$request->phone);
+            $ClientCheckUDS = (new UdsClient($Setting->companyId, $Setting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
+            return response()->json((new WebHookNewClientMS())->initiation($Client,$search, $request));
+        } catch (BadResponseException $e) { return response()->json($e); }
 
-        $participant = $request->participant;
-        $email = $this->ClintNullable($request->email);
-        $externalCode = $this->postClintId($TokenMC, $participant['id']);
-
-        $body = [
-            "name" => $request->displayName,
-            "phone" => (string) $request->phone,
-            "email" => $email,
-            "externalCode" => (string) $externalCode,
-        ];
-
-        if ($externalCode != null) {
-            $result = $Clint->requestPost($body);
-            if (isset($result->errors)){
-                webhookClintLog::create([
-                    'accountId' => $accountId,
-                    'message' => "error = ".$result->errors[0]->error."\n"."code = ".$result->errors[0]->code,
-                    'companyId' => $companyId,
-                ]);
-            } else {
-                $message = "Новый клиент = ". $request->displayName;
-                webhookClintLog::create([
-                    'accountId' => $accountId,
-                    'message' => $message,
-                    'companyId' => $companyId,
-                ]);
-            }
-        }  $result = null;
-    }
-
-    public function ClintNullable($item){
-        if ($item == null){
-            return '';
-        } else {
-            return $item;
-        }
-    }
-
-    public function postClintId($apiKei, $externalCode){
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode='.$externalCode;
-        $Client = new ClientMC($url, $apiKei);
-        $body = $Client->requestGet()->rows;
-        if (array_key_exists(1,$body)) return null;
-        else return $externalCode;
     }
 
 
 
 
 
-    public function postOrder(Request $request, $accountId){
+
+
+    public function postOrder(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    {
         try {
             $Setting = new getSettingVendorController($accountId);
             $TokenMC = $Setting->TokenMoySklad;
@@ -115,12 +79,7 @@ class postController extends Controller
                     $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
                     $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
                 } catch (ClientException $exception) {
-                    $message = $exception->getMessage();
-                    webhookOrderLog::create([
-                        'accountId' => $accountId,
-                        'message' => $message,
-                        'companyId' => $companyId,
-                    ]);
+
                 }
 
                 if ($organizationAccount != null)
@@ -156,34 +115,14 @@ class postController extends Controller
                     ];
 
                 if ($externalCode != null) {
-                    $result = $Clint->requestPost($body);
-                    if (isset($result->errors)){
-                        webhookOrderLog::create([
-                            'accountId' => $accountId,
-                            'message' => "error = ".$result->errors[0]->error."\n"."code = ".$result->errors[0]->code,
-                            'companyId' => $companyId,
-                        ]);
-                    } else {
-                        $message = "Покупатель = ".$request->delivery["receiverName"] . "\n" . "Заказал = ". count($request->items). " Товар(а) "
-                            . "\n" . "Сумма = " . $request->total;
-                        webhookOrderLog::create([
-                            'accountId' => $accountId,
-                            'message' => $message,
-                            'companyId' => $companyId,
-                        ]);
-                    }
+                    $Clint->requestPost($body);
                 }  $result = null;
 
             }
-        } catch (ClientException $exception){
-            $message = $exception->getMessage();
-            webhookOrderLog::create([
-                'accountId' => $accountId,
-                'message' => $message,
-                'companyId' => $companyId,
-            ]);
+        } catch (ClientException $e){
+            return response()->json($e);
         }
-
+        return response()->json();
     }
 
 

@@ -5,52 +5,56 @@ namespace App\Http\Controllers\Web;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 use Throwable;
 
 class RewardController extends Controller
 {
-    public function Accrue(Request $request, $accountId, $points, $participants){
-        $url = "https://api.uds.app/partner/v2/operations/reward";
+    public function Accrue($accountId, $points, $participants): \Illuminate\Http\JsonResponse
+    {
         $Setting = new getSettingVendorController($accountId);
 
         $body = [
             "points" => $points,
             "comment" => "",
             "silent" => false,
-            "participants" => [ $participants ],
+            "participants" => [$participants],
         ];
 
-        $UDSClint = new UdsClient($Setting->companyId,$Setting->TokenUDS);
         try {
-            $resultBOdy = $UDSClint->post($url,$body);
-            return response()->json(['Bool'=>true]);
-        } catch (Throwable $exception){
-            return response()->json(['Bool'=>false]);
+            $this->sendRequest($Setting, $body);
+            return response()->json(['Bool' => true]);
+        } catch (BadResponseException) {
+            return response()->json(['Bool' => false]);
         }
-
     }
 
-    public function Cancellation(Request $request, $accountId, $points, $participants){
-        $url = "https://api.uds.app/partner/v2/operations/reward";
+    public function Cancellation($accountId, $points, $participants): \Illuminate\Http\JsonResponse
+    {
         $Setting = new getSettingVendorController($accountId);
 
-        $points = $points-$points-$points;
+        $points = -$points;
 
         $body = [
             "points" => $points,
             "comment" => "",
             "silent" => false,
-            "participants" => [ $participants ],
+            "participants" => [$participants],
         ];
 
-        $UDSClint = new UdsClient($Setting->companyId,$Setting->TokenUDS);
         try {
-            $resultBOdy = $UDSClint->post($url,$body);
-            return response()->json(['Bool'=>true]);
-        } catch (Throwable $exception){
-            return response()->json(['Bool'=>false]);
+            $this->sendRequest($Setting, $body);
+            return response()->json(['Bool' => true]);
+        } catch (BadResponseException) {
+            return response()->json(['Bool' => false]);
         }
+    }
 
+    private function sendRequest(getSettingVendorController $Setting, array $body): void
+    {
+        $url = "https://api.uds.app/partner/v2/operations/reward";
+        $UDSClint = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $UDSClint->post($url, $body);
     }
 }

@@ -244,13 +244,14 @@
         let operations_availablePoints_Nubmer
         let operations_skipLoyaltyTotal
         let operations_user
+        let cashBack
         let operations_cashier_id = "{{ $cashier_id }}"
         let operations_cashier_name = "{{ $cashier_name }}"
 
         let operationsAccrue
         let operationsCancellation
 
-       /* let receivedMessage = {
+        /*let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.customerorder.edit",
             "objectId": "5f3023e9-05b3-11ee-0a80-06f20001197a",
@@ -485,7 +486,7 @@
                     operations_total = response.total;
                     operations_skipLoyaltyTotal = response.skipLoyaltyTotal;
 
-                    let cashBack = response.cashBack;
+                    cashBack = response.cashBack;
                     document.getElementById("total").innerText = operations_total
                     document.getElementById("cashBackOperation").innerText = cashBack
                     document.getElementById("availablePoints").innerText = availablePoints
@@ -517,6 +518,7 @@
                 receipt_cash: operations_cash,
                 receipt_points: operations_points,
                 receipt_skipLoyaltyTotal: operations_skipLoyaltyTotal,
+                cashBack: cashBack,
             };
 
             let settings = ajax_settings(url + 'CompletesOrder/operations/', "GET", data);
