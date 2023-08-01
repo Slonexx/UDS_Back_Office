@@ -75,6 +75,8 @@ class ProductCreateUdsService
         if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
         if (!array_key_exists('productIds', $productsUds)) { $productsUds['productIds'] = []; }
 
+        //dd($productsUds);
+
         if ($ProductFolder == "1") {
             $find = ProductFoldersByAccountID::query()->where('accountId', $accountId);
             foreach ($find->get()->all() as $item){
@@ -87,41 +89,46 @@ class ProductCreateUdsService
 
                 $productsMs = $this->getMs($folderName,$apiKeyMs);
                 foreach ($productsMs->rows as $row){
-                    $isProductNotAdd = true;
-                    if (property_exists($row, 'pathName')){
-                        if (count(explode('/', $row->pathName)) < 3){} else $isProductNotAdd = false;
-                    } else $isProductNotAdd = false;
 
-                    if (property_exists($row,"attributes") and $isProductNotAdd){
-                        foreach ($row->attributes as $attribute){
-                            if ($attribute->name == "id (UDS)"){
-                                if (in_array($attribute->value,$productsUds["productIds"])) {
-                                    $isProductNotAdd = false;
+                    if (str_starts_with($row->pathName, $folderName)) {
+                        $isProductNotAdd = true;
+
+                        if (property_exists($row, 'pathName')){
+                            if (count(explode('/', $row->pathName)) < 3){} else $isProductNotAdd = false;
+                        } else $isProductNotAdd = false;
+
+                        if (property_exists($row,"attributes") and $isProductNotAdd){
+                            foreach ($row->attributes as $attribute){
+                                if ($attribute->name == "id (UDS)"){
+                                    if (in_array($attribute->value,$productsUds["productIds"])) {
+                                        $isProductNotAdd = false;
+                                    }
                                 }
+                                if ($attribute->name == "Не выгружать товар в UDS ? (UDS)"){
+                                    if ($attribute->value) $isProductNotAdd = false;
+                                } else continue;
                             }
-                            if ($attribute->name == "Не выгружать товар в UDS ? (UDS)"){
-                                $isProductNotAdd = false;
-                            } else continue;
                         }
+
+                        if ($isProductNotAdd){
+                            if (property_exists($row,"productFolder")){
+                                $productFolderHref = $row->productFolder->meta->href;
+                                $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
+                                if (!in_array($idNodeCategory,$productsUds["categoryIds"])) { $idNodeCategory = 0; }
+                            } else $idNodeCategory = 0;
+
+                            try {
+                                $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
+
+                                if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
+                                else continue;
+                                $ARR_PRODUCT[] = $createdProduct;
+                            } catch (BadResponseException){
+                                continue;
+                            }
+                        } else continue;
                     }
 
-                    if ($isProductNotAdd){
-                        if (property_exists($row,"productFolder")){
-                            $productFolderHref = $row->productFolder->meta->href;
-                            $idNodeCategory = $this->getCategoryIdByMetaHref($productFolderHref,$apiKeyMs);
-                            if (!in_array($idNodeCategory,$productsUds["categoryIds"])) { $idNodeCategory = 0; }
-                        } else $idNodeCategory = 0;
-
-                        try {
-                            $createdProduct = $this->createProductUds($row,$apiKeyMs,$companyId,$apiKeyUds,$storeHref,$accountId,$idNodeCategory);
-
-                            if ($createdProduct != null){ $this->updateProduct($createdProduct,$row->id,$apiKeyMs); }
-                            else continue;
-                            $ARR_PRODUCT[] = $createdProduct;
-                        } catch (BadResponseException){
-                            continue;
-                        }
-                    } else continue;
 
                 }
             }
