@@ -57,13 +57,23 @@ class ProductCreateUdsService
     }
 
     private function getMs($folderName, $apiKeyMs){
+        $client = new MsClient($apiKeyMs);
+
         if ($folderName == null) {
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
         } else {
             $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~".$folderName;
         }
-        $client = new MsClient($apiKeyMs);
-        return $client->get($url);
+        $result = $client->get($url);
+
+        if ($folderName == null) {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/service";
+        } else {
+            $url = "https://online.moysklad.ru/api/remap/1.2/entity/service?filter=pathName~".$folderName;
+        }
+        $result->rows = array_merge($result->rows, $client->get($url)->rows);
+
+        return $result;
     }
 
     private function notAddedInUds($apiKeyMs, $apiKeyUds, $companyId, $ProductFolder, $storeName, $accountId): array
