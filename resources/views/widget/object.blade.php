@@ -268,7 +268,7 @@
 
             if (receivedMessage.name === 'Open') {
                 clearWidget()
-                let settings = ajax_settings(url + 'CustomerOrderEditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
+                let settings = ajax_settings(url + 'CustomerOrder/EditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 

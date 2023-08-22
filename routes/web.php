@@ -44,7 +44,7 @@ Route::get('/Accrue/{accountId}/{points}/{participants}', [RewardController::cla
 Route::get('/Cancellation/{accountId}/{points}/{participants}', [RewardController::class, 'Cancellation']);
 
 
-Route::get('/CustomerOrderEditObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CustomerOrderEditObject']);
+Route::get('/CustomerOrder/EditObject/{accountId}/{entity}/{objectId}', [ObjectController::class, 'CustomerOrderEditObject']);
 Route::get('/CompletesOrder/{accountId}/{objectId}', [ObjectController::class, 'CompletesOrder']);
 Route::get('/CompletesOrder/operationsCalc/', [ObjectController::class, 'operationsCalc']);
 Route::get('/CompletesOrder/operations/', [ObjectController::class, 'operations']);
