@@ -1,10 +1,5 @@
 <script>
-    let Folders = @json($Folders);
-    if (Folders.length > 0) {
-        for (let i = 0; i < Folders.length; i++) {
-            window.document.getElementById(Folders[i].id).click()
-        }
-    }
+
     function clearSendingGoodsArr() {
         window.document.getElementById('sendingGoodsArr').innerText = ""
         let children = $("#childrenProduct").children()

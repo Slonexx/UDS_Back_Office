@@ -79,8 +79,6 @@ class productController extends Controller
 
 
 
-
-
         return view('web.Setting.Product.product', [
             "Body_productFolder" => $arrayProductFolders,
             "Body_store" => $arrayStores,

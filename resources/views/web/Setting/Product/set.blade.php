@@ -17,6 +17,14 @@
     window.document.querySelector('select[name="ProductFolder"]').value = setProductFolder
 
     FU_sendingGoods(setProductFolder)
+
+    let Folders = @json($Folders);
+    if (Folders.length > 0) {
+        for (let i = 0; i < Folders.length; i++) {
+            window.document.getElementById(Folders[i].id).click()
+        }
+    }
+
     if (setProductFolder === '1') {
         window.document.querySelector('select[name="unloading"]').value = setUnloading
         window.document.querySelector('select[name="salesPrices"]').value = setSalesPrices
