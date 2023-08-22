@@ -25,7 +25,7 @@ use Generator;
 class NewCronCommandProductCreate extends Command
 {
 
-    protected $signature = 'cronCommand:ProductCreate';
+    protected $signature = 'devCronCommand:ProductCreate';
 
     protected $description = ' ';
 
