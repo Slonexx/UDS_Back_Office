@@ -59,6 +59,7 @@ class createAgentForMS
     {
         $body = [
             "name" => $customer->displayName,
+            "companyType"=> "individual",
             "externalCode" => (string) $customer->participant->id,
         ];
 
