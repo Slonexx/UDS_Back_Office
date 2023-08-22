@@ -11,6 +11,7 @@ use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
+use App\Models\newProductModel;
 use App\Models\orderSettingModel;
 use App\Models\ProductFoldersByAccountID;
 use App\Models\SettingMain;
@@ -55,23 +56,17 @@ class postController extends Controller
 
     private function Setting_Main_Create_Or_Update( string $accountId, string $TokenMS, string $companyId, string $TokenUDS): void
     {
-        $Setting = SettingMain::query()->where('accountId', $accountId);
+        $model = new SettingMain();
+        $existingRecords = SettingMain::where('accountId', $accountId)->get();
 
-        if ($Setting == []) {
-            SettingMain::create([
-                'accountId' => $accountId,
-                'TokenMoySklad' => $TokenMS,
-                'companyId' => $companyId,
-                'TokenUDS' => $TokenUDS,
-            ]);
-        } else {
-            $SettingMain_update = SettingMain::query()->where('accountId', $accountId);
-            $SettingMain_update->update([
-                'TokenMoySklad' => $TokenMS,
-                'companyId' => $companyId,
-                'TokenUDS' => $TokenUDS,
-            ]);
-        }
+        if (!$existingRecords->isEmpty()) { foreach ($existingRecords as $record) { $record->delete(); } }
+
+        $model->accountId = $accountId;
+        $model->TokenMoySklad = $TokenMS;
+        $model->companyId = $companyId;
+        $model->TokenUDS = $TokenUDS;
+
+        $model->save();
     }
 
     public function postSettingOrder(Request $request, $accountId, $isAdmin): \Illuminate\Http\RedirectResponse
