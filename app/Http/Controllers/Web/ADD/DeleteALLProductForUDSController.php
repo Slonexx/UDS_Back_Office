@@ -6,13 +6,13 @@ use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Services\product\ProductCreateUdsService;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Request;
+use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\JsonResponse;
 
 class DeleteALLProductForUDSController extends Controller
 {
 
-    public function DeleteALLProductForUDSController(Request $request, $as, $accountId): \Illuminate\Http\JsonResponse
+    public function DeleteALLProductForUDSController($as, $accountId): JsonResponse
     {
         if ($as == "p330538"){
             $result = [];
@@ -24,7 +24,7 @@ class DeleteALLProductForUDSController extends Controller
                     try {
                         $Client->delete("https://api.uds.app/partner/v2/goods/".$item);
                         $result[] = "Удаленно = ".$item;
-                    } catch (GuzzleException $exception){
+                    } catch (BadResponseException){
                         $result[] = "Не удалось удалить = ".$item;
                         continue;
                     }
