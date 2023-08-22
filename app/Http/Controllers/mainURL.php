@@ -22,7 +22,7 @@ class mainURL extends Controller
 
     public function me_url_host(): string
     {
-        return 'https://uds/';
+        return 'https://smartuds.kz/';
     }
 
 }

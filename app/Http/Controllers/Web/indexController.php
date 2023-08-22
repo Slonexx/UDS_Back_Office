@@ -72,39 +72,39 @@ class indexController extends Controller
     {
         $baseURL = new mainURL();
 
-     /*   $contextKey = $request->contextKey;
+        $contextKey = $request->contextKey;
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
-        $isAdmin = $employee->permissions->admin->view;*/
+        $isAdmin = $employee->permissions->admin->view;
         $isAdmin = "ALL";
 
         if ($isAdmin == "NO"){
             return view( 'widgets.counterparty', [
-                //'accountId' => $accountId,
+                'accountId' => $accountId,
 
-                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+               // 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'admin' => "NO",
             ] );
         }
 
         return view( 'widgets.counterparty', [
-            //'accountId' => $accountId,
+            'accountId' => $accountId,
 
-            'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+            //'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
             'admin' => "ALL",
             ] );
     }
     public function product(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
-        //$contextKey = $request->contextKey;
-        //$vendorAPI = new VendorApiController();
-        //$employee = $vendorAPI->context($contextKey);
-        //$accountId = $employee->accountId;
-        //$isAdmin = $employee->permissions->admin->view;
-        $accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
-        $isAdmin = "ALL";
+        $contextKey = $request->contextKey;
+        $vendorAPI = new VendorApiController();
+        $employee = $vendorAPI->context($contextKey);
+        $accountId = $employee->accountId;
+        $isAdmin = $employee->permissions->admin->view;
+        //$accountId = "1dd5bd55-d141-11ec-0a80-055600047495";
+        //$isAdmin = "ALL";
 
         if ($isAdmin == "NO"){
             return view( 'widgets.counterparty', [
@@ -124,9 +124,9 @@ class indexController extends Controller
         try {
             $contextKey = $request->contextKey;
             try {
-               /* $vendorAPI = new VendorApiController();
+                $vendorAPI = new VendorApiController();
                 $employee = $vendorAPI->context($contextKey);
-                $accountId = $employee->accountId;*/
+                $accountId = $employee->accountId;
             } catch (BadResponseException) {
                 return view( 'widget.Error', [
                     'status' => false,
@@ -136,13 +136,13 @@ class indexController extends Controller
             }
 
             return view( ' widget.object', [
-               /* 'accountId' => $accountId,
+                'accountId' => $accountId,
                 'cashier_id' => $employee->id,
-                'cashier_name' => $employee->name,*/
+                'cashier_name' => $employee->name,
 
-                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+               /* 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
-                'cashier_name' => "Сергей",
+                'cashier_name' => "Сергей",*/
             ] );
 
         } catch (BadResponseException $e){
@@ -209,6 +209,8 @@ class indexController extends Controller
 
 
     function time(Request $request, $accountId) {
+
+        dd();
 
         set_time_limit(3000);
         $setting = new getSettingVendorController($accountId);

@@ -1,8 +1,8 @@
 <script>
 
     let accountId = "{{ $accountId }}"
-   // let url = "https://smartuds.kz/api/DeleteALLProductForUDSController/p330538/"+accountId
-    let url = "https://uds/api/DeleteALLProductForUDSController/p330538/"+accountId
+    let url = "https://smartuds.kz/api/DeleteALLProductForUDSController/p330538/"+accountId
+    //let url = "https://uds/api/DeleteALLProductForUDSController/p330538/"+accountId
 
 
 
