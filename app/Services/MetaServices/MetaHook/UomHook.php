@@ -6,11 +6,17 @@ use App\Components\MsClient;
 
 class UomHook
 {
-    public function getUom($nameUom,$apiKey)
+
+    private MsClient $msClient;
+
+    public function __construct($ms)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/uom";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
+        $this->msClient = $ms;
+    }
+
+    public function getUom($nameUom): array
+    {
+        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/uom");
         $foundedMeta = null;
         foreach($json->rows as $row){
             if($row->name == $nameUom){

@@ -6,98 +6,54 @@ use App\Components\MsClient;
 
 class AttributeHook
 {
-    public function getProductAttribute($nameAttribute,$apiKey)
+    private MsClient $msClient;
+
+    public function __construct($ms)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
-        }
-        return $foundedMeta;
+        $this->msClient = $ms;
     }
 
-    public function getOrderAttribute($nameAttribute, $apiKey)
+    private function getAttribute($entityType, $nameAttribute)
     {
-        // обработка ошибки);
-        $client = new MsClient($apiKey);
-        $json = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes');
+        $url = "https://online.moysklad.ru/api/remap/1.2/entity/{$entityType}/metadata/attributes";
+        $json = $this->msClient->get($url);
 
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
+        foreach ($json->rows as $row) {
+            if ($row->name == $nameAttribute) {
+                return $row->meta;
+            }
         }
 
-        return $foundedMeta;
+        return null;
     }
 
-    public function getDemandAttribute($nameAttribute, $apiKey)
+    public function getProductAttribute($nameAttribute)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
-        }
-        return $foundedMeta;
+        return $this->getAttribute('product', $nameAttribute);
     }
 
-    public function getPaymentInAttribute($nameAttribute, $apiKey)
+    public function getOrderAttribute($nameAttribute)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/paymentin/metadata/attributes";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
-        }
-        return $foundedMeta;
+        return $this->getAttribute('customerorder', $nameAttribute);
     }
 
-    public function getCashInAttribute($nameAttribute, $apiKey)
+    public function getDemandAttribute($nameAttribute)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/cashin/metadata/attributes";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
-        }
-        return $foundedMeta;
+        return $this->getAttribute('demand', $nameAttribute);
     }
 
-    public function getFactureOutAttribute($nameAttribute, $apiKey)
+    public function getPaymentInAttribute($nameAttribute)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/factureout/metadata/attributes";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
-        $foundedMeta = null;
-        foreach($json->rows as $row){
-            if($row->name == $nameAttribute){
-                $foundedMeta = $row->meta;
-                break;
-            } else continue;
-        }
-        return $foundedMeta;
+        return $this->getAttribute('paymentin', $nameAttribute);
     }
 
+    public function getCashInAttribute($nameAttribute)
+    {
+        return $this->getAttribute('cashin', $nameAttribute);
+    }
 
-
+    public function getFactureOutAttribute($nameAttribute)
+    {
+        return $this->getAttribute('factureout', $nameAttribute);
+    }
 }

@@ -6,11 +6,17 @@ use App\Components\MsClient;
 
 class CurrencyHook
 {
-    public function getKzCurrency($apiKey)
+
+    private MsClient $msClient;
+
+    public function __construct($ms)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
+        $this->msClient = $ms;
+    }
+
+    public function getKzCurrency(): array
+    {
+        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге");
         $foundedMeta = null;
         foreach($json->rows as $row){
             $foundedMeta = [
@@ -25,19 +31,18 @@ class CurrencyHook
             break;
         }
         if (is_null($foundedMeta)){
-            return $this->createCurrency($apiKey);
+            return $this->createCurrency();
         } else return $foundedMeta;
     }
 
-    public function createCurrency($apiKey)
+    public function createCurrency(): array
     {
         $uri = "https://online.moysklad.ru/api/remap/1.2/entity/currency";
-        $client = new MsClient($apiKey);
         $currency = [
             "system" => true,
             "isoCode" => "KZT",
         ];
-        $createdMeta = $client->post($uri,$currency)->meta;
+        $createdMeta =  $this->msClient->post($uri,$currency)->meta;
 
         return [
             "meta" => [

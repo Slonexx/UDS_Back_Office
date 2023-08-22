@@ -6,11 +6,15 @@ use App\Components\MsClient;
 
 class PriceTypeHook
 {
-    public function getPriceType($namePrice,$apiKey)
+    private MsClient $msClient;
+
+    public function __construct($ms)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
-        $client = new MsClient($apiKey);
-        $json = $client->get($uri);
+        $this->msClient = $ms;
+    }
+    public function getPriceType($namePrice): array
+    {
+        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype");
         $foundedMeta = null;
         $count = 0;
         foreach($json as $price){
@@ -22,7 +26,7 @@ class PriceTypeHook
         }
 
         if ($foundedMeta == null){
-            $meta = $this->createPriceType($namePrice,$apiKey)[$count]->meta;
+            $meta = $this->createPriceType($namePrice)[$count]->meta;
             return [
                 "meta" => $meta,
             ];
@@ -33,10 +37,9 @@ class PriceTypeHook
         }
     }
 
-    private function createPriceType($namePrice,$apiKey){
+    private function createPriceType($namePrice){
         $url = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
-        $client = new MsClient($apiKey);
-        $json = $client->get($url);
+        $json =  $this->msClient->get($url);
         $item = $json[0];
         $body = [
             0 => [
@@ -51,7 +54,7 @@ class PriceTypeHook
                 "name" => $namePrice,
             ],
         ];
-        return $client->post($url, $body);
+        return  $this->msClient->post($url, $body);
     }
 
 }

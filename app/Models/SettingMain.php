@@ -12,9 +12,6 @@ class SettingMain extends Model
         'TokenMoySklad',
         'companyId',
         'TokenUDS',
-        'ProductFolder',
-        'UpdateProduct',
-        'Store',
     ];
 
     use HasFactory;

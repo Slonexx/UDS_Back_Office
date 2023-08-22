@@ -9,11 +9,17 @@ use App\Http\Controllers\Web\GET\getController;
 use App\Http\Controllers\Web\POST\postAutomationController;
 use App\Http\Controllers\Web\POST\postController;
 use App\Http\Controllers\Web\sendOperations;
+use App\Http\Controllers\Web\Setting\agentController;
+use App\Http\Controllers\web\Setting\productController;
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\RewardController;
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\Web\indexController;
-use \App\Http\Controllers\Config\DeleteVendorApiController;
+use App\Http\Controllers\Web\indexController;
+use App\Http\Controllers\Config\DeleteVendorApiController;
+
+
+
+Route::get('time/{accountId}', [indexController::class, 'time']);
 
 
 Route::get('web/CheckSave/web/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
@@ -54,6 +60,14 @@ Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("in
 
 Route::get('/Setting/Main/{accountId}/{isAdmin}', [getController::class, 'mainSetting'])->name('indexSetting');
 Route::post('/setSetting/Main/{accountId}/{isAdmin}', [postController::class, 'postSettingIndex'])->name('setSettingIndex');
+
+
+Route::get('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'indexProduct'])->name('productIndex');
+Route::post('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'postProduct'])->name('setProductIndex');
+
+
+Route::get('/Setting/createAgent/{accountId}/{isAdmin}', [agentController::class, 'getAgent'])->name('agent');
+Route::post('/Setting/createAgent/{accountId}/{isAdmin}', [agentController::class, 'postAgent'])->name('setAgent');
 
 
 Route::get('/Setting/Document/{accountId}/{isAdmin}', [getController::class, 'indexDocument'])->name('indexDocument');

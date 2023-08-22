@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
+use App\Http\Controllers\BD\newProductSettingBD;
 use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\cfg;
@@ -11,6 +13,9 @@ use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
+use App\Models\newProductModel;
+use App\Services\newProductService\createProductForMS;
+use App\Services\newProductService\createProductForUDS;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -119,9 +124,9 @@ class indexController extends Controller
         try {
             $contextKey = $request->contextKey;
             try {
-                $vendorAPI = new VendorApiController();
+               /* $vendorAPI = new VendorApiController();
                 $employee = $vendorAPI->context($contextKey);
-                $accountId = $employee->accountId;
+                $accountId = $employee->accountId;*/
             } catch (BadResponseException) {
                 return view( 'widget.Error', [
                     'status' => false,
@@ -131,13 +136,13 @@ class indexController extends Controller
             }
 
             return view( ' widget.object', [
-                'accountId' => $accountId,
+               /* 'accountId' => $accountId,
                 'cashier_id' => $employee->id,
-                'cashier_name' => $employee->name,
+                'cashier_name' => $employee->name,*/
 
-               /* 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
-                'cashier_name' => "Сергей",*/
+                'cashier_name' => "Сергей",
             ] );
 
         } catch (BadResponseException $e){
@@ -193,5 +198,59 @@ class indexController extends Controller
 
         }
     }
+
+
+
+
+
+
+
+
+
+
+    function time(Request $request, $accountId) {
+
+        set_time_limit(3000);
+        $setting = new getSettingVendorController($accountId);
+        $ms = new MsClient($setting->TokenMoySklad);
+        $counterparty = $ms->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty')->rows;
+
+        foreach ($counterparty as $item){
+            try {
+                $ms->delete('https://online.moysklad.ru/api/remap/1.2/entity/counterparty/'.$item->id,null);
+            } catch (BadResponseException) {
+                continue;
+            }
+        }
+
+        dd('yes');
+
+        $item = new newProductSettingBD($accountId);
+        $mainSetting = new getMainSettingBD($item->accountId);
+
+            $ClientCheckMC = new MsClient($mainSetting->tokenMs);
+            $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
+
+        $data = [
+            'accountId' => $item->accountId,
+            'salesPrices' => $item->salesPrices,
+            'promotionalPrice' => $item->promotionalPrice,
+            'Store' => $item->Store,
+            'StoreRecord' => $item->StoreRecord,
+            'productHidden' => $item->productHidden,
+            'countRound' => $item->countRound,
+        ];
+        if ($data['countRound'] < 10) {
+            /*$record = newProductModel::where('accountId', $item->accountId)->first();
+            $record->countRound = $item->countRound + 1;
+            $record->save();*/
+
+            $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
+            $create->initialization();
+        }
+
+
+    }
+
 
 }

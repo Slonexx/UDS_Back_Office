@@ -72,15 +72,12 @@ class ProductCreateMsService
 
     private function notAddedInMs($apiKeyMs,$apiKeyUds,$companyId, $parentFolder, $accountId)
     {
-        //$productsMs = $this->getMsCheck($apiKeyMs);
         $hrefAttrib = $this->attributeHookService->getProductAttribute("id (UDS)",$apiKeyMs)->href;
         $offset = 0;
         while ($this->haveRowsInResponse($url,$offset,$companyId,$apiKeyUds)){
             $productsUds = $this->getUds($url,$companyId,$apiKeyUds);
             foreach ($productsUds->rows as $productUds){
                 $currId = "".$productUds->id;
-                //echo $productUds->name."<br>";
-                //if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                 if ($productUds->data->type == "ITEM"){
                     if (!$this->isProductExistsMs($currId,$hrefAttrib,$apiKeyMs)){
                        $createdProduct = $this->createProductMs($apiKeyMs,$productUds,$accountId,$parentFolder);
@@ -116,7 +113,6 @@ class ProductCreateMsService
                         $accountId
                     );
                 }
-                // }
             }
             $offset += 50;
         }

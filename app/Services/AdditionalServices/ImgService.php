@@ -3,66 +3,62 @@
 namespace App\Services\AdditionalServices;
 
 use App\Components\MsClient;
+use App\Http\Controllers\Config\getSettingVendorController;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
+use Throwable;
 
 class ImgService
 {
+    private const TIMEOUT = 20; // Максимальное время ожидания ответа в секундах
 
-    public function setImgUDS($urlImages,$apiKeyMs,$companyId,$password): array
+    public function setImgUDS($urlImages, $accountId): array
     {
-        //$urlGood = "https://api.uds.app/partner/v2/goods/".$item_good->id;
-
+        $Setting = new getSettingVendorController($accountId);
+        $apiKeyMs = $Setting->TokenMoySklad;
+        $companyId = $Setting->companyId;
+        $password = $Setting->TokenUDS;
         $imgIds = [];
 
         $clientMs = new MsClient($apiKeyMs);
         $images = $clientMs->get($urlImages);
 
-        foreach ($images->rows as $image){
+        foreach ($images->rows as $image) {
             try {
-                if(property_exists($image, 'meta')){
+                if (property_exists($image, 'meta')) {
 
                     $imgHref = $image->meta->downloadHref;
                     $imageType = 'image/png';
 
-                    $response_Image_UDS = $this->setUrlToUds($imageType,$companyId,$password);
-                    $dataImgUds = json_decode($response_Image_UDS['result']);
+                    $responseImageUDS = $this->setUrlToUds($imageType, $companyId, $password);
+                    $dataImgUds = json_decode($responseImageUDS['result']);
 
-                    $url_to_UDS = $dataImgUds->url;
-                    $this->setImageToUds($imageType,$url_to_UDS,$imgHref,$apiKeyMs);
-                    $imgIds [] = $dataImgUds->imageId;
+                    $urlToUDS = $dataImgUds->url;
+                    $this->setImageToUds($imageType, $urlToUDS, $imgHref, $apiKeyMs);
+                    $imgIds[] = $dataImgUds->imageId;
                 }
-            } catch (\Throwable $e){
-                Storage::disk('local')->put('Error_to_S3_Image.txt',$url_to_UDS."                                                    \r\n". $e);
-            }
+            } catch (BadResponseException ) { }
         }
-        /*dd($imgIds);*/
         return $imgIds;
     }
 
-    public function setImgMS($product,$urls,$apiKeyMs)
+    public function setImgMS($product, $urls, $apiKeyMs): void
     {
-        //dd($product);
         $urlProduct = $product->meta->href;
         $count = 1;
         $body = [];
 
-        foreach ($urls as $url){
+        foreach ($urls as $url) {
             $content = $this->getImgContent($url);
-            if ($content['type'] == 'image/png'){
+            if (in_array($content['type'], ['image/png', 'image/jpeg'])) {
+                $fileExtension = pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
                 $body["images"][] = [
-                    "filename" => $count.".png",
-                    "content" => $content['content'],
-                ];
-            }
-            elseif ($content['type'] == 'image/jpeg'){
-                $body["images"][] = [
-                    "filename" => $count.".jpeg",
+                    "filename" => $count . "." . $fileExtension,
                     "content" => $content['content'],
                 ];
             }
@@ -70,68 +66,57 @@ class ImgService
         }
 
         $client = new MsClient($apiKeyMs);
-        $client->put($urlProduct,$body);
+        $client->put($urlProduct, $body);
     }
 
-    #[ArrayShape(["type" => "string", "content" => "string"])] private function getImgContent($url): array
+    #[ArrayShape(["type" => "string", "content" => "string"])]
+    private function getImgContent($url): array
     {
-        //$url = "https://thumbor.uds.app/IFr7jeq2K4arj2Xf5GKk_K2QLeA=/game-prod/549755819292/GOODS/c8df7baf-3abe-49ff-8d58-f378a8d9d7b3";
-        //$url = "https://www.codeproject.com/KB/GDI-plus/ImageProcessing2/img.jpg";
         $client = new Client();
-        $res = $client->get($url,["stream" => true]);
+        $res = $client->get($url, ["stream" => true, "timeout" => self::TIMEOUT]);
         $content_Type = $res->getHeaderLine('Content-Type');
-        $b64image =base64_encode($res->getBody()->getContents());
+        $b64image = base64_encode($res->getBody()->getContents());
         return [
             "type" => $content_Type,
             "content" => $b64image,
         ];
     }
 
-    /**
-     * @throws GuzzleException
-     */
-    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs)
+    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): void
     {
         $clientMs = new Client([
             'headers' => [
                 'Authorization' => $apiKeyMs,
-                'Content-Type' => 'application/json',
+                'Content-Type' => $imgType,
             ]
         ]);
 
-        $res = $clientMs->get($imageHref);
+        $res = $clientMs->get($imageHref, ["timeout" => self::TIMEOUT]);
         $image = $res->getBody()->getContents();
 
         $opts = array(
             'http' => array(
                 'method' => 'PUT',
                 'header' =>
-                    "Content-Type: ".$imgType."\r\n" ,
+                    "Content-Type: " . $imgType . "\r\n",
                 'content' => $image,
                 'ignore_errors' => true
             )
         );
 
         $context = stream_context_create($opts);
-        $result = file_get_contents($url,false, $context);
-
-
-        /*$client = new Client();
-        $res = $client->put($url,[
-            'headers'=> ['Content-Type' => "image/png"],
-            'form_params' => [ $image ]
-        ]);*/
+        $result = file_get_contents($url, false, $context);
     }
 
-    private function setUrlToUds($img_type,$companyId,$apiKey): array
+    private function setUrlToUds($imgType, $companyId, $apiKey): array
     {
         $url = "https://api.uds.app/partner/v2/image-upload-url";
 
         $date = new DateTime();
-        $uuid_v4 = Str::uuid(); //generate universally unique identifier version 4 (RFC 4122)
+        $uuid_v4 = Str::uuid(); //генерация уникального идентификатора версии 4 (RFC 4122)
         $itemData = json_encode(
             array(
-                'contentType' => $img_type,
+                'contentType' => $imgType,
             )
         );
 
@@ -141,30 +126,30 @@ class ImgService
                 'header' => "Accept: application/json\r\n" .
                     "Accept-Charset: utf-8\r\n" .
                     "Content-Type: application/json\r\n" .
-                    "Authorization: Basic ". base64_encode("$companyId:$apiKey")."\r\n" .
-                    "X-Origin-Request-Id: ".$uuid_v4."\r\n" .
-                    "X-Timestamp: ".$date->format(DateTimeInterface::ATOM),
+                    "Authorization: Basic " . base64_encode("$companyId:$apiKey") . "\r\n" .
+                    "X-Origin-Request-Id: " . $uuid_v4 . "\r\n" .
+                    "X-Timestamp: " . $date->format(DateTimeInterface::ATOM),
                 'content' => $itemData,
-                'ignore_errors' => true
+                'ignore_errors' => true,
+                'timeout' => self::TIMEOUT
             )
         );
 
         $context = stream_context_create($opts);
         $result = file_get_contents($url, false, $context);
 
-        //dd($context,$result);
-
-        preg_match('/([0-9])\d+/',$http_response_header[0],$matches);
+        preg_match('/([0-9])\d+/', $http_response_header[0], $matches);
         $response = intval($matches[0]);
 
         if ($response == 200) {
-            $message = "Creat new URL S3. Ready!";
-        } else { $message = "ERROR: $response";}
+            $message = "Создан новый URL S3. Готово!";
+        } else {
+            $message = "ОШИБКА: $response";
+        }
 
         $out["code"] = $response;
         $out["result"] = $result;
         $out["message"] = $message;
         return $out;
     }
-
 }

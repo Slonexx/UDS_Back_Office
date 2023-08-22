@@ -20,16 +20,10 @@ class getController extends Controller
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
-        $Setting = new getSettingVendorController($accountId);
         $SettingBD = new getMainSettingBD($accountId);
 
-        $TokenMoySklad = $Setting->TokenMoySklad;
         $companyId = $SettingBD->companyId;
         $TokenUDS = $SettingBD->TokenUDS;
-        $ProductFolder = $SettingBD->ProductFolder;
-        $Store = $SettingBD->Store;
-        $HiddenProduct = $SettingBD->hiddenProduct;
-        $arrFolders = [];
 
         if (isset($request->message)) {
             $message = [
@@ -43,47 +37,9 @@ class getController extends Controller
             'alert' => "",
         ];
 
-
-        if ($ProductFolder != null) {
-            if ($ProductFolder == "1") {
-                $Folders = ProductFoldersByAccountID::query()->where('accountId', $Setting->accountId)->get();
-                foreach ($Folders as $index => $item) {
-                    $arrFolders[$index] = [
-                        'id' => $item->getModel()->getAttributes()['FolderID'],
-                        'Name' => $item->getModel()->getAttributes()['FolderName']
-                    ];
-                }
-            } else {
-                $ProductFolder = "0";
-            }
-        } else $ProductFolder = "0";
-        if ($Store == null) $Store = "0";
-
-        $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
-            $pool->as('body_store')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/store"),
-            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
-        ]);
-
-        $body_productFolder[] = json_decode(json_encode(['id' => '0', 'name' => 'Корневая папка']));
-        if (array_key_exists(0, $responses['body_productFolder']->object()->rows)) {
-            foreach ($responses['body_productFolder']->object()->rows as $item) {
-                $body_productFolder[] = $item;
-            }
-        }
-
-        if ($HiddenProduct == null) $HiddenProduct = 1;
-
         return view('web.Setting.index', [
-            "Body_store" => $responses['body_store']->object()->rows,
-            "Body_productFolder" => $body_productFolder,
-            "Folders" => $arrFolders,
-
             "companyId" => $companyId,
             "TokenUDS" => $TokenUDS,
-
-            "ProductFolder" => $ProductFolder,
-            "Store" => $Store,
-            "hiddenProduct" => $HiddenProduct,
 
             "accountId" => $accountId,
             "message" => $message,

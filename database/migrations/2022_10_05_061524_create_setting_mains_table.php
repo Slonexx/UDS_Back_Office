@@ -18,9 +18,6 @@ class CreateSettingMainsTable extends Migration
             $table->string('TokenMoySklad');
             $table->string('companyId');
             $table->string('TokenUDS');
-            $table->string('ProductFolder');
-            $table->string('UpdateProduct');
-            $table->string('Store');
             $table->timestamps();
         });
     }

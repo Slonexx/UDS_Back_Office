@@ -24,11 +24,13 @@
                     <button id="btn_1" class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
                     <div class="dropdown-container">
                         <a class="mt-1" id="link_2" href="/Setting/Main/{{$accountId}}/{{$isAdmin}}"> Основная </a>
+                        <a class="mt-1" id="link_7" href="/Setting/createProduct/{{$accountId}}/{{$isAdmin}}"> Товары </a>
+                        <a class="mt-1" id="link_8" href="/Setting/createAgent/{{$accountId}}/{{$isAdmin}}"> Контрагент </a>
+
                         <a class="mt-1" id="link_3" href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
                         <a class="mt-1" id="link_4" href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>
                         <a class="mt-1" id="link_5" href="/Setting/Employees/{{$accountId}}/{{$isAdmin}}"> Сотрудники </a>
                         <a class="mt-1" id="link_6" href="/Setting/Automation/{{$accountId}}/{{$isAdmin}}"> Автоматизация </a>
-                        {{--<a class="mt-1" id="link_6" href="/Setting/Add/{{$accountId}}/{{$isAdmin}}"> Дополнительные настройки </a>--}}
                     </div>
                 </div>
 
@@ -81,7 +83,7 @@
     let item = '@yield('item')'
 
     window.document.getElementById(item).classList.add('active_sprint')
-    if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 6){
+    if (item.replace(/[^+\d]/g, '') > 1 && item.replace(/[^+\d]/g, '') <= 8){
         this_click(window.document.getElementById('btn_1'))
     }
 
