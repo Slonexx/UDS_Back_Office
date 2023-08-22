@@ -55,9 +55,7 @@ class postController extends Controller
 
     private function Setting_Main_Create_Or_Update( string $accountId, string $TokenMS, string $companyId, string $TokenUDS): void
     {
-        $Create = new create();
-        $update = new update();
-        $Setting = SettingMain::query()->where('accountId', $accountId)->get()->all();
+        $Setting = SettingMain::query()->where('accountId', $accountId);
 
         if ($Setting == []) {
             SettingMain::create([
