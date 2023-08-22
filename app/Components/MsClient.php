@@ -65,10 +65,10 @@ class MsClient{
                 }
             });
 
-            //dd($responses);
+
 
         } catch (RequestException $e){
-            dd($e);
+
         }
 
     }*/

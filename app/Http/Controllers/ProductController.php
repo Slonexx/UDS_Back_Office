@@ -84,8 +84,6 @@ class ProductController extends Controller
             "accountId" => "required|string",
         ]);
 
-        // dd(100/10.0);
-
         return response(
             $this->productUpdateMsService->updateProductsMs($data)
         );

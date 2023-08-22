@@ -245,7 +245,7 @@ class ProductUpdateUdsService
                             if ($nameOumUds == "MILLILITRE" || $nameOumUds == "GRAM"){
                                 $body["data"]["increment"] *= 1000.0;
                                 if ($body["data"]["increment"] >= 10000000){
-                                    //dd($body["data"]["increment"]);
+
                                     $bd = new BDController();
                                     $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                                     return null;
@@ -253,7 +253,7 @@ class ProductUpdateUdsService
                             } elseif ($nameOumUds == "CENTIMETRE"){
                                 $body["data"]["increment"] *= 100.0;
                                 if ($body["data"]["increment"] >= 1000000){
-                                    //dd($body["data"]["increment"]);
+
                                     $bd = new BDController();
                                     $bd->errorProductLog($accountId,$error_log." Шаг дробного значения (UDS) введен некорректно");
                                     return null;
@@ -308,7 +308,7 @@ class ProductUpdateUdsService
                             || !array_key_exists("minQuantity", $body["data"])
                         )
                     ){
-                        //dd(($body));
+
                         $bd = new BDController();
                         $bd->errorProductLog($accountId,$error_log." У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
                         return null;
@@ -325,7 +325,7 @@ class ProductUpdateUdsService
                     if ($isFractionProduct){
                         //if ($body["name"] == "Мешок с негром"){
                         $dPrice = explode('.',"".$body["data"]["price"]);
-                        //dd($dPrice);
+
                         if (count($dPrice) > 1 && strlen($dPrice[1]) > 2){
                             $bd = new BDController();
                             $bd->errorProductLog($accountId,$error_log." У товара цена имеет 3 числа после запятой (дробная часть)");
@@ -407,7 +407,7 @@ class ProductUpdateUdsService
         $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idMs;
         $client = new MsClient($apiKeyMs);
 
-        //dd($createdProduct);
+
 
         $body = [
             "attributes" => [

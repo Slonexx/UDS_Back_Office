@@ -50,12 +50,10 @@ class CreateMsCommand extends Command
     public function handle()
     {
         $allSettings = $this->settingsService->getSettings();
-        //dd($allSettings);
         $accountIds = [];
         foreach ($allSettings as $setting){
             $accountIds[] = $setting->accountId;
         }
-        //dd($accountIds);
         if (count($accountIds) == 0) return;
 
         $client = new Client();
@@ -74,7 +72,6 @@ class CreateMsCommand extends Command
                 } catch (\Throwable $e) { continue; }
                 if ($settings->TokenUDS == null || $settings->companyId == null || $settings->UpdateProduct == "0" ){ continue; }
                 if ( $settings->ProductFolder == null) $folder_id = '0'; else $folder_id = $settings->ProductFolder;
-                //dd($allSettings);
                 try {
                     yield $client->postAsync($url,[
                         'headers' => ['Accept' => 'application/json'],
@@ -96,16 +93,16 @@ class CreateMsCommand extends Command
             'concurrency' => $this->checkSettings($accountIds),
             'fulfilled' => function (Response $response) {
                 if ($response->getStatusCode() == 200) {
-                    //dd($response);
+
                 } else {
-                    //dd($response);
+
                 }
             },
             'rejected' => function ($reason) {
-                //dd($reason);
+
             }
         ]);
-        //dd($eachPromise);
+
         $eachPromise->promise()->wait();
     }
 }

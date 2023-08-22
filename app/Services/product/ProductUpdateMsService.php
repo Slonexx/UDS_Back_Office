@@ -49,7 +49,7 @@ class ProductUpdateMsService
         $apiKeyUds = $data['apiKeyUds'];
         $accountId = $data['accountId'];
 
-        //dd($data);
+
 
         set_time_limit(3600);
 

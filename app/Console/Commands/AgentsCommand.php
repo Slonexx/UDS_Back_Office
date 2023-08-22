@@ -68,7 +68,7 @@ class AgentsCommand extends Command
 
                     // Продолжение выполнения команды
                     $this->info('successfully.');
-                    /* dd( app(ProductCreateUdsService::class)->insertToUds($data));*/
+
                 }
             } finally {
                 $mutex->release(); // Освобождаем мьютекс

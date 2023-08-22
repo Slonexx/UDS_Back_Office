@@ -101,8 +101,6 @@ class NewCronCommandProductCreate extends Command
 
             }
 
-            dd('no');
-
         } else {
             // Задача уже выполняется, пропускаем запуск
             $this->info('Previous task is still running. Skipping the current run.');

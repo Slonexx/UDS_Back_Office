@@ -718,7 +718,7 @@ class ProductCreateUdsService
 
                 if ($isFractionProduct && (
                         !array_key_exists("increment", $body["data"]) || !array_key_exists("minQuantity", $body["data"]))) {
-                    //dd(($body));
+
                     $bd = new BDController();
                     $bd->errorProductLog($accountId, $error_log . " У дробного товара не введено Минимальный размер заказа или Шаг дробного значения");
                     return null;
@@ -783,12 +783,12 @@ class ProductCreateUdsService
         ];
         if (intval($nodeId) > 0 || $nodeId != "") {
             $body["nodeId"] = intval($nodeId);
-            // dd($body);
+
         }
         try {
             return $client->post($url, $body);
         } catch (ClientException $e) {
-            //dd($body, $e->getMessage());
+
             $bd = new BDController();
             $bd->errorProductLog($accountId, $e->getMessage());
             return null;

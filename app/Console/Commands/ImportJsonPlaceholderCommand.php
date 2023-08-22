@@ -23,12 +23,10 @@ class ImportJsonPlaceholderCommand extends Command
         $service = new ImportDateHttpClient();
         $response = $service->client->request('GET', '');
         $date = json_decode($response->getBody());
-       // dd($date);
         $rows = $date->rows;
-        dd($rows);
 
         /*foreach ($date as $rows){
-            dd($item);
+
         }*/
 
     }
