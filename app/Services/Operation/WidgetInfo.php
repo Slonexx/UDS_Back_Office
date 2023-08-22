@@ -178,7 +178,7 @@ class WidgetInfo
             $availablePoints = $this->AgentMCID($body_agentId);
             $phone = $this->AgentMCPhone($body_agentId);
             $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
-            $operationsCancellation = (int) $this->setting->operationsCancellation == 1 ? 0 : 0;
+            $operationsCancellation = (int) $this->setting->operationsCancellation?? 0;
 
             $message = [
                 'total' => $info_total_and_SkipLoyaltyTotal['total'],
