@@ -59,7 +59,11 @@ class postController extends Controller
         $model = new SettingMain();
         $existingRecords = SettingMain::where('accountId', $accountId)->get();
 
-        if (!$existingRecords->isEmpty()) { foreach ($existingRecords as $record) { $record->delete(); } }
+        if (!$existingRecords->isEmpty()) {
+            foreach ($existingRecords as $record) {
+                $record->delete();
+            }
+        }
 
         $model->accountId = $accountId;
         $model->TokenMoySklad = $TokenMS;

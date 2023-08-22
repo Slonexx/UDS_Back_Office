@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SettingMain extends Model
 {
+    protected $primaryKey = 'accountId';
+
     protected $fillable = [
         'accountId',
         'TokenMoySklad',
