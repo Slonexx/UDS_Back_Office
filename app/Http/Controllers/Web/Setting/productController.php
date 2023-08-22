@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\web\Setting;
+namespace App\Http\Controllers\Web\Setting;
 
 use App\Components\MsClient;
 use App\Http\Controllers\BD\getMainSettingBD;

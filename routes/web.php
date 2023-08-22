@@ -61,8 +61,8 @@ Route::get('/Setting/Main/{accountId}/{isAdmin}', [getController::class, 'mainSe
 Route::post('/setSetting/Main/{accountId}/{isAdmin}', [postController::class, 'postSettingIndex'])->name('setSettingIndex');
 
 
-Route::get('/Setting/createProduct/{accountId}/{isAdmin}', [App\Http\Controllers\web\Setting\productController::class, 'indexProduct'])->name('productIndex');
-Route::post('/Setting/createProduct/{accountId}/{isAdmin}', [App\Http\Controllers\web\Setting\productController::class, 'postProduct'])->name('setProductIndex');
+Route::get('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'indexProduct'])->name('productIndex');
+Route::post('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'postProduct'])->name('setProductIndex');
 
 
 Route::get('/Setting/createAgent/{accountId}/{isAdmin}', [agentController::class, 'getAgent'])->name('agent');
