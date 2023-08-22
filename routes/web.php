@@ -10,7 +10,6 @@ use App\Http\Controllers\Web\POST\postAutomationController;
 use App\Http\Controllers\Web\POST\postController;
 use App\Http\Controllers\Web\sendOperations;
 use App\Http\Controllers\Web\Setting\agentController;
-use App\Http\Controllers\web\Setting\productController;
 use App\Http\Controllers\Web\SettingController;
 use App\Http\Controllers\Web\RewardController;
 use Illuminate\Support\Facades\Route;
