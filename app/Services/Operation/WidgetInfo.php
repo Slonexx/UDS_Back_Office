@@ -68,7 +68,8 @@ class WidgetInfo
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
                 try {
-                    $goods_orders = $this->goods_orders($externalCode);
+                    $body = $this->udsClient->get("https://api.uds.app/partner/v2/goods-orders/" . $externalCode);
+                    $goods_orders = $this->goods_orders($body, $externalCode);
                     $StatusCode = 'orders';
                     $message = $goods_orders['message'];
                 } catch (BadResponseException) {
@@ -108,10 +109,9 @@ class WidgetInfo
         return $phone;
     }
 
-    private function goods_orders(mixed $externalCode): array
+    private function goods_orders(mixed $body, mixed $externalCode): array
     {
-        $UDSURL = "https://api.uds.app/partner/v2/goods-orders/";
-        $body =  $this->udsClient->get($UDSURL . $externalCode);
+
         $StatusCode = 200;
         $state = $body->state;
         $icon = "";
@@ -135,33 +135,31 @@ class WidgetInfo
 
     public function newPostOperations(mixed $externalCode, mixed $agentId, mixed $BodyMC): array
     {
-        $url = 'https://api.uds.app/partner/v2/operations/' . $externalCode;
         try {
-            $body = $this->udsClient->get($url);
-            if ($body->points < 0) $points = $body->points * -1; else {
-                foreach ($BodyMC->attributes as $item){
-                    if ($item->name == "Количество списанных баллов (UDS)") {
-                        $points = $item->value;
-                    }
+            $body = $this->udsClient->get('https://api.uds.app/partner/v2/operations/' . $externalCode);
+        } catch (BadResponseException) {
+            $status = false;
+            $data = null;
+        }
+
+        if ($body->points < 0) $points = $body->points * -1; else {
+            foreach ($BodyMC->attributes as $item){
+                if ($item->name == "Количество списанных баллов (UDS)") {
+                    $points = $item->value;
                 }
             }
+        }
 
-            $status = true;
-            $data = [
+        return [
+            'status' => true,
+            'data' => [
                 'id' => $body->id,
                 'BonusPoint' => $this->Calc($body, $agentId),
                 'points' => $points,
                 'state' => "COMPLETED",
                 'icon' => '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info' => 'Operations',
-            ];
-        } catch (BadResponseException) {
-            $status = false;
-            $data = null;
-        }
-        return [
-            'status' => $status,
-            'data' => $data,
+            ],
         ];
     }
 
