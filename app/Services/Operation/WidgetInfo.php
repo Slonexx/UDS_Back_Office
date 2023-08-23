@@ -144,7 +144,10 @@ class WidgetInfo
             ];
         }
 
-        if ($body->points < 0) $points = $body->points * -1; else {
+        $points = 0;
+        if ($body->points < 0)
+            $points = $body->points * -1;
+        else {
             foreach ($BodyMC->attributes as $item){
                 if ($item->name == "Количество списанных баллов (UDS)") {
                     $points = $item->value;
