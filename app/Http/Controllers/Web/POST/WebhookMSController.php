@@ -455,7 +455,7 @@ class WebhookMSController extends Controller
         $SkipLoyaltyTotal = 0;
         $BodyPositions = $this->msClient->get($ObjectBODY->positions->meta->href)->rows;
 
-        foreach ($BodyPositions as $item) {
+      /*  foreach ($BodyPositions as $item) {
             $url_item = $item->assortment->meta->href;
             $body =  $this->msClient->get($url_item);
 
@@ -486,10 +486,10 @@ class WebhookMSController extends Controller
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
 
-        }
+        }*/
 
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
-      /*  foreach ($BodyPositions as $item){
+        foreach ($BodyPositions as $item){
             $url_item = $item->assortment->meta->href;
             $body = $this->msClient->get($url_item);
             $BonusProgramm = false;
@@ -506,7 +506,7 @@ class WebhookMSController extends Controller
                 $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
-        }*/
+        }
 
         if ($SkipLoyaltyTotal <= 0 ) $SkipLoyaltyTotal = null;
 
