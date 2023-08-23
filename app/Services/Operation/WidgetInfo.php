@@ -138,8 +138,10 @@ class WidgetInfo
         try {
             $body = $this->udsClient->get('https://api.uds.app/partner/v2/operations/' . $externalCode);
         } catch (BadResponseException) {
-            $status = false;
-            $data = null;
+            return [
+                'status' => false,
+                'data' => null,
+            ];
         }
 
         if ($body->points < 0) $points = $body->points * -1; else {
