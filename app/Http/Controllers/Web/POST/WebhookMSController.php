@@ -6,6 +6,7 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\getData\getSetting;
 use App\Models\Automation_new_update_MODEL;
 use App\Services\MyWarehouse\Сounterparty\getAgentByHrefService\getAgentByHrefService;
 use GuzzleHttp\Exception\BadResponseException;
@@ -16,6 +17,8 @@ class WebhookMSController extends Controller
 {
     private getAgentByHrefService $getAgentByHrefService;
     private getSettingVendorController $Setting;
+
+    private mixed $setting;
     private MsClient $msClient;
     private UdsClient $udsClient;
 
@@ -51,7 +54,6 @@ class WebhookMSController extends Controller
     }
     public function customerorder(Request $request): JsonResponse
     {
-        //if (property_exists($request['events'], 'updatedFields')){
         if (isset($request['events'][0]['updatedFields'])){
             if (!in_array('state', $request['events'][0]['updatedFields'])) {
                 return response()->json([
@@ -75,6 +77,7 @@ class WebhookMSController extends Controller
         }
 
         $this->Setting = new getSettingVendorController($request['events'][0]['accountId']);
+        $this->setting = (new getSetting())->getSendSettingOperations($this->Setting->accountId);
         $this->msClient = new MsClient($this->Setting->TokenMoySklad);
         $this->udsClient = new UdsClient($this->Setting->companyId, $this->Setting->TokenUDS);
 
@@ -179,8 +182,7 @@ class WebhookMSController extends Controller
         $setAttributes = $this->Attributes($postUDS, $meta['type']);
         $this->msClient->put($meta['href'], [ 'externalCode'=>(string) $postUDS->id, 'attributes' => $setAttributes, ]);
 
-        //АВТОМАТИЗАЦИЯ
-        //dd($BDFFirst);
+
         if ($BDFFirst['documentAutomation'] == '1' or $BDFFirst['documentAutomation'] == 1){
             $this->createPaymentDocument($BDFFirst['add_automationPaymentDocument'],$ObjectBODY);
         } else
@@ -452,11 +454,46 @@ class WebhookMSController extends Controller
         $sum = $ObjectBODY->sum / 100;
         $SkipLoyaltyTotal = 0;
         $BodyPositions = $this->msClient->get($ObjectBODY->positions->meta->href)->rows;
+
+        foreach ($BodyPositions as $item) {
+            $url_item = $item->assortment->meta->href;
+            $body =  $this->msClient->get($url_item);
+
+            $BonusProgramm = false;
+            if (property_exists($body, 'attributes')) {
+                foreach ($body->attributes as $body_item) {
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) {
+                        $BonusProgramm = $body_item->value;
+                    }
+                    if ('Процент начисления (UDS)' == $body_item->name) {
+                        $minPrice = 0;
+                        if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
+                        if ($this->setting->customOperation == 1) {
+                            $BonusProgramm = $body_item->value;
+                        } else {
+                            if ($body_item->value < 100) {
+                                $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
+                                $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
+                            } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
+                        }
+
+                    }
+                }
+            }
+
+            if ($BonusProgramm) {
+                $price = ($item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100))) / 100;
+                $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
+            }
+
+        }
+
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
-        foreach ($BodyPositions as $item){
+      /*  foreach ($BodyPositions as $item){
             $url_item = $item->assortment->meta->href;
             $body = $this->msClient->get($url_item);
             $BonusProgramm = false;
+
             if (property_exists($body, 'attributes')){
                 foreach ($body->attributes as $body_item){
                     if ('Не применять бонусную программу (UDS)' == $body_item->name){
@@ -469,7 +506,7 @@ class WebhookMSController extends Controller
                 $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
-        }
+        }*/
 
         if ($SkipLoyaltyTotal <= 0 ) $SkipLoyaltyTotal = null;
 
