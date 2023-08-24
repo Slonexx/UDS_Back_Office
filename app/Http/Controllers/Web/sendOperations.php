@@ -56,14 +56,25 @@ class sendOperations extends Controller
     {
 
         try {
-            sendOperationsModel::create([
-                'accountId' => $accountId,
-                'operationsAccrue' => $request->operationsAccrue ?? 0 ,
-                'operationsCancellation' => $request->operationsCancellation ?? 0 ,
-                'operationsDocument' => $request->operationsDocument ?? 0 ,
-                'operationsPaymentDocument' => $request->PaymentDocument ?? 0 ,
-                'customOperation' => $request->customOperation ?? 0 ,
-            ]);
+
+            $model = new sendOperationsModel();
+            $existingRecords = sendOperationsModel::where('accountId', $accountId)->get();
+
+            if (!$existingRecords->isEmpty()) {
+                foreach ($existingRecords as $record) {
+                    $record->delete();
+                }
+            }
+
+            $model->accountId = $accountId;
+            $model->operationsAccrue = $request->operationsAccrue ?? 0 ;
+            $model->operationsCancellation = $request->operationsCancellation ?? 0 ;
+            $model->operationsDocument = $request->operationsDocument ?? 0 ;
+            $model->operationsPaymentDocument = $request->PaymentDocument ?? 0 ;
+            $model->customOperation = $request->customOperation ?? 0 ;
+
+            $model->save();
+
             $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
             $message["message"] = "Настройки сохранились!";
 

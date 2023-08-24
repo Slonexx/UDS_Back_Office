@@ -7,6 +7,7 @@ use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
+use App\Http\Controllers\Web\RewardController;
 use App\Models\Automation_new_update_MODEL;
 use App\Services\MyWarehouse\Сounterparty\getAgentByHrefService\getAgentByHrefService;
 use GuzzleHttp\Exception\BadResponseException;
@@ -178,6 +179,10 @@ class WebhookMSController extends Controller
         $postBODY['receipt'] = $this->BodyReceiptUDS($ObjectBODY);
 
         $postUDS = $this->udsClient->post('https://api.uds.app/partner/v2/operations', $postBODY);
+        if ($this->setting->customOperation == 1) {
+            (new RewardController())->Accrue($this->setting->accountId, $this->pointsAccrue($ObjectBODY), $postUDS->customer->id);
+        }
+
 
         $setAttributes = $this->Attributes($postUDS, $meta['type']);
         $this->msClient->put($meta['href'], [ 'externalCode'=>(string) $postUDS->id, 'attributes' => $setAttributes, ]);
@@ -455,7 +460,7 @@ class WebhookMSController extends Controller
         $SkipLoyaltyTotal = 0;
         $BodyPositions = $this->msClient->get($ObjectBODY->positions->meta->href)->rows;
 
-      /*  foreach ($BodyPositions as $item) {
+        foreach ($BodyPositions as $item) {
             $url_item = $item->assortment->meta->href;
             $body =  $this->msClient->get($url_item);
 
@@ -486,27 +491,8 @@ class WebhookMSController extends Controller
                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
             }
 
-        }*/
-
-        //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
-        foreach ($BodyPositions as $item){
-            $url_item = $item->assortment->meta->href;
-            $body = $this->msClient->get($url_item);
-            $BonusProgramm = false;
-
-            if (property_exists($body, 'attributes')){
-                foreach ($body->attributes as $body_item){
-                    if ('Не применять бонусную программу (UDS)' == $body_item->name){
-                        $BonusProgramm = $body_item->value;
-                        break;
-                    }
-                }
-            }
-            if ($BonusProgramm){
-                $price = ( $item->quantity * $item->price - ($item->quantity * $item->price * ($item->discount / 100)) ) / 100;
-                $SkipLoyaltyTotal = $SkipLoyaltyTotal + $price;
-            }
         }
+
 
         if ($SkipLoyaltyTotal <= 0 ) $SkipLoyaltyTotal = null;
 
@@ -569,6 +555,35 @@ class WebhookMSController extends Controller
             }
         }
         return $Attributes;
+    }
+
+    private function pointsAccrue(mixed $ObjectBODY)
+    {
+        $sum = 0;
+        $BodyPositions = $this->msClient->get($ObjectBODY->positions->meta->href)->rows;
+
+        foreach ($BodyPositions as $item) {
+            $url_item = $item->assortment->meta->href;
+            $body =  $this->msClient->get($url_item);
+
+            if (property_exists($body, 'attributes')) {
+                foreach ($body->attributes as $body_item) {
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) { continue; }
+                    if ('Процент начисления (UDS)' == $body_item->name) {
+                        $minPrice = 0;
+                        if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
+                        $price = $item->price * ($body_item->value / 100);
+                        if ($price > $minPrice) {
+                            $sum = $sum + $price ;
+                        } else {
+                            $sum = $sum + $minPrice;
+                        }
+
+                    }
+                }
+            }
+        }
+        return $sum;
     }
 
 
