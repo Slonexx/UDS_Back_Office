@@ -194,6 +194,7 @@ class WidgetInfo
             ];
         }
 
+
         return [
             'StatusCode' => $StatusCode,
             'message' => $message,
@@ -247,27 +248,23 @@ class WidgetInfo
         $BodyPositions = $this->msClient->get($href)->rows;
         //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
         foreach ($BodyPositions as $item) {
-            $url_item = $item->assortment->meta->href;
-            $body =  $this->msClient->get($url_item);
-
+            $body =  $this->msClient->get($item->assortment->meta->href);
             $BonusProgramm = false;
+
             if (property_exists($body, 'attributes')) {
                 foreach ($body->attributes as $body_item) {
-                    if ('Не применять бонусную программу (UDS)' == $body_item->name) {
-                        $BonusProgramm = $body_item->value;
-                    }
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) { $BonusProgramm = $body_item->value; }
+
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
                         if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
-                        if ($this->setting->customOperation == 1) {
-                            $BonusProgramm = $body_item->value;
-                        } else {
+                        if ($this->setting->customOperation == 1) { $BonusProgramm = $body_item->value;
+                        } elseif ($this->setting->customOperation == 0) {
                             if ($body_item->value < 100) {
                                 $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
                                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
                             } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
                         }
-
                     }
                 }
             }

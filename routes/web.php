@@ -18,17 +18,17 @@ use App\Http\Controllers\Web\indexController;
 use App\Http\Controllers\Config\DeleteVendorApiController;
 
 
-
+//TEST
 Route::get('time/{accountId}', [indexController::class, 'time']);
-
-
 Route::get('web/CheckSave/web/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
 
-
+//Search
 Route::get('/search/employee/byName/{login}', [indexController::class, 'searchEmployeeByID']);
 Route::get('/Check/Main/{accountId}/{isAdmin}', [getController::class, 'CheckSetting']);
 
 
+
+//Widget
 Route::get('/Counterparty', [indexController::class, 'counterparty']);
 
 Route::get('/CustomerOrderEdit', [indexController::class, 'CustomerOrderEdit']);
@@ -54,49 +54,42 @@ Route::get('/Salesreturn/{accountId}/{entity}/{objectId}', [Salesreturn::class, 
 Route::get('/postSalesreturn/operations', [Salesreturn::class, 'sReturn']);
 
 
+
+//Index
 Route::get('/', [indexController::class, 'index'])->name('index');
 Route::get('/{accountId}/{isAdmin}', [indexController::class, 'show'])->name("indexMain");
 
 
+//Setting
 Route::get('/Setting/Main/{accountId}/{isAdmin}', [getController::class, 'mainSetting'])->name('indexSetting');
 Route::post('/setSetting/Main/{accountId}/{isAdmin}', [postController::class, 'postSettingIndex'])->name('setSettingIndex');
-
 
 Route::get('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'indexProduct'])->name('productIndex');
 Route::post('/Setting/createProduct/{accountId}/{isAdmin}', [productController::class, 'postProduct'])->name('setProductIndex');
 
-
 Route::get('/Setting/createAgent/{accountId}/{isAdmin}', [agentController::class, 'getAgent'])->name('agent');
 Route::post('/Setting/createAgent/{accountId}/{isAdmin}', [agentController::class, 'postAgent'])->name('setAgent');
-
 
 Route::get('/Setting/Document/{accountId}/{isAdmin}', [getController::class, 'indexDocument'])->name('indexDocument');
 Route::post('/setSetting/Document/{accountId}/{isAdmin}', [postController::class, 'postSettingOrder'])->name('setSettingDocument');
 
-
 Route::get('/Setting/Add/{accountId}/{isAdmin}', [SettingController::class, 'indexAdd'])->name('indexAdd');
 Route::post('/setSetting/Add/{accountId}/{isAdmin}', [SettingController::class, 'postSettingAdd'])->name('setSettingAdd');
-
 
 Route::get('/Setting/Automation/{accountId}/{isAdmin}', [getAutomationController::class, 'getAutomation'])->name('getAutomation');
 Route::post('/setSetting/Automation/{accountId}/{isAdmin}', [postAutomationController::class, 'postSettingAdd'])->name('postAutomation');
 
-
-Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);
-
-
 Route::get('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'index']);
 Route::post('/Setting/sendOperations/{accountId}/{isAdmin}', [sendOperations::class, 'postOperations']);
 
+Route::get('/Setting/Employees/{accountId}/{isAdmin}', [employees::class, 'index']);
 
 Route::get('/Setting/Error/{accountId}/{isAdmin}/{message}', [SettingController::class, 'indexError'])->name('indexError');
 Route::get('/Setting/noAdmin/{accountId}/{isAdmin}/', [SettingController::class, 'indexNoAdmin'])->name('indexNoAdmin');
 
 
+//OLD Count product for product index
 Route::post('/CountProduct/', [ApplicationController::class, 'CountProduct']);
 
-
-
-
-
+//Delete web dev base
 Route::get('Web/DeleteVendorApi/{accountId}', [DeleteVendorApiController::class, 'Delete']);

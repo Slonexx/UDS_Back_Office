@@ -224,7 +224,9 @@
     </div>
 
     <script>
-        const url = "{{ app(mainURL::class)->me_url_host() }}"
+        //const url = "{{ app(mainURL::class)->me_url_host() }}"
+        const url = "https://uds/"
+
         let accountId = "{{ $accountId }}"
 
         let extensionPoint
@@ -251,28 +253,28 @@
         let operationsAccrue
         let operationsCancellation
 
-        /*let receivedMessage = {
+        let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.customerorder.edit",
             "objectId": "5f3023e9-05b3-11ee-0a80-06f20001197a",
             "messageId": 1,
             "displayMode": "expanded"
-        }*/
+        }
 
 
         window.addEventListener("message", function (event) {
-            let receivedMessage = event.data
+            //let receivedMessage = event.data
 
-            console.log(receivedMessage);
+            clearWidget()
             GlobalobjectId = receivedMessage.objectId;
 
             if (receivedMessage.name === 'Open') {
-                clearWidget()
+
                 let settings = ajax_settings(url + 'CustomerOrder/EditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                //receivedMessage = [];
+                receivedMessage = [];
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
@@ -321,7 +323,6 @@
                             document.getElementById("sendWarning").style.display = "none"
                             document.getElementById("undefined").style.display = "block"
                             document.getElementById("labelAccrue").style.display = "block"
-                            console.log(message)
                             operationsAccrue = message.operationsAccrue
                             operationsCancellation = message.operationsCancellation
 

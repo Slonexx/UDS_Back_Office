@@ -60,13 +60,14 @@ class sendOperations
         ];
 
         $post = json_decode(json_encode($Client->post($url, $body)), true);
+        if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
         if ($SettingBD->customOperation == 1) {
             $post['points'] = $data['receipt_cash'];
-            $post = json_decode(json_encode($post));
-
             (new RewardController())->Accrue($data['accountId'], $data['cashBack'], $post->customer->id);
             (new RewardController())->Cancellation($data['accountId'], $data['receipt_cash'], $post->customer->id);
         }
+
+        $post = json_decode(json_encode($post));
 
         $ClientMC = new MsClient($Setting->TokenMoySklad);
         $OldBody = $ClientMC->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId']);

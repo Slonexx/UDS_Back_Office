@@ -71,14 +71,10 @@ class OperationsCalc
 
             if (property_exists($body, 'attributes')) {
                 foreach ($body->attributes as $body_item) {
-                    if ('Не применять бонусную программу (UDS)' == $body_item->name) {
-                        $BonusProgramm = $body_item->value;
-                    }
-                    if ('Процент списания (UDS)' == $body_item->name) {
-                        $minPrice = property_exists($body, "minPrice") ? $body->minPrice->value : 0;
-
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) { $BonusProgramm = $body_item->value; }
+                    if ('Процент списания (UDS)' == $body_item->name) { $minPrice = property_exists($body, "minPrice") ? $body->minPrice->value : 0;
                         if ($body_item->value < 100) {
-                            $PresentBonus = (($item->price - ($item->price * $body_item->value / 90)) / 100);
+                            $PresentBonus = (($item->price - ($item->price * $body_item->value / 100)) / 100);
                             $unredeemableTotal = $unredeemableTotal + round($PresentBonus, 2);
                         } else {
                             $unredeemableTotal = $unredeemableTotal + (($item->price - $minPrice) / 100);

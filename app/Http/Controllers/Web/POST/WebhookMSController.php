@@ -55,6 +55,14 @@ class WebhookMSController extends Controller
     }
     public function customerorder(Request $request): JsonResponse
     {
+
+        if (empty($request->auditContext)) {
+            return response()->json([
+                'code' => 203,
+                'message' => $this->returnMessage("ERROR", "2023-00-00 00:00:00", "Отсутствует auditContext, (изменений не было), скрипт прекращён!"),
+            ]);
+        }
+
         if (isset($request['events'][0]['updatedFields'])){
             if (!in_array('state', $request['events'][0]['updatedFields'])) {
                 return response()->json([
@@ -467,21 +475,18 @@ class WebhookMSController extends Controller
             $BonusProgramm = false;
             if (property_exists($body, 'attributes')) {
                 foreach ($body->attributes as $body_item) {
-                    if ('Не применять бонусную программу (UDS)' == $body_item->name) {
-                        $BonusProgramm = $body_item->value;
-                    }
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) { $BonusProgramm = $body_item->value; }
+
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
                         if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
-                        if ($this->setting->customOperation == 1) {
-                            $BonusProgramm = $body_item->value;
-                        } else {
+                        if ($this->setting->customOperation == 1) { $BonusProgramm = $body_item->value;
+                        } elseif ($this->setting->customOperation == 0) {
                             if ($body_item->value < 100) {
                                 $SkipLoyaltyTotalSum = (($item->price - ($item->price * $body_item->value / 90)) / 100);
                                 $SkipLoyaltyTotal = $SkipLoyaltyTotal + round($SkipLoyaltyTotalSum, 2);
                             } else $SkipLoyaltyTotal = $SkipLoyaltyTotal + ($item->price - $minPrice) / 100;
                         }
-
                     }
                 }
             }

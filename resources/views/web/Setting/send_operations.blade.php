@@ -123,8 +123,9 @@
                         {{--Сводобный - Помимо стандратной операции в UDS, будет проводиться донаичслени или списание баллов --}}
                         <div class="col-5">
                             <select id="customOperation" name="customOperation" class="form-select text-black" >
-                                <option selected value="0">Ограниченный</option>
-                                <option value="1">Свободный</option>
+                                <option selected value="3"> Стандартный </option>
+                                <option value="0"> Ограниченный </option>
+                                <option value="1"> Свободный </option>
                             </select>
                         </div>
                     </div>

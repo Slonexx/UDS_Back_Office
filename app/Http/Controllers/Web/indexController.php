@@ -122,7 +122,7 @@ class indexController extends Controller
     public function ObjectEdit(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
         try {
-            $contextKey = $request->contextKey;
+            /*$contextKey = $request->contextKey;
             try {
                 $vendorAPI = new VendorApiController();
                 $employee = $vendorAPI->context($contextKey);
@@ -133,16 +133,16 @@ class indexController extends Controller
                     'code' => 400,
                     'message' => "Ошибка получения контекста приложения! Обновите страницу (F5)",
                 ] );
-            }
+            }*/
 
             return view( ' widget.object', [
-                'accountId' => $accountId,
+              /*  'accountId' => $accountId,
                 'cashier_id' => $employee->id,
-                'cashier_name' => $employee->name,
+                'cashier_name' => $employee->name,*/
 
-               /* 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                 'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
-                'cashier_name' => "Сергей",*/
+                'cashier_name' => "Сергей",
             ] );
 
         } catch (BadResponseException $e){
