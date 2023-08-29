@@ -186,6 +186,7 @@ class WebhookMSController extends Controller
         $postBODY['cashier'] = $this->BodyCashierUDS($uid);
         $postBODY['receipt'] = $this->BodyReceiptUDS($ObjectBODY);
 
+
         $postUDS = $this->udsClient->post('https://api.uds.app/partner/v2/operations', $postBODY);
         if ($this->setting->customOperation == 1) {
             (new RewardController())->Accrue($this->setting->accountId, $this->pointsAccrue($ObjectBODY), $postUDS->customer->id);
@@ -562,7 +563,7 @@ class WebhookMSController extends Controller
         return $Attributes;
     }
 
-    private function pointsAccrue(mixed $ObjectBODY)
+    private function pointsAccrue(mixed $ObjectBODY): float|int
     {
         $sum = 0;
         $BodyPositions = $this->msClient->get($ObjectBODY->positions->meta->href)->rows;
@@ -588,7 +589,7 @@ class WebhookMSController extends Controller
                 }
             }
         }
-        return $sum;
+        return $sum / 100;
     }
 
 

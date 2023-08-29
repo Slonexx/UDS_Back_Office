@@ -63,8 +63,8 @@ class sendOperations
         if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
         if ($SettingBD->customOperation == 1) {
             $post['points'] = $data['receipt_cash'];
-            (new RewardController())->Accrue($data['accountId'], $data['cashBack'], $post->customer->id);
-            (new RewardController())->Cancellation($data['accountId'], $data['receipt_cash'], $post->customer->id);
+            (new RewardController())->Accrue($data['accountId'], $data['cashBack'], $post['customer']['id']);
+            (new RewardController())->Cancellation($data['accountId'], $data['receipt_cash'], $post['customer']['id']);
         }
 
         $post = json_decode(json_encode($post));
