@@ -5,7 +5,7 @@
     <div class="content p-4 mt-2 bg-white text-Black rounded main-container content-container">
 
         @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Настройки → Главное") </script>
+        <script> NAME_HEADER_TOP_SERVICE("Настройки → Подключение ") </script>
 
         @if($message['status'] == true)
             <div class="{{$message['alert']}} mt-1"> {{ $message['message'] }} </div>

@@ -23,9 +23,9 @@
                 <div class="mt-2">
                     <button id="btn_1" class="dropdown-btn">Настройки <i class="fa fa-caret-down"></i> </button>
                     <div class="dropdown-container">
-                        <a class="mt-1" id="link_2" href="/Setting/Main/{{$accountId}}/{{$isAdmin}}"> Основная </a>
+                        <a class="mt-1" id="link_2" href="/Setting/Main/{{$accountId}}/{{$isAdmin}}"> Подключение </a>
                         <a class="mt-1" id="link_7" href="/Setting/createProduct/{{$accountId}}/{{$isAdmin}}"> Товары </a>
-                        <a class="mt-1" id="link_8" href="/Setting/createAgent/{{$accountId}}/{{$isAdmin}}"> Контрагент </a>
+                        <a class="mt-1" id="link_8" href="/Setting/createAgent/{{$accountId}}/{{$isAdmin}}"> Контрагенты </a>
 
                         <a class="mt-1" id="link_3" href="/Setting/Document/{{$accountId}}/{{$isAdmin}}"> Заказы </a>
                         <a class="mt-1" id="link_4" href="/Setting/sendOperations/{{$accountId}}/{{$isAdmin}}"> Операции </a>

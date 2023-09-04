@@ -31,19 +31,13 @@
                             <option value="1">Да</option>
                         </select>
                     </div>
-               {{--     <div class="col-2 text-center">
-                        <label class="mx-3 mt-1 from-label">Статус: </label>
-                    </div>
-                    <div class="col-2">
-                        <label class="mx-3 mt-1 from-label">XXX%</label>
-                    </div>--}}
                 </div>
                 <div id="T1View" style="display: block">
                     {{--выгрузка--}}
                     <div class="mt-2 row">
                         <div class="col-6">
                             <label class="row mx-1">
-                                <div class="col-9"> Выгрузка в </div>
+                                <div class="col-9"> Выгрузка ИЗ </div>
                                 <button type="button"
                                         class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover1 "
                                         data-toggle="popover" data-placement="right" data-trigger="focus"
