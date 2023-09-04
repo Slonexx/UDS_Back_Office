@@ -94,7 +94,7 @@
                         <div class="mt-2 row">
                             <div class="col-6">
                                 <label class="row mx-1">
-                                    <div class="col-9"> Укажите раздел цены продаж </div>
+                                    <div class="col-9"> Укажите цену продаж в UDS </div>
                                 </label>
                                 <div class="col-10">
                                     <select onchange="SalesPriceHidden(this.value, 'salesPrices')" name="salesPrices" class="form-select text-black ">
@@ -104,7 +104,7 @@
                             </div>
                             <div class="col-6">
                                 <label class="row mx-1">
-                                    <div class="col-9"> Укажите аукционную цену продаж </div>
+                                    <div class="col-9"> Укажите акционную цену продаж </div>
                                 </label>
                                 <div class="col-10">
                                     <select onchange="SalesPriceHidden(this.value, 'promotionalPrice')" name="promotionalPrice" class="form-select text-black ">
