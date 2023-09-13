@@ -38,10 +38,12 @@ class WidgetInfo
         $body_agentId = $this->msClient->get($BodyMC->agent->meta->href);
         $agentId = $body_agentId;
 
+
         if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
+            $phone = $this->AgentMCPhone($agentId);
             $agentId = [
                 'externalCode' => $agentId->externalCode,
-                'phone' => property_exists($agentId, 'phone') ? $agentId->phone : null,
+                'phone' => $phone,
                 'dontPhone' => true,
             ];
         } else {
@@ -78,9 +80,8 @@ class WidgetInfo
                     $message = $data['data'];
                 }
             } else {
-                $operation = $this->operation_to_post($externalCode, $agentId, $BodyMC, $body_agentId);
                 $StatusCode = 'operation';
-                $message = $operation['message'];
+                $message = $this->operation_to_post($externalCode, $agentId, $BodyMC, $body_agentId);
             }
         } catch (ClientException $e) {
             return ['StatusCode' => 'error', 'message' => $e->getMessage()];
@@ -145,6 +146,7 @@ class WidgetInfo
         }
 
         $points = 0;
+        $BonusPoint = 0;
         if ($body->points < 0)
             $points = $body->points * -1;
         else {
@@ -152,8 +154,16 @@ class WidgetInfo
                 if ($item->name == "Количество списанных баллов (UDS)") {
                     $points = $item->value;
                 }
+
+                if ($item->name == "Количество списанных баллов (UDS)") {
+                    $BonusPoint = $item->value;
+                }
+
             }
         }
+
+
+        if ($BonusPoint <= 0) $this->Calc($body, $agentId);
 
         return [
             'status' => true,
@@ -170,35 +180,23 @@ class WidgetInfo
 
     private function operation_to_post(mixed $externalCode, array $agentId, mixed $BodyMC, mixed $body_agentId): array
     {
-        $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
+        $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
+        $infoCustomers = $this->AgentMCID($agentId);
+        $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
+        $operationsCancellation = (int) $this->setting->operationsCancellation?? 0;
 
-        if ($data['status']) {
-            $StatusCode = 200;
-            $message = $data['data'];
-        } else {
-            $StatusCode = 404;
-            $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
-            $availablePoints = $this->AgentMCID($body_agentId);
-            $phone = $this->AgentMCPhone($body_agentId);
-            $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
-            $operationsCancellation = (int) $this->setting->operationsCancellation?? 0;
-
-            $message = [
-                'total' => $info_total_and_SkipLoyaltyTotal['total'],
-                'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-                'availablePoints' => $availablePoints,
-                'points' => 0,
-                'phone' => $phone,
-                'operationsAccrue' => $operationsAccrue,
-                'operationsCancellation' => $operationsCancellation,
-            ];
-        }
-
-
-        return [
-            'StatusCode' => $StatusCode,
-            'message' => $message,
+        $data = [
+            'total' => $info_total_and_SkipLoyaltyTotal['total'],
+            'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
+            'availablePoints' => $infoCustomers->participant->points,
+            'points' => 0,
+            'phone' => $agentId['phone'],
+            'uid' =>  $infoCustomers->uid,
+            'operationsAccrue' => $operationsAccrue,
+            'operationsCancellation' => $operationsCancellation,
         ];
+
+        return $data;
     }
 
     public function Calc($body, $agentId)
@@ -282,35 +280,19 @@ class WidgetInfo
         ];
     }
 
-    public function AgentMCID($bodyMC): int
+    public function AgentMCID($AgentForPhoneAndCode)
     {
 
-        if ((int)$bodyMC->externalCode > 1000) {
-            $url_UDS = 'https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode;
-            $body = $this->udsClient->get($url_UDS)->participant;
-            return $body->points;
+        if (is_numeric($AgentForPhoneAndCode['externalCode']) && ctype_digit($AgentForPhoneAndCode['externalCode']) && $AgentForPhoneAndCode['externalCode'] > 10000) {
+            $url_UDS = 'https://api.uds.app/partner/v2/customers/' . $AgentForPhoneAndCode['externalCode'];
+            return $this->udsClient->get($url_UDS);
         } else {
-            $result = 0;
-            if (property_exists($bodyMC, 'phone')) {
-                $phone = urlencode('+' . $this->phone_number($bodyMC->phone));
-                $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $phone;
-                try {
-                    $Body = $this->udsClient->get($url)->user;
-                    $result = $Body->participant->points;
-                } catch (BadResponseException) {
-                }
-                return $result;
-            }
-
-            return $result;
+            $phone = urlencode('+' .$AgentForPhoneAndCode['phone']);
+            $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $phone;
+            try {
+                return $this->udsClient->get($url)->user;
+            } catch (BadResponseException) {return null;}
         }
 
-    }
-
-    public function phone_number($phone): array|string|null
-    {
-        $phone = preg_replace('/[^0-9]/', '', $phone);
-        if ($phone[0] == 8) $phone[0] = 7;
-        return $phone;
     }
 }

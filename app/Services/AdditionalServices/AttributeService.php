@@ -215,6 +215,13 @@ class AttributeService
                 "show" => false,
                 "description" => "Количество списанных баллов (UDS)",
             ],
+            4 => [
+                "name" => "Количество начисленных баллов (UDS)",
+                "type" => "double",
+                "required" => false,
+                "show" => false,
+                "description" => "Количество начисленных баллов (UDS)",
+            ],
         ];
     }
 

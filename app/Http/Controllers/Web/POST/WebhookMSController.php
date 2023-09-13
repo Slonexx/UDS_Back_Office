@@ -538,7 +538,7 @@ class WebhookMSController extends Controller
                     ];
                 }
             }
-            if ($item->name == "Начисление баллов (UDS)") {
+            elseif ($item->name == "Начисление баллов (UDS)") {
                 if ($postUDS->cash > 0) {
                     $Attributes[] = [
                         'meta' => [
@@ -559,6 +559,16 @@ class WebhookMSController extends Controller
                     ];
                 }
             }
+            elseif ($item->name == "Количество начисленных баллов (UDS)"){
+                $Attributes[] = [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ],
+                    'value' => (float) $postUDS->points,
+                ];
+            } else continue;
         }
         return $Attributes;
     }

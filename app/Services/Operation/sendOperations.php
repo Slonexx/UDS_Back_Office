@@ -41,7 +41,7 @@ class sendOperations
         $body = [
             'code' => $data['code'],
             'participant' => [
-                'uid' => null,
+                'uid' => $data['user_uid'] ?? null,
                 'phone' => $data['phone'],
             ],
             'nonce' => null,
@@ -61,10 +61,11 @@ class sendOperations
 
         $post = json_decode(json_encode($Client->post($url, $body)), true);
         if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
+
         if ($SettingBD->customOperation == 1) {
-            $post['points'] = $data['receipt_cash'];
+            if ( $data['receipt_points'] > 0 ) $post['points'] = $data['receipt_points'];
             (new RewardController())->Accrue($data['accountId'], $data['cashBack'], $post['customer']['id']);
-            (new RewardController())->Cancellation($data['accountId'], $data['receipt_cash'], $post['customer']['id']);
+            (new RewardController())->Cancellation($data['accountId'], $data['receipt_points'], $post['customer']['id']);
         }
 
         $post = json_decode(json_encode($post));
@@ -82,9 +83,7 @@ class sendOperations
             'positions' => $setPositions,
             'attributes' => $setAttributes,
         ]);
-        if ($data['entity'] == 'customerorder') {
-            $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id);
-        }
+        if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
         $this->createPaymentDocument($Setting, $SettingBD, $putBody);
 
         return [
@@ -147,6 +146,15 @@ class sendOperations
                     'value' => true,
                 ];
             } elseif ($item->name == "Количество списанных баллов (UDS)"){
+                $Attributes[] = [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ],
+                    'value' => (float) $postUDS->points,
+                ];
+            }elseif ($item->name == "Количество начисленных баллов (UDS)"){
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,

@@ -103,6 +103,7 @@ class ObjectController extends Controller
             "objectId" => 'required|string',
             "entity" => 'required|string',
             "user" => "required|string",
+            "user_uid" => "required|string",
             "cashier_id" => "required|string",
             "cashier_name" => "required|string",
             "receipt_total" => "required|string",

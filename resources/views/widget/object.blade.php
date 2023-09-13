@@ -246,6 +246,7 @@
         let operations_availablePoints_Nubmer
         let operations_skipLoyaltyTotal
         let operations_user
+        let operations_user_uid
         let cashBack
         let operations_cashier_id = "{{ $cashier_id }}"
         let operations_cashier_name = "{{ $cashier_name }}"
@@ -328,6 +329,7 @@
 
                             OLDPhone = message.phone
                             operations_user = message.phone
+                            operations_user_uid = message.uid
                             operations_total = message.total
                             operations_availablePoints_Nubmer = message.availablePoints
                             operations_availablePoints = message.availablePoints
@@ -513,6 +515,7 @@
                 objectId: GlobalobjectId,
                 entity: extensionPoint,
                 user: operations_user,
+                user_uid: operations_user_uid,
                 cashier_id: operations_cashier_id,
                 cashier_name: operations_cashier_name,
                 receipt_total: operations_total,
