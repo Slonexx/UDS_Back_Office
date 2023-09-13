@@ -161,7 +161,7 @@ class sendOperations
                         'type' => $item->meta->type,
                         'mediaType' => $item->meta->mediaType,
                     ],
-                    'value' => (float) $postUDS->points,
+                    'value' => (float) $data['cashBack'],
                 ];
             }
             else continue;
