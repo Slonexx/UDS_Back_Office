@@ -210,7 +210,7 @@ class AttributeService
             ],
             3 => [
                 "name" => "Количество списанных баллов (UDS)",
-                "type" => "long",
+                "type" => "double",
                 "required" => false,
                 "show" => false,
                 "description" => "Количество списанных баллов (UDS)",
