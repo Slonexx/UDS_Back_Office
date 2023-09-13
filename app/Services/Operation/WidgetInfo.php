@@ -155,7 +155,7 @@ class WidgetInfo
                     $points = $item->value;
                 }
 
-                if ($item->name == "Количество списанных баллов (UDS)") {
+                if ($item->name == "Количество начисленных баллов (UDS)") {
                     $BonusPoint = $item->value;
                 }
 
@@ -169,7 +169,7 @@ class WidgetInfo
             'status' => true,
             'data' => [
                 'id' => $body->id,
-                'BonusPoint' => $this->Calc($body, $agentId),
+                'BonusPoint' => $BonusPoint,
                 'points' => $points,
                 'state' => "COMPLETED",
                 'icon' => '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
