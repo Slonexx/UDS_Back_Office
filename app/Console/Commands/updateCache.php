@@ -36,14 +36,6 @@ class updateCache extends Command
                 "accountId" => $settings->accountId,
             ];
 
-             $metaAll = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/attributes/')->rows;
-
-             foreach ($metaAll as $item) {
-                 if ($item->name == 'Количество списанных баллов (UDS)') {
-                     $ClientCheckMC->delete($item->meta->href, []);
-                 }
-             }
-
             dispatch(function () use ($data) {
                 app(AttributeController::class)->setAllAttributesOfData($data);
             })->onQueue('default');
