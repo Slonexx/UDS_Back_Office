@@ -13,7 +13,7 @@ class AppConfigController extends Controller
 
     var $appBaseUrl = 'APP-BASE-URL';
 
-    var $moyskladVendorApiEndpointUrl = 'https://online.moysklad.ru/api/vendor/1.0';
+    var $moyskladVendorApiEndpointUrl = 'https://apps-api.moysklad.ru/api/vendor/1.0';
     var $moyskladJsonApiEndpointUrl = 'https://online.moysklad.ru/api/remap/1.2';
 
     public function __construct(array $cfg)
