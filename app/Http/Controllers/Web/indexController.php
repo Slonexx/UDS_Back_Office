@@ -70,15 +70,13 @@ class indexController extends Controller
 
     public function counterparty(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
     {
-        $baseURL = new mainURL();
-
         $contextKey = $request->contextKey;
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
         $accountId = $employee->accountId;
 
         $isAdmin = $employee->permissions->admin->view;
-        $isAdmin = "ALL";
+        //$isAdmin = "ALL";
 
         if ($isAdmin == "NO"){
             return view( 'widgets.counterparty', [

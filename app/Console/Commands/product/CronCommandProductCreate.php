@@ -87,7 +87,7 @@ class CronCommandProductCreate extends Command
     private function countRound($countRound, $accountId): bool
     {
         $record = newProductModel::where('accountId', $accountId)->first();
-        if ($countRound < 10) {
+        if ($countRound < 5) {
             $record->countRound = $countRound + 1;
             $record->save();
             return true;
