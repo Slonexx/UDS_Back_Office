@@ -18,7 +18,7 @@ class RewardController extends Controller
         $body = [
             "points" => $points,
             "comment" => "",
-            "silent" => false,
+            "silent" => true,
             "participants" => [$participants],
         ];
 
@@ -39,7 +39,7 @@ class RewardController extends Controller
         $body = [
             "points" => $points,
             "comment" => "",
-            "silent" => false,
+            "silent" => true,
             "participants" => [$participants],
         ];
 

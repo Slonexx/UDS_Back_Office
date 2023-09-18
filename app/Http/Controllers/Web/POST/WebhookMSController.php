@@ -430,7 +430,7 @@ class WebhookMSController extends Controller
         if ($int == "") { return true; } else return false;
     }
 
-    private function BodyCashierUDS($uid): array
+    private function BodyCashierUDS($uid): ?array
     {
         $employee = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
         foreach ($employee as $item){
@@ -442,10 +442,7 @@ class WebhookMSController extends Controller
             }
         }
 
-        return [
-            'externalId' => $employee[0]->id,
-            'name' => $employee[0]->fullNamem,
-            ];
+        return null;
     }
 
     private function AgentCheckUIDUDS($externalCodeAgent, $phone): array
