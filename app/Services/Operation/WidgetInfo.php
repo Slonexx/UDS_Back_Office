@@ -57,7 +57,7 @@ class WidgetInfo
                 }
                 $agentId = [
                     'externalCode' => $agentId->externalCode,
-                    'phone' => '+' . $phone,
+                    'phone' => $phone,
                 ];
             } else {
                 return [
