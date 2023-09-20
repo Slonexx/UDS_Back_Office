@@ -20,6 +20,8 @@ class newAgentModel extends Model
 
         'url',
         'offset',
+
+        'countRound',
     ];
 
 }

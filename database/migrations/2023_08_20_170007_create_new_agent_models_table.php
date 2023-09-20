@@ -22,6 +22,8 @@ class CreateNewAgentModelsTable extends Migration
             $table->longText('url')->nullable();
             $table->integer('offset')->nullable();
 
+            $table->integer('countRound')->nullable();
+
             $table->timestamps();
         });
     }

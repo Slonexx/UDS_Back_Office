@@ -64,20 +64,45 @@ class CronCommandAgentCreate extends Command
 
         $data = [
             'accountId' => $item->accountId,
+
             'unloading' => $item->unloading,
+
             'examination' => $item->examination,
             'email' => $item->email,
             'gender' => $item->gender,
             'birthDate' => $item->birthDate,
+
             'url' => $item->url,
             'offset' => $item->offset,
-        ];
-        $create = new createAgentForMS($data, $clientCheckMC, $clientCheckUDS);
-        $create->initialization();
-        try {
 
-        } catch (BadResponseException) {
-            return;
+            'countRound ' => $item->countRound,
+        ];
+
+        $record = newAgentModel::where('accountId', $item->accountId)->first();
+        if ( $item->countRound < 20) {
+            newAgentModel::where('accountId', $data->accountId)->update([
+                'countRound' => $record->countRound + 1,
+            ]);
+            try {
+                (new createAgentForMS($data, $clientCheckMC, $clientCheckUDS))->initialization();
+            } catch (BadResponseException) { return; }
+
+        } else {
+            newAgentModel::where('accountId', $data->accountId)->update([
+                'unloading' => 0,
+                'examination' => null,
+                'email' => null,
+                'gender' => null,
+                'birthDate' => null,
+            ]);
+
         }
+
+
+
     }
+
+
+
 }
+
