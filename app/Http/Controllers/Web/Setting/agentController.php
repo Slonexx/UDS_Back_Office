@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Web\Setting;
 
-use App\Components\MsClient;
-use App\Http\Controllers\BD\getMainSettingBD;
+
 use App\Http\Controllers\BD\newAgentSettingBD;
-use App\Http\Controllers\BD\newProductSettingBD;
-use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
 use App\Models\newAgentModel;
-use App\Models\ProductFoldersByAccountID;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class agentController extends Controller
 {
-    public function getAgent(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
+    public function getAgent(Request $request, $accountId, $isAdmin): View|Factory|Application|RedirectResponse
     {
         if ($isAdmin == "NO") {
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
@@ -52,7 +52,7 @@ class agentController extends Controller
     }
 
 
-    public function postAgent(Request $request, $accountId, $isAdmin): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
+    public function postAgent(Request $request, $accountId, $isAdmin): View|Factory|Application|RedirectResponse
     {
         if ($isAdmin == "NO") {
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
@@ -104,6 +104,7 @@ class agentController extends Controller
             $model->birthDate = null;
             $model->url = 'https://api.uds.app/partner/v2/customers?max=50&offset=0';
             $model->offset = 0;
+            $model->countRound = 0;
         } else {
             $model->examination = $request->examination ?? '';
             $model->email = $request->email ?? '';
@@ -111,6 +112,7 @@ class agentController extends Controller
             $model->birthDate = $request->birthDate ?? '';
             $model->url = 'https://api.uds.app/partner/v2/customers?max=50&offset=0';
             $model->offset = 0;
+            $model->countRound = 0;
         }
 
         $model->save();

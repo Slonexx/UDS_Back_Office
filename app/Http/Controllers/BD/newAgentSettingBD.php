@@ -19,6 +19,8 @@ class newAgentSettingBD extends Controller
     public mixed $url;
     public mixed $offset;
 
+    public mixed $countRound;
+
     public function __construct($accountId)
     {
         $this->accountId = $accountId;
@@ -37,6 +39,7 @@ class newAgentSettingBD extends Controller
 
                 $this->url = $result['url'];
                 $this->offset = $result['offset'];
+                $this->countRound = $result['countRound'];
             } else {
                 $this->unloading = '0';
                 $this->examination = null;
@@ -46,6 +49,7 @@ class newAgentSettingBD extends Controller
 
                 $this->url = null;
                 $this->offset = null;
+                $this->countRound = null;
             }
         } catch (BadResponseException $e) {
             $this->unloading = '0';
@@ -56,6 +60,7 @@ class newAgentSettingBD extends Controller
 
             $this->url = null;
             $this->offset = null;
+            $this->countRound = null;
         }
     }
 
