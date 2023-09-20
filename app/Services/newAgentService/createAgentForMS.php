@@ -163,7 +163,7 @@ class createAgentForMS
 
         $json = $this->msClient->get($urlToFind);
 
-        if ($json->meta->size == 0){
+        if ($json->meta->size > 0){
           return true;
         } else return false;
 
