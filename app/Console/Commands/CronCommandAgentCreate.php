@@ -80,7 +80,7 @@ class CronCommandAgentCreate extends Command
 
         $record = newAgentModel::where('accountId', $item->accountId)->first();
         if ( $item->countRound < 20) {
-            newAgentModel::where('accountId', $data->accountId)->update([
+            newAgentModel::where('accountId',  $item->accountId)->update([
                 'countRound' => $record->countRound + 1,
             ]);
             try {
@@ -88,7 +88,7 @@ class CronCommandAgentCreate extends Command
             } catch (BadResponseException) { return; }
 
         } else {
-            newAgentModel::where('accountId', $data->accountId)->update([
+            newAgentModel::where('accountId',  $item->accountId)->update([
                 'unloading' => 0,
                 'examination' => null,
                 'email' => null,
