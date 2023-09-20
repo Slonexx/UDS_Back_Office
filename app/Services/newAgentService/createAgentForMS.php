@@ -60,7 +60,9 @@ class createAgentForMS
     {
 
         if ($this->setting->examination == '0'){
-            if ($phone == "") { } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+            if ($phone == "") {
+                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
+            } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
         } elseif ($this->setting->examination == '1') { $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName; }
 
         elseif ($this->setting->examination == '2') {
@@ -71,7 +73,9 @@ class createAgentForMS
         }
 
         else {
-            if ($phone == "") { } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+            if ($phone == "") {
+                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
+            } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
         }
 
         $json = $this->msClient->get($urlToFind);
