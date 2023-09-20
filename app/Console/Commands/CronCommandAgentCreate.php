@@ -75,7 +75,7 @@ class CronCommandAgentCreate extends Command
             'url' => $item->url,
             'offset' => $item->offset,
 
-            'countRound ' => $item->countRound,
+            'countRound' => $item->countRound,
         ];
 
         $record = newAgentModel::where('accountId', $item->accountId)->first();
