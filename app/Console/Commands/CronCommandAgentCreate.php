@@ -72,10 +72,10 @@ class CronCommandAgentCreate extends Command
             'url' => $item->url,
             'offset' => $item->offset,
         ];
-
+        $create = new createAgentForMS($data, $clientCheckMC, $clientCheckUDS);
+        $create->initialization();
         try {
-            $create = new createAgentForMS($data, $clientCheckMC, $clientCheckUDS);
-            $create->initialization();
+
         } catch (BadResponseException) {
             return;
         }

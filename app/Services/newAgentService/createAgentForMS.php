@@ -28,6 +28,7 @@ class createAgentForMS
     {
         $offset = $this->setting->offset;
 
+
         while ($this->haveRowsInResponse($url,$offset)){
             $customersFromUds = $this->udsClient->get($url);
             foreach ($customersFromUds->rows as $customerFromUds){
@@ -57,6 +58,25 @@ class createAgentForMS
 
     public function createAgent($customer, $phone): void
     {
+
+        if ($this->setting->examination == '0'){
+            if ($phone == "") { } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+        } elseif ($this->setting->examination == '1') { $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName; }
+
+        elseif ($this->setting->examination == '2') {
+            if ($phone == "") {
+                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName;
+            } else
+                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone.";name=".$customer->displayName;
+        }
+
+        else {
+            if ($phone == "") { } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+        }
+
+        $json = $this->msClient->get($urlToFind);
+
+
         $body = [
             "name" => $customer->displayName,
             "companyType"=> "individual",
@@ -75,8 +95,7 @@ class createAgentForMS
 
             $dateString = $customer->birthDate;
             $dateTime = strtotime($dateString);
-            $newDateTime = date("Y-m-d H:i:s.000", strtotime("-1 day", $dateTime));
-            $newDateTime .= " 21:00:00.000";
+            $newDateTime = date("Y-m-d", strtotime("-1 day", $dateTime)) . " 21:00:00.000";
 
             $body["birthDate"] = $newDateTime;
 
@@ -85,7 +104,14 @@ class createAgentForMS
         if ($customer->phone != null){
             $body["phone"] = $phone;
         }
-        $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/counterparty",$body);
+
+        if ($json->meta->size == 0){
+            $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/counterparty",$body);
+        } else {
+            unset($body['name']);
+            unset($body['companyType']);
+            $this->msClient->put("https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$json->rows[0]->id,$body);
+        }
 
 
     }
@@ -98,6 +124,7 @@ class createAgentForMS
             $url = $url."&nodeId=".$nodeId;
         }
         $json =  $this->udsClient->get($url);
+
         return count($json->rows) > 0;
     }
 
