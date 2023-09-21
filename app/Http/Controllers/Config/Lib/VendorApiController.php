@@ -19,9 +19,8 @@ class VendorApiController extends Controller
         return $this->request('POST', '/context/' . $contextKey);
     }
 
-    function updateAppStatus(string $accountId, string $status)
+    function updateAppStatus(string $appId, string $accountId, string $status)
     {
-        $appId = (new cfg())->appId;
 
         return $this->request('PUT',
             "/apps/$appId/$accountId/status",
