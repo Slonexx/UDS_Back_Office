@@ -22,8 +22,7 @@ class VendorApiController extends Controller
     }
 
     private function request(string $method, $path, $body = null) {
-        $url = (new cfg())->moyskladVendorApiEndpointUrl . $path;
-        return makeHttpRequest( $method, $url, buildJWT(), $body);
+        return makeHttpRequest( $method, (new cfg())->moyskladVendorApiEndpointUrl . $path, buildJWT(), $body);
     }
 
 }
@@ -34,8 +33,8 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
                 'method'  => $method,
                 'header'  => array(
                     'Authorization: Bearer ' . $bearerToken,
-                    'Accept-Encoding' => 'gzip',
-                    "Content-type: application/json"
+                    'Content-type: application/json',
+                    'Accept-Encoding: gzip'
                 ),
                 'content' => $body
             )
@@ -44,10 +43,9 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
             array(
                 'method'  => $method,
                 'header'  => array(
-                    'Authorization' => 'Bearer ' . $bearerToken,
-                    'Accept-Encoding' => 'gzip',
-                    'Content-type' => 'application/json'
-                ),
+                    'Authorization: Bearer ' . $bearerToken,
+                    'Accept-Encoding: gzip'
+                )
             )
         );
     $context = stream_context_create($opts);
