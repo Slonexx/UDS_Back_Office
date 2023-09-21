@@ -225,7 +225,7 @@
 
     <script>
         //const url = "{{ app(mainURL::class)->me_url_host() }}"
-        const url = "https://uds/"
+        const url = "https://smartuds.kz/"
 
         let accountId = "{{ $accountId }}"
 
