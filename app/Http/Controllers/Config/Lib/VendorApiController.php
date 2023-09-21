@@ -44,8 +44,9 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
             array(
                 'method'  => $method,
                 'header'  => array(
-                    'Authorization: Bearer ' . $bearerToken,
-                    'Accept-Encoding' => 'gzip'
+                    'Authorization' => 'Bearer ' . $bearerToken,
+                    'Accept-Encoding' => 'gzip',
+                    'Content-type' => 'application/json'
                 ),
             )
         );
