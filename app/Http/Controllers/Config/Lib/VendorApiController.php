@@ -5,54 +5,54 @@ namespace App\Http\Controllers\Config\Lib;
 use App\Http\Controllers\Controller;
 
 use \Firebase\JWT\JWT;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 
 require_once 'jwt.lib.php';
 
-
 class VendorApiController extends Controller
 {
-    function context(string $contextKey) {
+    function context(string $contextKey)
+    {
         return $this->request('POST', '/context/' . $contextKey);
     }
 
-    function updateAppStatus(string $appId, string $accountId, string $status) {
+    function updateAppStatus(string $accountId, string $status)
+    {
+        $appId = (new cfg())->appId;
+
         return $this->request('PUT',
             "/apps/$appId/$accountId/status",
-            "{\"status\": \"$status\"}");
+            ["status" => $status]);
     }
 
-    private function request(string $method, $path, $body = null) {
-        return makeHttpRequest( $method, (new cfg())->moyskladVendorApiEndpointUrl . $path, buildJWT(), $body);
+    private function request(string $method, $path, $body = null)
+    {
+        $url = (new cfg())->moyskladVendorApiEndpointUrl . $path;
+        $bearerToken = buildJWT();
+
+        $client = new Client();
+
+        $options = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $bearerToken,
+                'Accept-Encoding' => 'gzip',
+                'Content-type' => 'application/json'
+            ]
+        ];
+
+        if ($body !== null) {
+            $options['json'] = $body;
+        }
+
+        $response = $client->request($method, $url, $options);
+        return json_decode($response->getBody()->getContents());
+
+
     }
-
 }
-function makeHttpRequest(string $method, string $url, string $bearerToken, $body = null) {
-    $opts = $body
-        ? array('http' =>
-            array(
-                'method'  => $method,
-                'header'  => array(
-                    'Authorization: Bearer ' . $bearerToken,
-                    'Content-type: application/json',
-                    'Accept-Encoding: gzip'
-                ),
-                'content' => $body
-            )
-        )
-        : array('http' =>
-            array(
-                'method'  => $method,
-                'header'  => array(
-                    'Authorization: Bearer ' . $bearerToken,
-                    'Accept-Encoding: gzip'
-                )
-            )
-        );
-    $context = stream_context_create($opts);
-    $result = file_get_contents($url, false, $context);
-    return json_decode($result);
-}
-
 function buildJWT(): string
 {
 
@@ -66,3 +66,9 @@ function buildJWT(): string
     );
     return JWT::encode($token, $cfg->secretKey);
 }
+
+
+
+
+
+

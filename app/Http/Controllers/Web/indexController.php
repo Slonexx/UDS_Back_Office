@@ -27,6 +27,7 @@ class indexController extends Controller
 
         $vendorAPI = new VendorApiController();
         $employee = $vendorAPI->context($contextKey);
+        dd($employee);
         $accountId = $employee->accountId;
         $isAdmin = $employee->permissions->admin->view;
 
