@@ -55,10 +55,9 @@ class widgetCounterparty
                 try {
                     return response()->json([
                         'Bool' => true,
-                        'customers' => $ClientMS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user
+                        'customers' => $ClientUDS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user
                     ]);
-
-                } catch (BadResponseException) {
+                } catch (BadResponseException $e) {
                     return response()->json(['Bool' => false]);
                 }
 
