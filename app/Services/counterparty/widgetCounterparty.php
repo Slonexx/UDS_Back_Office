@@ -16,7 +16,7 @@ class widgetCounterparty
         $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
 
         try {
-            $MSCounterparty = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty/' . $objectId);
+            $MSCounterparty = $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty/' . $objectId);
         } catch (BadResponseException $e) {
             return response()->json(['Bool' => false]);
         }
@@ -31,7 +31,21 @@ class widgetCounterparty
                 return response()->json(['Bool' => false]);
             }
 
-        } else return response()->json(['Bool' => false]);
+        } else {
+
+            if (property_exists($MSCounterparty, 'phone')) {
+                $phone = "+7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $MSCounterparty->phone)), -10);
+
+                try {
+                    return $ClientMS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user;
+                } catch (BadResponseException $e) {
+                    return response()->json(['Bool' => false]);
+                }
+
+            } else {
+                return response()->json(['Bool' => false]);
+            }
+        }return response()->json(['Bool' => false]);
     }
 
 }

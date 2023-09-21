@@ -33,7 +33,7 @@ class CronCommandProductCreate extends Command
                 $mainSetting = new getMainSettingBD($item->getAttributes()['accountId']);
                 try {
                     $ClientCheckMC = new MsClient($mainSetting->tokenMs);
-                    $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                    $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
                     $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
                     $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (BadResponseException) { continue; }

@@ -51,7 +51,7 @@ class UpdateUdsCommand extends Command
                 if ($settings->UpdateProduct != "1"){
                     $clientCheck = new MsClient($settings->TokenMoySklad);
                     try {
-                        $body = $clientCheck->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                        $body = $clientCheck->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
                         $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                         $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                         $countSettings++;
@@ -73,7 +73,7 @@ class UpdateUdsCommand extends Command
             foreach ($allSettings as $settings){
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                    $body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
 
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
@@ -112,7 +112,7 @@ class UpdateUdsCommand extends Command
                 $settings = new getSettingVendorController($accountId);
                 try {
                     $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                    $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                    $body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
 
                     $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                     $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');

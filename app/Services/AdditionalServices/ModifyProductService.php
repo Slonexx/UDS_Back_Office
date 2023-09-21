@@ -9,7 +9,7 @@ class ModifyProductService
 
     public function createModifyProductMs($productMeta,$nameModify,$character,$apiKey)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/variant";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/variant";
         $client = new MsClient($apiKey);
 
         $idCharacter = $this->getCharacterByName($nameModify,$apiKey);
@@ -39,7 +39,7 @@ class ModifyProductService
     }
 
     private function createCharacterByName($nameCharacter,$apiKey){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/variant/metadata/characteristics";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/variant/metadata/characteristics";
         $client = new MsClient($apiKey);
         $body = [
             "name" => $nameCharacter,
@@ -48,7 +48,7 @@ class ModifyProductService
     }
 
     private function getCharacterByName($nameCharacter,$apiKey){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/variant/metadata/characteristics";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/variant/metadata/characteristics";
         $client = new MsClient($apiKey);
         $json = $client->get($url);
         $foundedId = null;

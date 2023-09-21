@@ -127,7 +127,7 @@ class OrderUpdateMsService
 
     private function getMs($orderId,$apiKey)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode=".$orderId;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode=".$orderId;
         $client = new MsClient($apiKey);
         $json = $client->get($url);
         return $json;
@@ -149,7 +149,7 @@ class OrderUpdateMsService
 
     private function changeOrderStatusMs($orderId, $metaState, $apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/".$orderId;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/".$orderId;
         $client = new MsClient($apiKey);
         $client->put($uri,[
             "state" => [

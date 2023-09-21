@@ -34,6 +34,7 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
                 'method'  => $method,
                 'header'  => array(
                     'Authorization: Bearer ' . $bearerToken,
+                    'Accept-Encoding' => 'gzip',
                     "Content-type: application/json",
                 ),
                 'content' => $body
@@ -42,7 +43,11 @@ function makeHttpRequest(string $method, string $url, string $bearerToken, $body
         : array('http' =>
             array(
                 'method'  => $method,
-                'header'  => 'Authorization: Bearer ' . $bearerToken
+                'header'  => array(
+                    'Authorization: Bearer ' . $bearerToken,
+                    'Accept-Encoding' => 'gzip',
+                    "Content-type: application/json",
+                ),
             )
         );
     $context = stream_context_create($opts);

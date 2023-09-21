@@ -8,7 +8,7 @@ class CustomEntityService
 {
     public function createCustomEntity($apiKey, $entityName, $values): void
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customentity";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customentity";
         $client = new MsClient($apiKey);
         $bodyEntity = [
             "name" => $entityName,
@@ -23,7 +23,7 @@ class CustomEntityService
 
     public function createEntityElement($apiKey,$entityId,$elementName): void
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customentity/".$entityId;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customentity/".$entityId;
         $client = new MsClient($apiKey);
         $bodyEntityEl = [
             "name" => $elementName,

@@ -46,7 +46,7 @@ class ProductCreateMsService
 
     private function getMsCheck($apiKeyMs)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
         $propertyIds = [];
@@ -134,7 +134,7 @@ class ProductCreateMsService
 
     private function isProductExistsMs($nodeId, $hrefMsAttribProduct, $apiKeyMs): bool
     {
-        $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter="
+        $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/product?filter="
             .$hrefMsAttribProduct."=".$nodeId;
         //dd($urlToFind);
         $client = new MsClient($apiKeyMs);
@@ -189,7 +189,7 @@ class ProductCreateMsService
 
     private function createCategoryMs($apiKeyMs, $nameFolder,$externalCode,$accountId,$parentFolder = null)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
         $client = new MsClient($apiKeyMs);
 
         $jsonToCheck = $client->get($url);
@@ -225,7 +225,7 @@ class ProductCreateMsService
 
     private function createProductMs($apiKeyMs, $productUds,$accountId, $productFolderMeta = null)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         $bodyProduct["name"] = $productUds->name;
 
         $bodyProduct["salePrices"] = [
@@ -435,7 +435,7 @@ class ProductCreateMsService
     }
 
     private function createVariantProduct($apiKeyMs, $productVar,$accountId, $productFolderMeta = null){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         $client = new MsClient($apiKeyMs);
         foreach ($productVar->data->variants as $variant){
             $bodyProductVar["name"] = $variant->name."(".$productVar->name.")";
@@ -527,7 +527,7 @@ class ProductCreateMsService
 
     private function getFolderMetaById($folderId, $apiKeyMs)
     {   if ($folderId != 0) {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder/".$folderId;
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
         $return = $json->meta;

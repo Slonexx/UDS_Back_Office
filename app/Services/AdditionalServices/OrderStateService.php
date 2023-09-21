@@ -25,7 +25,7 @@ class OrderStateService
         if($status == null){
             return null;
         } else {
-            $uri = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+            $uri = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
             $client = new MsClient($apiKey);
             $jsonStates = $client->get($uri);
             $foundedState = null;

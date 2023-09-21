@@ -71,14 +71,14 @@ class sendOperations
         $post = json_decode(json_encode($post));
 
         $ClientMC = new MsClient($Setting->TokenMoySklad);
-        $OldBody = $ClientMC->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId']);
+        $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId']);
 
         $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
         $setAttributes = $this->Attributes($data, $post, $Setting);
 
         $OldBody->externalCode = $post->id;
 
-        $putBody = $ClientMC->put('https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], [
+        $putBody = $ClientMC->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], [
             'externalCode' => (string) $post->id,
             'positions' => $setPositions,
             'attributes' => $setAttributes,
@@ -121,7 +121,7 @@ class sendOperations
 
     public function Attributes($data, $postUDS, $Setting): array
     {
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/metadata/attributes';
+        $url = 'https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/metadata/attributes';
         $Client = new ClientMC($url, $Setting->TokenMoySklad);
         $metadata = $Client->requestGet()->rows;
         $Attributes = [];
@@ -177,9 +177,9 @@ class sendOperations
             $positions = [];
             $attributesValue = [];
             $Store = $Setting->Store;
-            $bodyStore = $client->get('https://online.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Store)->rows;
+            $bodyStore = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Store)->rows;
             $Store = $bodyStore[0]->id;
-            $bodyAttributes = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows;
+            $bodyAttributes = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows;
 
             foreach ($OldBody->attributes as $item) {
                 $attributesValue[$item->name] = [
@@ -214,7 +214,7 @@ class sendOperations
                 ];
             }
 
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/demand';
+            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/demand';
             $body = [
                 'organization' => ['meta' => [
                     'href' => $OldBody->organization->meta->href,
@@ -227,7 +227,7 @@ class sendOperations
                     'mediaType' => $OldBody->agent->meta->mediaType,
                 ]],
                 'store' => ['meta' => [
-                    'href' => 'https://online.moysklad.ru/api/remap/1.2/entity/store/' . $Store,
+                    'href' => 'https://api.moysklad.ru/api/remap/1.2/entity/store/' . $Store,
                     'type' => 'store',
                     'mediaType' => 'application/json',
                 ]],
@@ -262,7 +262,7 @@ class sendOperations
                         ],
                     ];
 
-                    $urlFacture = 'https://online.moysklad.ru/api/remap/1.2/entity/factureout';
+                    $urlFacture = 'https://api.moysklad.ru/api/remap/1.2/entity/factureout';
                     $client = new MsClient($Setting->TokenMoySklad);
                     $client->post($urlFacture, $body);
                 }
@@ -307,11 +307,11 @@ class sendOperations
         ];
 
         if ($SettingBD->operationsPaymentDocument == 1 || $SettingBD->operationsPaymentDocument == "1") {
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
         }
 
         if ($SettingBD->operationsPaymentDocument == 2) {
-            $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
         }
 
         $client->post($url, $body);

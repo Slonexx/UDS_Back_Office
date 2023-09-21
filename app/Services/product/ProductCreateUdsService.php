@@ -62,16 +62,16 @@ class ProductCreateUdsService
         $client = new MsClient($apiKeyMs);
 
         if ($folderName == null) {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         } else {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~" . $folderName;
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/product?filter=pathName~" . $folderName;
         }
         $result = $client->get($url);
 
         if ($folderName == null) {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/service";
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/service";
         } else {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/service?filter=pathName~" . $folderName;
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/service?filter=pathName~" . $folderName;
         }
         $result->rows = array_merge($result->rows, $client->get($url)->rows);
 
@@ -215,7 +215,7 @@ class ProductCreateUdsService
     {
 
         if ($folderName != null) {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=" . $folderName;
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=" . $folderName;
             $client = new MsClient($apiKeyMs);
             try {
                 $json = $client->get($url);
@@ -225,7 +225,7 @@ class ProductCreateUdsService
                 return (false);
             }
         } else {
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
             $client = new MsClient($apiKeyMs);
             try {
                 $json = $client->get($url)->rows;
@@ -243,7 +243,7 @@ class ProductCreateUdsService
 
     private function updateCategory($createdCategoryId, $idMs, $apiKeyMs): void
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMs;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMs;
         $client = new MsClient($apiKeyMs);
         $body = [
             "externalCode" => "" . $createdCategoryId,
@@ -253,7 +253,7 @@ class ProductCreateUdsService
 
     private function updateProduct($createdProduct, $idMs, $apiKeyMs): void
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/" . $idMs;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product/" . $idMs;
         $client = new MsClient($apiKeyMs);
 
         try {
@@ -387,7 +387,7 @@ class ProductCreateUdsService
                                 $variants[$id]['offer']['skipLoyalty'] = $attribute->value;
                             }
                             if ($attribute->name == "Товар неограничен (UDS)" && !$attribute->value) {
-                                $inStock = $Client_MS->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?" . "filter=store=" . $storeHref . ";search=" . $item->name)->rows;
+                                $inStock = $Client_MS->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?" . "filter=store=" . $storeHref . ";search=" . $item->name)->rows;
                                 if ($inStock) {
                                     $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity;
                                 }

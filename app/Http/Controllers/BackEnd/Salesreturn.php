@@ -15,7 +15,7 @@ class Salesreturn extends Controller
        $Setting = new getSettingVendorController($accountId);
        $ClientUDS = new UdsClient($Setting->companyId, $Setting->TokenUDS);
 
-       $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$objectId;
+       $url = 'https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$objectId;
        $ClientMC = new ClientMC($url, $Setting->TokenMoySklad);
        $MAINBody = $ClientMC->requestGet();
 
@@ -79,7 +79,7 @@ class Salesreturn extends Controller
 
         $Setting = new getSettingVendorController($data['accountId']);
         $ClientMC = new MsClient($Setting->TokenMoySklad);
-        $url = 'https://online.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$data['objectId'];
+        $url = 'https://api.moysklad.ru/api/remap/1.2/entity/salesreturn/'.$data['objectId'];
         $BodyMC = $ClientMC->get($url);
         $OLD_partialAmount = ((int) substr(strrchr($BodyMC->externalCode, "="), 1));
         $partialAmount = ( (int) $data['partialAmount']) + $OLD_partialAmount;

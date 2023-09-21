@@ -24,7 +24,7 @@ class AgentService
 
     private function getMs($apiKeyMs): array
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty";
         $client = new MsClient($apiKeyMs);
         $json = $client->get($url);
         $customerIds = [];
@@ -92,7 +92,7 @@ class AgentService
         $client = new MsClient($apiKeyMs);
 
         if ($customer->phone != null){
-            $BodyAgentMS = $client->get("https://online.moysklad.ru/api/remap/1.2/entity/counterparty?search=".$customer->phone)->rows;
+            $BodyAgentMS = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/counterparty?search=".$customer->phone)->rows;
         } else $BodyAgentMS = [];
         if ($BodyAgentMS != []){
             $agent = [
@@ -107,7 +107,7 @@ class AgentService
             if ($customer->phone != null){
                 $agent["phone"] = $customer->phone;
             }
-            $client->post("https://online.moysklad.ru/api/remap/1.2/entity/counterparty",$agent);
+            $client->post("https://api.moysklad.ru/api/remap/1.2/entity/counterparty",$agent);
         } else {
             $agent = [
                 "name" => $customer->displayName,
@@ -121,7 +121,7 @@ class AgentService
             if ($customer->phone != null){
                 $agent["phone"] = $customer->phone;
             }
-            $client->put("https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$BodyAgentMS[0]->id, $agent);
+            $client->put("https://api.moysklad.ru/api/remap/1.2/entity/counterparty/".$BodyAgentMS[0]->id, $agent);
         }
 
 
@@ -141,14 +141,14 @@ class AgentService
 
     private function isAgentExistsMs($nodeId,$phone,$apiKeyMs): bool
     {
-        $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId;
+        $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId;
         //dd($urlToFind);
         $client = new MsClient($apiKeyMs);
         $json = $client->get($urlToFind);
 
         if ($json->meta->size == 0){
             if ($phone != null){
-                $urlCheckPhone = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone=".$phone;
+                $urlCheckPhone = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone=".$phone;
                 $json = $client->get($urlCheckPhone);
                 if ($json->meta->size > 0){
                     $this->updateAgent($json->rows[0],$nodeId,$apiKeyMs);
@@ -163,7 +163,7 @@ class AgentService
 
     private function updateAgent($agent,$newNodeId, $apiKeyMs)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$agent->id;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty/".$agent->id;
         $client = new MsClient($apiKeyMs);
         $body = [
             "externalCode" => $newNodeId

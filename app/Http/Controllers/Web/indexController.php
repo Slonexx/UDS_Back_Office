@@ -6,18 +6,12 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\BD\newProductSettingBD;
-use App\Http\Controllers\Config\DeleteVendorApiController;
 use App\Http\Controllers\Config\getSettingVendorController;
-use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
-use App\Models\newProductModel;
-use App\Services\newProductService\createProductForMS;
 use App\Services\newProductService\createProductForUDS;
 use App\Services\Settings\SettingsService;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\Request;
 
@@ -184,7 +178,7 @@ class indexController extends Controller
 
             try {
                 $ClientCheckMC = new MsClient($setting->TokenMoySklad);
-                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee?filter=uid~'.$login)->rows;
+                $body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee?filter=uid~'.$login)->rows;
 
                 if ($body!=[]){
                     dd($body);
@@ -208,22 +202,18 @@ class indexController extends Controller
 
     function time(Request $request, $accountId) {
 
-        dd();
-
         set_time_limit(3000);
         $setting = new getSettingVendorController($accountId);
         $ms = new MsClient($setting->TokenMoySklad);
-        $counterparty = $ms->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty')->rows;
+        $counterparty = $ms->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty')->rows;
 
         foreach ($counterparty as $item){
             try {
-                $ms->delete('https://online.moysklad.ru/api/remap/1.2/entity/counterparty/'.$item->id,null);
+                $ms->delete('https://api.moysklad.ru/api/remap/1.2/entity/counterparty/'.$item->id,null);
             } catch (BadResponseException) {
                 continue;
             }
         }
-
-        dd('yes');
 
         $item = new newProductSettingBD($accountId);
         $mainSetting = new getMainSettingBD($item->accountId);

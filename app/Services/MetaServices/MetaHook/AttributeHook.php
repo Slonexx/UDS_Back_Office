@@ -15,7 +15,7 @@ class AttributeHook
 
     private function getAttribute($entityType, $nameAttribute)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/{$entityType}/metadata/attributes";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/{$entityType}/metadata/attributes";
         $json = $this->msClient->get($url);
 
         foreach ($json->rows as $row) {

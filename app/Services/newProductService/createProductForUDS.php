@@ -93,7 +93,7 @@ class createProductForUDS
     {
         if ($this->setting->StoreRecord == '1') {
             $count = 0;
-            foreach ($this->msClient->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://online.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows as $itemStock) {
+            foreach ($this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows as $itemStock) {
                 $count += $itemStock->quantity;
             }
             return $count > 0;
@@ -126,8 +126,8 @@ class createProductForUDS
     private function getMs($folderName): stdClass
     {
         $urls = [
-            '' => "https://online.moysklad.ru/api/remap/1.2/entity/product",
-            'service' => "https://online.moysklad.ru/api/remap/1.2/entity/service"
+            '' => "https://api.moysklad.ru/api/remap/1.2/entity/product",
+            'service' => "https://api.moysklad.ru/api/remap/1.2/entity/service"
         ];
 
         $result = new stdClass();
@@ -150,14 +150,14 @@ class createProductForUDS
     {
         $arrProductFolders = [];
         if ($pathName == null) {
-            $tmp = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/productfolder/')->rows;
+            $tmp = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder/')->rows;
             foreach ($tmp as $item) {
                 if (substr_count($item->pathName, '/') < 2) {
                     $arrProductFolders[] = $item;
                 }
             }
         } else {
-            $tmp = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName~' . $pathName)->rows;
+            $tmp = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName~' . $pathName)->rows;
             foreach ($tmp as $item) {
                 if (strpos($item->pathName, $pathName) === 0 and substr_count($item->pathName, '/') < 3) {
                     $arrProductFolders[] = $item;
@@ -241,7 +241,7 @@ class createProductForUDS
             $body["nodeId"] = intval($nodeId);
         }
         try {
-            $this->msClient->put("https://online.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMsProductFolder, [
+            $this->msClient->put("https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMsProductFolder, [
                 "externalCode" => "" . ($this->udsClient->post('https://api.uds.app/partner/v2/goods', $body))->id,
             ]);
         } catch (ClientException) {

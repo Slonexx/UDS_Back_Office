@@ -36,7 +36,7 @@ class ProductUpdateUdsHiddenService
             if (!array_key_exists('categoryIds', $productsUds)) { $productsUds['categoryIds'] = []; }
             if (array_key_exists('productIds', $productsUds)) {
                 $filter = null;
-                foreach ($this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/')->rows as $item) {
+                foreach ($this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes/')->rows as $item) {
                     if ($item->name == 'id (UDS)') {
                         $filter = $item->meta->href;
                     } else continue;
@@ -46,7 +46,7 @@ class ProductUpdateUdsHiddenService
                         try {
                             $nodeID = 0;
                             $product = $this->client->get('https://api.uds.app/partner/v2/goods/' . $item);
-                            $MS_product = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/product?filter='.$filter.'='.$item)->rows;
+                            $MS_product = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product?filter='.$filter.'='.$item)->rows;
                             if ($MS_product != [] and $product->hidden == false){
                                 $MS_product = $MS_product[0];
                                 if (property_exists($product->data, 'variants')) {

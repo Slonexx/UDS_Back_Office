@@ -8,7 +8,7 @@ class OrganizationService
 {
     public function getOrganization($nameOrganization,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/organization?search=".$nameOrganization;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/organization?search=".$nameOrganization;
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;
@@ -31,7 +31,7 @@ class OrganizationService
 
     public function createOrganization($nameOrganization,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/organization";
         $client = new MsClient($apiKey);
         $organization = [
             "name" => $nameOrganization,
@@ -51,7 +51,7 @@ class OrganizationService
 
     public function getOrganizationNameById($organizationId,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$organizationId;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$organizationId;
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         return $json->name;
@@ -59,7 +59,7 @@ class OrganizationService
 
     public function getOrganizationAccountByNumber($organizationId,$number,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$organizationId."/accounts";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$organizationId."/accounts";
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;

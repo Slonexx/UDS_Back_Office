@@ -18,7 +18,7 @@ class WebHookNewClientMS
                     "email" =>  $request->email ?? '',
                     "externalCode" => (string) $this->postClintId($Client, $request->participant['id']),
                 ];
-                return $Client->post( 'https://online.moysklad.ru/api/remap/1.2/entity/counterparty', $body);
+                return $Client->post( 'https://api.moysklad.ru/api/remap/1.2/entity/counterparty', $body);
             }
         } catch (BadResponseException $e){
             return $e;
@@ -27,7 +27,7 @@ class WebHookNewClientMS
     }
 
     private function postClintId(MsClient $Client, $externalCode){
-        $body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode='.$externalCode);
+        $body = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode='.$externalCode);
         return array_key_exists(1, $body) ? null : $externalCode;
     }
 

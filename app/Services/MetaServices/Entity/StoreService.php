@@ -8,7 +8,7 @@ class StoreService
 {
     public function getStore($storeName,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/store?search=".$storeName;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/store?search=".$storeName;
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;
@@ -23,7 +23,7 @@ class StoreService
 
     public function createStore($storeName,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/store";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/store";
         $client = new MsClient($apiKey);
         $store = [
             "name" => $storeName,

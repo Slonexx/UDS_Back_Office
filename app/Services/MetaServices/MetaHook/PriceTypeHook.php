@@ -14,7 +14,7 @@ class PriceTypeHook
     }
     public function getPriceType($namePrice): array
     {
-        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype");
+        $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype");
         $foundedMeta = null;
         $count = 0;
         foreach($json as $price){
@@ -38,7 +38,7 @@ class PriceTypeHook
     }
 
     private function createPriceType($namePrice){
-        $url = "https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
+        $url = "https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
         $json =  $this->msClient->get($url);
         $item = $json[0];
         $body = [

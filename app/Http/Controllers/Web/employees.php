@@ -30,7 +30,7 @@ class employees extends Controller
         }
 
         $TokenMoySklad = $Setting->TokenMoySklad;
-        $url_employee = 'https://online.moysklad.ru/api/remap/1.2/entity/employee';
+        $url_employee = 'https://api.moysklad.ru/api/remap/1.2/entity/employee';
         $Client = new MsClient($TokenMoySklad);
         $Body_employee = $Client->get($url_employee)->rows;
         $security = [];

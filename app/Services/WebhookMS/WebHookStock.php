@@ -42,9 +42,9 @@ class WebHookStock
     {
         foreach ($BODY as $item){
             try {
-                $Stock = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/store/'.$item->storeId);
+                $Stock = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store/'.$item->storeId);
                 if ($Stock->name == $this->Setting->Store){
-                    $product = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/product/'.$item->assortmentId);
+                    $product = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product/'.$item->assortmentId);
                     if (property_exists($product, 'attributes')) {
                         $ID = $this->attributes($product->attributes, 'id (UDS)');
                         if ($ID == 0) { continue; }
@@ -58,9 +58,9 @@ class WebHookStock
                 else continue;
             } catch (BadResponseException $e) {
                 try {
-                    $Stock = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/store/'.$item->storeId);
+                    $Stock = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store/'.$item->storeId);
                     if ($Stock->name == $this->Setting->Store){
-                        $product = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/variant/'.$item->assortmentId);
+                        $product = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/variant/'.$item->assortmentId);
                         if (property_exists($product, 'attributes')) {
                             $ID = $this->attributes($product->attributes, 'id (UDS)');
                             if ($ID == 0) { continue; }

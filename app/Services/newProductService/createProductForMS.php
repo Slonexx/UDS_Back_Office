@@ -95,7 +95,7 @@ class createProductForMS
 
     private function isProductExistsMs($nodeId, $hrefMsAttribProduct): bool
     {
-        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/product?filter=" . $hrefMsAttribProduct . "=" . $nodeId);
+        $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/product?filter=" . $hrefMsAttribProduct . "=" . $nodeId);
         return ($json->meta->size > 0);
     }
 
@@ -132,7 +132,7 @@ class createProductForMS
 
     private function createCategoryMs($nameFolder, $externalCode, $parentFolder = null)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
 
         $jsonToCheck = $this->msClient->get($url);
 
@@ -165,7 +165,7 @@ class createProductForMS
 
     private function createProductMs($productUds, $productFolderMeta = null)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         $bodyProduct["name"] = $productUds->name;
 
         $bodyProduct["salePrices"] = [
@@ -363,7 +363,7 @@ class createProductForMS
 
     private function createVariantProduct($productVar, $productFolderMeta = null): void
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product";
         foreach ($productVar->data->variants as $variant) {
             $bodyProductVar["name"] = $variant->name . "(" . $productVar->name . ")";
             if ($variant->sku != null) {
@@ -449,7 +449,7 @@ class createProductForMS
 
     private function getProductAttribute()
     {
-        $json = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes');
+        $json = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes');
         $foundedMeta = null;
         foreach ($json->rows as $row) {
             if ($row->name == "id (UDS)") {
@@ -462,10 +462,10 @@ class createProductForMS
 
     private function getFolderMetaById()
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
         $meta = null;
         try {
-            $getBody = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=UDS')->rows;
+            $getBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=UDS')->rows;
             if ($getBody) {
                 $meta = $getBody[0]->meta;
             }

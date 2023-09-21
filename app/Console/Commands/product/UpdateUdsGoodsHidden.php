@@ -39,7 +39,7 @@ class UpdateUdsGoodsHidden extends Command
 
             try {
                 $ClientCheckMC = new MsClient($settings->TokenMoySklad);
-                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                $body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
 
                 $ClientCheckUDS = new UdsClient($settings->companyId, $settings->TokenUDS);
                 $body = $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');

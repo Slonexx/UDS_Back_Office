@@ -34,7 +34,7 @@ class postController extends Controller
 
         try {
             $Client = new MsClient($Setting->TokenMoySklad);
-            $search = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/counterparty?search='.$request->phone);
+            $search = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?search='.$request->phone);
             $ClientCheckUDS = (new UdsClient($Setting->companyId, $Setting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
             return response()->json((new WebHookNewClientMS())->initiation($Client,$search, $request));
         } catch (BadResponseException $e) { return response()->json($e); }
@@ -55,7 +55,7 @@ class postController extends Controller
             $companyId = $Setting->companyId;
 
             if ($Setting->creatDocument == "1"){
-                $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder";
+                $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder";
                 $Clint = new ClientMC($url, $TokenMC);
 
                 $BD = new BDController();
@@ -127,7 +127,7 @@ class postController extends Controller
 
 
     public function metaOrganization($apiKey, $Organization){
-        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$Organization;
+        $url_organization = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$Organization;
         $Clint = new ClientMC($url_organization, $apiKey);
         $Body = $Clint->requestGet()->meta;
         $href = $Body->href;
@@ -146,7 +146,7 @@ class postController extends Controller
 
         if ($PaymentAccount == null) return null;
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/organization/".$Organization."/accounts";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$Organization."/accounts";
         $Clint = new ClientMC($url, $apiKey);
         $Body = $Clint->requestGet()->rows;
         foreach ($Body as $item){
@@ -174,14 +174,14 @@ class postController extends Controller
     public function metaAgent($apiKey, $agent){
 
         $Clint = new MsClient($apiKey);
-        $Body = $Clint->get("https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~".$agent->id)->rows;
+        $Body = $Clint->get("https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~".$agent->id)->rows;
         if ($Body == []) {
             $agent = [
                 "name" => $agent->displayName,
                 "externalCode" => (string) $agent->id,
             ];
 
-            $url = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty";
+            $url = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty";
             $client = new MsClient($apiKey);
             $Body = $client->post($url,$agent)->meta;
         } else {
@@ -206,7 +206,7 @@ class postController extends Controller
         if ($Status == null){
             return null;
         }
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/";
         $Clint = new ClientMC($url, $apiKey);
         $Body = $Clint->requestGet()->states;
         foreach ($Body as $item){
@@ -228,7 +228,7 @@ class postController extends Controller
     }
 
     public function metaStore($apiKey, $StoreName){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/store/";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/store/";
         $Clint = new ClientMC($url, $apiKey);
         $body = $Clint->requestGet()->rows;
         foreach ($body as $item){
@@ -253,7 +253,7 @@ class postController extends Controller
 
         if ($salesChannelName == null) return null;
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel?search=".$salesChannelName;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel?search=".$salesChannelName;
         $Clint = new ClientMC($url, $apiKey);
         $Body = $Clint->requestGet()->rows[0]->meta;
         $href = $Body->href;
@@ -271,7 +271,7 @@ class postController extends Controller
     public function metaProject($apiKey, $Project){
         if ($Project == null) return null;
 
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/project?search=".$Project;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/project?search=".$Project;
         $Clint = new ClientMC($url, $apiKey);
         $Body = $Clint->requestGet()->rows[0]->meta;
         $href = $Body->href;
@@ -325,7 +325,7 @@ class postController extends Controller
     }
 
     public function metaPositions($apiKey, $UDSitem, $purchase, $delivery){
-        $urlMeta = "https://online.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
+        $urlMeta = "https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
         $Client = new ClientMC($urlMeta, $apiKey);
         $BodyMeta = $Client->requestGet()->rows;
         foreach ($BodyMeta as $BodyMeta_item){
@@ -340,7 +340,7 @@ class postController extends Controller
 
         $Result = [];
         foreach ($UDSitem as $id=>$item){
-            $urlProduct = 'https://online.moysklad.ru/api/remap/1.2/entity/product?filter='.$BodyMeta.'='.$item['id'];
+            $urlProduct = 'https://api.moysklad.ru/api/remap/1.2/entity/product?filter='.$BodyMeta.'='.$item['id'];
             $Client = new ClientMC($urlProduct, $apiKey);
             $body = $Client->requestGet()->rows;
             //dd($body);
@@ -409,7 +409,7 @@ class postController extends Controller
     }
 
     public function CheckExternalCode($apiKey, $externalCode){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode~".$externalCode;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode~".$externalCode;
         $Clint = new ClientMC($url, $apiKey);
         $body = $Clint->requestGet()->rows;
         if (!$body) return (string) $externalCode;
@@ -417,13 +417,13 @@ class postController extends Controller
     }
 
     public function delivery($apiKey, $deliveryCase){
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/assortment?filter=externalCode=Доставка(UDS)";
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/assortment?filter=externalCode=Доставка(UDS)";
         $Client = new ClientMC($url, $apiKey);
         $body = $Client->requestGet()->rows;
 
         if (array_key_exists(0, $body)) $body = $body[0];
         else {
-            $urlService = "https://online.moysklad.ru/api/remap/1.2/entity/service";
+            $urlService = "https://api.moysklad.ru/api/remap/1.2/entity/service";
             $ClientService = new ClientMC($urlService, $apiKey);
             $bodyService = [
                 'name' => 'Доставка (UDS)',

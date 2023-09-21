@@ -11,7 +11,7 @@ class ImportDateHttpClient
     {
         $this->client = new Client([
             'auth' => [$email, $password],
-            'base_uri' => 'https://online.moysklad.ru/api/remap/1.2/'.$base_url,
+            'base_uri' => 'https://api.moysklad.ru/api/remap/1.2/'.$base_url,
             'timeout'  => 2.0,
             'verify' => false,
         ]);

@@ -58,7 +58,7 @@ class OperationsCalc
 
     private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id)
     {
-        $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
+        $bodyOrder = $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
         $unredeemableTotal = null;
         $href = $bodyOrder->positions->meta->href;
         $BodyPositions = $ClientMS->get($href)->rows;
@@ -98,7 +98,7 @@ class OperationsCalc
 
     private function customOperation(MsClient $ClientMS, mixed $entity_type, mixed $object_Id, string $operationType)
     {
-        $bodyOrder = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
+        $bodyOrder = $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $entity_type . '/' . $object_Id);
         $value = 0;
         $href = $bodyOrder->positions->meta->href;
         $BodyPositions = $ClientMS->get($href)->rows;

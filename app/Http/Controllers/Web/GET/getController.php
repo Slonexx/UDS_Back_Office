@@ -92,8 +92,8 @@ class getController extends Controller
         if ($Store == null) $Store = "0";
 
         $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
-            $pool->as('body_store')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/store"),
-            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
+            $pool->as('body_store')->withToken($TokenMoySklad)->get("https://api.moysklad.ru/api/remap/1.2/entity/store"),
+            $pool->as('body_productFolder')->withToken($TokenMoySklad)->get("https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName="),
         ]);
 
         dd($responses['body_productFolder']->object());
@@ -172,10 +172,10 @@ class getController extends Controller
 
         //dd($Setting);
 
-        $url_organization = "https://online.moysklad.ru/api/remap/1.2/entity/organization";
-        $url_customerorder = "https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
-        $url_saleschannel = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
-        $url_project = "https://online.moysklad.ru/api/remap/1.2/entity/project";
+        $url_organization = "https://api.moysklad.ru/api/remap/1.2/entity/organization";
+        $url_customerorder = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
+        $url_saleschannel = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel";
+        $url_project = "https://api.moysklad.ru/api/remap/1.2/entity/project";
 
         if ($Organization != null) {
             $urlCheck = $url_organization . "/" . $Organization;
@@ -203,7 +203,7 @@ class getController extends Controller
 
         $arr_PaymentAccount = [];
         foreach ($arr_Organization as $item) {
-            $arr_PaymentAccount[$item->id] = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/" . $item->id . "/accounts")->rows;
+            $arr_PaymentAccount[$item->id] = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/organization/" . $item->id . "/accounts")->rows;
         }
 
         return view('web.Setting.document', [

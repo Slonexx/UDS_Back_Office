@@ -16,7 +16,7 @@ class CurrencyHook
 
     public function getKzCurrency(): array
     {
-        $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге");
+        $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency?seacrh=тенге");
         $foundedMeta = null;
         foreach($json->rows as $row){
             $foundedMeta = [
@@ -37,7 +37,7 @@ class CurrencyHook
 
     public function createCurrency(): array
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/currency";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/currency";
         $currency = [
             "system" => true,
             "isoCode" => "KZT",

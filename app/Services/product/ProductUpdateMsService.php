@@ -80,7 +80,7 @@ class ProductUpdateMsService
         foreach ($json->rows as $row) {
             $currId = "".$row->id;
             if ($row->data->type == "ITEM"){
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/product?filter="
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/product?filter="
                     .$hrefMsAttribProduct."=".$currId;
                 $clientMs = new MsClient($apiKeyMs);
                 $json = $clientMs->get($urlToFind);
@@ -100,7 +100,7 @@ class ProductUpdateMsService
 
     private function updateProductInMs($productUds,$idProductMs,$accountId,$apiKeyMs)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/entity/product/".$idProductMs;
+        $url = "https://api.moysklad.ru/api/remap/1.2/entity/product/".$idProductMs;
         $bodyProduct["name"] = $productUds->name;
 
         $bodyProduct["salePrices"] = [

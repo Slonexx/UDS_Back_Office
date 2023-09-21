@@ -221,7 +221,7 @@ class WebhookMSController extends Controller
         switch ($paymentDocument) {
             case "1":
             {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/cashin';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
                 $body = [
                     'organization' => ['meta' => [
                         'href' => $OldBody->organization->meta->href,
@@ -251,9 +251,9 @@ class WebhookMSController extends Controller
             }
             case "2":
             {
-                $url = 'https://online.moysklad.ru/api/remap/1.2/entity/paymentin';
+                $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
 
-                $rate_body = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
+                $rate_body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/currency/")->rows;
                 $rate = null;
                 foreach ($rate_body as $item) {
                     if ($item->name == "тенге" or $item->fullName == "Казахстанский тенге") {
@@ -311,7 +311,7 @@ class WebhookMSController extends Controller
         $attributes = null;
         $positions = null;
 
-        foreach ($this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows as $item) {
+        foreach ($this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows as $item) {
             if ($item->name == "Начисление баллов (UDS)") {
                 $attributes[] = [
                     'meta' => [
@@ -339,7 +339,7 @@ class WebhookMSController extends Controller
 
         if ($BDFFirst['add_automationStore'] == 0 or $BDFFirst['add_automationStore'] == null) {
             $store = $OldBody->store->meta->href;
-        } else $store = 'https://online.moysklad.ru/api/remap/1.2/entity/store/' . $BDFFirst['add_automationStore'];
+        } else $store = 'https://api.moysklad.ru/api/remap/1.2/entity/store/' . $BDFFirst['add_automationStore'];
 
         $body = [
             'organization' => [
@@ -405,14 +405,14 @@ class WebhookMSController extends Controller
         else unset($body['project']);
 
         try {
-            $Demands = $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/demand", $body);
+            $Demands = $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/demand", $body);
             if ($BDFFirst['automationDocument'] == '3') {
-                $this->msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/factureout', [
+                $this->msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/factureout', [
                     'demands' => [
                         '0' => [
                             'meta' => [
-                                'href' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/" . $Demands->id,
-                                'metadataHref' => "https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata",
+                                'href' => "https://api.moysklad.ru/api/remap/1.2/entity/demand/" . $Demands->id,
+                                'metadataHref' => "https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata",
                                 'type' => "demand",
                                 'mediaType' => "application/json",
                             ]
@@ -445,7 +445,7 @@ class WebhookMSController extends Controller
 
     private function BodyCashierUDS($uid): ?array
     {
-        $employee = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/employee')->rows;
+        $employee = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/employee')->rows;
         foreach ($employee as $item) {
             if ($item->uid == $uid) {
                 return [
@@ -528,7 +528,7 @@ class WebhookMSController extends Controller
 
     public function Attributes(mixed $postUDS, string $type, float $Accrue): array
     {
-        $metadata = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/' . $type . '/metadata/attributes')->rows;
+        $metadata = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $type . '/metadata/attributes')->rows;
         $Attributes = null;
         foreach ($metadata as $item) {
             if ($item->name == "Списание баллов (UDS)") {

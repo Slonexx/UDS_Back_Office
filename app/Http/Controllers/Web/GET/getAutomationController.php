@@ -29,20 +29,20 @@ class getAutomationController extends Controller
         $Setting = new getSettingVendorController($accountId);
         $Client = new MsClient($Setting->TokenMoySklad);
 
-        $demand = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/demand/metadata');
+        $demand = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata');
         if (!property_exists($demand,'states')) {
             $demand = [0=>['name'=>'Отсутствуют статусы в отгрузках, автоматизация не будет работать']];
         } else $demand = $demand->states;
 
         $body_meta = [
-            'customerorder' => $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/customerorder/metadata')->states,
+            'customerorder' => $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata')->states,
             'demand' => $demand,
             ];
-        $body_store = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/store')->rows;
-        $body_project = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/project')->rows;
-        $body_saleschannel = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/saleschannel')->rows;
+        $body_store = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/store')->rows;
+        $body_project = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/project')->rows;
+        $body_saleschannel = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/saleschannel')->rows;
 
-        $body_organization = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/organization/")->rows;
+        $body_organization = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/organization/")->rows;
 
         $find = Automation_new_update_MODEL::query()->where('accountId', $accountId)->first();
         if ($find == null) {

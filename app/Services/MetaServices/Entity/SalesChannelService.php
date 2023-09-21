@@ -8,7 +8,7 @@ class SalesChannelService
 {
     public function getSaleChannel($saleChannelName,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel?search=".$saleChannelName;
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel?search=".$saleChannelName;
         $client = new MsClient($apiKey);
         $json = $client->get($uri);
         $foundedMeta = null;
@@ -33,7 +33,7 @@ class SalesChannelService
 
     public function createSaleChannel($saleChannelName,$apiKey)
     {
-        $uri = "https://online.moysklad.ru/api/remap/1.2/entity/saleschannel";
+        $uri = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel";
         $client = new MsClient($apiKey);
         $saleChannel = [
             "name" => $saleChannelName,

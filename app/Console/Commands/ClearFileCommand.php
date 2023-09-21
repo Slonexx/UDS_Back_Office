@@ -39,7 +39,7 @@ class ClearFileCommand extends Command
 
             try {
                 $ClientCheckMC = new MsClient($setting->TokenMoySklad);
-                $body = $ClientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+                $body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
             } catch (BadResponseException $e) {
                 app(DeleteVendorApiController::class)->Delete($setting->accountId);
             }

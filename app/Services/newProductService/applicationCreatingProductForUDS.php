@@ -104,7 +104,7 @@ class applicationCreatingProductForUDS
             ],
         ];
 
-        $inStock = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://online.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $product->name)->rows;
+        $inStock = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $product->name)->rows;
         if ($inStock) {
             $body['data']['inventory']['inStock'] = $inStock[0]->quantity;
         }
@@ -128,7 +128,7 @@ class applicationCreatingProductForUDS
     private function prepareVariants($product): array
     {
         $variants = [];
-        foreach ($this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/variant?filter=productid=' . $product->id)->rows as $id => $item) {
+        foreach ($this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/variant?filter=productid=' . $product->id)->rows as $id => $item) {
             $variants[$id] = [
                 'name' => $item->name,
                 'sku' => null,
@@ -142,7 +142,7 @@ class applicationCreatingProductForUDS
                 ],
             ];
 
-            $inStock = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://online.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows;
+            $inStock = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows;
             if ($inStock) {
                 $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity;
             }

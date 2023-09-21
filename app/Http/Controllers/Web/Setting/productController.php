@@ -39,11 +39,11 @@ class productController extends Controller
          * 3)Цена
         */
 
-        $arrayProductFolders = $ClientMs->get('https://online.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=')->rows;
-        $arrayStores = $ClientMs->get('https://online.moysklad.ru/api/remap/1.2/entity/store')->rows;
+        $arrayProductFolders = $ClientMs->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=')->rows;
+        $arrayStores = $ClientMs->get('https://api.moysklad.ru/api/remap/1.2/entity/store')->rows;
         $arrayPrice = [
-            'salesPrices' => $ClientMs->get('https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype'),
-            'promotionalPrice' => $ClientMs->get('https://online.moysklad.ru/api/remap/1.2/context/companysettings/pricetype'),
+            'salesPrices' => $ClientMs->get('https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype'),
+            'promotionalPrice' => $ClientMs->get('https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype'),
         ];
 
 
@@ -183,9 +183,9 @@ class productController extends Controller
                 if ($id == "0") {
                     $FolderName = "Корневая папка";
                     $FolderID = "0";
-                    $FolderURLs = "https://online.moysklad.ru/api/remap/1.2/entity/productfolder";
+                    $FolderURLs = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
                 } else {
-                    $body = $Client->get("https://online.moysklad.ru/api/remap/1.2/entity/productfolder/" . $id);
+                    $body = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" . $id);
                     $FolderName = $body->name;
                     $FolderID = $body->id;
                     $FolderURLs = $body->meta->href;
@@ -212,22 +212,22 @@ class productController extends Controller
 
         $WebhookProduct = true;
         $WebhookProductFolder = true;
-        $Webhook_body = $msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
+        $Webhook_body = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
         if ($Webhook_body != []) {
             foreach ($Webhook_body as $item) {
                 if ($item->url == "https://smartuds.kz/api/webhook/product") {
                     $WebhookProduct = false;
-                    if ($ProductFolder != 1) $msClient->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/' . $item->id, null);
+                    if ($ProductFolder != 1) $msClient->delete('https://api.moysklad.ru/api/remap/1.2/entity/webhook/' . $item->id, null);
                 }
 
                 if ($item->url == "https://smartuds.kz/api/webhook/productfolder") {
                     $WebhookProductFolder = false;
-                    if ($ProductFolder != 1) $msClient->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhook/' . $item->id, null);
+                    if ($ProductFolder != 1) $msClient->delete('https://api.moysklad.ru/api/remap/1.2/entity/webhook/' . $item->id, null);
                 }
             }
         }
         if ($WebhookProduct and $ProductFolder == 1) {
-            $msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
+            $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/webhook/', [
                 'url' => "https://smartuds.kz/api/webhook/product",
                 'action' => "UPDATE",
                 'diffType' => "FIELDS",
@@ -235,7 +235,7 @@ class productController extends Controller
             ]);
         }
         if ($WebhookProductFolder and $ProductFolder == 1) {
-            $msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
+            $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/webhook/', [
                 'url' => "https://smartuds.kz/api/webhook/productfolder",
                 'action' => "UPDATE",
                 'diffType' => "FIELDS",
@@ -258,18 +258,18 @@ class productController extends Controller
         ];
         $Webhook_check = true;
 
-        $Webhook_body = $msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock')->rows;
+        $Webhook_body = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/webhookstock')->rows;
         if ($Webhook_body != []) {
             foreach ($Webhook_body as $item) {
                 if ($item->url == "https://smartuds.kz/api/webhook/stock") {
                     $Webhook_check = false;
 
                     if ($ProductFolder != 1) {
-                        $msClient->delete('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock/' . $item->id, []);
+                        $msClient->delete('https://api.moysklad.ru/api/remap/1.2/entity/webhookstock/' . $item->id, []);
                     }
                 }
             }
         }
-        if ($Webhook_check and $ProductFolder == 1) $msClient->post('https://online.moysklad.ru/api/remap/1.2/entity/webhookstock', $body);
+        if ($Webhook_check and $ProductFolder == 1) $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/webhookstock', $body);
     }
 }

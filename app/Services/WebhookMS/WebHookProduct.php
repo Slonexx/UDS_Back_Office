@@ -65,7 +65,7 @@ class WebHookProduct
                 $Body["data"]['description'] = $BodyProduct->description;
             }
 
-            $variant = $this->msClient->get('https://online.moysklad.ru/api/remap/1.2/entity/variant?filter=productid='.$BodyProduct->id)->rows;
+            $variant = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/variant?filter=productid='.$BodyProduct->id)->rows;
             foreach ($variant as $id=>$item){
                 $price = null;
                 $variants[$id] = [

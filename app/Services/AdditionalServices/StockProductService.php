@@ -8,7 +8,7 @@ class StockProductService
 {
     public function getProductStockMs($idNode,$storeHref,$apiKey)
     {
-        $url = "https://online.moysklad.ru/api/remap/1.2/report/stock/all?".
+        $url = "https://api.moysklad.ru/api/remap/1.2/report/stock/all?".
         "filter=store=".$storeHref;
         $client = new MsClient($apiKey);
         $json = $client->get($url);

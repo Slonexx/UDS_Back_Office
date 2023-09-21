@@ -44,7 +44,7 @@ class ProductController extends Controller
         }
 
         try {
-            $BodyMSProduct = $ClientMS->get('https://online.moysklad.ru/api/remap/1.2/entity/product/'.$productID);
+            $BodyMSProduct = $ClientMS->get('https://api.moysklad.ru/api/remap/1.2/entity/product/'.$productID);
         } catch (BadResponseException $e){
             if ($e->getCode() == 401){
                 return response()->json([

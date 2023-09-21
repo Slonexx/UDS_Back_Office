@@ -60,7 +60,7 @@ class postAutomationController extends Controller
             $Client = new MsClient($Setting->TokenMoySklad);
             $url_check ='https://smartuds.kz/api/webhook/' ;
             $Webhook_check = true;
-            $Webhook_body = $Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
+            $Webhook_body = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
             if ($Webhook_body != []){
                 foreach ($Webhook_body as $item){
                     if ($item->url == $url_check){
@@ -77,13 +77,13 @@ class postAutomationController extends Controller
                     $url_check = $url_check.$entity;
                 }
 
-                foreach ($Client->get('https://online.moysklad.ru/api/remap/1.2/entity/webhook/')->rows as $item){
+                foreach ($Client->get('https://api.moysklad.ru/api/remap/1.2/entity/webhook/')->rows as $item){
                     if (strpos(($item->url), "https://smartuds.kz/") !== false) {
                         $Client->delete($item->meta->href,null);
                     }
                 }
 
-                $Client->post('https://online.moysklad.ru/api/remap/1.2/entity/webhook/', [
+                $Client->post('https://api.moysklad.ru/api/remap/1.2/entity/webhook/', [
                     'url' => $url_check,
                     'action' => "UPDATE",
                     'entityType' => $entity,

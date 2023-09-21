@@ -61,21 +61,21 @@ class createAgentForMS
 
         if ($this->setting->examination == '0'){
             if ($phone == "") {
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
-            } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
-        } elseif ($this->setting->examination == '1') { $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName; }
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
+            } else $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+        } elseif ($this->setting->examination == '1') { $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName; }
 
         elseif ($this->setting->examination == '2') {
             if ($phone == "") {
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName;
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$customer->displayName;
             } else
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone.";name=".$customer->displayName;
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone.";name=".$customer->displayName;
         }
 
         else {
             if ($phone == "") {
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
-            } else $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$customer->participant->id;
+            } else $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
         }
 
         $json = $this->msClient->get($urlToFind);
@@ -110,11 +110,11 @@ class createAgentForMS
         }
 
         if ($json->meta->size == 0){
-            $this->msClient->post("https://online.moysklad.ru/api/remap/1.2/entity/counterparty",$body);
+            $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/counterparty",$body);
         } else {
             unset($body['name']);
             unset($body['companyType']);
-            $this->msClient->put("https://online.moysklad.ru/api/remap/1.2/entity/counterparty/".$json->rows[0]->id,$body);
+            $this->msClient->put("https://api.moysklad.ru/api/remap/1.2/entity/counterparty/".$json->rows[0]->id,$body);
         }
 
 
@@ -135,7 +135,7 @@ class createAgentForMS
     private function isAgentExistsMs($nodeId, $phone, $displayName): bool
     {
         try {
-            $json = $this->msClient->get("https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId);
+            $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode=".$nodeId);
         } catch (BadResponseException){ return false; }
 
         if ($json->meta->size == 0) { return false; }
@@ -145,24 +145,24 @@ class createAgentForMS
             if ($phone == "") {
                 return false;
             } else
-            $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+            $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
 
         } elseif ($this->setting->examination == '1') {
-            $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$displayName;
+            $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$displayName;
         }
 
         elseif ($this->setting->examination == '2') {
             if ($phone == "") {
-                $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$displayName;
+                $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=name=".$displayName;
             } else
-            $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone.";name=".$displayName;
+            $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone.";name=".$displayName;
         }
 
         else {
             if ($phone == "") {
                 return false;
             } else
-            $urlToFind = "https://online.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
+            $urlToFind = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=phone~".$phone;
         }
 
         $json = $this->msClient->get($urlToFind);

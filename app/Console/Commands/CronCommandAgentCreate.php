@@ -54,7 +54,7 @@ class CronCommandAgentCreate extends Command
     {
         try {
             $clientCheckMC = new MsClient($mainSetting->tokenMs);
-            $clientCheckMC->get('https://online.moysklad.ru/api/remap/1.2/entity/employee');
+            $clientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
 
             $clientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
             $clientCheckUDS->get('https://api.uds.app/partner/v2/settings');
