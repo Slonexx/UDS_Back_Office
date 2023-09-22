@@ -39,7 +39,7 @@ class WidgetInfo
         $agentId = $body_agentId;
 
 
-        if ($this->setting->operationsAccrue == '0') {
+        //if ($this->setting->operationsAccrue == '0') {
             if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
                 $phone = $this->AgentMCPhone($agentId);
                 $agentId = [
@@ -67,7 +67,7 @@ class WidgetInfo
                     ];
                 }
             }
-        }
+        //}
 
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
