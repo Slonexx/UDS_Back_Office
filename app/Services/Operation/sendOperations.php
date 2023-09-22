@@ -60,6 +60,7 @@ class sendOperations
         ];
 
         $post = json_decode(json_encode($Client->post($url, $body)), true);
+
         if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
 
         if ($SettingBD->customOperation == 1) {
