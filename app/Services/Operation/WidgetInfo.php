@@ -39,31 +39,33 @@ class WidgetInfo
         $agentId = $body_agentId;
 
 
-        if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
-            $phone = $this->AgentMCPhone($agentId);
-            $agentId = [
-                'externalCode' => $agentId->externalCode,
-                'phone' => $phone,
-                'dontPhone' => true,
-            ];
-        } else {
-            if (property_exists($agentId, 'phone')) {
+        if ($this->setting->operationsAccrue == '0') {
+            if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
                 $phone = $this->AgentMCPhone($agentId);
-                if (mb_strlen($phone) > 14) {
-                    return [
-                        'StatusCode' => 'error',
-                        'message' => 'Некорректный номер телефона: ' . $agentId->phone,
-                    ];
-                }
                 $agentId = [
                     'externalCode' => $agentId->externalCode,
                     'phone' => $phone,
+                    'dontPhone' => true,
                 ];
             } else {
-                return [
-                    'StatusCode' => 'error',
-                    'message' => 'Отсутствует номер телефона у данного контрагента',
-                ];
+                if (property_exists($agentId, 'phone')) {
+                    $phone = $this->AgentMCPhone($agentId);
+                    if (mb_strlen($phone) > 14) {
+                        return [
+                            'StatusCode' => 'error',
+                            'message' => 'Некорректный номер телефона: ' . $agentId->phone,
+                        ];
+                    }
+                    $agentId = [
+                        'externalCode' => $agentId->externalCode,
+                        'phone' => $phone,
+                    ];
+                } else {
+                    return [
+                        'StatusCode' => 'error',
+                        'message' => 'Отсутствует номер телефона у данного контрагента',
+                    ];
+                }
             }
         }
 
@@ -81,7 +83,7 @@ class WidgetInfo
                 }
             } else {
                 $StatusCode = 'operation';
-                $message = $this->operation_to_post($externalCode, $agentId, $BodyMC, $body_agentId);
+                $message = $this->operation_to_post($agentId, $BodyMC);
             }
         } catch (ClientException $e) {
             return ['StatusCode' => 'error', 'message' => $e->getMessage()];
@@ -178,7 +180,7 @@ class WidgetInfo
         ];
     }
 
-    private function operation_to_post(mixed $externalCode, array $agentId, mixed $BodyMC, mixed $body_agentId): array
+    private function operation_to_post(array $agentId, mixed $BodyMC): array
     {
         $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
         $infoCustomers = $this->AgentMCID($agentId);
