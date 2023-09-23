@@ -479,7 +479,7 @@
                 points: point,
             };
 
-            let settings = ajax_settings(url + 'CompletesOrder/operationsCalc', "GET", data);
+            let settings = ajax_settings(url + 'Completes/Order/operationsCalc', "GET", data);
             console.log('info operations request settings  ↓ ')
             console.log(settings)
             $.ajax(settings).done(function (response) {
@@ -531,7 +531,7 @@
                 cashBack: cashBack,
             };
 
-            let settings = ajax_settings(url + 'CompletesOrder/operations/', "GET", data);
+            let settings = ajax_settings(url + 'Completes/Order/operations/', "GET", data);
             console.log('send operations parameters  ↓ ')
             console.log(settings)
 
