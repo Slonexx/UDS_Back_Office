@@ -61,6 +61,19 @@ class UdsClient {
         return json_decode($res->getBody());
     }
 
+    public function postHttp_errorsNo($url, $body){
+        $date = new DateTime();
+        $uuid_v4 = Str::uuid();
+        $res = $this->client->post($url,[
+            "Accept" => "application/json",
+            "X-Origin-Request-Id" => $uuid_v4,
+            "X-Timestamp" => $date->format(DateTime::ATOM),
+            'body' => json_encode($body),
+        ]);
+
+        return json_decode($res->getBody());
+    }
+
     public function put($url, $body){
         $date = new DateTime();
         $uuid_v4 = Str::uuid();

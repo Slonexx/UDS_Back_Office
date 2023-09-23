@@ -23,14 +23,11 @@ class ClientMC extends Controller
 
     public function requestGet()
     {
-        //$accept = "application/json";
-        // if($vnd == true){
-        //     $accept = "application/vnd.api+json";
-        // } else {
-        //     $accept = "application/json";
-        // }
+
         $headers = [
             'Authorization' => $this->apiKey,
+            'Content-Type' => 'application/json',
+            'Accept-Encoding' => 'gzip',
         ];
         $client = new Client();
 
@@ -63,6 +60,7 @@ class ClientMC extends Controller
         $headers = [
             'Authorization' => $this->apiKey,
             'Content-Type' => 'application/json',
+            'Accept-Encoding' => 'gzip',
         ];
 
         $client = new Client([

@@ -39,7 +39,7 @@ class WidgetInfo
         $agentId = $body_agentId;
 
 
-        //if ($this->setting->operationsAccrue == '0') {
+        if ($this->setting->operationsAccrue == '0') {
             if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
                 $phone = $this->AgentMCPhone($agentId);
                 $agentId = [
@@ -67,8 +67,9 @@ class WidgetInfo
                     ];
                 }
             }
-        //}
+        }
 
+        // dd($externalCode,is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000);
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
                 try {
@@ -180,20 +181,31 @@ class WidgetInfo
         ];
     }
 
-    private function operation_to_post(array $agentId, mixed $BodyMC): array
+    private function operation_to_post($agentId, mixed $BodyMC): array
     {
         $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
-        $infoCustomers = $this->AgentMCID($agentId);
+        if ($this->setting->operationsAccrue == '0') {
+            $infoCustomers = $this->AgentMCID($agentId);
+            $availablePoints = $infoCustomers->participant->points;
+            $uid = $infoCustomers->uid;
+            $phone = $agentId['phone'];
+        } {
+            $availablePoints = null;
+            $uid = null;
+            $phone = null;
+        }
+
+
         $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
         $operationsCancellation = (int) $this->setting->operationsCancellation?? 0;
 
         $data = [
             'total' => $info_total_and_SkipLoyaltyTotal['total'],
             'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
-            'availablePoints' => $infoCustomers->participant->points,
+            'availablePoints' => $availablePoints,
             'points' => 0,
-            'phone' => $agentId['phone'],
-            'uid' =>  $infoCustomers->uid,
+            'phone' => $phone,
+            'uid' =>  $uid,
             'operationsAccrue' => $operationsAccrue,
             'operationsCancellation' => $operationsCancellation,
         ];

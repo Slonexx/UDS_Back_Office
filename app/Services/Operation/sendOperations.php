@@ -59,8 +59,14 @@ class sendOperations
             'tags' => null,
         ];
 
-        $post = json_decode(json_encode($Client->post($url, $body)), true);
-
+        try {
+            $post = json_decode(json_encode($Client->postHttp_errorsNo($url, $body)), true);
+        } catch (BadResponseException $e) {
+            return [
+                'status' => false,
+                'message' => $e->getResponse()->getBody()->getContents(),
+            ];
+        }
         if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
 
         if ($SettingBD->customOperation == 1) {
@@ -88,6 +94,7 @@ class sendOperations
         $this->createPaymentDocument($Setting, $SettingBD, $putBody);
 
         return [
+            'status' => true,
             'code' => 200,
             'id' => $post->id,
             'points' => $post->points,

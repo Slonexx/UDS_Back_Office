@@ -4,13 +4,13 @@
 @section('content')
 
 
-    <div class="row gradient rounded p-2">
-        <div class="col-6">
-            <div class="mx-2"> <img src="https://smartwebkassa.kz/webkassa_png.png" width="90%"   alt=""> </div>
-        </div>
-        <div class="col-2 ">
 
+
+    <div class="row uds-gradient">
+        <div class="p-2 col-6 text-white">&nbsp;
+            <img src="https://smartuds.kz/Config/UDS.png" width="40" height="40" alt="">&nbsp;
         </div>
+
     </div>
 
     <div class="row mt-4 rounded bg-white">

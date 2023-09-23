@@ -104,6 +104,7 @@
                     Провести операцию
                 </div>
             </div>
+            <div id="errorMessage" class="p-2 bg-danger text-white" style="display: none"> </div>
             <div class="mt-2 row mx-2">
                 <div class="row mt-2 mx-2 p-1">
                     <div id="labelAccrue" class="col-6">
@@ -224,8 +225,8 @@
     </div>
 
     <script>
-        //const url = "{{ app(mainURL::class)->me_url_host() }}"
-        const url = "https://smartuds.kz/"
+        const url = "{{ app(mainURL::class)->me_url_host() }}"
+        //onst url = "https://uds/"
 
         let accountId = "{{ $accountId }}"
 
@@ -257,7 +258,7 @@
         /*let receivedMessage = {
             "name": "Open",
             "extensionPoint": "document.customerorder.edit",
-            "objectId": "5f3023e9-05b3-11ee-0a80-06f20001197a",
+            "objectId": "4e1cd8b0-5181-11ee-0a80-09a40013d917",
             "messageId": 1,
             "displayMode": "expanded"
         }*/
@@ -404,7 +405,6 @@
             let QRCode = document.getElementById("QRCode").value
             if (QRCode.length == 6) {
                 document.getElementById("sendQRError").style.display = "none"
-                document.getElementById("sendPoint").style.display = "block"
                 document.getElementById("sendCancellation").style.display = "block"
                 document.getElementById("buttonOperations").style.display = "block"
                 document.getElementById("sendAccrue").style.display = "block";
@@ -449,6 +449,12 @@
         }
 
         function sendAccrueOrCancellation(myRadio) {
+            document.getElementById('QRCode').value = ""
+            document.getElementById('total').innerText = "0"
+            document.getElementById('cashBackOperation').innerText = "0"
+            document.getElementById('availablePoints').innerText = "0"
+            document.getElementById('QRCodePoint').value = "0"
+
             document.getElementById('buttonOperations').style.display = "none"
             document.getElementById("sendCancellation").style.display = "none"
             document.getElementById("sendPoint").style.display = "none";
@@ -533,10 +539,14 @@
                 console.log('send operations response  ↓ ')
                 console.log(response)
 
-                if (response.code == 200) {
+                if (response.status) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";
-                } else window.document.getElementById('buttonOperations').style.display = 'block'
+                } else {
+                    window.document.getElementById('buttonOperations').style.display = 'block'
+                    window.document.getElementById('errorMessage').style.display = 'block'
+                    window.document.getElementById('errorMessage').innerText = response.message
+                }
                 window.document.getElementById('outLoud').style.display = 'none'
             })
 
@@ -595,6 +605,7 @@
             document.getElementById("Accrue").checked = true;
             document.getElementById("Error402").style.display = "none"
             document.getElementById("sendQRErrorID").style.display = "none"
+            document.getElementById("errorMessage").style.display = "none"
         }
 
         function PointMax(max) {

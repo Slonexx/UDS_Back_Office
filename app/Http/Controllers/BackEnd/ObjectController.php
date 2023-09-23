@@ -98,12 +98,13 @@ class ObjectController extends Controller
 
     public function operations(Request $request): JsonResponse
     {
+
         $data = $request->validate([
             "accountId" => 'required|string',
             "objectId" => 'required|string',
             "entity" => 'required|string',
             "user" => "required|string",
-            "user_uid" => "required",
+            "user_uid" => "nullable|string",
             "cashier_id" => "required|string",
             "cashier_name" => "required|string",
             "receipt_total" => "required|string",
@@ -112,6 +113,7 @@ class ObjectController extends Controller
             "receipt_skipLoyaltyTotal" => "required|string",
             "cashBack" => "required|string",
         ]);
+
         return response()->json((new sendOperations())->initiation($data));
     }
 
