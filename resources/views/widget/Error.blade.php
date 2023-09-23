@@ -32,23 +32,8 @@
         const hostWindow = window.parent
         let app = @json($message);
 
-        if (app.length > 0) {
-            for (let index = 0; index < app.length; index++){
-                let old = window.document.getElementById('errorMessage').innerText;
-                window.document.getElementById('errorMessage').innerText = old + "\n" + app[index]
-            }
-        }
+        window.document.getElementById('errorMessage').innerText = JSON.stringify(app)
 
-        window.addEventListener("message", function(event) {
-            console.log(event.data)
-            const receivedMessage = event.data;
-            let sendingMessage = {
-                name: "OpenFeedback",
-                correlationId: receivedMessage.messageId
-            };
-            hostWindow.postMessage(sendingMessage, '*');
-
-        })
 
     </script>
 
