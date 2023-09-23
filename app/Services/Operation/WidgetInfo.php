@@ -189,7 +189,7 @@ class WidgetInfo
             $availablePoints = $infoCustomers->participant->points;
             $uid = $infoCustomers->uid;
             $phone = $agentId['phone'];
-        } {
+        } else {
             $availablePoints = null;
             $uid = null;
             $phone = null;
