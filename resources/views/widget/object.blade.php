@@ -479,7 +479,7 @@
                 points: point,
             };
 
-            let settings = ajax_settings(url + 'CompletesOrder/operationsCalc/', "GET", data);
+            let settings = ajax_settings(url + 'CompletesOrder/operationsCalc', "GET", data);
             console.log('info operations request settings  ↓ ')
             console.log(settings)
             $.ajax(settings).done(function (response) {
