@@ -572,8 +572,9 @@ class WebhookMSController extends Controller
                     ];
                 }
             } elseif ($item->name == "Количество начисленных баллов (UDS)") {
-
-                $Accrue = ($Accrue == 0) ? (float)$postUDS->points : $Accrue;
+                if ($Accrue == 0) {
+                    $Accrue = (float)$postUDS->points;
+                }
 
                 $Attributes[] = [
                     'meta' => [
