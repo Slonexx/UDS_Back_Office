@@ -179,27 +179,26 @@ class getController extends Controller
 
         if ($Organization != null) {
             $urlCheck = $url_organization . "/" . $Organization;
-            $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
-                $pool->as('organization')->withToken($TokenMoySklad)->get($urlCheck),
-                $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
 
-                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
-                $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
-                $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
-            ]);
-            $Organization = $responses['organization']->object();
+            $organization = $Client->get($urlCheck);
+            $body_organization = $Client->get($url_organization);
+            $body_customerorder = $Client->get($url_customerorder);
+            $body_saleschannel = $Client->get($url_saleschannel);
+            $body_project = $Client->get($url_project);
+
+            $Organization = $Client->get($urlCheck)->rows;
         } else {
             $Organization = "0";
-            $responses = Http::withToken($TokenMoySklad)->pool(fn(Pool $pool) => [
-                $pool->as('body_organization')->withToken($TokenMoySklad)->get($url_organization),
 
-                $pool->as('body_customerorder')->withToken($TokenMoySklad)->get($url_customerorder),
-                $pool->as('body_saleschannel')->withToken($TokenMoySklad)->get($url_saleschannel),
-                $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
-            ]);
+            $body_organization = $Client->get($url_organization);
+            $body_customerorder = $Client->get($url_customerorder);
+            $body_saleschannel = $Client->get($url_saleschannel);
+            $body_project = $Client->get($url_project);
         }
 
-        $arr_Organization = $responses['body_organization']->object()->rows;
+
+        $arr_Organization = $body_organization->rows;
+
 
         $arr_PaymentAccount = [];
         foreach ($arr_Organization as $item) {
@@ -211,9 +210,9 @@ class getController extends Controller
             "arr_Organization" => $arr_Organization,
             "arr_PaymentAccount" => $arr_PaymentAccount,
 
-            "arr_Customerorder" => $responses['body_customerorder']->object()->states,
-            "arr_Saleschannel" => $responses['body_saleschannel']->object()->rows,
-            "arr_Project" => $responses['body_project']->object()->rows,
+            "arr_Customerorder" => $body_customerorder->states,
+            "arr_Saleschannel" => $body_saleschannel->rows,
+            "arr_Project" => $body_project->rows,
 
             "creatDocument" => $creatDocument,
             "Organization" => $Organization,
