@@ -16,9 +16,9 @@ class RewardController extends Controller
         $Setting = new getSettingVendorController($accountId);
 
         $body = [
-            "points" => $points,
+            "points" => round($points, 2),
             "comment" => "",
-            "silent" => true,
+            "silent" => false,
             "participants" => [$participants],
         ];
 

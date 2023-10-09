@@ -124,13 +124,6 @@ class WebhookMSController extends Controller
                     }
                 } else $boolSaleschannel = true;
 
-                /*if ((int)$ObjectBODY->externalCode > 10000) {
-                    return response()->json([
-                        'code' => 203,
-                        'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], "Внешний код был изменён, операция ранее уже проводилась, скрипт прекращён!"),
-                    ]);
-                }*/
-
 
                 if ($boolProject and $boolSaleschannel) return response()->json([
                     'code' => 200,
@@ -193,6 +186,8 @@ class WebhookMSController extends Controller
         $postBODY['cashier'] = $this->BodyCashierUDS($uid);
         $postBODY['receipt'] = $this->BodyReceiptUDS($ObjectBODY);
 
+
+        //dd($postBODY, $this->setting->customOperation, $this->pointsAccrue($ObjectBODY));
 
         $postUDS = $this->udsClient->post('https://api.uds.app/partner/v2/operations', $postBODY);
         if ($this->setting->customOperation == 1) {
@@ -605,10 +600,8 @@ class WebhookMSController extends Controller
                     $minPrice = 0;
                     if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
                     $price = $item->price * ($body_item->value / 100);
-
-                    if ($price < $minPrice) { $sum = $sum + $price;
+                    if ($price > $minPrice) { $sum = $sum + $price;
                     } else { $sum = $sum + $minPrice; }
-
                 }
             }
 
