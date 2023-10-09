@@ -36,14 +36,36 @@ class updateCache extends Command
                 "accountId" => $settings->accountId,
             ];
 
-            dispatch(function () use ($data) {
+            $this->newDomesMS($ClientCheckMC);
+
+          /*  dispatch(function () use ($data) {
                 app(AttributeController::class)->setAllAttributesOfData($data);
-            })->onQueue('default');
+            })->onQueue('default');*/
 
             $this->info('Command executed successfully.');
         }
 
 
+    }
+
+
+
+    private function newDomesMS(MsClient $ClientCheckMC){
+        $Webhook_body = $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/webhook/')->rows;
+        foreach ($Webhook_body as $item){
+            if (strpos(($item->url), "https://smartuds.kz/") !== false) {
+
+                $body = [
+                    'url' => $item->url,
+                    'action' => "UPDATE",
+                    'entityType' => $item->url,
+                    'diffType' => "FIELDS",
+                ];
+
+                $ClientCheckMC->delete($item->meta->href,null);
+                $ClientCheckMC->post('https://api.moysklad.ru/api/remap/1.2/entity/webhook/', $body);
+            }
+        }
     }
 
 }
