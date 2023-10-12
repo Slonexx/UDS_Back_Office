@@ -596,12 +596,8 @@ class WebhookMSController extends Controller
                 if ('Не применять бонусную программу (UDS)' == $body_item->name) {
                     continue;
                 } elseif ('Процент начисления (UDS)' == $body_item->name) {
-
-                    $minPrice = 0;
-                    if (property_exists($body, "minPrice")) { $minPrice = $body->minPrice->value; }
                     $price = $item->price * ($body_item->value / 100);
-                    if ($price > $minPrice) { $sum = $sum + $price;
-                    } else { $sum = $sum + $minPrice; }
+                    $sum = $sum + $price;
                 }
             }
 
