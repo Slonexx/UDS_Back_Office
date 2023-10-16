@@ -28,13 +28,10 @@ class applicationCreatingProductForUDS
     public function createProductUds(mixed $product)
     {
         $url = "https://api.uds.app/partner/v2/goods";
+        $body = null;
 
-        if (property_exists($product, 'variantsCount')) {
-            if ($product->variantsCount > 0) {
-                $body = $this->prepareVaryingItemBody($product);
-            } else {
-                $body = $this->prepareRegularItemBody($product);
-            }
+        if (isset($product->variantsCount) && $product->variantsCount > 0) {
+            $body = $this->prepareVaryingItemBody($product);
         } else {
             $body = $this->prepareRegularItemBody($product);
         }

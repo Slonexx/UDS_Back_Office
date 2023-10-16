@@ -70,7 +70,6 @@ class createProductForUDS
             foreach ($productCreatingForCheck as $item) {
                 if ($this->shouldCreateProductForCheck($item)) {
                     try {
-                        //$createdProduct = $this->createProductUds($item);
                         $createdProduct = $createProduct->createProductUds($item);
                         if ($createdProduct) {
                             $ARR_PRODUCT[] = $createdProduct;
