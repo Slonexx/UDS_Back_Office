@@ -186,7 +186,7 @@ class getController extends Controller
             $body_saleschannel = $Client->get($url_saleschannel);
             $body_project = $Client->get($url_project);
 
-            $Organization = $Client->get($urlCheck)->rows;
+            $Organization = $Client->get($urlCheck);
         } else {
             $Organization = "0";
 
