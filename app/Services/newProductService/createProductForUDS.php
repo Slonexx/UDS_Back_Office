@@ -239,9 +239,20 @@ class createProductForUDS
         if (intval($nodeId) > 0 || $nodeId != "") {
             $body["nodeId"] = intval($nodeId);
         }
+
+        try {
+            $udsBodyPost = $this->udsClient->postHttp_errorsNo('https://api.uds.app/partner/v2/goods', $body);
+                if (property_exists($udsBodyPost, 'id')) {
+
+                } else return;
+        } catch (BadResponseException) {
+            return;
+        }
+
+
         try {
             $this->msClient->put("https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMsProductFolder, [
-                "externalCode" => "" . ($this->udsClient->post('https://api.uds.app/partner/v2/goods', $body))->id,
+                "externalCode" => "" . $udsBodyPost->id ,
             ]);
         } catch (ClientException) {
             return;
