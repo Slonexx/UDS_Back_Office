@@ -43,7 +43,7 @@ class applicationCreatingProductForUDS
         $this->processProductDetails($product, $body);
 
         try {
-            $createdProduct = $this->udsClient->post($url, $body);
+            $createdProduct = $this->udsClient->postHttp_errorsNo($url, $body);
 
             if ($createdProduct != null) {
                 $this->updateProduct($createdProduct, $product);
@@ -297,7 +297,7 @@ class applicationCreatingProductForUDS
 
         if (property_exists($product, 'images')) {
             $imgIds = $this->imgService->setImgUDS($product->images->meta->href, $this->setting->accountId);
-            $body["data"]["photos"] = $imgIds;
+            if ($imgIds != []) $body["data"]["photos"] = $imgIds;
         }
     }
 

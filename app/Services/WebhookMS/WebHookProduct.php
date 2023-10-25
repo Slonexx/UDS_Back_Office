@@ -213,9 +213,8 @@ class WebHookProduct
 
         if (in_array('image', $updatedFields)){
            if (property_exists($BodyProduct,'images')){
-               $imgIds = $this->imgService->setImgUDS($BodyProduct->images->meta->href,
-                   $this->Setting->TokenMoySklad, $this->Setting->companyId, $this->Setting->TokenUDS );
-               $Body["data"]["photos"] = $imgIds;
+               $imgIds = $this->imgService->setImgUDS($BodyProduct->images->meta->href, $this->Setting->accountId);
+               if ($imgIds != []) $Body["data"]["photos"] = $imgIds;
            } else unset( $Body["data"]["photos"]);
        } else {
            $Body['data']['photos'] = $BodyUDS->data->photos;

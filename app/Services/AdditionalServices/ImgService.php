@@ -8,10 +8,9 @@ use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
-use Throwable;
+
 
 class ImgService
 {
@@ -27,6 +26,10 @@ class ImgService
 
         $clientMs = new MsClient($apiKeyMs);
         $images = $clientMs->get($urlImages);
+
+        if ($images->meta->size == 0) {
+            return [];
+        }
 
         foreach ($images->rows as $image) {
             try {
@@ -44,6 +47,7 @@ class ImgService
                 }
             } catch (BadResponseException ) { }
         }
+
         return $imgIds;
     }
 
@@ -88,6 +92,7 @@ class ImgService
             'headers' => [
                 'Authorization' => $apiKeyMs,
                 'Content-Type' => $imgType,
+                'Accept-Encoding' => 'gzip',
             ]
         ]);
 
