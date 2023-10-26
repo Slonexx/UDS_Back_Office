@@ -78,7 +78,7 @@ class CronCommandProductCreate extends Command
         } else {
             if ($this->countRound($data['countRound'], $data['accountId'])) {
                 $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
-                dd($create->initialization());
+                $create->initialization();
             }
         }
 
@@ -93,6 +93,21 @@ class CronCommandProductCreate extends Command
             return true;
         } else {
             $record->delete();
+            $model = new newProductModel();
+
+            $model->accountId = $accountId;
+            $model->ProductFolder = '0';
+
+            $model->unloading = null;
+            $model->salesPrices = null;
+            $model->promotionalPrice = null;
+            $model->Store = null;
+            $model->StoreRecord = null;
+            $model->productHidden = null;
+            $model->countRound = null;
+
+            $model->save();
+
             return false;
         }
     }
