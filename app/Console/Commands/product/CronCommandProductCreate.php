@@ -24,9 +24,9 @@ class CronCommandProductCreate extends Command
     }
     public function handle(): void
     {
-        //$mutex = Cache::lock('process_NewProduct', 9000);
+        $mutex = Cache::lock('process_NewProduct', 9000);
 
-        //if ($mutex->get()) {
+        if ($mutex->get()) {
             $allSettings = newProductModel::all();
 
             foreach ($allSettings as $item) {
@@ -62,10 +62,10 @@ class CronCommandProductCreate extends Command
                 }
             }
 
-        //   $mutex->release();
-        //} else {
-        //    $this->info('Previous task is still running. Skipping the current run.');
-        //}
+           $mutex->release();
+        } else {
+            $this->info('Previous task is still running. Skipping the current run.');
+        }
     }
 
     protected function processJob($data, $ClientCheckMC, $ClientCheckUDS): void
@@ -78,7 +78,7 @@ class CronCommandProductCreate extends Command
         } else {
             if ($this->countRound($data['countRound'], $data['accountId'])) {
                 $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
-                $create->initialization();
+                dd($create->initialization());
             }
         }
 

@@ -14,7 +14,6 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class ImgService
 {
-    private const TIMEOUT = 20; // Максимальное время ожидания ответа в секундах
 
     public function setImgUDS($urlImages, $accountId): array
     {
@@ -73,11 +72,10 @@ class ImgService
         $client->put($urlProduct, $body);
     }
 
-    #[ArrayShape(["type" => "string", "content" => "string"])]
     private function getImgContent($url): array
     {
         $client = new Client();
-        $res = $client->get($url, ["stream" => true, "timeout" => self::TIMEOUT]);
+        $res = $client->get($url);
         $content_Type = $res->getHeaderLine('Content-Type');
         $b64image = base64_encode($res->getBody()->getContents());
         return [
@@ -96,7 +94,7 @@ class ImgService
             ]
         ]);
 
-        $res = $clientMs->get($imageHref, ["timeout" => self::TIMEOUT]);
+        $res = $clientMs->get($imageHref);
         $image = $res->getBody()->getContents();
 
         $opts = array(
@@ -136,7 +134,6 @@ class ImgService
                     "X-Timestamp: " . $date->format(DateTimeInterface::ATOM),
                 'content' => $itemData,
                 'ignore_errors' => true,
-                'timeout' => self::TIMEOUT
             )
         );
 

@@ -29,7 +29,8 @@ class createProductForUDS
 
         $ARR_PRODUCT = [];
         $find = ProductFoldersByAccountID::query()->where('accountId', $this->setting->accountId);
-        $productCreatingForCheck = [];
+        $baseUDS = $this->getUdsCheck();
+
 
         foreach ($find->get() as $itemFolderModel) {
             $folderName = $itemFolderModel->getAttributes()['FolderName'];
@@ -39,22 +40,15 @@ class createProductForUDS
             $this->addCategoriesToUds($folderName);
             $productsMs = $this->getMs($folderName);
 
+
+
+
             foreach ($productsMs->rows as $item) {
                 $create = $this->shouldCreateProduct($item);
 
                 if ($create && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3) {
-                    if (property_exists($item, "attributes")) {
-                        foreach ($item->attributes as $attribute) {
-                            if ($attribute->name == "id (UDS)") {
-                                $productCreatingForCheck[] = $item;
-                                $create = false;
-                            } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)" && $attribute->value) {
-                                $create = false;
-                            }
-                        }
-                    }
 
-                    if ($create) {
+                    if ($create and $this->shouldCreateProductForCheck($item, $baseUDS)) {
                         try {
                             $createdProduct = $createProduct->createProductUds($item);
                             if ($createdProduct) {
@@ -64,21 +58,10 @@ class createProductForUDS
                             continue;
                         }
                     }
+
                 }
             }
 
-            foreach ($productCreatingForCheck as $item) {
-                if ($this->shouldCreateProductForCheck($item)) {
-                    try {
-                        $createdProduct = $createProduct->createProductUds($item);
-                        if ($createdProduct) {
-                            $ARR_PRODUCT[] = $createdProduct;
-                        }
-                    } catch (BadResponseException) {
-                        continue;
-                    }
-                }
-            }
         }
 
         return [
@@ -100,23 +83,22 @@ class createProductForUDS
         return true;
     }
 
-    private function shouldCreateProductForCheck($item): bool
+    private function shouldCreateProductForCheck($item, $baseUDS): bool
     {
         $create = true;
-        foreach ($item->attributes as $attribute) {
-            if ($attribute->name == "id (UDS)") {
-                try {
-                    $this->udsClient->get('https://api.uds.app/partner/v2/goods/' . $attribute->value);
-                    $create = false;
-                } catch (BadResponseException) {
-                    $create = true;
-                }
-            } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)") {
-                if ($attribute->value) {
-                    $create = false;
+
+        if (property_exists($item, "attributes")) {
+            foreach ($item->attributes as $attribute) {
+                if ($attribute->name == "id (UDS)") {
+                    if (in_array($attribute->value, $baseUDS["productIds"])) {
+                        $create = false;
+                    }
+                } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)") {
+                    if ($attribute->value) { $create = false; }
                 }
             }
         }
+
         return $create;
     }
 
@@ -257,6 +239,53 @@ class createProductForUDS
         } catch (ClientException) {
             return;
         }
+    }
+
+
+    public function getUdsCheck(): array
+    {
+        $result = [
+            "productIds" => [],
+            "categoryIds" => [],
+        ];
+
+        $this->findNodesUds($result);
+
+        return $result;
+    }
+
+    private function findNodesUds(&$result, $nodeId = 0, $path = ""): void
+    {
+        $offset = 0;
+
+        do {
+            $url = "https://api.uds.app/partner/v2/goods?max=50&offset={$offset}";
+
+            if ($nodeId > 0) {
+                $url .= "&nodeId={$nodeId}";
+            }
+
+            try {
+                $json = $this->udsClient->get($url);
+                $rows = $json->rows ?? [];
+            } catch (ClientException $e) {
+                break; // Прерываем цикл в случае ошибки
+            }
+
+            foreach ($rows as $row) {
+                $currId = (string) $row->id;
+                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") {
+                    $result["productIds"][] = $currId;
+                } elseif ($row->data->type == "CATEGORY") {
+                    $result["categoryIds"][] = $currId;
+                    $newPath = $path . "/" . $row->name;
+                    $this->findNodesUds($result, $currId, $newPath);
+                }
+            }
+
+            $offset += 50;
+
+        } while (count($rows) > 0);
     }
 
 }
