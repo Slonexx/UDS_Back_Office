@@ -8,7 +8,7 @@ class AttributeHook
 {
     private MsClient $msClient;
 
-    public function __construct($ms)
+    public function __construct(MsClient $ms)
     {
         $this->msClient = $ms;
     }

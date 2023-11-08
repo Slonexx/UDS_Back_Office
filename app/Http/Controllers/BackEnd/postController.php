@@ -17,18 +17,11 @@ class postController extends Controller
 {
     private AttributeHook $attributeHook;
 
-    /**
-     * @param AttributeHook $attributeHook
-     */
-    public function __construct(AttributeHook $attributeHook)
-    {
-        $this->attributeHook = $attributeHook;
-    }
-
 
     public function postClint(Request $request, $accountId): \Illuminate\Http\JsonResponse
     {
         $Setting = new getSettingVendorController($accountId);
+        $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
         $TokenMC = $Setting->TokenMoySklad;
         $companyId = $Setting->companyId;
 
@@ -49,8 +42,12 @@ class postController extends Controller
 
     public function postOrder(Request $request, $accountId): \Illuminate\Http\JsonResponse
     {
+
+
+
         try {
             $Setting = new getSettingVendorController($accountId);
+            $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
             $TokenMC = $Setting->TokenMoySklad;
             $companyId = $Setting->companyId;
 
