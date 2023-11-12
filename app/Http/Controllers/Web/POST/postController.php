@@ -88,6 +88,7 @@ class postController extends Controller
         if ($request->creatDocument == "1") {
             $app->creatDocument = $request->creatDocument;
             $app->Organization = $request->Organization;
+            $app->Store = $request->Store;
             $app->Document = $request->Document;
             $app->PaymentDocument = $request->PaymentDocument;
             if ($request->PaymentDocument == "2") $app->PaymentAccount = $PaymentAccount; else {

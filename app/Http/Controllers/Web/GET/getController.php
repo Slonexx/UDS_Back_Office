@@ -149,6 +149,7 @@ class getController extends Controller
         $TokenMoySklad = $Setting->TokenMoySklad;
         $creatDocument = $Setting->creatDocument;
         $Organization = $Setting->Organization;
+        $Store = $Setting->Store;
         $PaymentDocument = $Setting->PaymentDocument;
         $Document = $Setting->Document;
         $PaymentAccount = $Setting->PaymentAccount;
@@ -173,6 +174,7 @@ class getController extends Controller
         //dd($Setting);
 
         $url_organization = "https://api.moysklad.ru/api/remap/1.2/entity/organization";
+        $url_store = "https://api.moysklad.ru/api/remap/1.2/entity/store/";
         $url_customerorder = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata";
         $url_saleschannel = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel";
         $url_project = "https://api.moysklad.ru/api/remap/1.2/entity/project";
@@ -180,8 +182,8 @@ class getController extends Controller
         if ($Organization != null) {
             $urlCheck = $url_organization . "/" . $Organization;
 
-            $organization = $Client->get($urlCheck);
             $body_organization = $Client->get($url_organization);
+            $body_store = $Client->get($url_store);
             $body_customerorder = $Client->get($url_customerorder);
             $body_saleschannel = $Client->get($url_saleschannel);
             $body_project = $Client->get($url_project);
@@ -191,6 +193,7 @@ class getController extends Controller
             $Organization = "0";
 
             $body_organization = $Client->get($url_organization);
+            $body_store = $Client->get($url_store);
             $body_customerorder = $Client->get($url_customerorder);
             $body_saleschannel = $Client->get($url_saleschannel);
             $body_project = $Client->get($url_project);
@@ -209,6 +212,7 @@ class getController extends Controller
 
             "arr_Organization" => $arr_Organization,
             "arr_PaymentAccount" => $arr_PaymentAccount,
+            "arr_Store" => $body_store->rows,
 
             "arr_Customerorder" => $body_customerorder->states,
             "arr_Saleschannel" => $body_saleschannel->rows,
@@ -216,6 +220,7 @@ class getController extends Controller
 
             "creatDocument" => $creatDocument,
             "Organization" => $Organization,
+            "Store" => $Store,
             "PaymentDocument" => $PaymentDocument,
             "Document" => $Document,
             "PaymentAccount" => $PaymentAccount,

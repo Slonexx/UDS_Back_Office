@@ -15,15 +15,16 @@ use Illuminate\Support\Facades\DB;
 
 class BDController extends Controller
 {
-    public function createOrderID($accountId, $orderID, $companyId){
-        try {
-            order_id::create([
-                'accountId' => $accountId,
-                'orderID' => $orderID,
-            ]);
-        } catch (ClientException){
+    public function createOrderID($accountId, $orderID): void
+    {
+        $model = new order_id();
 
-        }
+        $order_id = order_id::where('accountId',  $accountId)->where('orderID',  $orderID)->get()->first();
+        if ($order_id != null) $order_id->delete();
+
+        $model->accountId = $accountId;
+        $model->orderID = $orderID;
+        $model->save();
     }
 
     public function deleteOrderID($accountId, $orderID){

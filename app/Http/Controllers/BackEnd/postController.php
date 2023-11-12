@@ -6,427 +6,342 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Services\MetaServices\MetaHook\AttributeHook;
+use App\Services\MetaServices\MetaHook\PriceTypeHook;
+use App\Services\MetaServices\MetaHook\UomHook;
 use App\Services\WebhookMS\WebHookNewClientMS;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class postController extends Controller
 {
     private AttributeHook $attributeHook;
+    private MsClient $msClient;
 
 
-    public function postClint(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    public function postClint(Request $request, $accountId): JsonResponse
     {
         $Setting = new getSettingVendorController($accountId);
         $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
-        $TokenMC = $Setting->TokenMoySklad;
-        $companyId = $Setting->companyId;
 
         try {
             $Client = new MsClient($Setting->TokenMoySklad);
-            $search = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?search='.$request->phone);
-            $ClientCheckUDS = (new UdsClient($Setting->companyId, $Setting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
-            return response()->json((new WebHookNewClientMS())->initiation($Client,$search, $request));
-        } catch (BadResponseException $e) { return response()->json($e); }
+            $search = $Client->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?search=' . $request->phone);
+            (new UdsClient($Setting->companyId, $Setting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
+            return response()->json((new WebHookNewClientMS())->initiation($Client, $search, $request));
+        } catch (BadResponseException $e) {
+            return response()->json($e);
+        }
 
     }
 
 
-
-
-
-
-
-    public function postOrder(Request $request, $accountId): \Illuminate\Http\JsonResponse
+    public function postOrder(Request $request, $accountId): JsonResponse
     {
 
+        $Setting = new getSettingVendorController($accountId);
+        $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
+        $this->msClient = new MsClient($Setting->TokenMoySklad);
+
+        if ($Setting->creatDocument != "1") {
+            return response()->json([
+                'status' => false,
+                'data' => [
+                    'message' => 'Нет настроек приложения',
+                    'Setting' => $Setting,
+                ],
+            ]);
+        }
 
 
         try {
-            $Setting = new getSettingVendorController($accountId);
-            $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
-            $TokenMC = $Setting->TokenMoySklad;
-            $companyId = $Setting->companyId;
-
-            if ($Setting->creatDocument == "1"){
-                $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder";
-                $Clint = new ClientMC($url, $TokenMC);
-
-                $BD = new BDController();
-                $BD->createOrderID($accountId, $request->id, $companyId);
-                //$BD->deleteOrderID($accountId, $request->id);
-
-                try {
-                    $organization = $this->metaOrganization($TokenMC, $Setting->Organization);
-                    $organizationAccount = $this->metaOrganizationAccount($TokenMC, $Setting->PaymentAccount, $Setting->Organization);
-                    $agent = $this->metaAgent($TokenMC, json_decode(json_encode( $request->customer)));
-                    $state = $this->metaState($TokenMC, $Setting->NEW);
-                    $store = $this->metaStore($TokenMC, $Setting->Store);
-                    $salesChannel = $this->metaSalesChannel($TokenMC, $Setting->Saleschannel);
-                    $attributes = $this->metaAttributes($TokenMC, $request->purchase);
-                    $project = $this->metaProject($TokenMC, $Setting->Project);
-                    $shipmentAddress = $this->ShipmentAddress($request->delivery);
-
-                    $description = $request->delivery['userComment'];
-                    if ($description == null)  $description = "";
-
-                    $positions = $this->metaPositions($TokenMC, $request->items, $request->purchase, $request->delivery);
-                    $externalCode = $this->CheckExternalCode($TokenMC, $request->id);
-                } catch (ClientException $exception) {
-
-                }
-
-                if ($organizationAccount != null)
-                    $body = [
-                        "organization" => $organization,
-                        "organizationAccount" => $organizationAccount,
-                        "agent" => $agent,//Создавать АГЕНТА НАДО
-                        "state" => $state,
-                        "store" => $store,
-                        "salesChannel" => $salesChannel,
-                        "project" => $project,
-                        "shipmentAddress" => $shipmentAddress,
-                        "description" => $description,
-
-                        "attributes" => $attributes,
-                        "positions" => $positions,
-                        "externalCode" => $externalCode,
-                    ];
-                else
-                    $body = [
-                        "organization" => $organization,
-                        "agent" => $agent,//Создавать АГЕНТА НАДО
-                        "state" => $state,
-                        "store" => $store,
-                        "salesChannel" => $salesChannel,
-                        "project" => $project,
-                        "shipmentAddress" => $shipmentAddress,
-                        "description" => $description,
-
-                        "attributes" => $attributes,
-                        "positions" => $positions,
-                        "externalCode" => $externalCode,
-                    ];
-
-                if ($externalCode != null) {
-                    $Clint->requestPost($body);
-                }  $result = null;
-
-            }
-        } catch (ClientException $e){
-            return response()->json($e);
+            $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'status' => false,
+                'data' => [
+                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
+                    'message' => $e->getMessage(),
+                ],
+            ]);
         }
-        return response()->json();
+
+        $externalCode = $this->CheckExternalCode($request->id);
+        if ($externalCode) {
+            return response()->json([
+                'status' => false,
+                'data' => [
+                    'message' => "Заказ уже создан!",
+                    'Setting' => $Setting,
+                    'request' => $request->all(),
+                ],
+            ]);
+        }
+
+        $BD = new BDController();
+        $BD->createOrderID($accountId, $request->id);
+
+
+        $organization = $this->metaOrganization($Setting->Organization);
+        $organizationAccount = $this->metaOrganizationAccount($Setting->PaymentAccount, $Setting->Organization);
+        $agent = $this->metaAgent((object) $request->customer);
+        $state = $this->metaState($Setting->NEW);
+        $store = $this->metaStore($Setting->Store);
+        $salesChannel = $this->metaSalesChannel($Setting->Saleschannel);
+        $project = $this->metaProject($Setting->Project);
+        $shipmentAddress = $this->ShipmentAddress($request->delivery);
+        $attributes = $this->metaAttributes($request->purchase);
+
+
+        $description = $request->delivery['userComment'] ?? '';
+
+        $positions = $this->metaPositions($request->items, $request->purchase, $request->delivery);
+
+
+        $body = [
+            "organization" => $organization,
+            "organizationAccount" => $organizationAccount,
+            "agent" => $agent,
+            "state" => $state,
+            "store" => $store,
+            "salesChannel" => $salesChannel,
+            "project" => $project,
+            "shipmentAddress" => $shipmentAddress,
+            "description" => $description,
+
+            "attributes" => $attributes,
+            "positions" => $positions,
+            "externalCode" => (string) $request->id,
+        ];
+
+        $body = array_filter($body, function ($value) {
+            return $value !== null;
+        });
+
+
+        try {
+            $response = $this->msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/customerorder', $body);
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'status' => false,
+                'data' => [
+                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
+                    'message' => $e->getMessage(),
+                    'body' => $body,
+                ],
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'body' => $body,
+                'response' => $response,
+            ],
+        ]);
+
+
     }
 
 
-    public function metaOrganization($apiKey, $Organization){
-        $url_organization = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$Organization;
-        $Clint = new ClientMC($url_organization, $apiKey);
-        $Body = $Clint->requestGet()->meta;
-        $href = $Body->href;
-        $type = $Body->type;
-        $mediaType = $Body->mediaType;
+    private function metaOrganization($Organization): array
+    {
         return [
-           'meta' => [
-               'href'=> $href,
-               'type'=> $type,
-               'mediaType'=> $mediaType,
-           ]
+            'meta' => [
+                'href' => "https://api.moysklad.ru/api/remap/1.2/entity/organization/" . $Organization,
+                'type' => 'organization',
+                'mediaType' => 'application/json',
+            ]
         ];
     }
 
-    public function metaOrganizationAccount($apiKey, $PaymentAccount, $Organization){
+    private function metaOrganizationAccount($PaymentAccount, $Organization): ?array
+    {
+        try {
+            $Body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/organization/" . $Organization . "/accounts");
+        } catch (BadResponseException) {
+            return null;
+        }
 
-        if ($PaymentAccount == null) return null;
+        if ($Body->meta->size == 0) return null;
 
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/organization/".$Organization."/accounts";
-        $Clint = new ClientMC($url, $apiKey);
-        $Body = $Clint->requestGet()->rows;
-        foreach ($Body as $item){
-            if ($item->accountNumber == $PaymentAccount){
-                $href = $item->meta->href;
-                $type = $item->meta->type;
-                $mediaType = $item->meta->mediaType;
-                break;
-            } else {
-                $href = null;
+        foreach ($Body->rows as $item) {
+            if ($item->accountNumber == $PaymentAccount) {
+                return [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ]
+                ];
             }
         }
 
-        if ($href == null) return null;
-
-        return [
-           'meta' => [
-               'href'=> $href,
-               'type'=> $type,
-               'mediaType'=> $mediaType,
-           ]
-        ];
+        return null;
     }
 
-    public function metaAgent($apiKey, $agent){
+    private function getEntityByExternalCode($entityType, $externalCode): ?array
+    {
+        try {
+            $response = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/{$entityType}?filter=externalCode~{$externalCode}");
+            $rows = $response->rows;
 
-        $Clint = new MsClient($apiKey);
-        $Body = $Clint->get("https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~".$agent->id)->rows;
-        if ($Body == []) {
+            if (empty($rows)) {
+                return null;
+            }
+
+            $meta = $rows[0]->meta;
+
+            return [
+                'meta' => [
+                    'href' => $meta->href,
+                    'type' => $meta->type,
+                    'mediaType' => $meta->mediaType,
+                ],
+            ];
+        } catch (BadResponseException) {
+            return null;
+        }
+    }
+
+    private function metaAgent($agent): array
+    {
+        $Body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/counterparty?filter=externalCode~" . $agent->id)->rows;
+
+        if (empty($Body)) {
             $agent = [
                 "name" => $agent->displayName,
-                "externalCode" => (string) $agent->id,
+                "companyType" => "individual",
+                "externalCode" => (string)$agent->id,
             ];
-
-            $url = "https://api.moysklad.ru/api/remap/1.2/entity/counterparty";
-            $client = new MsClient($apiKey);
-            $Body = $client->post($url,$agent)->meta;
+            $Body = $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/counterparty", $agent)->meta;
         } else {
             $Body = $Body[0]->meta;
         }
 
-        $href = $Body->href;
-        $type = $Body->type;
-        $mediaType = $Body->mediaType;
-
         return [
             'meta' => [
-                'href'=> $href,
-                'type'=> $type,
-                'mediaType'=> $mediaType,
-            ]
+                'href' => $Body->href,
+                'type' => $Body->type,
+                'mediaType' => $Body->mediaType,
+            ],
         ];
     }
 
-    public function metaState($apiKey, $Status){
-
-        if ($Status == null){
+    private function metaState(mixed $Status): ?array
+    {
+        if ($Status == null) {
             return null;
         }
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/";
-        $Clint = new ClientMC($url, $apiKey);
-        $Body = $Clint->requestGet()->states;
-        foreach ($Body as $item){
+
+        try {
+            $Body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/customerorder/metadata/");
+            if (!property_exists($Body, 'states')) {
+                return null;
+            }
+        } catch (BadResponseException) {
+            return null;
+        }
+
+        foreach ($Body->states as $item) {
             if ($item->name == $Status) {
-                $href = $item->meta->href;
-                $type = $item->meta->type;
-                $mediaType = $item->meta->mediaType;
-                break;
-            } else $href = null;
+                return [
+                    'meta' => [
+                        'href' => $item->meta->href,
+                        'type' => $item->meta->type,
+                        'mediaType' => $item->meta->mediaType,
+                    ]
+                ];
+            }
         }
-        if ($href == null) return null;
-        return [
-            'meta' => [
-                'href'=> $href,
-                'type'=> $type,
-                'mediaType'=> $mediaType,
-            ]
-        ];
+
+        return null;
     }
 
-    public function metaStore($apiKey, $StoreName){
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/store/";
-        $Clint = new ClientMC($url, $apiKey);
-        $body = $Clint->requestGet()->rows;
-        foreach ($body as $item){
-            if ($item->name == $StoreName){
-                $href = $item->meta->href;
-                $type = $item->meta->type;
-                $mediaType = $item->meta->mediaType;
-                break;
-            } else $href = null;
-        }
-        if ($href == null) return null;
-        return [
-            'meta' => [
-                'href'=> $href,
-                'type'=> $type,
-                'mediaType'=> $mediaType,
-            ]
-        ];
-    }
-
-    public function metaSalesChannel($apiKey, $salesChannelName){
-
-        if ($salesChannelName == null) return null;
-
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/saleschannel?search=".$salesChannelName;
-        $Clint = new ClientMC($url, $apiKey);
-        $Body = $Clint->requestGet()->rows[0]->meta;
-        $href = $Body->href;
-        $type = $Body->type;
-        $mediaType = $Body->mediaType;
-        return [
-            'meta' => [
-                'href'=> $href,
-                'type'=> $type,
-                'mediaType'=> $mediaType,
-            ]
-        ];
-    }
-
-    public function metaProject($apiKey, $Project){
-        if ($Project == null) return null;
-
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/project?search=".$Project;
-        $Clint = new ClientMC($url, $apiKey);
-        $Body = $Clint->requestGet()->rows[0]->meta;
-        $href = $Body->href;
-        $type = $Body->type;
-        $mediaType = $Body->mediaType;
-        return [
-            'meta' => [
-                'href'=> $href,
-                'type'=> $type,
-                'mediaType'=> $mediaType,
-            ]
-        ];
-    }
-
-    public function metaAttributes($apiKey, $purchase): array
+    private function metaStore($storeName): ?array
     {
-        if ($purchase['points'] >= 0 )
+        return $this->getEntityByExternalCode('store', $storeName);
+    }
+
+    private function metaSalesChannel($salesChannelName): ?array
+    {
+        return $this->getEntityByExternalCode('saleschannel', $salesChannelName);
+    }
+
+    private function metaProject($project): ?array
+    {
+        return $this->getEntityByExternalCode('project', $project);
+    }
+    private function metaAttributes($purchase): array
+    {
+        if ($purchase['points'] >= 0)
             $DeductionOfPoints = [
-                'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)', $apiKey),
+                'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)'),
                 'value' => true,
-        ];
+            ];
         else  $DeductionOfPoints = [
-            'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)', $apiKey),
+            'meta' => $this->attributeHook->getOrderAttribute('Списание баллов (UDS)'),
             'value' => false,
         ];
 
-        if ($purchase['cashBack'] > 0 )
+        if ($purchase['cashBack'] > 0)
             $AccrualOfPoints = [
-                'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)', $apiKey),
+                'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)'),
                 'value' => true,
             ];
         else  $AccrualOfPoints = [
-            'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)', $apiKey),
+            'meta' => $this->attributeHook->getOrderAttribute('Начисление баллов (UDS)'),
             'value' => false,
         ];
 
-        if ($purchase['certificatePoints'] > 0 )
+        if ($purchase['certificatePoints'] > 0)
             $UsingCertificate = [
-                'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)', $apiKey),
+                'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)'),
                 'value' => true,
             ];
         else  $UsingCertificate = [
-            'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)', $apiKey),
+            'meta' => $this->attributeHook->getOrderAttribute('Использование сертификата (UDS)'),
             'value' => false,
         ];
 
-        $array = [$DeductionOfPoints, $AccrualOfPoints, $UsingCertificate];
-
-        return $array;
+        return [$DeductionOfPoints, $AccrualOfPoints, $UsingCertificate];
 
     }
 
-    public function metaPositions($apiKey, $UDSitem, $purchase, $delivery){
-        $urlMeta = "https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes";
-        $Client = new ClientMC($urlMeta, $apiKey);
-        $BodyMeta = $Client->requestGet()->rows;
-        foreach ($BodyMeta as $BodyMeta_item){
-            if ($BodyMeta_item->name == 'id (UDS)'){ $BodyMeta = $BodyMeta_item->meta->href;
-                break;
-            }
-        }
-
-        $total = $purchase["total"] - $purchase["skipLoyaltyTotal"];
-        if ($purchase["points"]+$purchase["certificatePoints"] > 0) $pointsPercent = ($purchase["certificatePoints"] + $purchase["points"])  * 100 / $total;
-        else $pointsPercent = 0;
-
-        $Result = [];
-        foreach ($UDSitem as $id=>$item){
-            $urlProduct = 'https://api.moysklad.ru/api/remap/1.2/entity/product?filter='.$BodyMeta.'='.$item['id'];
-            $Client = new ClientMC($urlProduct, $apiKey);
-            $body = $Client->requestGet()->rows;
-            //dd($body);
-            $bodyIndex = 0;
-            if  (isset($body[1])) {
-                foreach ($body as $bodyCheckID=>$bodyCheckItem){
-                    //$tmp = $item['variantName']."(".$item['name'].")";
-                    if ($item['variantName']."(".$item['name'].")" == $bodyCheckItem->name ) {
-                        $bodyIndex = $bodyCheckID;
-                        break;
-                    } else $bodyIndex = 0 ;
-                }
-            } else $bodyIndex = 0;
-            $body = $body[$bodyIndex];
-            foreach ($body->attributes as $attributesItem){
-                if ('Не применять бонусную программу (UDS)' == $attributesItem->name){
-                    if ($attributesItem->value == true) $discount = 0;
-                    else $discount = $pointsPercent;
-                    break;
-                } else $discount = $pointsPercent;
-            }
-
-            $assortment = [ 'meta' => [
-                     'href' => $body->meta->href,
-                     'type' => $body->meta->type,
-                     'mediaType' => $body->meta->mediaType,
-                ]
-            ];
-            $ArrayItem = [
-                'quantity' => $item['qty'],
-                'price' => $item['price']*100,
-                'assortment' => $assortment,
-                'discount' => $discount,
-                'reserve' => $item['qty'],
-            ];
-            $Result[] = $ArrayItem;
-        }
-
-        if ($delivery['deliveryCase'] != null) {
-            $deliveryCase = $this->delivery($apiKey, $delivery['deliveryCase']);
-            $ArrayItem = [
-                'quantity' => 1,
-                'price' => $deliveryCase['price']*100,
-                'assortment' => $deliveryCase['assortment'],
-            ];
-
-            $Result[] = $ArrayItem;
-        }
-
-
-       return $Result;
-    }
-
-    public function ShipmentAddress($delivery){
-        $DELIVERY = "";
-        $PICKUP = "";
-        if ($delivery["branch"]) { $PICKUP = "(САМОВЫВОЗ) ".$delivery["branch"]["displayName"];
-            return $PICKUP;
+    private function ShipmentAddress($delivery)
+    {
+        if ($delivery["branch"]) {
+            return "(САМОВЫВОЗ) " . $delivery["branch"]["displayName"];
         }
         if ($delivery["address"]) {
-            $DELIVERY = $delivery["address"];
-            $deliveryCase = $delivery["deliveryCase"];
-            return $DELIVERY;
+            //$deliveryCase = $delivery["deliveryCase"];
+            return $delivery["address"];
         }
         return null;
     }
 
-    public function CheckExternalCode($apiKey, $externalCode){
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode~".$externalCode;
-        $Clint = new ClientMC($url, $apiKey);
-        $body = $Clint->requestGet()->rows;
-        if (!$body) return (string) $externalCode;
-        else return null;
+    private function CheckExternalCode($externalCode): bool
+    {
+        try {
+            $body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode~" . $externalCode);
+        } catch (BadResponseException) {
+            return true;
+        }
+        if ($body->meta->size == 0) return false;
+        else return true;
     }
 
-    public function delivery($apiKey, $deliveryCase){
-        $url = "https://api.moysklad.ru/api/remap/1.2/entity/assortment?filter=externalCode=Доставка(UDS)";
-        $Client = new ClientMC($url, $apiKey);
-        $body = $Client->requestGet()->rows;
+    private function delivery($deliveryCase): array
+    {
 
-        if (array_key_exists(0, $body)) $body = $body[0];
-        else {
-            $urlService = "https://api.moysklad.ru/api/remap/1.2/entity/service";
-            $ClientService = new ClientMC($urlService, $apiKey);
-            $bodyService = [
-                'name' => 'Доставка (UDS)',
-                'externalCode' => 'Доставка(UDS)'
-            ];
-            $body = $ClientService->requestPost($bodyService);
+        $body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/service?filter=name=Доставка(UDS)")->rows;
+
+        if ($body->meta->size == 0) {
+            $bodyService = ['name' => 'Доставка (UDS)'];
+            $body = $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/service", $bodyService);
+        } else {
+            $body = $body->rows[0];
         }
 
         return [
@@ -440,4 +355,143 @@ class postController extends Controller
             'price' => $deliveryCase['value'],
         ];
     }
+
+    private function metaPositions($UDSitem, $purchase, $delivery): ?array
+    {
+        $BodyMeta = null;
+        $Body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes");
+        if ($Body->meta->size == 0) return null; else {
+            $Body = $Body->rows;
+        }
+
+
+        foreach ($Body as $BodyMeta_item) {
+            if ($BodyMeta_item->name == 'id (UDS)') {
+                $BodyMeta = $BodyMeta_item->meta->href;
+                break;
+            }
+        }
+        if ($BodyMeta == null) return null;
+
+
+        $total = $purchase["total"] - $purchase["skipLoyaltyTotal"];
+        if ($purchase["points"] + $purchase["certificatePoints"] > 0) $pointsPercent = ($purchase["certificatePoints"] + $purchase["points"]) * 100 / $total;
+        else $pointsPercent = 0;
+
+
+        $Result = [];
+        foreach ($UDSitem as $item) {
+            $body = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product?filter=' . $BodyMeta . '=' . $item['id']);
+            $discount = 0;
+            $bodyIndex = 0;
+
+            if ($body->meta->size == 0) {
+                $newProduct = $this->creatingProduct(json_decode(json_encode($item)));
+                $body = [0 => $newProduct];
+            } else {
+                $body = $body->rows;
+            }
+
+            if (isset($body[1])) {
+                foreach ($body as $bodyCheckID => $bodyCheckItem) {
+                    if ($item['variantName'] . "(" . $item['name'] . ")" == $bodyCheckItem->name) {
+                        $bodyIndex = $bodyCheckID;
+                        break;
+                    }
+                }
+            }
+
+            $body = $body[$bodyIndex];
+            if (property_exists($body, 'attributes'))
+                foreach ($body->attributes as $attributesItem) {
+                    if ('Не применять бонусную программу (UDS)' == $attributesItem->name) {
+                        if ($attributesItem->value) $discount = 0; else $discount = $pointsPercent;
+                        break;
+                    } else $discount = $pointsPercent;
+                }
+            else $discount = $pointsPercent;
+
+            $Result[] = [
+                'quantity' => $item['qty'],
+                'price' => $item['price'] * 100,
+                'assortment' => ['meta' => [
+                    'href' => $body->meta->href,
+                    'type' => $body->meta->type,
+                    'mediaType' => $body->meta->mediaType,
+                ]
+                ],
+                'discount' => $discount,
+                'reserve' => $item['qty'],
+            ];
+        }
+
+        if ($delivery['deliveryCase'] != null) {
+            $deliveryCase = $this->delivery($delivery['deliveryCase']);
+            $ArrayItem = [
+                'quantity' => 1,
+                'price' => $deliveryCase['price'] * 100,
+                'assortment' => $deliveryCase['assortment'],
+            ];
+
+            $Result[] = $ArrayItem;
+        }
+
+
+        return $Result;
+    }
+
+    private function creatingProduct($productUds)
+    {
+        $bodyProduct["name"] = $productUds->name;
+
+        $bodyProduct["salePrices"] = [
+            0 => [
+                "value" => $productUds->price * 100,
+                "priceType" => (new PriceTypeHook($this->msClient))->getPriceTypeFirst("Цена продажи"),
+            ],
+        ];
+        $bodyProduct["uom"] = (new UomHook($this->msClient))->getUom($this->getUomMsByUds($productUds->measurement));
+
+        if ($productUds->sku != null) {
+            $bodyProduct["article"] = $productUds->sku;
+        }
+
+        $bodyProduct["externalCode"] = "" . $productUds->id;
+
+        try {
+            return $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/product", $bodyProduct);
+        } catch (BadResponseException) {
+            return null;
+        }
+    }
+
+    private function getUomMsByUds($nameUom): string
+    {
+        $nameUomMs = "";
+        switch ($nameUom) {
+            case "PIECE":
+                $nameUomMs = "шт";
+                break;
+            case "CENTIMETRE":
+                $nameUomMs = "см";
+                break;
+            case "METRE":
+                $nameUomMs = "м";
+                break;
+            case "MILLILITRE":
+                $nameUomMs = "мм";
+                break;
+            case "LITRE":
+                $nameUomMs = "л; дм3";
+                break;
+            case "GRAM":
+                $nameUomMs = "г";
+                break;
+            case "KILOGRAM":
+                $nameUomMs = "кг";
+                break;
+        }
+        return $nameUomMs;
+    }
+
 }

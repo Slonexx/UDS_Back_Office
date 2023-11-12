@@ -37,6 +37,13 @@ class PriceTypeHook
         }
     }
 
+    public function getPriceTypeFirst($namePrice): array
+    {
+        $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype");
+        return [
+            "meta" => $json[0]->meta,
+        ];
+    }
     private function createPriceType($namePrice){
         $url = "https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype";
         $json =  $this->msClient->get($url);

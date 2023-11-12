@@ -66,6 +66,16 @@
                             </div>
                         </div>
                         <div class="mt-1 row">
+                            <P class="col-5 col-form-label"> Выберите склад: </P>
+                            <div class="col-7">
+                                <select id="Store" name="Store" class="form-select text-black" >
+                                    @foreach($arr_Store as $StoreItem)
+                                        <option value="{{ $StoreItem->name }}"> {{ ($StoreItem->name) }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-1 row">
                             <P class="col-sm-5 col-form-label"> Выберите какой тип платежного документа создавать: </P>
                             <div class="col-sm-7">
                                 <select id="PaymentDocument" name="PaymentDocument" class="form-select text-black"  onclick="PaymentDocumentFun()">
@@ -228,10 +238,9 @@
 
         let message = "{{ $message }}"
 
-        console.log(message)
-
         let creatDocument = "{{ $creatDocument }}"
         let Organization = @json($Organization);
+        let Store = '{{ $Store }}'
         let Document = '{{ $Document }}'
         let PaymentDocument = '{{ $PaymentDocument }}'
         let PaymentAccount = '{{ $PaymentAccount }}'
@@ -250,6 +259,11 @@
             window.document.getElementById('select_Organization').value = Organization.id
             window.document.getElementById('PaymentAccount_' + Organization.id).style.display = 'block'
             window.document.getElementById('select_PaymentAccount_' + Organization.id).value = PaymentAccount
+        }
+
+
+        if (Store !== '') {
+            window.document.getElementById('Store').value = Store
         }
 
         if(message !== "0"){
