@@ -114,10 +114,10 @@ class postController extends Controller
             "positions" => $positions,
             "externalCode" => (string) $request->id,
         ];
-
         $body = array_filter($body, function ($value) {
             return $value !== null;
         });
+
 
 
         try {
@@ -181,25 +181,26 @@ class postController extends Controller
         return null;
     }
 
-    private function getEntityByExternalCode($entityType, $externalCode): ?array
+    private function getEntityByName($entityType, $name): ?array
     {
         try {
-            $response = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/{$entityType}?filter=externalCode~{$externalCode}");
+            $response = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/{$entityType}");
             $rows = $response->rows;
+            if (empty($rows)) { return null; }
 
-            if (empty($rows)) {
-                return null;
+            foreach ($rows as $item) {
+                if ($item->name == $name) {
+                    return [
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
+                    ];
+                }
             }
 
-            $meta = $rows[0]->meta;
-
-            return [
-                'meta' => [
-                    'href' => $meta->href,
-                    'type' => $meta->type,
-                    'mediaType' => $meta->mediaType,
-                ],
-            ];
+           return null;
         } catch (BadResponseException) {
             return null;
         }
@@ -261,17 +262,17 @@ class postController extends Controller
 
     private function metaStore($storeName): ?array
     {
-        return $this->getEntityByExternalCode('store', $storeName);
+        return $this->getEntityByName('store', $storeName);
     }
 
     private function metaSalesChannel($salesChannelName): ?array
     {
-        return $this->getEntityByExternalCode('saleschannel', $salesChannelName);
+        return $this->getEntityByName('saleschannel', $salesChannelName);
     }
 
     private function metaProject($project): ?array
     {
-        return $this->getEntityByExternalCode('project', $project);
+        return $this->getEntityByName('project', $project);
     }
     private function metaAttributes($purchase): array
     {
