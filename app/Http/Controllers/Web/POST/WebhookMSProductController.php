@@ -87,12 +87,12 @@ class WebhookMSProductController extends Controller
 
         try {
             return response()->json([
-                'code' => 200,
+                'code' => 'by Slonex',
                 'message' => $this->WebHookStock->initiation($request['accountId'], $request['reportUrl']),
             ]);
         } catch (BadResponseException $e){
             return response()->json([
-                'code' => 203,
+                'code' => 503,
                 'message' => $this->returnMessage("ERROR", $request['auditContext']['moment'], $e->getMessage()),
             ]);
         }

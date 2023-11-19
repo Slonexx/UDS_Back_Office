@@ -2,73 +2,78 @@
 
 namespace App\Services\WebhookMS;
 
-
 use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\Config\getSettingVendorController;
-use App\Services\AdditionalServices\ImgService;
+use App\Http\Controllers\Config\GetSettingVendorController;
+use App\Models\NewProductModel;
 use GuzzleHttp\Exception\BadResponseException;
 
 class WebHookStock
 {
-    private getSettingVendorController $Setting;
+    private GetSettingVendorController $setting;
     private MsClient $msClient;
     private UdsClient $udsClient;
 
     public function initiation($accountId, $reportUrl): string
     {
-        $this->Setting = new getSettingVendorController($accountId);
-        $this->msClient = new MsClient($this->Setting->TokenMoySklad);
-        $this->udsClient = new UdsClient($this->Setting->companyId, $this->Setting->TokenUDS);
+        $this->setting = new GetSettingVendorController($accountId);
+        $this->msClient = new MsClient($this->setting->TokenMoySklad);
+        $this->udsClient = new UdsClient($this->setting->companyId, $this->setting->TokenUDS);
 
         try {
-            $BODY = $this->msClient->get($reportUrl);
+            $body = $this->msClient->get($reportUrl);
         } catch (BadResponseException $e) {
-            return 'Ошибка: '.$e->getMessage();
+            return 'Ошибка: ' . $e->getMessage();
         }
 
-        if (count($BODY)>0){
-            return $this->ProductsQuantity($BODY);
+        if (count($body) > 0) {
+            return $this->updateProductsQuantity($body);
         } else {
             return 'Изменение невозможно, пустой массив';
         }
-
-
     }
 
-    private function ProductsQuantity(mixed $BODY): string
+    private function updateProductsQuantity(array $body): string
     {
-        $Stock = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store/'.$BODY[0]->storeId);
-        if ($Stock->name == $this->Setting->Store)
-        foreach ($BODY as $item){
+        $settingStore = NewProductModel::where('accountId', $this->setting->accountId)->first();
+        if ($settingStore === null) {
+            return "Отсутствует настройки сохранения";
+        }
+
+        $stock = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store/' . $body[0]->storeId);
+        if ($stock->name !== $settingStore->Store) {
+            return "Склад не соответствует настройкам";
+        }
+
+        foreach ($body as $item) {
             try {
-                $product = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product/'.$item->assortmentId);
-            }catch (BadResponseException){
+                $product = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/product/' . $item->assortmentId);
+            } catch (BadResponseException) {
                 continue;
             }
+
             if (property_exists($product, 'attributes')) {
-                $ID = $this->attributes($product->attributes, 'id (UDS)');
-                if ($ID != 0) {
+                $id = $this->getAttributesValue($product->attributes, 'id (UDS)');
+                if ($id !== 0) {
                     try {
-                        $ProductUDS = $this->udsClient->get('https://api.uds.app/partner/v2/goods/'.$ID);
-                        $ProductUDS->data->inventory->inStock = $item->stock;
-                        $this->udsClient->put('https://api.uds.app/partner/v2/goods/'.$ID, $ProductUDS);
+                        $productUDS = $this->udsClient->get('https://api.uds.app/partner/v2/goods/' . $id);
+                        $productUDS->data->inventory->inStock = $item->stock;
+                        $this->udsClient->put('https://api.uds.app/partner/v2/goods/' . $id, $productUDS);
                     } catch (BadResponseException) {
                         continue;
                     }
                 }
-            } else continue;
+            }
         }
-        else return "Склад не соответствует настройкам";
+
         return "Все возможные количество товар изменились";
     }
 
-
-    private function attributes(mixed $attributes, string $Name)
+    private function getAttributesValue(array $attributes, string $name): int
     {
         $value = 0;
-        foreach ($attributes as $item){
-            if ($Name == $item->name){
+        foreach ($attributes as $item) {
+            if ($name === $item->name) {
                 $value = $item->value;
             }
         }
