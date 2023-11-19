@@ -266,6 +266,7 @@ class productController extends Controller
 
                     if ($ProductFolder != 1) {
                         $msClient->delete('https://api.moysklad.ru/api/remap/1.2/entity/webhookstock/' . $item->id, []);
+                        $Webhook_check = true;
                     }
                 }
             }
