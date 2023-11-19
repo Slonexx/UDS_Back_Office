@@ -31,11 +31,11 @@ class CronCommandProductCreate extends Command
 
             foreach ($allSettings as $item) {
                 $mainSetting = new getMainSettingBD($item->getAttributes()['accountId']);
+                if ($this->countRound($item->getAttributes()['countRound'], $item)) continue;
+
                 try {
-                    $ClientCheckMC = new MsClient($mainSetting->tokenMs);
-                    $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
-                    $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
-                    $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                    $ClientCheckMC = (new MsClient($mainSetting->tokenMs))->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
+                    $ClientCheckUDS = (new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
                 } catch (BadResponseException) { continue; }
                 if ($item->getAttributes()['ProductFolder'] == '0' or $item->getAttributes()['ProductFolder'] == null) continue;
 
@@ -54,7 +54,6 @@ class CronCommandProductCreate extends Command
 
                 if ($item->getAttributes()['unloading'] ==  null) continue;
 
-
                 try {
                     $this->processJob($data, $ClientCheckMC, $ClientCheckUDS);
                 } catch (BadResponseException) {
@@ -70,45 +69,18 @@ class CronCommandProductCreate extends Command
 
     protected function processJob($data, $ClientCheckMC, $ClientCheckUDS): void
     {
-        if ($data['loading']) {
-            if ($this->countRound($data['countRound'], $data['accountId'])) {
-                $create = new createProductForMS($data, $ClientCheckMC, $ClientCheckUDS);
-                $create->initialization();
-            }
-        } else {
-            if ($this->countRound($data['countRound'], $data['accountId'])) {
-                $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
-                $create->initialization();
-            }
-        }
+        if ($data['loading']) $create = new createProductForMS($data, $ClientCheckMC, $ClientCheckUDS);
+        else $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
 
+        $create->initialization();
     }
 
-    private function countRound($countRound, $accountId): bool
+    private function countRound($countRound, $record): bool
     {
-        $record = newProductModel::where('accountId', $accountId)->first();
-        if ($countRound < 5) {
+        if ($countRound < 3) {
             $record->countRound = $countRound + 1;
             $record->save();
-            return true;
-        } else {
-            $record->delete();
-            $model = new newProductModel();
-
-            $model->accountId = $accountId;
-            $model->ProductFolder = '0';
-
-            $model->unloading = null;
-            $model->salesPrices = null;
-            $model->promotionalPrice = null;
-            $model->Store = null;
-            $model->StoreRecord = null;
-            $model->productHidden = null;
-            $model->countRound = null;
-
-            $model->save();
-
             return false;
-        }
+        } return true;
     }
 }

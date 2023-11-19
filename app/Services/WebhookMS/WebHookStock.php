@@ -59,6 +59,7 @@ class WebHookStock
                 }
             } else continue;
         }
+        else return "Склад не соответствует настройкам";
         return "Все возможные количество товар изменились";
     }
 
