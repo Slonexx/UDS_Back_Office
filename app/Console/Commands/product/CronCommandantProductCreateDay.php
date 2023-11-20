@@ -25,7 +25,7 @@ class CronCommandantProductCreateDay extends Command
         $allSettings = newProductModel::all();
 
         foreach ($allSettings as $item) {
-            $mainSetting = new getMainSettingBD($item->accountId);
+            /*$mainSetting = new getMainSettingBD($item->accountId);
             try {
                 $clientCheckMC = new MsClient($mainSetting->tokenMs);
                 $clientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
@@ -34,7 +34,7 @@ class CronCommandantProductCreateDay extends Command
                 $clientCheckUDS->get('https://api.uds.app/partner/v2/settings');
             } catch (BadResponseException) {
                 continue;
-            }
+            }*/
 
             $countRound =  $item->countRound;
 
