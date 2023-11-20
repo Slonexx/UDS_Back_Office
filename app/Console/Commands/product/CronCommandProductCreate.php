@@ -6,8 +6,7 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\newProductModel;
-use App\Services\NewProductService\createProductForMS;
-use App\Services\NewProductService\createProductForUDS;
+use App\Services\newProductService\createProductForMS;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -25,7 +24,7 @@ class CronCommandProductCreate extends Command
 
     public function handle(): void
     {
-        $mutex = Cache::lock('2process_NewProduct', 9000);
+        $mutex = Cache::lock('3process_NewProduct', 9000);
 
         if ($mutex->get()) {
             $allSettings = newProductModel::all();

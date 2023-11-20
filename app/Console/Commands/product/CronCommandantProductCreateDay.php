@@ -32,7 +32,7 @@ class CronCommandantProductCreateDay extends Command
 
                 $clientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
                 $clientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-            } catch (BadResponseException $e) {
+            } catch (BadResponseException) {
                 continue;
             }
 
@@ -52,13 +52,13 @@ class CronCommandantProductCreateDay extends Command
                 continue;
             }
 
-            $record = NewProductModel::where('accountId', $data['accountId'])->first();
+            $record = newProductModel::where('accountId', $data['accountId'])->first();
 
             if ($record) {
                 $record->delete();
             }
 
-            $model = new NewProductModel();
+            $model = new newProductModel();
 
             $model->fill($data);
 
