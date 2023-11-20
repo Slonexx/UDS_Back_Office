@@ -57,13 +57,18 @@ class CronCommandantProductCreateDay extends Command
 
             $model = new newProductModel();
 
-            $model->fill($data);
+            $model->accountId = $data['accountId'];
+            $model->ProductFolder = $data['ProductFolder'];
+            $model->unloading = $data['unloading'];
+            $model->salesPrices = $data['salesPrices'];
+            $model->promotionalPrice = $data['promotionalPrice'];
+            $model->Store = $data['Store'];
+            $model->StoreRecord = $data['StoreRecord'];
+            $model->productHidden = $data['productHidden'];
 
-            if (3 >= $data['countRound']) {
-                $model->countRound = $data['countRound'];
-            } else {
-                $model->countRound = '1';
-            }
+            if (3 >= $data['countRound']) $model->countRound = $data['countRound'];
+            else $model->countRound = '1';
+
 
             $model->save();
         }
