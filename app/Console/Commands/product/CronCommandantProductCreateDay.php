@@ -48,9 +48,8 @@ class CronCommandantProductCreateDay extends Command
                 'countRound' => $item->countRound,
             ];
 
-            if ($item->unloading === null) {
-                continue;
-            }
+            if ($item->unloading === null) continue;
+
 
             $record = newProductModel::where('accountId', $data['accountId'])->first();
 
@@ -63,7 +62,7 @@ class CronCommandantProductCreateDay extends Command
             if (3 >= $data['countRound']) {
                 $model->countRound = $data['countRound'];
             } else {
-                $model->countRound = '0';
+                $model->countRound = '1';
             }
 
             $model->save();
