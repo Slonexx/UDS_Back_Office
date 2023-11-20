@@ -66,8 +66,13 @@ class CronCommandantProductCreateDay extends Command
             $model->StoreRecord = $data['StoreRecord'];
             $model->productHidden = $data['productHidden'];
 
-            if (3 >= $data['countRound']) $model->countRound = $data['countRound'];
-            else $model->countRound = '1';
+
+
+            if ($data['countRound'] >= 3) {
+                $model->countRound = '0';
+            } else {
+                $model->countRound = $data['countRound'];
+            }
 
 
             $model->save();
