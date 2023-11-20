@@ -62,7 +62,7 @@ class CronCommandantProductCreateDay extends Command
 
             $model->fill($data);
 
-            if ($data['countRound'] < 3) {
+            if ($data['countRound'] < 2) {
                 $model->countRound = $data['countRound'];
             } else {
                 $model->countRound = 0;
