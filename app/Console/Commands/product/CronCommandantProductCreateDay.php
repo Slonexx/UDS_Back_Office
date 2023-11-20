@@ -36,38 +36,24 @@ class CronCommandantProductCreateDay extends Command
                 continue;
             }
 
-            $data = [
-                'accountId' => $item->accountId,
-                'ProductFolder' => $item->ProductFolder,
-                'unloading' => $item->unloading,
-                'salesPrices' => $item->salesPrices,
-                'promotionalPrice' => $item->promotionalPrice,
-                'Store' => $item->Store,
-                'StoreRecord' => $item->StoreRecord,
-                'productHidden' => $item->productHidden,
-                'countRound' => $item->countRound,
-            ];
-
-            $record = newProductModel::where('accountId', $data['accountId'])->first();
-
-            if ($record) $record->delete();
+            $countRound =  $item->countRound;
 
             $model = new newProductModel();
 
-            $model->accountId = $data['accountId'];
-            $model->ProductFolder = $data['ProductFolder'];
-            $model->unloading = $data['unloading'];
-            $model->salesPrices = $data['salesPrices'];
-            $model->promotionalPrice = $data['promotionalPrice'];
-            $model->Store = $data['Store'];
-            $model->StoreRecord = $data['StoreRecord'];
-            $model->productHidden = $data['productHidden'];
+            $model->accountId = $item->accountId;
+            $model->ProductFolder = $item->ProductFolder;
+            $model->unloading = $item->unloading;
+            $model->salesPrices = $item->salesPrices;
+            $model->promotionalPrice = $item->promotionalPrice;
+            $model->Store = $item->Store;
+            $model->StoreRecord = $item->StoreRecord;
+            $model->productHidden = $item->productHidden;
 
+            $record = newProductModel::where('accountId', $item->accountId)->first();
 
+            if ($record) $record->delete();
 
-            if (intval($data['countRound']) >= 3) $model->countRound = '0';
-            else  $model->countRound = $data['countRound'];
-
+            if ($countRound == 3) $model->countRound = 0; else  $model->countRound = $countRound;
 
 
             $model->save();
