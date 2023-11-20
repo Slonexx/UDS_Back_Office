@@ -48,9 +48,6 @@ class CronCommandantProductCreateDay extends Command
                 'countRound' => $item->countRound,
             ];
 
-            if ($item->unloading === null) continue;
-
-
             $record = newProductModel::where('accountId', $data['accountId'])->first();
 
             if ($record) $record->delete();
