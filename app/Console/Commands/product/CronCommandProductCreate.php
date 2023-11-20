@@ -6,8 +6,8 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\newProductModel;
-use App\Services\NewProductService\CreateProductForMS;
-use App\Services\NewProductService\CreateProductForUDS;
+use App\Services\NewProductService\createProductForMS;
+use App\Services\NewProductService\createProductForUDS;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -25,7 +25,7 @@ class CronCommandProductCreate extends Command
 
     public function handle(): void
     {
-        $mutex = Cache::lock('process_NewProduct', 9000);
+        $mutex = Cache::lock('2process_NewProduct', 9000);
 
         if ($mutex->get()) {
             $allSettings = newProductModel::all();
@@ -78,8 +78,8 @@ class CronCommandProductCreate extends Command
     protected function processJob($data, $clientCheckMC, $clientCheckUDS): void
     {
         $create = $data['loading']
-            ? new CreateProductForMS($data, $clientCheckMC, $clientCheckUDS)
-            : new CreateProductForUDS($data, $clientCheckMC, $clientCheckUDS);
+            ? new createProductForMS($data, $clientCheckMC, $clientCheckUDS)
+            : new createProductForUDS($data, $clientCheckMC, $clientCheckUDS);
 
         $create->initialization();
     }
