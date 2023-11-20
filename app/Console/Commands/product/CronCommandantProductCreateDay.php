@@ -4,7 +4,7 @@ namespace App\Console\Commands\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\BD\GetMainSettingBD;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\newProductModel;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;

@@ -4,7 +4,7 @@ namespace App\Console\Commands\product;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\BD\GetMainSettingBD;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\newProductModel;
 use App\Services\NewProductService\CreateProductForMS;
 use App\Services\NewProductService\CreateProductForUDS;
@@ -25,13 +25,13 @@ class CronCommandProductCreate extends Command
 
     public function handle(): void
     {
-        $mutex = Cache::lock('newprocess_NewProduct', 9000);
+        $mutex = Cache::lock('nprocess_NewProduct', 9000);
 
         if ($mutex->get()) {
             $allSettings = newProductModel::all();
 
             foreach ($allSettings as $item) {
-                $mainSetting = new GetMainSettingBD($item->accountId);
+                $mainSetting = new getMainSettingBD($item->accountId);
                 if ($this->countRound($item->countRound, $item)) {
                     continue;
                 }
