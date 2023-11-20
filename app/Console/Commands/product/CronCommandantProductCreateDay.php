@@ -5,7 +5,7 @@ namespace App\Console\Commands\product;
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\GetMainSettingBD;
-use App\Models\NewProductModel;
+use App\Models\newProductModel;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Console\Command;
 
@@ -22,7 +22,7 @@ class CronCommandantProductCreateDay extends Command
 
     public function handle(): void
     {
-        $allSettings = NewProductModel::all();
+        $allSettings = newProductModel::all();
 
         foreach ($allSettings as $item) {
             $mainSetting = new getMainSettingBD($item->accountId);
