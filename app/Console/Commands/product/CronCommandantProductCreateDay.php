@@ -53,18 +53,27 @@ class CronCommandantProductCreateDay extends Command
 
             $record = newProductModel::where('accountId', $data['accountId'])->first();
 
-            if ($record) {
-                $record->update([
-                    'ProductFolder' => $data['ProductFolder'],
-                    'unloading' => $data['unloading'],
-                    'salesPrices' => $data['salesPrices'],
-                    'promotionalPrice' => $data['promotionalPrice'],
-                    'Store' => $data['Store'],
-                    'StoreRecord' => $data['StoreRecord'],
-                    'productHidden' => $data['productHidden'],
-                    'countRound' => intval($data['countRound']) >= 3 ? '0' : $data['countRound'],
-                ]);
-            }
+            if ($record) $record->delete();
+
+            $model = new newProductModel();
+
+            $model->accountId = $data['accountId'];
+            $model->ProductFolder = $data['ProductFolder'];
+            $model->unloading = $data['unloading'];
+            $model->salesPrices = $data['salesPrices'];
+            $model->promotionalPrice = $data['promotionalPrice'];
+            $model->Store = $data['Store'];
+            $model->StoreRecord = $data['StoreRecord'];
+            $model->productHidden = $data['productHidden'];
+
+
+
+            if (intval($data['countRound']) >= 3) $model->countRound = '0';
+            else  $model->countRound = $data['countRound'];
+
+
+
+            $model->save();
         }
     }
 }
