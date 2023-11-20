@@ -77,7 +77,7 @@ class CronCommandProductCreate extends Command
         }
     }
 
-    protected function processJob($data, $clientCheckMC, $clientCheckUDS): void
+    protected function processJob($data, MsClient $clientCheckMC, UdsClient $clientCheckUDS): void
     {
         $create = $data['loading']
             ? new createProductForMS($data, $clientCheckMC, $clientCheckUDS)

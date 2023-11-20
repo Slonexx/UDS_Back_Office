@@ -16,7 +16,7 @@ class createProductForUDS
     private MsClient $msClient;
     private UdsClient $udsClient;
 
-    public function __construct($data, $ms, $uds)
+    public function __construct($data, MsClient $ms, UdsClient $uds)
     {
         $this->setting = json_decode(json_encode($data));
         $this->msClient = $ms;
