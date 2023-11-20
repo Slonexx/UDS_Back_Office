@@ -54,9 +54,7 @@ class CronCommandantProductCreateDay extends Command
 
             $record = newProductModel::where('accountId', $data['accountId'])->first();
 
-            if ($record) {
-                $record->delete();
-            }
+            if ($record) $record->delete();
 
             $model = new newProductModel();
 
@@ -65,7 +63,7 @@ class CronCommandantProductCreateDay extends Command
             if ($data['countRound'] < 2) {
                 $model->countRound = $data['countRound'];
             } else {
-                $model->countRound = 0;
+                $model->countRound = '0';
             }
 
             $model->save();
