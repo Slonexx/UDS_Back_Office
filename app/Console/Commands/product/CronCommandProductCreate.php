@@ -25,7 +25,7 @@ class CronCommandProductCreate extends Command
 
     public function handle(): void
     {
-        $mutex = Cache::lock('4process_NewProduct', 9000);
+        $mutex = Cache::lock('5process_NewProduct', 9000);
 
         if ($mutex->get()) {
             $allSettings = newProductModel::all();
@@ -37,8 +37,10 @@ class CronCommandProductCreate extends Command
                 }
 
                 try {
-                    $clientCheckMC = (new MsClient($mainSetting->tokenMs))->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
-                    $clientCheckUDS = (new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS))->get('https://api.uds.app/partner/v2/settings');
+                    $clientCheckMC = new MsClient($mainSetting->tokenMs);
+                    $clientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
+                    $clientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
+                    $clientCheckUDS->get('https://api.uds.app/partner/v2/settings');
                 } catch (BadResponseException) {
                     continue;
                 }
