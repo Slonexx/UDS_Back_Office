@@ -4,19 +4,19 @@ namespace App\Services\WebhookMS;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\Config\GetSettingVendorController;
-use App\Models\NewProductModel;
+use App\Http\Controllers\Config\getSettingVendorController;
+use App\Models\newProductModel;
 use GuzzleHttp\Exception\BadResponseException;
 
 class WebHookStock
 {
-    private GetSettingVendorController $setting;
+    private getSettingVendorController $setting;
     private MsClient $msClient;
     private UdsClient $udsClient;
 
     public function initiation($accountId, $reportUrl): string
     {
-        $this->setting = new GetSettingVendorController($accountId);
+        $this->setting = new getSettingVendorController($accountId);
         $this->msClient = new MsClient($this->setting->TokenMoySklad);
         $this->udsClient = new UdsClient($this->setting->companyId, $this->setting->TokenUDS);
 
@@ -35,7 +35,7 @@ class WebHookStock
 
     private function updateProductsQuantity(array $body): string
     {
-        $settingStore = NewProductModel::where('accountId', $this->setting->accountId)->first();
+        $settingStore = newProductModel::where('accountId', $this->setting->accountId)->first();
         if ($settingStore === null) {
             return "Отсутствует настройки сохранения";
         }
