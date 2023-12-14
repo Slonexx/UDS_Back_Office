@@ -6,6 +6,7 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
+use App\Jobs\webhookUDS;
 use App\Services\MetaServices\MetaHook\AttributeHook;
 use App\Services\MetaServices\MetaHook\PriceTypeHook;
 use App\Services\MetaServices\MetaHook\UomHook;
@@ -36,6 +37,22 @@ class postController extends Controller
 
     }
 
+
+    public function setJob(Request $request, $accountId)
+    {
+
+        $params = [
+            "headers" => [
+                'Content-Type' => 'application/json'
+            ],
+            'json' => $request->all(),
+        ];
+
+        webhookUDS::dispatch($params, 'https://dev.smartuds.kz/api/webhook/'.$accountId.'/order')->onConnection('database')->onQueue("high");
+
+        return response('',200);
+
+    }
 
     public function postOrder(Request $request, $accountId): JsonResponse
     {
@@ -144,6 +161,7 @@ class postController extends Controller
 
 
     }
+
 
 
     private function metaOrganization($Organization): array

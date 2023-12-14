@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 
     Route::post('/webhook/{accountId}/client',[postController::class, 'postClint']);
     Route::post('/webhook/{accountId}/order',[postController::class, 'postOrder']);
-    Route::post('/webhook/order/{accountId}/',[postController::class, 'postOrder']);
+    Route::post('/webhook/order/{accountId}/',[postController::class, 'setJob']);
 
 
 
