@@ -69,7 +69,7 @@ class postController extends Controller
         }
 
         $externalCode = $this->CheckExternalCode($request->id);
-        if (!$externalCode) {
+        if ($externalCode) {
             return response()->json([
                 'status' => false,
                 'data' => [
@@ -328,7 +328,7 @@ class postController extends Controller
         try {
             $body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode~" . $externalCode);
         } catch (BadResponseException) {
-            return true;
+            return false;
         }
         if ($body->meta->size == 0) return false;
         else return true;
