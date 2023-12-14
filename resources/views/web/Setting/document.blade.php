@@ -146,7 +146,7 @@
                                     <i onclick="myWebXyk2()" class="gradient_focus btn fa-solid fa-link p-2"></i>
                                 </div>
                                 <div id="myWebXyk2" class="mt-1 col-11 myWebXyk2 s-min-16">
-                                    https://smartuds.kz/api/webhook/{{$accountId}}/order
+                                    https://smartuds.kz/api/webhook/order/{{$accountId}}
                                 </div>
                             </div>
                         </div>
