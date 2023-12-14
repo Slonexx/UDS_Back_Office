@@ -44,6 +44,7 @@ class postController extends Controller
         $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
         $this->msClient = new MsClient($Setting->TokenMoySklad);
 
+
         if ($Setting->creatDocument != "1") {
             return response()->json([
                 'status' => false,
@@ -68,7 +69,7 @@ class postController extends Controller
         }
 
         $externalCode = $this->CheckExternalCode($request->id);
-        if ($externalCode) {
+        if (!$externalCode) {
             return response()->json([
                 'status' => false,
                 'data' => [
