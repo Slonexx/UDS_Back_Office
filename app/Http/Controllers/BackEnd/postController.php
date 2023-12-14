@@ -40,8 +40,6 @@ class postController extends Controller
     public function postOrder(Request $request, $accountId): JsonResponse
     {
 
-        dd($request->all());
-
         $Setting = new getSettingVendorController($accountId);
         $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
         $this->msClient = new MsClient($Setting->TokenMoySklad);
