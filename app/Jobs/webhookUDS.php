@@ -39,7 +39,30 @@ class webhookUDS implements ShouldQueue
             $delay = mt_rand(10, 1000);
             usleep($delay);
             $response = $client->post($this->url, $this->params);
-        } catch(ClientException ) {
+        }  catch(ClientException $e) {
+            $msError = "Превышено ограничение на количество запросов в единицу времени";
+
+            $statusCode = $e->getResponse()->getStatusCode();
+            $body_encoded = $e->getResponse()->getBody()->getContents();
+
+            $body = json_decode($body_encoded);
+
+            $data = $body->data ?? false;
+
+            $inputMessage = null;
+            if($data){
+                if(property_exists($data, "errors"))
+                    $inputMessage = $data->errors[0]->error;
+
+
+            }
+
+            if($statusCode == 429 && $inputMessage == $msError){
+                $delay = mt_rand(100, 1000);
+                usleep($delay);
+                webhookUDS::dispatch($this->params, $this->url)->onConnection('database')->onQueue("low");
+            }
+
         }
     }
 }
