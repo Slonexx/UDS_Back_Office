@@ -113,6 +113,7 @@ class postController extends Controller
 
 
         $description = $request->delivery['userComment'] ?? '';
+        $description = $description . PHP_EOL . 'Клиент: ' . $request->delivery['receiverName'] . ' ' . $request->delivery['receiverPhone'];
 
         $positions = $this->metaPositions($request->items, $request->purchase, $request->delivery);
 
