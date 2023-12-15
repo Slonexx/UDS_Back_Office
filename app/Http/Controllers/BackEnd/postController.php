@@ -14,6 +14,8 @@ use App\Services\WebhookMS\WebHookNewClientMS;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Laravel\Telescope\IncomingEntry;
+use Laravel\Telescope\Telescope;
 
 class postController extends Controller
 {
@@ -23,6 +25,11 @@ class postController extends Controller
 
     public function postClint(Request $request, $accountId): JsonResponse
     {
+
+        Telescope::tag(function (IncomingEntry $entry) use ($accountId) {
+            return [$accountId, 'postClint', 'postClint:' . $accountId];
+        });
+
         $Setting = new getSettingVendorController($accountId);
         $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
 
@@ -57,6 +64,11 @@ class postController extends Controller
     public function postOrder(Request $request, $accountId)
     {
 
+        Telescope::tag(function (IncomingEntry $entry) use ($accountId) {
+            return [$accountId, 'postOrder', 'postOrder:' . $accountId];
+        });
+
+
         $Setting = new getSettingVendorController($accountId);
         $this->attributeHook = new AttributeHook(new MsClient($Setting->TokenMoySklad));
         $this->msClient = new MsClient($Setting->TokenMoySklad);
@@ -79,8 +91,7 @@ class postController extends Controller
             return response()->json([
                 'status' => false,
                 'data' => [
-                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
-                    'message' => $e->getMessage(),
+                    'BadResponseException' => json_decode($e->getResponse()->getBody()->getContents()),
                 ],
             ]);
         }
@@ -142,7 +153,7 @@ class postController extends Controller
             return response()->json([
                 'status' => false,
                 'data' => [
-                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
+                    'BadResponseException' => json_decode($e->getResponse()->getBody()->getContents()),
                 ],
             ]);
         }
@@ -158,7 +169,7 @@ class postController extends Controller
             return response()->json([
                 'status' => false,
                 'data' => [
-                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
+                    'BadResponseException' => json_decode( $e->getResponse()->getBody()->getContents()),
                     'body' => $body,
                 ],
             ]);
