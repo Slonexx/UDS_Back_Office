@@ -137,14 +137,6 @@ class postController extends Controller
         });
 
 
-        $params = [
-            "headers" => [
-                'Content-Type' => 'application/json'
-            ],
-            'json' => $request->all(),
-        ];
-
-        webhookUDS::dispatch($params, 'https://smartuds.kz/api/webhook/'.$accountId.'/order')->onConnection('database')->onQueue("high");
 
         try {
             $response = $this->msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/customerorder', $body);
