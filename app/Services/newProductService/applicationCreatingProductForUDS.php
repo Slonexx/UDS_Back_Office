@@ -42,6 +42,12 @@ class applicationCreatingProductForUDS
 
         $this->processProductDetails($product, $body);
 
+        //dd($body);
+
+        if (isset($body['data']['price']))
+        if ($body['data']['price'] == 0) return null;
+
+
         try {
             $createdProduct = $this->udsClient->postHttp_errorsNo($url, $body);
 
@@ -50,7 +56,7 @@ class applicationCreatingProductForUDS
             }
 
             return $createdProduct;
-        } catch (ClientException) {
+        } catch (BadResponseException $e) {
             return null;
         }
     }
@@ -103,7 +109,8 @@ class applicationCreatingProductForUDS
 
         $inStock = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $product->name)->rows;
         if ($inStock) {
-            $body['data']['inventory']['inStock'] = $inStock[0]->quantity;
+            if ($inStock[0]->quantity > 0) $body['data']['inventory']['inStock'] = $inStock[0]->quantity;
+            else $body['data']['inventory']['inStock'] = 0;
         }
         if (property_exists($product, "attributes")) {
             $this->handleAttributes($product, $body, $nameOumUds);
@@ -141,7 +148,8 @@ class applicationCreatingProductForUDS
 
             $inStock = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows;
             if ($inStock) {
-                $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity;
+                if ($inStock[0]->quantity > 0) $variants[$id]['inventory']['inStock'] = $inStock[0]->quantity;
+                else $variants[$id]['inventory']['inStock'] = 0;
             }
 
 
