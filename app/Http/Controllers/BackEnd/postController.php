@@ -143,7 +143,6 @@ class postController extends Controller
                 'status' => false,
                 'data' => [
                     'BadResponseException' => $e->getResponse()->getBody()->getContents(),
-                    'message' => $e->getMessage(),
                 ],
             ]);
         }
@@ -160,7 +159,6 @@ class postController extends Controller
                 'status' => false,
                 'data' => [
                     'BadResponseException' => $e->getResponse()->getBody()->getContents(),
-                    'message' => $e->getMessage(),
                     'body' => $body,
                 ],
             ]);
