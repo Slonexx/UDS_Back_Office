@@ -54,7 +54,7 @@ class postController extends Controller
 
     }
 
-    public function postOrder(Request $request, $accountId): JsonResponse
+    public function postOrder(Request $request, $accountId)
     {
 
         $Setting = new getSettingVendorController($accountId);
@@ -100,42 +100,56 @@ class postController extends Controller
         $BD = new BDController();
         $BD->createOrderID($accountId, $request->id);
 
+        try {
 
-        $organization = $this->metaOrganization($Setting->Organization);
-        $organizationAccount = $this->metaOrganizationAccount($Setting->PaymentAccount, $Setting->Organization);
-        $agent = $this->metaAgent((object) $request->customer);
-        $state = $this->metaState($Setting->NEW);
-        $store = $this->metaStore($Setting->Store);
-        $salesChannel = $this->metaSalesChannel($Setting->Saleschannel);
-        $project = $this->metaProject($Setting->Project);
-        $shipmentAddress = $this->ShipmentAddress($request->delivery);
-        $attributes = $this->metaAttributes($request->purchase);
-
-
-        $description = $request->delivery['userComment'] ?? '';
-        $description = $description . PHP_EOL . 'Клиент: ' . $request->delivery['receiverName'] . ' ' . $request->delivery['receiverPhone'];
-
-        $positions = $this->metaPositions($request->items, $request->purchase, $request->delivery);
+            $organization = $this->metaOrganization($Setting->Organization);
+            $organizationAccount = $this->metaOrganizationAccount($Setting->PaymentAccount, $Setting->Organization);
+            $agent = $this->metaAgent((object) $request->customer);
+            $state = $this->metaState($Setting->NEW);
+            $store = $this->metaStore($Setting->Store);
+            $salesChannel = $this->metaSalesChannel($Setting->Saleschannel);
+            $project = $this->metaProject($Setting->Project);
+            $shipmentAddress = $this->ShipmentAddress($request->delivery);
+            $attributes = $this->metaAttributes($request->purchase);
 
 
-        $body = [
-            "organization" => $organization,
-            "organizationAccount" => $organizationAccount,
-            "agent" => $agent,
-            "state" => $state,
-            "store" => $store,
-            "salesChannel" => $salesChannel,
-            "project" => $project,
-            "shipmentAddress" => $shipmentAddress,
-            "description" => $description,
+            $description = $request->delivery['userComment'] ?? '';
+            $description = $description . PHP_EOL . 'Клиент: ' . $request->delivery['receiverName'] . ' ' . $request->delivery['receiverPhone'];
 
-            "attributes" => $attributes,
-            "positions" => $positions,
-            "externalCode" => (string) $request->id,
-        ];
-        $body = array_filter($body, function ($value) {
-            return $value !== null;
-        });
+            $positions = $this->metaPositions($request->items, $request->purchase, $request->delivery);
+
+
+            $body = [
+                "organization" => $organization,
+                "organizationAccount" => $organizationAccount,
+                "agent" => $agent,
+                "state" => $state,
+                "store" => $store,
+                "salesChannel" => $salesChannel,
+                "project" => $project,
+                "shipmentAddress" => $shipmentAddress,
+                "description" => $description,
+
+                "attributes" => $attributes,
+                "positions" => $positions,
+                "externalCode" => (string) $request->id,
+            ];
+            $body = array_filter($body, function ($value) {
+                return $value !== null;
+            });
+
+        } catch (BadResponseException $e) {
+            return response()->json([
+                'status' => false,
+                'data' => [
+                    'BadResponseException' => $e->getResponse()->getBody()->getContents(),
+                    'message' => $e->getMessage(),
+                ],
+            ]);
+        }
+
+
+
 
 
 
