@@ -27,7 +27,7 @@ class CronCommandProductCreate extends Command
     {
         $mutex = Cache::lock('5process_NewProduct', 9000);
 
-        if ($mutex->get()) {
+        if (true) { //$mutex->get()) {
 
             $allSettings = newProductModel::all();
 
