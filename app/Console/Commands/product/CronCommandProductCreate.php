@@ -28,72 +28,68 @@ class CronCommandProductCreate extends Command
         $mutex = Cache::lock('5process_NewProduct', 9000);
 
         if ($mutex->get()) {
+
             $allSettings = newProductModel::all();
 
             foreach ($allSettings as $item) {
-                $mainSetting = new getMainSettingBD($item->accountId);
-                if ($this->countRound($item->countRound, $item)) {
-                    continue;
-                }
-
+                $mainSetting = new getMainSettingBD($item->getAttributes()['accountId']);
                 try {
-                    $clientCheckMC = new MsClient($mainSetting->tokenMs);
-                    $clientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
-                    $clientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
-                    $clientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                } catch (BadResponseException) {
-                    continue;
-                }
-
-                if ($item->ProductFolder == '0' || $item->ProductFolder === null) {
-                    continue;
-                }
+                    $ClientCheckMC = new MsClient($mainSetting->tokenMs);
+                    $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
+                    $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
+                    $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
+                } catch (BadResponseException) { continue; }
+                if ($item->getAttributes()['ProductFolder'] == '0' or $item->getAttributes()['ProductFolder'] == null) continue;
 
                 $data = [
-                    'accountId' => $item->accountId,
-                    'salesPrices' => $item->salesPrices,
-                    'promotionalPrice' => $item->promotionalPrice,
-                    'Store' => $item->Store,
-                    'StoreRecord' => $item->StoreRecord,
-                    'productHidden' => $item->productHidden,
-                    'countRound' => $item->countRound,
-                    'loading' => $item->unloading === '1',
+                    'accountId' => $item->getAttributes()['accountId'],
+                    'salesPrices' => $item->getAttributes()['salesPrices'],
+                    'promotionalPrice' => $item->getAttributes()['promotionalPrice'],
+                    'Store' => $item->getAttributes()['Store'],
+                    'StoreRecord' => $item->getAttributes()['StoreRecord'],
+                    'productHidden' => $item->getAttributes()['productHidden'],
+                    'countRound' => $item->getAttributes()['countRound'],
                 ];
 
-                if ($item->unloading === null) {
-                    continue;
-                }
+                if ($item->getAttributes()['unloading'] ==  '1') { $data['loading'] = true; }
+                else  $data['loading'] = false;
+
+                if ($item->getAttributes()['unloading'] ==  null) continue;
+
 
                 try {
-                    $this->processJob($data, $clientCheckMC, $clientCheckUDS);
-                } catch (BadResponseException) {
-                    continue;
+
+                    dispatch(function () use ( $data, $ClientCheckMC, $ClientCheckUDS ) {
+                        if ($data['loading'] and $data['countRound'] < 3) {
+                            $record = newProductModel::where('accountId', $data['accountId'])->first();
+                            $record->countRound = $data['countRound'] + 1;
+                            $record->save();
+
+                            $create = new createProductForMS($data, $ClientCheckMC, $ClientCheckUDS);
+                            $create->initialization();
+                        }
+                        else {
+                            $record = newProductModel::where('accountId',$data['accountId'] )->first();
+                            $record->countRound = $data['countRound'] + 1;
+                            $record->save();
+
+                            $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
+                            $create->initialization();
+                        }
+                    })->onQueue('default');
+
+                    // Продолжение выполнения команды
+                    $this->info('successfully.');
+
+                } finally {
+                    $mutex->release(); // Освобождаем мьютекс
                 }
+
             }
 
-            $mutex->release();
         } else {
+            // Задача уже выполняется, пропускаем запуск
             $this->info('Previous task is still running. Skipping the current run.');
         }
-    }
-
-    protected function processJob($data, MsClient $clientCheckMC, UdsClient $clientCheckUDS): void
-    {
-        $create = $data['loading']
-            ? new createProductForMS($data, $clientCheckMC, $clientCheckUDS)
-            : new createProductForUDS($data, $clientCheckMC, $clientCheckUDS);
-
-        $create->initialization();
-    }
-
-    private function countRound($countRound, $record): bool
-    {
-        if ($countRound < 3) {
-            $record->countRound = $countRound + 1;
-            $record->save();
-            return false;
-        }
-
-        return true;
     }
 }
