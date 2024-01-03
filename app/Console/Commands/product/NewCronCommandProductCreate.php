@@ -73,26 +73,20 @@ class NewCronCommandProductCreate extends Command
 
             if ($item->getAttributes()['unloading'] == null) continue;
 
-            dispatch(function () use ($data, $ClientCheckMC, $ClientCheckUDS) {
-                if ($data['loading'] and $data['countRound'] < 10) {
-                    $record = newProductModel::where('accountId', $data['accountId'])->first();
-                    $record->countRound = $data['countRound'] + 1;
-                    $record->save();
+            dispatch(function () use ($data, $ClientCheckMC, $ClientCheckUDS, $item) {
+                $item->countRound += 1;
+                $item->save();
 
+                if ($data['loading'] && $data['countRound'] < 300) {
                     $create = new createProductForMS($data, $ClientCheckMC, $ClientCheckUDS);
-                    $create->initialization();
                 } else {
-                    $record = newProductModel::where('accountId', $data['accountId'])->first();
-                    $record->countRound = $data['countRound'] + 1;
-                    $record->save();
-
                     $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
-                    $create->initialization();
                 }
+                $create->initialization();
             })->onQueue('default');
 
-            // Продолжение выполнения команды
             $this->info('successfully.');
+
 
         }
 

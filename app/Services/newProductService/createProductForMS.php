@@ -28,7 +28,7 @@ class createProductForMS
 
     public function __construct($data, $ms, $uds)
     {
-        $this->setting = $data;
+        $this->setting = json_decode(json_encode($data));
         $this->msClient = $ms;
         $this->udsClient = $uds;
         $this->imgService = new ImgService();
