@@ -62,12 +62,10 @@ class CronCommandProductCreate extends Command
                         $item->countRound += 1;
                         $item->save();
 
-                        if ($data['loading'] && $data['countRound'] < 3) {
-                            $create = new createProductForMS($data);
-                        } else {
-                            $create = new createProductForUDS($data);
-                        }
-                        $create->initialization();
+                        if ($data['loading']) $create = new createProductForMS($data);
+                        else $create = new createProductForUDS($data);
+
+                        if ($data['countRound'] < 3) $create->initialization();
                     })->onQueue('default');
 
                     $this->info('successfully.');
