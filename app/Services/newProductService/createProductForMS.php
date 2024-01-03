@@ -4,6 +4,7 @@ namespace App\Services\newProductService;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Services\AdditionalServices\ImgService;
 use App\Services\MetaServices\MetaHook\AttributeHook;
@@ -26,17 +27,19 @@ class createProductForMS
     private PriceTypeHook $priceTypeHookService;
     private UomHook $uomHookService;
 
-    public function __construct($data, $ms, $uds)
+    public function __construct($data)
     {
+        $mainSetting = new getMainSettingBD($data['accountId']);
+
         $this->setting = json_decode(json_encode($data));
-        $this->msClient = $ms;
-        $this->udsClient = $uds;
+        $this->msClient = new MsClient($mainSetting->tokenMs);
+        $this->udsClient = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
         $this->imgService = new ImgService();
 
-        $this->attributeHookService = new AttributeHook($ms);
-        $this->currencyHookService = new CurrencyHook($ms);
-        $this->priceTypeHookService = new PriceTypeHook($ms);
-        $this->uomHookService = new UomHook($ms);
+        $this->attributeHookService = new AttributeHook($this->msClient);
+        $this->currencyHookService = new CurrencyHook($this->msClient);
+        $this->priceTypeHookService = new PriceTypeHook($this->msClient);
+        $this->uomHookService = new UomHook($this->msClient);
     }
 
     public function initialization(): array
@@ -47,7 +50,8 @@ class createProductForMS
         $parentFolder = $this->getFolderMetaById();
 
 
-        $hrefAttrib = $this->getProductAttribute()->href;
+        $hrefAttrib = $this->getProductAttribute();
+        if ($hrefAttrib == null)  return ["message" => "Отсутствуют доп поля", ];
         $offset = 0;
         while ($this->haveRowsInResponse($url, $offset)) {
             $productsUds = $this->udsClient->get($url);
@@ -62,19 +66,21 @@ class createProductForMS
                         }
                     }
 
-                } elseif ($productUds->data->type == "VARYING_ITEM") {
-
+                }
+                elseif ($productUds->data->type == "VARYING_ITEM") {
                     if (!$this->isProductExistsMs($currId, $hrefAttrib)) {
                         $this->createVariantProduct($productUds, $parentFolder);
                     }
-
-                } elseif ($productUds->data->type == "CATEGORY") {
+                }
+                elseif ($productUds->data->type == "CATEGORY") {
                     $category = $this->createCategoryMs($productUds->name, $productUds->id, $parentFolder);
                     $this->addProductsByCategoryUds(
                         $hrefAttrib,
                         $category->meta,
+                        $category->externalCode
                     );
                 }
+                else continue;
             }
             $offset += 50;
         }
@@ -86,9 +92,7 @@ class createProductForMS
     private function haveRowsInResponse(&$url, $offset, $nodeId = 0): bool
     {
         $url = "https://api.uds.app/partner/v2/goods?max=50&offset=" . $offset;
-        if ($nodeId > 0) {
-            $url = $url . "&nodeId=" . $nodeId;
-        }
+        if ($nodeId > 0) { $url = $url . "&nodeId=" . $nodeId; }
         $json = $this->udsClient->get($url);
         return count($json->rows) > 0;
     }
@@ -99,10 +103,11 @@ class createProductForMS
         return ($json->meta->size > 0);
     }
 
-    private function addProductsByCategoryUds($hrefProductId, $parentCategoryMeta): void
+    private function addProductsByCategoryUds($hrefProductId, $parentCategoryMeta, $nodeId = 0): void
     {
+
         $offset = 0;
-        while ($this->haveRowsInResponse($url, $offset)) {
+        while ($this->haveRowsInResponse($url, $offset, $nodeId)) {
             $json = $this->udsClient->get($url);
             foreach ($json->rows as $row) {
                 $currId = "" . $row->id;
@@ -112,15 +117,18 @@ class createProductForMS
                         $this->addProductsByCategoryUds(
                             $hrefProductId,
                             $category->meta,
+                            $category->externalCode
                         );
-                } elseif ($row->data->type == "ITEM") {
+                }
+                elseif ($row->data->type == "ITEM") {
                     if (!$this->isProductExistsMs($currId, $hrefProductId)) {
                         $createdProduct = $this->createProductMs($row, $parentCategoryMeta);
                         if ($createdProduct != null && count($row->imageUrls) > 0) {
                             $this->imgService->setImgMS($createdProduct, $row->imageUrls, $this->apiKeyMs);
                         }
                     }
-                } elseif ($row->data->type == "VARYING_ITEM") {
+                }
+                elseif ($row->data->type == "VARYING_ITEM") {
                     if (!$this->isProductExistsMs($currId, $hrefProductId)) {
                         $this->createVariantProduct($row, $parentCategoryMeta);
                     }
@@ -172,7 +180,7 @@ class createProductForMS
             0 => [
                 "value" => $productUds->data->price * 100,
                 "currency" => $this->currencyHookService->getKzCurrency(),
-                "priceType" => $this->priceTypeHookService->getPriceType("Цена продажи"),
+                "priceType" => $this->priceTypeHookService->getPriceType("Цена продажи",  $this->setting->salesPrices),
             ],
         ];
 
@@ -204,7 +212,7 @@ class createProductForMS
             $bodyProduct["salePrices"][1] = [
                 "value" => $productUds->data->offer->offerPrice * 100,
                 "currency" => $this->currencyHookService->getKzCurrency(),
-                "priceType" => $this->priceTypeHookService->getPriceType("Акционный"),
+                "priceType" => $this->priceTypeHookService->getPriceType("Акционный", $this->setting->promotionalPrice),
             ];
         }
 
@@ -315,7 +323,8 @@ class createProductForMS
             }
 
             $countAttribute++;
-        } elseif ($productUds->data->measurement == "LITRE" || $productUds->data->measurement == "KILOGRAM") {
+        }
+        elseif ($productUds->data->measurement == "LITRE" || $productUds->data->measurement == "KILOGRAM") {
 
             if ($productUds->data->offer == null) {
                 $bodyProduct["attributes"][$countAttribute] = [
@@ -373,7 +382,7 @@ class createProductForMS
                 0 => [
                     "value" => $variant->price * 100,
                     "currency" => $this->currencyHookService->getKzCurrency(),
-                    "priceType" => $this->priceTypeHookService->getPriceType("Цена продажи"),
+                    "priceType" => $this->priceTypeHookService->getPriceType("Цена продажи",  $this->setting->salesPrices),
                 ],
             ];
             $bodyProductVar["uom"] = $this->uomHookService->getUom("шт");
@@ -396,7 +405,7 @@ class createProductForMS
                 $bodyProductVar["salePrices"][1] = [
                     "value" => $variant->offer->offerPrice * 100,
                     "currency" => $this->currencyHookService->getKzCurrency(),
-                    "priceType" => $this->priceTypeHookService->getPriceType("Акционный"),
+                    "priceType" => $this->priceTypeHookService->getPriceType("Акционный",  $this->setting->promotionalPrice),
                 ];
             }
             $bodyProductVar["attributes"][$countAttribute] = [
@@ -453,7 +462,7 @@ class createProductForMS
         $foundedMeta = null;
         foreach ($json->rows as $row) {
             if ($row->name == "id (UDS)") {
-                $foundedMeta = $row->meta;
+                $foundedMeta = $row->meta->href;
                 break;
             } else continue;
         }
@@ -465,7 +474,7 @@ class createProductForMS
         $url = "https://api.moysklad.ru/api/remap/1.2/entity/productfolder";
         $meta = null;
         try {
-            $getBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName=UDS')->rows;
+            $getBody = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=name=UDS')->rows;
             if ($getBody) {
                 $meta = $getBody[0]->meta;
             }

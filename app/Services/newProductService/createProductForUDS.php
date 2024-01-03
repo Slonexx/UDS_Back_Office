@@ -4,6 +4,7 @@ namespace App\Services\newProductService;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
+use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\ProductFoldersByAccountID;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
@@ -16,11 +17,13 @@ class createProductForUDS
     private MsClient $msClient;
     private UdsClient $udsClient;
 
-    public function __construct($data, MsClient $ms, UdsClient $uds)
+    public function __construct($data)
     {
+        $mainSetting = new getMainSettingBD($data['accountId']);
+
         $this->setting = json_decode(json_encode($data));
-        $this->msClient = $ms;
-        $this->udsClient = $uds;
+        $this->msClient = new MsClient($mainSetting->tokenMs);
+        $this->udsClient = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
     }
 
     public function initialization(): array
@@ -30,6 +33,8 @@ class createProductForUDS
         $ARR_PRODUCT = [];
         $find = ProductFoldersByAccountID::query()->where('accountId', $this->setting->accountId);
         $baseUDS = $this->getUdsCheck();
+
+        //dd($baseUDS);
 
 
         foreach ($find->get() as $itemFolderModel) {

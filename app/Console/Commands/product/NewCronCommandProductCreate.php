@@ -73,14 +73,14 @@ class NewCronCommandProductCreate extends Command
 
             if ($item->getAttributes()['unloading'] == null) continue;
 
-            dispatch(function () use ($data, $ClientCheckMC, $ClientCheckUDS, $item) {
+            dispatch(function () use ($data, $item) {
                 $item->countRound += 1;
                 $item->save();
 
                 if ($data['loading'] && $data['countRound'] < 300) {
-                    $create = new createProductForMS($data, $ClientCheckMC, $ClientCheckUDS);
+                    $create = new createProductForMS($data);
                 } else {
-                    $create = new createProductForUDS($data, $ClientCheckMC, $ClientCheckUDS);
+                    $create = new createProductForUDS($data);
                 }
                 $create->initialization();
             })->onQueue('default');

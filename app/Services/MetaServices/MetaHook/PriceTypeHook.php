@@ -12,18 +12,31 @@ class PriceTypeHook
     {
         $this->msClient = $ms;
     }
-    public function getPriceType($namePrice): array
+    public function getPriceType($namePrice, $id = null): array
     {
         $json = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/context/companysettings/pricetype");
         $foundedMeta = null;
         $count = 0;
+
+        foreach($json as $price){
+            if($price->id == $id){
+                $foundedMeta = $price->meta;
+                break;
+            }
+            $count++;
+        }
+        if ($foundedMeta == null)
         foreach($json as $price){
             if($price->name == $namePrice){
                 $foundedMeta = $price->meta;
                 break;
             }
             $count++;
-        }
+        } else
+            return [
+                "meta" => $foundedMeta,
+            ];
+
 
         if ($foundedMeta == null){
             $meta = $this->createPriceType($namePrice)[$count]->meta;
