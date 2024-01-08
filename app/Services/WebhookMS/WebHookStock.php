@@ -35,14 +35,13 @@ class WebHookStock
 
     private function updateProductsQuantity(array $body): string
     {
-        $settingStore = newProductModel::where('accountId', ' $this->setting->accountId')->get()->first();
-        dd($settingStore);
+        $settingStore = newProductModel::where('accountId', $this->setting->accountId)->get()->first();
         if ($settingStore === null) {
             return "Отсутствует настройки сохранения";
         }
 
         $stock = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store/' . $body[0]->storeId);
-        if ($stock->name !== $settingStore->Store) {
+        if ($stock->id !== $settingStore->Store) {
             return "Склад не соответствует настройкам";
         }
 
