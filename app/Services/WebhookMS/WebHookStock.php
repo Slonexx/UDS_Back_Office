@@ -36,6 +36,7 @@ class WebHookStock
     private function updateProductsQuantity(array $body): string
     {
         $settingStore = newProductModel::where('accountId', $this->setting->accountId)->get()->first();
+        dd($settingStore);
         if ($settingStore === null) {
             return "Отсутствует настройки сохранения";
         }
