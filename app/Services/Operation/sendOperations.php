@@ -84,12 +84,16 @@ class sendOperations
         $setAttributes = $this->Attributes($data, $post, $Setting);
 
         $OldBody->externalCode = $post->id;
-
-        $putBody = $ClientMC->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], [
+        $putBodyEntity = [
             'externalCode' => (string) $post->id,
             'positions' => $setPositions,
             'attributes' => $setAttributes,
-        ]);
+        ];
+
+        if ($putBodyEntity['attributes'] = null ) unset($putBodyEntity['attributes']);
+        if ($putBodyEntity['positions'] = null ) unset($putBodyEntity['positions']);
+
+        $putBody = $ClientMC->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'],$putBodyEntity );
         if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
         $this->createPaymentDocument($Setting, $SettingBD, $putBody);
 
