@@ -90,8 +90,10 @@ class sendOperations
             'attributes' => $setAttributes,
         ];
 
-        if ($putBodyEntity['attributes'] = null ) unset($putBodyEntity['attributes']);
-        if ($putBodyEntity['positions'] = null ) unset($putBodyEntity['positions']);
+        if ($putBodyEntity['attributes'] == null ) unset($putBodyEntity['attributes']);
+        if ($putBodyEntity['positions'] == null ) unset($putBodyEntity['positions']);
+
+        //dd($putBodyEntity);
 
         $putBody = $ClientMC->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'],$putBodyEntity );
         if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
