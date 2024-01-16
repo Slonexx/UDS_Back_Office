@@ -59,6 +59,9 @@ class sendOperations
             'tags' => null,
         ];
 
+        if ($receipt_points > 0 ) $body['participant']['uid'] = null;
+
+
         try {
             $post = json_decode(json_encode($Client->postHttp_errorsNo($url, $body)), true);
         } catch (BadResponseException $e) {

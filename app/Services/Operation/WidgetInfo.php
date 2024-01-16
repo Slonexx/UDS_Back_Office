@@ -69,7 +69,23 @@ class WidgetInfo
             }
         }
 
-        // dd($externalCode,is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000);
+        if ($entity == 'salesreturn' and property_exists($BodyMC, 'demand')) {
+            $demand = $this->msClient->get($BodyMC->demand->meta->href);
+            if (is_numeric($demand->externalCode) && ctype_digit($demand->externalCode) && $demand->externalCode > 10000) {
+                $externalCode = $demand->externalCode;
+            } elseif (property_exists($demand, 'customerOrder')) {
+                $customerOrder = $this->msClient->get($demand->customerOrder->meta->href);
+                if (is_numeric($customerOrder->externalCode) && ctype_digit($customerOrder->externalCode) && $customerOrder->externalCode > 10000) {
+                    $externalCode = $customerOrder->externalCode;
+                } else  return ['StatusCode' => 'error', 'message' => 'У данного документа отсутствуют связанные документы на которых была операция'];
+            }
+        }
+        elseif ($entity == 'salesreturn') return ['StatusCode' => 'error', 'message' => 'У данного документа отсутствуют связанные документы на которых была операция'];
+
+
+
+
+
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
                 try {
@@ -78,6 +94,7 @@ class WidgetInfo
                     $StatusCode = 'orders';
                     $message = $goods_orders['message'];
                 } catch (BadResponseException) {
+
                     $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
                     $StatusCode = 'successfulOperation';
                     $message = $data['data'];
@@ -86,9 +103,11 @@ class WidgetInfo
                 $StatusCode = 'operation';
                 $message = $this->operation_to_post($agentId, $BodyMC);
             }
-        } catch (ClientException $e) {
+        }
+        catch (ClientException $e) {
             return ['StatusCode' => 'error', 'message' => $e->getMessage()];
         }
+
 
         return [
             'StatusCode' => $StatusCode,
@@ -150,8 +169,7 @@ class WidgetInfo
 
         $points = 0;
         $BonusPoint = 0;
-        if ($body->points < 0)
-            $points = $body->points * -1;
+        if ($body->points < 0) $points = $body->points * -1;
         else {
             foreach ($BodyMC->attributes as $item){
                 if ($item->name == "Количество списанных баллов (UDS)") {
@@ -168,12 +186,15 @@ class WidgetInfo
 
         if ($BonusPoint <= 0) $this->Calc($body, $agentId);
 
+        //dd($body);
+
         return [
             'status' => true,
             'data' => [
                 'id' => $body->id,
                 'BonusPoint' => $BonusPoint,
                 'points' => $points,
+                'total' => $body->total,
                 'state' => "COMPLETED",
                 'icon' => '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info' => 'Operations',

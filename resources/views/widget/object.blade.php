@@ -226,7 +226,7 @@
 
     <script>
         const url = "{{ app(mainURL::class)->me_url_host() }}"
-        //onst url = "https://uds/"
+        //const url = "https://uds/"
 
         let accountId = "{{ $accountId }}"
 
@@ -255,10 +255,10 @@
         let operationsAccrue
         let operationsCancellation
 
-        /*let receivedMessage = {
+       /* let receivedMessage = {
             "name": "Open",
-            "extensionPoint": "document.customerorder.edit",
-            "objectId": "43659366-2e1f-11ee-0a80-07f3001d00c3",
+            "extensionPoint": "document.demand.edit",
+            "objectId": "c462e80a-b462-11ee-0a80-01ef000fa5a8",
             "messageId": 1,
             "displayMode": "expanded"
         }*/
@@ -267,16 +267,15 @@
         window.addEventListener("message", function (event) {
             let receivedMessage = event.data
 
-            clearWidget()
-            GlobalobjectId = receivedMessage.objectId;
-
             if (receivedMessage.name === 'Open') {
+                clearWidget()
+                GlobalobjectId = receivedMessage.objectId;
 
                 let settings = ajax_settings(url + 'CustomerOrder/EditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
                 console.log('initial request settings  ↓ ')
                 console.log(settings)
 
-                //receivedMessage = null;
+                receivedMessage = null;
 
                 $.ajax(settings).done(function (response) {
                     console.log('initial request response  ↓ ')
