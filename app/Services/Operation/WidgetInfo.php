@@ -183,6 +183,11 @@ class WidgetInfo
             }
         }
 
+        $parts = explode("=", $BodyMC->externalCode);
+        if (count($parts) > 1) $result = end($parts);
+        else $result = 0;
+
+        $total = $body->total - $result;
 
         if ($BonusPoint <= 0) $this->Calc($body, $agentId);
 
@@ -194,7 +199,7 @@ class WidgetInfo
                 'id' => $body->id,
                 'BonusPoint' => $BonusPoint,
                 'points' => $points,
-                'total' => $body->total,
+                'total' => $total,
                 'state' => "COMPLETED",
                 'icon' => '<i class="fa-solid fa-circle-check text-success"> <span class="text-dark">Проведённая операция</span> </i>',
                 'info' => 'Operations',
