@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\Web\RewardController;
+use App\Models\orderSettingModel;
 use App\Services\counterparty\widgetCounterparty;
 use App\Services\Operation\OperationsCalc;
 use App\Services\Operation\sendOperations;
@@ -36,11 +37,18 @@ class ObjectController extends Controller
     {
         $Setting = new getSettingVendorController($accountId);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
+        $msClient = new MsClient($Setting->TokenMoySklad);
         try {
             $url = 'https://api.uds.app/partner/v2/goods-orders/' . $objectId . '/complete';
             $Client->post($url, null);
             $StatusCode = "200";
             $message = "Заказ завершён";
+
+            $body = $this->CreateDemand($Setting, $msClient, $objectId);
+            if ($body['status']) $demand = $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/demand', $body['data']);
+
+            //ЗАВТРА
+
             return [
                 'StatusCode' => $StatusCode,
                 'message' => $message,
@@ -117,12 +125,76 @@ class ObjectController extends Controller
         return response()->json((new sendOperations())->initiation($data));
     }
 
+    private function CreateDemand(getSettingVendorController $Setting, MsClient $msClient, $objectId)
+    {
+        $body = [];
+        $orderSetting = orderSettingModel::where('accountId', $Setting->accountId)->get()->first();
+        if ($orderSetting != null) $orderSetting = $orderSetting->toArray();
+        else return [
+            'status' => false,
+            'message' => 'Заказ завершён", Отсутствуют настройки создание отгрузки! '
+        ];;
+        try {
+            $Order = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode=' . $objectId)->rows['0'];
+        } catch (BadResponseException $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage()
+            ];
+        }
 
 
+        $body['organization'] = $Order->organization;
+        if (property_exists($Order, 'organizationAccount')) $body['organizationAccount'] = $Order->organizationAccount;
+
+        try {
+            $Store = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/store?search=' . $Setting->Store)->rows['0'];
+        } catch (BadResponseException $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+
+        $body['agent'] = $Order->agent;
+        $body['store'] = (object)['meta' => $Store->meta];
+        if (property_exists($Order, 'shipmentAddress')) $body['shipmentAddress'] = $Order->shipmentAddress;
+        if (property_exists($Order, 'salesChannel')) $body['salesChannel'] = $Order->salesChannel;
+        if (property_exists($Order, 'project')) $body['project'] = $Order->project;
 
 
+        try {
+            $pos = $msClient->get($Order->positions->meta->href)->rows;
+        } catch (BadResponseException $e) {
+            return [
+                'status' => false,
+                'message' => $e->getMessage()
+            ];
+        }
 
 
+        $positions = [];
+
+        foreach ($pos as $item) {
+            $positions[] = [
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'discount' => $item->discount,
+                'vat' => $item->vat,
+                'assortment' => $item->assortment,
+                'reserve' => 0,
+            ];
+        }
+        $body['positions'] = $positions;
+
+        $body['externalCode'] = $Order->externalCode;
+        $body['customerOrder'] = (object)['meta' => $Order->meta];
+
+        return [
+            'status' => true,
+            'data' => $body
+        ];
+    }
 
 
 }
