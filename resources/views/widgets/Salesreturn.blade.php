@@ -20,10 +20,10 @@
     let accountId = "{{ $accountId }}"
 
 
-   /* let receivedMessage = {
+    /*let receivedMessage = {
         "name": "Open",
         "extensionPoint": "document.salesreturn.edit",
-        "objectId": "d80d70c9-b462-11ee-0a80-052a0010a61b",
+        "objectId": "341c1ece-b48b-11ee-0a80-119800000503",
         //"objectId": "2c9cde4b-b42c-11ee-0a80-16d900044b0e",
         "messageId": 1,
         "displayMode": "expanded"
@@ -54,7 +54,16 @@
                 } else {
                     window.document.getElementById('main').style.display = "block"
                     window.document.getElementById('Private_return_full').style.display = "block"
-                    setDataParameters(json.message)
+
+                    if (json.id == undefined || json.id) {
+                        window.document.getElementById('main').style.display = "none"
+                        window.document.getElementById('Private_return_full').style.display = "none"
+                        window.document.getElementById('DontExternal').style.display = "block"
+                        window.document.getElementById('DontExternalMessage').style.display = JSON.stringify('У данного документа нету связных документов отгрузки')
+                    } else {
+                        setDataParameters(json.message)
+                    }
+
                 }
             })
         }
@@ -69,6 +78,7 @@
             return_id: return_id,
             partialAmount: setTotal,
         };
+
         let settings = ajax_settings(url + 'postSalesreturn/operations/', "GET", params)
         $.ajax(settings).done(function (r_textPars) {
             if (r_textPars.status) {
