@@ -46,7 +46,7 @@
             let settings = ajax_settings(url + 'CustomerOrder/EditObject/' + accountId + '/salesreturn/' + GlobalobjectId, "GET", null)
 
             $.ajax(settings).done(function (json) {
-
+                console.log(json)
 
                 if (json.StatusCode === 'error') {
                     window.document.getElementById('DontExternal').style.display = "block"
@@ -55,7 +55,7 @@
                     window.document.getElementById('main').style.display = "block"
                     window.document.getElementById('Private_return_full').style.display = "block"
 
-                    if (json.id == undefined || json.id) {
+                    if (json.message.id == undefined || json.message.id == null) {
                         window.document.getElementById('main').style.display = "none"
                         window.document.getElementById('Private_return_full').style.display = "none"
                         window.document.getElementById('DontExternal').style.display = "block"
