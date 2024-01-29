@@ -53,7 +53,7 @@ class CronCommandantProductCreateDay extends Command
 
             if ($record) $record->delete();
 
-            if ($countRound == 3) $model->countRound = 0; else  $model->countRound = $countRound;
+            if ($countRound >= 3) $model->countRound = 0; else  $model->countRound = $countRound;
 
 
             $model->save();
