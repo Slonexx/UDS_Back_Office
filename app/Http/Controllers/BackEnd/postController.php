@@ -381,12 +381,11 @@ class postController extends Controller
 
         $body = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/entity/service?filter=name=Доставка(UDS)")->rows;
 
-        if ($body->meta->size == 0) {
+        if ($body == []) {
             $bodyService = ['name' => 'Доставка (UDS)'];
             $body = $this->msClient->post("https://api.moysklad.ru/api/remap/1.2/entity/service", $bodyService);
-        } else {
-            $body = $body->rows[0];
-        }
+        } else $body = $body[0];
+
 
         return [
             'assortment' => [
