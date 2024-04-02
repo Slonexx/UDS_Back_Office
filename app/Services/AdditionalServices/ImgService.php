@@ -7,6 +7,7 @@ use App\Http\Controllers\Config\getSettingVendorController;
 use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
 
@@ -23,11 +24,17 @@ class ImgService
         $imgIds = [];
 
         $clientMs = new MsClient($apiKeyMs);
-        $images = $clientMs->get($urlImages);
-
-        if ($images->meta->size == 0) {
+        try {
+            $images = $clientMs->get($urlImages);
+        } catch (BadResponseException){
             return [];
         }
+
+        //dd($images);
+
+
+        if ($images->meta->size == 0) return [];
+
 
         foreach ($images->rows as $image) {
             try {
@@ -37,17 +44,13 @@ class ImgService
                     $imageType = 'image/png';
 
                     $responseImageUDS = $this->setUrlToUds($imageType, $companyId, $password);
-                    if($responseImageUDS['code'] == 200)
-                        $dataImgUds = $responseImageUDS['result'];
-                    else
-                        continue;
-
-                    $urlToUDS = $dataImgUds->url;
-                    $this->setImageToUds($imageType, $urlToUDS, $imgHref, $apiKeyMs);
-                    $imgIds[] = $dataImgUds->imageId;
+                    if($responseImageUDS['code'] == 200) {
+                        $imgIds[] = $responseImageUDS['result']->imageId;
+                        $this->setImageToUds($imageType, $responseImageUDS['result']->url, $imgHref, $apiKeyMs);
+                    }
+                    else continue;
                 }
-            } catch (GuzzleException $e) {
-                return $e->getMessage();
+            } catch (GuzzleException) {
             }
         }
 
@@ -113,14 +116,8 @@ class ImgService
 
         if($statusCode == 200){
             $clientUds = new Client();
-            $res = $clientUds->put($url, [
-                'json' => json_decode($image),
-                'http_errors' => false
-            ]);
+            $clientUds->put($url, ['json' => json_decode($image), 'http_errors' => false]);
         }
-
-
-
     }
 
     private function setUrlToUds($imgType, $companyId, $apiKey): array
