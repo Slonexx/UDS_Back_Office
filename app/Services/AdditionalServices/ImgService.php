@@ -46,11 +46,10 @@ class ImgService
                     $this->setImageToUds($imageType, $urlToUDS, $imgHref, $apiKeyMs);
                     $imgIds[] = $dataImgUds->imageId;
                 }
-            } catch (GuzzleException) {
+            } catch (GuzzleException $e) {
+                return $e->getMessage();
             }
         }
-
-        dd($imgIds);
 
         return $imgIds;
     }
@@ -113,13 +112,9 @@ class ImgService
         $image = $res->getBody()->getContents();
 
         if($statusCode == 200){
-            $clientUds = new Client([
-                'headers' => [
-                    'Content-Type' => $imgType,
-                ]
-            ]);
+            $clientUds = new Client();
             $res = $clientUds->put($url, [
-                'json' => $image,
+                'json' => json_decode($image),
                 'http_errors' => false
             ]);
         }
