@@ -108,21 +108,24 @@ class ImgService
             ]
         ]);
 
-        $res = $clientMs->get($imageHref);
+        $res = $clientMs->get($imageHref, ['http_errors' => false]);
+        $statusCode = $res->getStatusCode();
         $image = $res->getBody()->getContents();
 
-        $opts = array(
-            'http' => array(
-                'method' => 'PUT',
-                'header' =>
-                    "Content-Type: " . $imgType . "\r\n",
-                'content' => $image,
-                'ignore_errors' => true
-            )
-        );
+        if($statusCode == 200){
+            $clientUds = new Client([
+                'headers' => [
+                    'Content-Type' => $imgType,
+                ]
+            ]);
+            $res = $clientUds->put($url, [
+                'json' => $image,
+                'http_errors' => false
+            ]);
+        }
 
-        $context = stream_context_create($opts);
-        file_get_contents($url, false, $context);
+
+
     }
 
     private function setUrlToUds($imgType, $companyId, $apiKey): array
