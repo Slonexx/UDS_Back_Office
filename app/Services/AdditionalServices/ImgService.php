@@ -6,6 +6,7 @@ use App\Components\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use DateTime;
 use DateTimeInterface;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Support\Str;
@@ -38,7 +39,10 @@ class ImgService
                     $imageType = 'image/png';
 
                     $responseImageUDS = $this->setUrlToUds($imageType, $companyId, $password);
-                    $dataImgUds = json_decode($responseImageUDS['result']);
+                    if($responseImageUDS['code'] == 200)
+                        $dataImgUds = $responseImageUDS['result'];
+                    else
+                        continue;
 
                     $urlToUDS = $dataImgUds->url;
                     $this->setImageToUds($imageType, $urlToUDS, $imgHref, $apiKeyMs);
@@ -117,45 +121,48 @@ class ImgService
 
         $date = new DateTime();
         $uuid_v4 = Str::uuid(); //генерация уникального идентификатора версии 4 (RFC 4122)
-        $itemData = json_encode(
-            array(
-                'contentType' => $imgType,
-            )
+        $timestamp = $date->format(DateTimeInterface::ATOM);
+        $body = array(
+            'contentType' => $imgType,
         );
 
-        $opts = array(
-            'http' => array(
-                'method' => 'POST',
-                'header' => "Accept: application/json\r\n" .
-                    "Accept-Charset: utf-8\r\n" .
-                    "Content-Type: application/json\r\n" .
-                    "Authorization: Basic " . base64_encode("$companyId:$apiKey") . "\r\n" .
-                    "X-Origin-Request-Id: " . $uuid_v4 . "\r\n" .
-                    "X-Timestamp: " . $date->format(DateTimeInterface::ATOM),
-                'content' => $itemData,
-                'ignore_errors' => true,
-            )
-        );
+        $preparedAuthValue = "Basic" . base64_encode("$companyId:$apiKey");
+            
+        $client = new Client([
+            'headers' => [
+                'Accept' => 'application/json',
+                'Accept-Charset' => 'utf-8',
+                'Content-Type' => 'application/json',
+                'Authorization' => $preparedAuthValue,
+                'X-Origin-Request-Id' => $uuid_v4,
+                'X-Timestamp' => $timestamp
+            ]
+        ]);
 
-        $context = stream_context_create($opts);
         try {
-            $result = file_get_contents($url, false, $context);
-        } catch (BadResponseException $e){
-            $out["code"] = 400;
-            $out["result"] = $e->getResponse()->getBody()->getContents();
-            $out["message"] = "ОШИБКА: ".$e->getMessage();
+            $urlRes = $client->post($url, [
+                'json' => $body,
+                'http_errors' => false
+            ]);
+            $encodedRes = $urlRes->getBody()->getContents();
+            $response = json_decode($encodedRes);
+            $statusCode = $urlRes->getStatusCode();
+
+            if ($statusCode == 200) 
+                $message = "Создан новый URL S3. Готово!";
+            else 
+                $message = "ОШИБКА: $response";
+
+            $out["code"] = $statusCode;
+            $out["result"] = $response;
+            $out["message"] = $message;
+            return $out;
+        } catch (Exception $e){
+            $out["code"] = 500;
+            $out["result"] = $e;
+            $out["message"] = "ОШИБКА: " . $e->getMessage();
             return $out;
         }
-
-        preg_match('/([0-9])\d+/', $http_response_header[0], $matches);
-        $response = intval($matches[0]);
-
-        if ($response == 200) $message = "Создан новый URL S3. Готово!";
-        else $message = "ОШИБКА: $response";
-
-        $out["code"] = $response;
-        $out["result"] = $result;
-        $out["message"] = $message;
-        return $out;
+        
     }
 }
