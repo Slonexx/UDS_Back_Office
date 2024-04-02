@@ -22,8 +22,6 @@ class agentController extends Controller
 
         $newSetting = new newAgentSettingBD($accountId);
 
-        $message = $this->messageRequest($request->message);
-
         if ($newSetting->unloading == null or  $newSetting->unloading == '0'){
             $examination = '0';
             $email = '';
@@ -46,7 +44,11 @@ class agentController extends Controller
 
 
             "accountId" => $accountId,
-            "message" => $message,
+
+
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
+
             "isAdmin" => $isAdmin,
         ]);
     }
@@ -58,15 +60,18 @@ class agentController extends Controller
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
-        $message = $this->messageRequest($request->message);
-
 
         $this->createNewAgentModel($accountId, $request);
-        $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
-        $message["message"] = "Настройки сохранились!";
+        $class_message = "is-success";
+        $message = "Настройки сохранились!";
 
 
-        return redirect()->route('agent', ['accountId' => $accountId, 'isAdmin' => $isAdmin, 'message' => $message]);
+        return redirect()->route('agent', [
+            'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
+            'message' => $message,
+            'class_message' => $class_message
+        ]);
     }
 
 

@@ -25,20 +25,16 @@ class applicationCreatingProductForUDS
     }
 
 
-    public function createProductUds(mixed $product)
+    public function createProductUds(mixed $product): ?object
     {
-        $url = "https://api.uds.app/partner/v2/goods";
         $body = null;
 
-        if (isset($product->variantsCount) && $product->variantsCount > 0) {
-            $body = $this->prepareVaryingItemBody($product);
-        } else {
-            $body = $this->prepareRegularItemBody($product);
-        }
+        if (isset($product->variantsCount) && $product->variantsCount > 0) $body = $this->prepareVaryingItemBody($product);
+        else $body = $this->prepareRegularItemBody($product);
 
-        if ($body === null) {
-            return null;
-        }
+
+        if ($body === null) return null;
+
 
         $this->processProductDetails($product, $body);
 
@@ -47,13 +43,14 @@ class applicationCreatingProductForUDS
         if (isset($body['data']['price']))
         if ($body['data']['price'] == 0) return null;
 
+ $body['externalId'] = $product->id;
+
+
 
         try {
-            $createdProduct = $this->udsClient->postHttp_errorsNo($url, $body);
+            $createdProduct = $this->udsClient->newPOST("https://api.uds.app/partner/v2/goods", $body);
+            if ($createdProduct->status) if ($createdProduct->data != null) $this->updateProduct($createdProduct, $product);
 
-            if ($createdProduct != null) {
-                $this->updateProduct($createdProduct, $product);
-            }
 
             return $createdProduct;
         } catch (BadResponseException $e) {
@@ -66,12 +63,12 @@ class applicationCreatingProductForUDS
         $name = $this->getShortenedName($product->name);
         $variants = $this->prepareVariants($product);
 
-        if (empty($variants)) {
-            return null;
-        }
+        if (empty($variants)) return null;
+
 
         return [
             "name" => $name,
+            "externalId" => $product->id,
             "data" => [
                 "type" => "VARYING_ITEM",
                 "description" => "",
@@ -81,29 +78,34 @@ class applicationCreatingProductForUDS
         ];
     }
 
-    private function prepareRegularItemBody($product): array
+    private function prepareRegularItemBody($product): ?array
     {
         $name = $this->getShortenedName($product->name);
         $prices = $this->getPrices($product);
+        $vatCode = $this->getVat($product);
+
+        if ($prices == []) return null;
+
         $nameOumUds = null;
         $description = "";
+        $paymentSubject = 'COMMODITY';
 
-        if (property_exists($product, 'uom')) {
-            $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href);
-        }
+        if ($product->meta->type == 'service') $paymentSubject = 'SERVICE';
 
-        if (property_exists($product, 'description')) {
-            $description = $product->description;
-        }
+        if (property_exists($product, 'uom')) $nameOumUds = $this->getUomUdsByMs($product->uom->meta->href);
+        if (property_exists($product, 'description')) $description = $product->description;
 
         $body = [
             "name" => $name,
+            "externalId" => $product->id,
             "data" => [
                 "type" => "ITEM",
                 "price" => $prices["salePrice"],
                 "measurement" => $nameOumUds,
                 "inventory" => ['inStock' => 0],
                 "description" => $description,
+                "paymentSubject" => $paymentSubject,
+                "vatCode" => $vatCode,
             ],
         ];
 
@@ -112,15 +114,11 @@ class applicationCreatingProductForUDS
             if ($inStock[0]->quantity > 0) $body['data']['inventory']['inStock'] = $inStock[0]->quantity;
             else $body['data']['inventory']['inStock'] = 0;
         }
-        if (property_exists($product, "attributes")) {
-            $this->handleAttributes($product, $body, $nameOumUds);
-        }
+        if (property_exists($product, "attributes")) $this->handleAttributes($product, $body, $nameOumUds);
 
 
-        if (property_exists($product, "article")) {
-            $body["data"]["sku"] = $product->article;
-        }
 
+        if (property_exists($product, "article")) $body["data"]["sku"] = $product->article;
         return $body;
     }
 
@@ -169,21 +167,12 @@ class applicationCreatingProductForUDS
                 foreach ($product->attributes as $attribute) {
                     if ($attribute->name == "Акционный товар (UDS)" && $attribute->value) {
                         foreach ($item->salePrices as $salePrices) {
-                            if ($salePrices->priceType->id == $this->setting->promotionalPrice) {
-                                if ($variants[$id]['price'] != $salePrices->value / 100) {
-                                    $variants[$id]['offer']['offerPrice'] = $salePrices->value / 100;
-                                }
-                            }
+                            if ($salePrices->priceType->id == $this->setting->promotionalPrice and $variants[$id]['price'] != $salePrices->value / 100) $variants[$id]['offer']['offerPrice'] = $salePrices->value / 100;
                         }
                     }
 
-                    if ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value) {
-                        $variants[$id]['offer']['skipLoyalty'] = $attribute->value;
-                    }
-
-                    if ($attribute->name == "Товар неограничен (UDS)" && !$attribute->value) {
-                        $variants[$id]['inventory']['inStock'] = null;
-                    }
+                    if ($attribute->name == "Не применять бонусную программу (UDS)" && $attribute->value) $variants[$id]['offer']['skipLoyalty'] = $attribute->value;
+                    if ($attribute->name == "Товар неограничен (UDS)" && !$attribute->value) $variants[$id]['inventory']['inStock'] = null;
                 }
             }
         }
@@ -194,14 +183,9 @@ class applicationCreatingProductForUDS
     private function getPrices($product): array
     {
         $prices = [];
-
-        // Loop through sale prices and prepare data...
         foreach ($product->salePrices as $price) {
-            if ($price->priceType->id == $this->setting->salesPrices) {
-                $prices["salePrice"] = ($price->value / 100);
-            }
-            elseif ($this->setting->salesPrices != $this->setting->promotionalPrice and $price->priceType->id == $this->setting->promotionalPrice)
-                $prices["offerPrice"] = ($price->value / 100);
+            if ($price->priceType->id == $this->setting->salesPrices) $prices["salePrice"] = ($price->value / 100);
+            elseif ($this->setting->salesPrices != $this->setting->promotionalPrice and $price->priceType->id == $this->setting->promotionalPrice) $prices["offerPrice"] = ($price->value / 100);
         }
 
         return $prices;
@@ -213,18 +197,13 @@ class applicationCreatingProductForUDS
         $isFractionProduct = false;
 
         foreach ($product->attributes as $attribute) {
-            if ($attribute->name == "Дробное значение товара (UDS)" && $attribute->value == 1) {
-                $isFractionProduct = true;
-                //break;
-            } elseif ($attribute->name == "Акционный товар (UDS)" && $attribute->value == 1) {
-                $isOfferProduct = true;
-            }
+            if ($attribute->name == "Дробное значение товара (UDS)" && $attribute->value == 1) $isFractionProduct = true;
+            elseif ($attribute->name == "Акционный товар (UDS)" && $attribute->value == 1) $isOfferProduct = true;
         }
 
 
-        if ($isFractionProduct && ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE")) {
-            return;
-        }
+        if ($isFractionProduct && ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE")) return;
+
 
         if (isset($prices['offerPrice'])) {
             if ($isOfferProduct && ($prices['offerPrice'] <= 0 || $prices['offerPrice'] > $prices['salePrice'])) {
@@ -363,6 +342,17 @@ class applicationCreatingProductForUDS
             } else continue;
         }
         return $foundedMeta;
+    }
+
+    private function getVat($product): string
+    {
+        if (property_exists($product, 'vat')){
+            return match ($product->vat) {
+                10 => 'NDS_10',
+                20 => 'NDS_20',
+                default => 'NO_NDS',
+            };
+        } else return "NO_NDS";
     }
 
 }

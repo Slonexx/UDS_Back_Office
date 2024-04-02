@@ -1,4 +1,3 @@
-@php use App\Http\Controllers\mainURL; @endphp
 @extends('widget.widget')
 @section('content')
     <div class="main-container">
@@ -181,9 +180,7 @@
                     <div class="col-1"></div>
                     <div class="col-10">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***"
-                                   onchange="onchangePoint()" onKeyPress="only_float()"
-                                   aria-label="Dollar amount (with dot and two decimal places)">
+                            <input type="text" class="form-control" id="QRCodePoint" placeholder="*** ***" onchange="onchangePoint()" onKeyPress="only_float()">
                             <div class="input-group-append">
                                 <span id="maxPoint" class="input-group-text">0.00</span>
                             </div>
@@ -224,181 +221,17 @@
         </div>
     </div>
 
+
+    @include('widget.main.parameters')
+    @include('widget.main.clear')
+    @include('widget.main.lite_script')
+    @include('widget.main.set_is')
+    @include('widget.main.set_is_input')
+    @include('widget.main.isOrder')
+    @include('widget.main.isBonusSystem')
+
+    @include('widget.main.loading_widget')
     <script>
-        const url = "{{ app(mainURL::class)->me_url_host() }}"
-        //const url = "https://uds/"
-
-        let accountId = "{{ $accountId }}"
-
-        let extensionPoint
-        let GlobalobjectId
-
-        let GlobalxRefURL
-        let GlobalUDSOrderID
-        let OLDPhone
-        let OLDQRCode
-
-        let tmp_operations_style
-        let operations_total
-        let operations_cash
-        let operations_points
-        let operations_Max_points
-        let operations_availablePoints
-        let operations_availablePoints_Nubmer
-        let operations_skipLoyaltyTotal
-        let operations_user
-        let operations_user_uid
-        let cashBack
-        let operations_cashier_id = "{{ $cashier_id }}"
-        let operations_cashier_name = "{{ $cashier_name }}"
-
-        let operationsAccrue
-        let operationsCancellation
-
-       /* let receivedMessage = {
-            "name": "Open",
-            "extensionPoint": "document.demand.edit",
-            "objectId": "c462e80a-b462-11ee-0a80-01ef000fa5a8",
-            "messageId": 1,
-            "displayMode": "expanded"
-        }*/
-
-
-        window.addEventListener("message", function (event) {
-            let receivedMessage = event.data
-
-            if (receivedMessage.name === 'Open') {
-                clearWidget()
-                GlobalobjectId = receivedMessage.objectId;
-
-                let settings = ajax_settings(url + 'CustomerOrder/EditObject/' + accountId + '/' + set_extensionPoint(receivedMessage.extensionPoint) + '/' + receivedMessage.objectId, "GET", null)
-                console.log('initial request settings  ↓ ')
-                console.log(settings)
-
-                receivedMessage = null;
-
-                $.ajax(settings).done(function (response) {
-                    console.log('initial request response  ↓ ')
-                    console.log(response)
-                    let message = response.message
-                    switch (response.StatusCode) {
-                        case "error": {
-                            document.getElementById("Error402").style.display = "block"
-                            document.getElementById("ErrorMessage").innerText = response.message
-                            break
-                        }
-                        case "orders": {
-                            document.getElementById("activated").style.display = "block";
-                            document.getElementById("undefined").style.display = "none";
-                            GlobalUDSOrderID = message.id;
-                            let BonusPoint = message.BonusPoint;
-                            let points = message.points;
-                            document.getElementById("infoOrderOrOperations").innerText = 'Заказ №';
-                            GlobalxRefURL = "https://admin.uds.app/admin/orders?order=" + message.id;
-                            window.document.getElementById("OrderID").innerHTML = message.id;
-                            let icon = message.icon.replace(/\\/g, '');
-                            window.document.getElementById("icon").innerHTML = icon;
-                            window.document.getElementById("cashBack").innerHTML = BonusPoint;
-                            window.document.getElementById("points").innerHTML = points;
-                            setStateByStatus(message.state)
-                            break
-                        }
-                        case "successfulOperation": {
-                            document.getElementById("activated").style.display = "block";
-                            document.getElementById("undefined").style.display = "none";
-                            GlobalUDSOrderID = message.id;
-                            let BonusPoint = message.BonusPoint;
-                            let points = message.points;
-                            document.getElementById("infoOrderOrOperations").innerText = 'Операция №';
-                            GlobalxRefURL = "https://admin.uds.app/admin/operations"
-                            window.document.getElementById("OrderID").innerHTML = message.id;
-                            let icon = message.icon.replace(/\\/g, '');
-                            window.document.getElementById("icon").innerHTML = icon;
-                            window.document.getElementById("cashBack").innerHTML = BonusPoint;
-                            window.document.getElementById("points").innerHTML = points;
-                            setStateByStatus(message.state)
-                            break
-                        }
-                        case "operation": {
-                            document.getElementById("activated").style.display = "none"
-                            document.getElementById("sendWarning").style.display = "none"
-                            document.getElementById("undefined").style.display = "block"
-                            document.getElementById("labelAccrue").style.display = "block"
-                            operationsAccrue = message.operationsAccrue
-                            operationsCancellation = message.operationsCancellation
-
-                            OLDPhone = message.phone
-                            operations_user = message.phone
-                            operations_user_uid = message.uid
-                            operations_total = message.total
-                            operations_availablePoints_Nubmer = message.availablePoints
-                            operations_availablePoints = message.availablePoints
-                            operations_skipLoyaltyTotal = message.SkipLoyaltyTotal
-
-                            document.getElementById("labelAccrue").style.display = "block"
-                            document.getElementById("labelCancellation").style.display = "block"
-
-                            sendAccrueOrCancellation(window.document.getElementById("Accrue"))
-                            break
-                        }
-                        default: {
-                            document.getElementById("Error402").style.display = "block"
-                            document.getElementById("ErrorMessage").innerText = response.message
-                            break
-                        }
-                    }
-                })
-            }
-        });
-
-
-        function ButtonComplete() {
-            let settings = ajax_settings(url + "CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID, "GET", null)
-            console.log('Button Complete request settings  ↓ ')
-            console.log(settings)
-            $.ajax(settings).done(function (response) {
-                console.log('Button Complete request response  ↓ ')
-                console.log(response)
-                if (response.StatusCode == 200) {
-                    document.getElementById("success").style.display = "block";
-                    document.getElementById("danger").style.display = "none";
-                } else {
-                    document.getElementById("success").style.display = "none";
-                    document.getElementById("danger").style.display = "block";
-                }
-            });
-        }
-
-        function sendAccrueFUNCTION(Val) {
-            operations_points = 0
-            if (Val === 0) {
-                document.getElementById("sendQR").style.display = "none"
-                document.getElementById("QRCodePoint").value = ""
-                operations_user = OLDPhone
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints_Nubmer)
-            }
-            if (Val === 1) {
-                document.getElementById("sendQR").style.display = "block"
-                document.getElementById("QRCode").value = ''
-                operations_user = OLDQRCode
-            }
-        }
-
-        function sendCancellationFUNCTION(Val) {
-            operations_points = 0
-            document.getElementById("sendCancellation").style.display = "block";
-            if (Val === 0) {
-                document.getElementById("sendQR").style.display = "none"
-                document.getElementById("QRCodePoint").value = ""
-                operations_user = OLDPhone
-                info_operations(operations_user, operations_total, operations_skipLoyaltyTotal, operations_points, operations_availablePoints_Nubmer)
-            }
-            if (Val === 1) {
-                document.getElementById("sendQR").style.display = "block"
-                document.getElementById("QRCode").value = ''
-                operations_user = OLDQRCode
-            }
-        }
 
         function onchangeQR() {
             let QRCode = document.getElementById("QRCode").value
@@ -442,30 +275,6 @@
             }
         }
 
-        function onchangePoint() {
-            let QRCodePoint = window.document.getElementById('QRCodePoint');
-            operations_points = QRCodePoint.value
-        }
-
-        function sendAccrueOrCancellation(myRadio) {
-            document.getElementById('QRCode').value = ""
-            document.getElementById('total').innerText = "0"
-            document.getElementById('cashBackOperation').innerText = "0"
-            document.getElementById('availablePoints').innerText = "0"
-            document.getElementById('QRCodePoint').value = "0"
-
-            document.getElementById('buttonOperations').style.display = "none"
-            document.getElementById("sendCancellation").style.display = "none"
-            document.getElementById("sendPoint").style.display = "none";
-            let div = myRadio.value;
-            if (div === "sendAccrue") {
-                sendAccrueFUNCTION(operationsAccrue)
-            }
-            if (div === "sendCancellation") {
-                sendCancellationFUNCTION(operationsCancellation)
-                document.getElementById("sendPoint").style.display = "block";
-            }
-        }
 
         function info_operations(user, total, skipTotal, point, availablePoints) {
             let data = {
@@ -552,115 +361,7 @@
         }
 
 
-        function setStateByStatus(State) {
-            if (State == "NEW") {
-                document.getElementById("ButtonComplete").style.display = "block";
-                document.getElementById("Complete").style.display = "none";
-                document.getElementById("Deleted").style.display = "none";
-            }
-            if (State == "COMPLETED") {
-                document.getElementById("Complete").style.display = "block";
-                document.getElementById("ButtonComplete").style.display = "none";
-                document.getElementById("Deleted").style.display = "none";
-            }
-            if (State == "DELETED") {
-                document.getElementById("Deleted").style.display = "block";
-                document.getElementById("Complete").style.display = "none";
-                document.getElementById("Complete").style.display = "none";
-            }
-        }
 
-        function ajax_settings(url, method, data) {
-            return {
-                "url": url,
-                "method": method,
-                "timeout": 0,
-                "headers": {"Content-Type": "application/json",},
-                "data": data,
-            }
-        }
-
-    </script>
-
-    <script>
-
-        document.getElementById("QRCodePoint").addEventListener("change", function () {
-            let v = parseInt(this.value);
-            if (v < 1) this.value = 1;
-            if (v > operations_Max_points) this.value = operations_Max_points;
-            operations_points = this.value
-        });
-
-        function clearWidget() {
-            document.getElementById("activated").style.display = "none";
-            document.getElementById("undefined").style.display = "none";
-            document.getElementById("Error402").style.display = "none"
-            document.getElementById("success").style.display = "none";
-            document.getElementById("danger").style.display = "none";
-            document.getElementById("sendWarning").style.display = "none";
-            document.getElementById("buttonOperations").style.display = "none";
-            document.getElementById("labelAccrue").style.display = "none";
-            document.getElementById("labelCancellation").style.display = "none";
-            document.getElementById("Accrue").checked = true;
-            document.getElementById("Error402").style.display = "none"
-            document.getElementById("sendQRErrorID").style.display = "none"
-            document.getElementById("errorMessage").style.display = "none"
-        }
-
-        function PointMax(max) {
-            let idPoint = window.document.getElementById('maxPoint');
-            idPoint.innerText = max.toString();
-        }
-
-        function formatParams(params) {
-            return "?" + Object
-                .keys(params)
-                .map(function (key) {
-                    return key + "=" + encodeURIComponent(params[key])
-                })
-                .join("&")
-        }
-
-
-        function xRefURL() {
-            window.open(GlobalxRefURL);
-        }
-
-        function only_numbers() {
-            if (event.keyCode < 48 || event.keyCode > 57)
-                event.returnValue = false;
-        }
-
-        function only_float() {
-            if (event.keyCode < 48 || event.keyCode > 57) {
-                event.returnValue = event.keyCode === 46;
-            }
-        }
-
-
-        function set_extensionPoint(params) {
-            let result
-            switch (params) {
-                case "document.customerorder.edit": {
-                    result = "customerorder"
-                    extensionPoint = "customerorder"
-                    break
-                }
-
-                case "document.demand.edit": {
-                    result = "demand"
-                    extensionPoint = "demand"
-                    break
-                }
-
-                case "document.salesreturn.edit": {
-                    result = "salesreturn"
-                    extensionPoint = "salesreturn"
-                    break
-                }
-            }
-            return result
-        }
 
     </script>
 

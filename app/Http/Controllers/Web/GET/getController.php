@@ -25,24 +25,15 @@ class getController extends Controller
         $companyId = $SettingBD->companyId;
         $TokenUDS = $SettingBD->TokenUDS;
 
-        if (isset($request->message)) {
-            $message = [
-                'status' => true,
-                'message' => $request->message['message'],
-                'alert' => $request->message['alert'],
-            ];
-        } else $message = [
-            'status' => false,
-            'message' => "",
-            'alert' => "",
-        ];
-
         return view('web.Setting.index', [
             "companyId" => $companyId,
             "TokenUDS" => $TokenUDS,
-
             "accountId" => $accountId,
-            "message" => $message,
+
+
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
+
             "isAdmin" => $isAdmin,
         ]);
     }
@@ -231,7 +222,9 @@ class getController extends Controller
             "COMPLETED" => $COMPLETED,
             "DELETED" => $DELETED,
 
-            "message" => $message,
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
+
             "apiKey" => $TokenMoySklad,
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,

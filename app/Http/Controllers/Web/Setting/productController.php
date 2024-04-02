@@ -31,8 +31,6 @@ class productController extends Controller
 
         $arrFolders = [];
 
-        $message = $this->messageRequest($request->message);
-
         /*
          * 1)Категории
          * 2)Склад
@@ -98,7 +96,11 @@ class productController extends Controller
             "TokenUDS" => $TokenUDS,
 
             "accountId" => $accountId,
-            "message" => $message,
+
+
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
+
             "isAdmin" => $isAdmin,
         ]);
     }
@@ -115,11 +117,15 @@ class productController extends Controller
         $this->CreateWebhookByProductMS($request, $ClientMS);
         $this->CreateWebhookStockByProductMS($request, $ClientMS);
 
-        $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
-        $message["message"] = "Настройки сохранились!";
+        $class_message = "is-success";
+        $message = "Настройки сохранились!";
 
-
-        return redirect()->route('productIndex', ['accountId' => $accountId, 'isAdmin' => $isAdmin, 'message' => $message]);
+        return redirect()->route('productIndex', [
+            'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
+            'message' => $message,
+            'class_message' => $class_message,
+            ]);
 
     }
 

@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Config\Lib;
 
 use App\Http\Controllers\Controller;
 
-use \Firebase\JWT\JWT;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\BadResponseException;
-use Illuminate\Support\Collection;
+use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Config;
 
 require_once 'jwt.lib.php';
@@ -19,9 +17,9 @@ class VendorApiController extends Controller
         return $this->request('POST', '/context/' . $contextKey);
     }
 
-    function updateAppStatus(string $appId, string $accountId, string $status)
+    function updateAppStatus(string $accountId, string $status)
     {
-
+        $appId = Config::get("Global.appId");
         return $this->request('PUT',
             "/apps/$appId/$accountId/status",
             ["status" => $status]);
@@ -29,11 +27,9 @@ class VendorApiController extends Controller
 
     private function request(string $method, $path, $body = null)
     {
-        $url = (new cfg())->moyskladVendorApiEndpointUrl . $path;
+        $url =  Config::get("Global.VendorEndpoint") . $path;
         $bearerToken = buildJWT();
-
         $client = new Client();
-
         $options = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $bearerToken,
@@ -54,16 +50,13 @@ class VendorApiController extends Controller
 }
 function buildJWT(): string
 {
-
-    $cfg = new cfg();
-
     $token = array(
-        "sub" => $cfg->appUid,
+        "sub" =>  Config::get("Global.appUid"),
         "iat" => time(),
         "exp" => time() + 300,
         "jti" => bin2hex(random_bytes(32))
     );
-    return JWT::encode($token, $cfg->secretKey);
+    return JWT::encode($token,  Config::get("Global.secretKey"));
 }
 
 

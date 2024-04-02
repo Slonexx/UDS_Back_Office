@@ -23,9 +23,15 @@
         background-image: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
         background-size: 100%;
         -webkit-background-clip: text;
-        -moz-background-clip: text;
         -webkit-text-fill-color: transparent;
         -moz-text-fill-color: transparent;
+    }
+
+    .gradient_focus{
+       /* border: 2px solid transparent;
+        border-image: linear-gradient(34deg, rgba(145,0,253,1) 0%, rgba(232,0,141,1) 100%);
+        border-image-slice: 1;
+        border-radius: 0.375rem !important;*/
     }
 
     .gradient_focus:hover{
@@ -41,7 +47,6 @@
         border: 0px;
         background-size: 100%;
         -webkit-background-clip: text;
-        -moz-background-clip: text;
         -webkit-text-fill-color: transparent;
         -moz-text-fill-color: transparent;
     }

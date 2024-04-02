@@ -1,15 +1,12 @@
 @extends('layout')
 @section('item', 'link_8')
+@section('name_head', 'Настройки → Контрагент')
 @section('content')
 
-    <div class="content p-4 mt-2 bg-white text-Black rounded main-container content-container">
 
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Настройки → контрагент") </script>
-
-        @if($message['status'] == true)
-            <div class="{{$message['alert']}} mt-1"> {{ $message['message'] }} </div>
-        @endif
+    @include('div.TopServicePartner')
+    @include('div.notification')
+    <div class="box">
         <form action="  {{ route( 'setAgent' , [ 'accountId' => $accountId,  'isAdmin' => $isAdmin ] ) }} "
               method="post">
             @csrf <!-- {{ csrf_field() }} -->

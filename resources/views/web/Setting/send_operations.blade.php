@@ -1,20 +1,11 @@
-
 @extends('layout')
 @section('item', 'link_4')
+@section('name_head', 'Настройки → Операции')
 @section('content')
 
-    <div class="content p-4 mt-2 bg-white text-Black rounded">
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Настройки → Операции") </script>
-
-        <br>
-        @isset($message)
-
-            <div class="{{$message['alert']}}"> {{ $message['message'] }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-
-        @endisset
+    @include('div.TopServicePartner')
+    @include('div.notification')
+    <div class="box">
         <div class=" alert alert-info alert-dismissible fade show in text-center" style="font-size: 16px">
             По умолчанию операции на списание бонусных баллов по номеру телефона недоступны, необходимо писать на почту ( <u>support@uds.app</u> ) о включении данного функционала
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

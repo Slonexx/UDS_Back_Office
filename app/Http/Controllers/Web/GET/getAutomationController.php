@@ -16,16 +16,6 @@ class getAutomationController extends Controller
             return redirect()->route('indexNoAdmin', ["accountId" => $accountId, "isAdmin" => $isAdmin]);
         }
 
-        if (isset($request->message)) {
-            $message = $request->message;
-            if ($message == "Настройки сохранились") {
-                $class = "mt-1 alert alert-success alert-dismissible fade show in text-center";
-            } else $class = "mt-1 alert alert-warning alert-danger fade show in text-center";
-        } else {
-            $message = '';
-            $class = '';
-        };
-
         $Setting = new getSettingVendorController($accountId);
         $Client = new MsClient($Setting->TokenMoySklad);
 
@@ -83,8 +73,8 @@ class getAutomationController extends Controller
             'documentAutomation' => $documentAutomation,
 
 
-            "message" => $message,
-            "class" => $class,
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
 
             "accountId" => $accountId,
             "isAdmin" => $isAdmin,

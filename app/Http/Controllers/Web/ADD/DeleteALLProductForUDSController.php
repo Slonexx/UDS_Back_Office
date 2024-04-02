@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Web\ADD;
 
+use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\BackEnd\BDController;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Controller;
-use App\Services\product\ProductCreateUdsService;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Config;
+use React\EventLoop\Loop;
+use function React\Promise\all;
 
 class DeleteALLProductForUDSController extends Controller
 {
@@ -19,69 +22,86 @@ class DeleteALLProductForUDSController extends Controller
 
         set_time_limit(900);
 
-        if ($as == "p330538"){
-            $result = [];
-            $setting = new getSettingVendorController($accountId);
-            $UDS = $this->getUdsCheck($setting->companyId, $setting->TokenUDS, $accountId);
+        $result = [];
+        $setting = new getSettingVendorController($accountId);
+        $Client = new UdsClient($setting->companyId, $setting->TokenUDS);
+        $UDS = $this->getUdsCheck($setting->companyId, $setting->TokenUDS, $accountId, $Client);
 
-            $Client = new UdsClient($setting->companyId, $setting->TokenUDS);
-            if ($UDS['productIds']!=[]){
-                foreach ($UDS['productIds'] as $item){
-                    try {
-                        $Client->delete("https://api.uds.app/partner/v2/goods/".$item);
-                        $result[] = "Удаленно = ".$item;
-                    } catch (BadResponseException){
-                        $result[] = "Не удалось удалить = ".$item;
-                        continue;
-                    }
+        foreach ($UDS as $base) {
+            foreach ($base as $item){
+                try {
+                    $Client->delete("https://api.uds.app/partner/v2/goods/".$item);
+                    $result[] = "Удаленно = ".$item;
+                } catch (BadResponseException){
+                    $result[] = "Не удалось удалить = ".$item;
+                    continue;
                 }
             }
-            return response()->json($result);
-        } else return response()->json([],404);
+        }
+        return response()->json($result);
 
     }
 
+    public function DeleteProduct($accountId){
+        $result = [];
+        $setting = new getSettingVendorController($accountId);
+        $Client = new UdsClient($setting->companyId, $setting->TokenUDS);
+        $UDS = $this->getUdsCheck($setting->companyId, $setting->TokenUDS, $accountId, $Client);
 
-    public function getUdsCheck($companyId, $apiKeyUds, $accountId): array
+        foreach ($UDS as $base) {
+            foreach ($base as $item){
+                try {
+                    $Client->delete("https://api.uds.app/partner/v2/goods/".$item);
+                    $result[] = "Удаленно = ".$item;
+                } catch (BadResponseException){
+                    $result[] = "Не удалось удалить = ".$item;
+                    continue;
+                }
+            }
+        }
+        return response()->json($result);
+    }
+
+
+    public function getUdsCheck($companyId, $apiKeyUds, $accountId, UdsClient $client): array
     {
         $result = [
             "productIds" => [],
             "categoryIds" => [],
         ];
 
-        $this->findNodesUds($result, $companyId, $apiKeyUds, $accountId);
+        $this->findNodesUds($result, $companyId, $apiKeyUds, $accountId, $client);
 
         return $result;
     }
 
-    private function findNodesUds(&$result, $companyId, $apiKeyUds, $accountId, $nodeId = 0, $path = ""): void
+    private function findNodesUds(&$result, $companyId, $apiKeyUds, $accountId, UdsClient $client, $nodeId = 0, $path = ""): void
     {
         $offset = 0;
+        $url = "https://api.uds.app/partner/v2/goods?max=50&offset={$offset}";
+        $get = $client->newGET($url);
+        if ($get->status) $json = $get->data;
 
-        $client = new UdsClient($companyId, $apiKeyUds);
+
 
         do {
             $url = "https://api.uds.app/partner/v2/goods?max=50&offset={$offset}";
+            if ($nodeId > 0) $url .= "&nodeId={$nodeId}";
 
-            if ($nodeId > 0) {
-                $url .= "&nodeId={$nodeId}";
-            }
 
-            try {
-                $json = $client->get($url);
-                $rows = $json->rows ?? [];
-            } catch (ClientException $e) {
-                break; // Прерываем цикл в случае ошибки
-            }
+
+            $get = $client->newGET($url);
+            if ($get->status) $json = $get->data; else break;
+            $rows = $json->rows ?? [];
+
 
             foreach ($rows as $row) {
                 $currId = (string) $row->id;
-                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") {
-                    $result["productIds"][] = $currId;
-                } elseif ($row->data->type == "CATEGORY") {
+                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") $result["productIds"][] = $currId;
+                elseif ($row->data->type == "CATEGORY") {
                     $result["categoryIds"][] = $currId;
                     $newPath = $path . "/" . $row->name;
-                    $this->findNodesUds($result, $companyId, $apiKeyUds, $accountId, $currId, $newPath);
+                    $this->findNodesUds($result, $companyId, $apiKeyUds, $accountId,$client, $currId, $newPath);
                 }
             }
 

@@ -20,7 +20,6 @@ use App\Http\Controllers\Config\DeleteVendorApiController;
 
 //TEST
 Route::get('time/{accountId}', [indexController::class, 'time']);
-Route::get('web/CheckSave/web/{accountId}', [indexController::class, 'CheckSave'])->name('CheckSave');
 
 //Search
 Route::get('/search/employee/byName/{login}', [indexController::class, 'searchEmployeeByID']);

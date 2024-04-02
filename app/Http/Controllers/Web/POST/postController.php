@@ -2,52 +2,56 @@
 
 namespace App\Http\Controllers\Web\POST;
 
-use App\Components\MsClient;
 use App\Components\UdsClient;
-use App\Http\Controllers\BD\create;
-use App\Http\Controllers\BD\update;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\AppInstanceContoller;
 use App\Http\Controllers\Config\Lib\cfg;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
-use App\Models\newProductModel;
 use App\Models\orderSettingModel;
-use App\Models\ProductFoldersByAccountID;
 use App\Models\SettingMain;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class postController extends Controller
 {
-    public function postSettingIndex(Request $request, $accountId, $isAdmin): \Illuminate\Http\RedirectResponse
+    public function postSettingIndex(Request $request, $accountId, $isAdmin): RedirectResponse
     {
-        $cfg = new cfg();
-        $appId = $cfg->appId;
-        $app = AppInstanceContoller::loadApp($appId, $accountId);
+        $app = AppInstanceContoller::loadApp($accountId);
         $Setting = new getSettingVendorController($accountId);
 
+        if ($Setting->TokenMoySklad == null or $Setting->TokenMoySklad == '')  return redirect()->route('indexSetting', [
+            'message' => 'Переустановите приложение',
+            'class_message' => 'is-danger',
+
+            'accountId' => $accountId,
+            'isAdmin' => $isAdmin,
+        ]);
+
         $Client = new UdsClient($request->companyId, $request->TokenUDS);
-        $body = $Client->getisErrors("https://api.uds.app/partner/v2/settings");
-        if ($body == 200) {
+        $body = $Client->checkingSetting();
+        if ($body->status) {
             $this->Setting_Main_Create_Or_Update($accountId, $Setting->TokenMoySklad, $request->companyId, $request->TokenUDS);
             $app->companyId = $request->companyId;
             $app->TokenUDS = $request->TokenUDS;
             $app->ProductFolder = null;
             $app->UpdateProduct = null;
             $app->Store = null;
-            $app->status = AppInstanceContoller::ACTIVATED;
-            app(VendorApiController::class)->updateAppStatus($appId, $accountId, $app->getStatusName());
 
+            $app->status = AppInstanceContoller::ACTIVATED;
+            app(VendorApiController::class)->updateAppStatus($accountId, $app->getStatusName());
             $app->persist();
-            $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
-            $message["message"] = "Настройки сохранились!";
+
+            $class_message = "is-success";
+            $message = "Настройки сохранились!";
         } else {
-            $message["alert"] = " alert alert-danger alert-dismissible fade show in text-center ";
-            $message["message"] = "Не верный ID Компании или API Key";
+            $class_message = "is-danger";
+            $message = "Не верный ID Компании или API Key";
         }
 
         return redirect()->route('indexSetting', [
             'message' => $message,
+            'class_message' => $class_message,
 
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,
@@ -73,11 +77,11 @@ class postController extends Controller
         $model->save();
     }
 
-    public function postSettingOrder(Request $request, $accountId, $isAdmin): \Illuminate\Http\RedirectResponse
+    public function postSettingOrder(Request $request, $accountId, $isAdmin): RedirectResponse
     {
         $cfg = new cfg();
         $appId = $cfg->appId;
-        $app = AppInstanceContoller::loadApp($appId, $accountId);
+        $app = AppInstanceContoller::loadApp($accountId);
 
         $Organization = $request->Organization;
         if ('Нет расчетного счёта' != $request->$Organization) {
@@ -149,10 +153,12 @@ class postController extends Controller
 
         }
 
+        $class_message = "is-success";
         $message = "Настройки сохранились!";
 
         return redirect()->route('indexDocument', [
-            'message' => $message,
+            "message" => $message,
+            "class_message" => $class_message,
 
             'accountId' => $accountId,
             'isAdmin' => $isAdmin,

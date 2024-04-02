@@ -79,6 +79,10 @@ class SettingController extends Controller
             "DELETED" => $DELETED,
 
             "accountId"=> $accountId,
+
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
+
             'isAdmin' => $isAdmin,
         ]);
     }
@@ -87,7 +91,7 @@ class SettingController extends Controller
 
         $cfg = new cfg();
         $appId = $cfg->appId;
-        $app = AppInstanceContoller::loadApp($appId, $accountId);
+        $app = AppInstanceContoller::loadApp($accountId);
 
         $Saleschannel = $request->Saleschannel;
         $Project = $request->Project;
@@ -132,6 +136,9 @@ class SettingController extends Controller
             $pool->as('body_project')->withToken($TokenMoySklad)->get($url_project),
         ]);
 
+        $class_message = "is-success";
+        $message = "Настройки сохранились!";
+
         return view('web.Setting.documentAdd',[
             "Body_customerorder" => $responses['body_customerorder']->object()->states,
             "Body_saleschannel" => $responses['body_saleschannel']->object()->rows,
@@ -144,7 +151,9 @@ class SettingController extends Controller
             "COMPLETED" => $request->COMPLETED,
             "DELETED" => $request->DELETED,
 
-            "message"=> $message,
+            'message' => $message,
+            'class_message' => $class_message,
+
             "accountId"=> $accountId,
             'isAdmin' => $isAdmin,
         ]);

@@ -48,6 +48,9 @@ class sendOperations extends Controller
             'operationsDocument' => $operationsDocument,
             'operationsPaymentDocument' => $operationsPaymentDocument,
             'customOperation' => $customOperation,
+
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
         ]);
     }
 
@@ -75,16 +78,20 @@ class sendOperations extends Controller
 
             $model->save();
 
-            $message["alert"] = " alert alert-success alert-dismissible fade show in text-center ";
-            $message["message"] = "Настройки сохранились!";
+            $class_message = "is-success";
+            $message = "Настройки сохранились!";
 
         } catch (BadResponseException) {
-            $message["alert"] = " alert alert-danger alert-dismissible fade show in text-center ";
-            $message["message"] = "Ошибка настройки не сохранились";
+            $class_message = "is-danger";
+            $message = "Ошибка настройки не сохранились";
         }
 
+
         return view('web.Setting.send_operations', array(
-            "message" => $message,
+            'message' => $message,
+            'class_message' => $class_message,
+
+
             "accountId" => $accountId,
             'isAdmin' => $isAdmin,
 

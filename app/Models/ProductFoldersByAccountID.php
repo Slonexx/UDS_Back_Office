@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductFoldersByAccountID extends Model
 {
+    use HasFactory;
+
+    protected $table = "product_folders_by_account_i_d_s";
 
     protected $fillable = [
         'accountId',
@@ -15,5 +18,26 @@ class ProductFoldersByAccountID extends Model
         'FolderURLs',
     ];
 
-    use HasFactory;
+
+
+
+    public static function getInformation($accountId): object
+    {
+        $model = ProductFoldersByAccountID::where('accountId',  $accountId )->get();
+        if (!$model->isEmpty()) {
+            $return = [];
+            foreach ($model as $item) {
+                $return[] = $item->toArray();
+            }
+            return (object) [
+                'query' => $model,
+                'toArray' => $return,
+            ];
+        } else {
+            return (object) [
+                'query' => $model,
+                'toArray' => null,
+            ];
+        }
+    }
 }

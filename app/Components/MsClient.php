@@ -2,10 +2,9 @@
 
 namespace App\Components;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\Pool;
-use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Facades\Http;
+use Psr\Http\Message\ResponseInterface;
 
 class MsClient{
 
@@ -47,5 +46,42 @@ class MsClient{
             'body' => json_encode($body),
         ]);
         return json_decode($res->getBody());
+    }
+
+
+    public function newGet($url): object
+    {
+        try {
+            return  $this->ResponseHandler($this->client->get($url));
+        } catch (GuzzleException $e) {
+            return $this->ResponseHandlerField($e);
+        }
+    }
+
+    public function newPUT($url, $body){
+        try {
+            return  $this->ResponseHandler($this->client->put($url, ['json'=> $body]));
+        } catch (GuzzleException $e) {
+            return $this->ResponseHandlerField($e);
+        }
+    }
+
+    private function ResponseHandler(ResponseInterface $post): object
+    {
+        return (object) [
+            'status' => true,
+            'body' => $post->getBody(),
+            'data' => json_decode($post->getBody()->getContents()),
+        ];
+    }
+    private function ResponseHandlerField(BadResponseException|\Exception $e): object
+    {
+        return (object) [
+            'status' => false,
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'body' => $e->getResponse()->getBody(),
+            'data' => json_decode($e->getResponse()->getBody()->getContents()),
+        ];
     }
 }
