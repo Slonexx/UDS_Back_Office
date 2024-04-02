@@ -1,15 +1,12 @@
 @extends('layout')
 @section('item', 'link_7')
+@section('name_head', 'Настройки → товары')
 @section('content')
 
-    <div class="content p-4 mt-2 bg-white text-Black rounded main-container content-container">
+    @include('div.TopServicePartner')
+    @include('div.notification')
 
-        @include('div.TopServicePartner')
-        <script> NAME_HEADER_TOP_SERVICE("Настройки → товары") </script>
-
-        @if($message['status'] == true)
-            <div class="{{$message['alert']}} mt-1"> {{ $message['message'] }} </div>
-        @endif
+    <div class="box">
         <form action="  {{ route( 'setProductIndex' , [ 'accountId' => $accountId,  'isAdmin' => $isAdmin ] ) }} " method="post">
         @csrf <!-- {{ csrf_field() }} -->
             <div class="row mt-1 p-1 gradient_invert rounded text-black">

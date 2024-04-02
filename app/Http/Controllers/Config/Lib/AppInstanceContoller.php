@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Config\Lib;
 
-use App\Http\Controllers\Controller;
 use Doctrine\Instantiator\Exception\InvalidArgumentException;
+use Illuminate\Support\Facades\Config;
 
 
 class AppInstanceContoller
@@ -80,8 +80,8 @@ class AppInstanceContoller
         return $dir . "data/$appId.$accountId.json";
     }
 
-    static function loadApp($appId, $accountId): AppInstanceContoller {
-        return self::load($appId, $accountId);
+    static function loadApp($accountId): AppInstanceContoller {
+        return self::load(Config::get("Global.appId"), $accountId);
     }
 
     static function load($appId, $accountId): AppInstanceContoller {

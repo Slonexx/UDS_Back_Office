@@ -15,7 +15,10 @@
         "laravel/sanctum": "^2.11",
         "laravel/telescope": "^4.11",
         "laravel/tinker": "^2.5",
-        "lorisleiva/laravel-actions": "^2.4"
+        "lorisleiva/laravel-actions": "^2.4",
+        "psr/http-message": "^1.0",
+        "react/http": "^1.8",
+        "react/react": "1.4"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

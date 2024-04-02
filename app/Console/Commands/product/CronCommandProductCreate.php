@@ -26,41 +26,32 @@ class CronCommandProductCreate extends Command
     public function handle(): void
     {
         $mutex = Cache::lock('process_NewProduct', 9000);
-
-        if (/*true) { //*/$mutex->get()) {
-
+        //if ($mutex->get()) {
+        if (true) {
             $allSettings = newProductModel::all();
+            foreach ($allSettings as $sql) {
+                $item = $sql->toArray();
+                $mainSetting = new getMainSettingBD($item['accountId']);
+                $msClient = new MsClient($mainSetting->tokenMs);
+                $udsClient = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
 
-            foreach ($allSettings as $item) {
-                $mainSetting = new getMainSettingBD($item->getAttributes()['accountId']);
-                try {
-                    $ClientCheckMC = new MsClient($mainSetting->tokenMs);
-                    $ClientCheckMC->get('https://api.moysklad.ru/api/remap/1.2/entity/employee');
-                    $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
-                    $ClientCheckUDS->get('https://api.uds.app/partner/v2/settings');
-                } catch (BadResponseException) { continue; }
-                if ($item->getAttributes()['ProductFolder'] == '0' or $item->getAttributes()['ProductFolder'] == null) continue;
+                $statusMS = $msClient->newGet('https://api.moysklad.ru/api/remap/1.2/entity/employee');
+                $statusUDS = $udsClient->checkingSetting();
+                if (!$statusMS->status and !$statusUDS->status) continue;
+                if ($item['ProductFolder'] == '0' or $item['ProductFolder'] == null) continue;
 
-                $data = [
-                    'accountId' => $item->getAttributes()['accountId'],
-                    'salesPrices' => $item->getAttributes()['salesPrices'],
-                    'promotionalPrice' => $item->getAttributes()['promotionalPrice'],
-                    'Store' => $item->getAttributes()['Store'],
-                    'StoreRecord' => $item->getAttributes()['StoreRecord'],
-                    'productHidden' => $item->getAttributes()['productHidden'],
-                    'countRound' => $item->getAttributes()['countRound'],
-                ];
+                $data = $item;
 
-                if ($item->getAttributes()['unloading'] ==  '1') { $data['loading'] = true; }
-                else  $data['loading'] = false;
+                if ($item['unloading'] == '1') $data['loading'] = true;
+                else $data['loading'] = false;
 
-                if ($item->getAttributes()['unloading'] ==  null) continue;
 
+                if ($item['unloading'] == null) continue;
                 try {
 
-                    dispatch(function () use ($data, $item) {
-                        $item->countRound += 1;
-                        $item->save();
+                    dispatch(function () use ($data, $sql) {
+                        $sql->countRound += 1;
+                        $sql->save();
 
                         if ($data['loading']) $create = new createProductForMS($data);
                         else $create = new createProductForUDS($data);
@@ -68,17 +59,14 @@ class CronCommandProductCreate extends Command
                         if ($data['countRound'] < 3) $create->initialization();
                     })->onQueue('default');
 
-                    $this->info('successfully.');
-
+                    $this->info($data['accountId'].': успешно.');
                 } finally {
                     $mutex->release(); // Освобождаем мьютекс
                 }
 
             }
 
-        } else {
-            // Задача уже выполняется, пропускаем запуск
-            $this->info('Previous task is still running. Skipping the current run.');
-        }
+        } else $this->info('Previous task is still running. Skipping the current run.');
+
     }
 }

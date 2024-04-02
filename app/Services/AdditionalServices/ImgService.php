@@ -138,16 +138,20 @@ class ImgService
         );
 
         $context = stream_context_create($opts);
-        $result = file_get_contents($url, false, $context);
+        try {
+            $result = file_get_contents($url, false, $context);
+        } catch (BadResponseException $e){
+            $out["code"] = 400;
+            $out["result"] = $e->getResponse()->getBody()->getContents();
+            $out["message"] = "ОШИБКА: ".$e->getMessage();
+            return $out;
+        }
 
         preg_match('/([0-9])\d+/', $http_response_header[0], $matches);
         $response = intval($matches[0]);
 
-        if ($response == 200) {
-            $message = "Создан новый URL S3. Готово!";
-        } else {
-            $message = "ОШИБКА: $response";
-        }
+        if ($response == 200) $message = "Создан новый URL S3. Готово!";
+        else $message = "ОШИБКА: $response";
 
         $out["code"] = $response;
         $out["result"] = $result;

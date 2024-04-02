@@ -31,39 +31,24 @@ class createProductForUDS
         $createProduct = new applicationCreatingProductForUDS($this->setting, $this->msClient, $this->udsClient);
 
         $ARR_PRODUCT = [];
-        $find = ProductFoldersByAccountID::query()->where('accountId', $this->setting->accountId);
+        $find = ProductFoldersByAccountID::getInformation($this->setting->accountId);
         $baseUDS = $this->getUdsCheck();
 
-        //dd($baseUDS);
+        if ($find->toArray == null) return ["message" => "Отсутствуют настройки папок"];
+        foreach ($find->toArray as $itemFolderModel) {
+            $folderName = ($itemFolderModel['FolderName'] === "Корневая папка") ? '' : $itemFolderModel['FolderName'];
 
 
-        foreach ($find->get() as $itemFolderModel) {
-            $folderName = $itemFolderModel->getAttributes()['FolderName'];
-            if ($folderName == "Корневая папка") {
-                $folderName = '';
-            }
-            $this->addCategoriesToUds($folderName);
+            (new folderCreating($this->msClient, $this->udsClient))->addCategoriesToUds($folderName);
             $productsMs = $this->getMs($folderName);
 
-
-
-
             foreach ($productsMs->rows as $item) {
-                $create = $this->shouldCreateProduct($item);
+                $is_create_sklad = $this->shouldCreateProduct($item);
+                $is_create = $this->shouldCreateProductForCheck($item, $baseUDS);
 
-                if ($create && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3) {
-
-                    if ($create and $this->shouldCreateProductForCheck($item, $baseUDS)) {
-                        try {
-                            $createdProduct = $createProduct->createProductUds($item);
-                            if ($createdProduct) {
-                                $ARR_PRODUCT[] = $createdProduct;
-                            }
-                        } catch (BadResponseException) {
-                            continue;
-                        }
-                    }
-
+                if ($is_create and ($is_create_sklad && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3)) {
+                    $createdProduct = $createProduct->createProductUds($item);
+                    if ($createdProduct) $ARR_PRODUCT[] = $createdProduct;
                 }
             }
 
@@ -80,7 +65,9 @@ class createProductForUDS
     {
         if ($this->setting->StoreRecord == '1') {
             $count = 0;
-            foreach ($this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name)->rows as $itemStock) {
+
+            $tmp = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $item->name);
+            foreach ($tmp->rows as $itemStock) {
                 $count += $itemStock->quantity;
             }
             return $count > 0;
@@ -95,18 +82,15 @@ class createProductForUDS
         if (property_exists($item, "attributes")) {
             foreach ($item->attributes as $attribute) {
                 if ($attribute->name == "id (UDS)") {
-                    if (in_array($attribute->value, $baseUDS["productIds"])) {
-                        $create = false;
-                    }
+                    if (in_array($attribute->value, $baseUDS["productIds"])) $create = false;
                 } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)") {
-                    if ($attribute->value) { $create = false; }
+                    if ($attribute->value) $create = false;
                 }
             }
         }
 
         return $create;
     }
-
 
 
     private function getMs($folderName): stdClass
@@ -121,9 +105,7 @@ class createProductForUDS
 
         foreach ($urls as $baseUrl) {
             $url = $baseUrl;
-            if ($folderName !== '') {
-                $url .= "?filter=pathName~" . $folderName;
-            }
+            if ($folderName !== '') $url .= "?filter=pathName~" . $folderName;
 
             $response = $this->msClient->get($url);
             $result->rows = array_merge($result->rows, $response->rows);
@@ -132,119 +114,7 @@ class createProductForUDS
 
     }
 
-    private function addCategoriesToUds($pathName): void
-    {
-        $arrProductFolders = [];
-        if ($pathName == null) {
-            $tmp = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder/')->rows;
-            foreach ($tmp as $item) {
-                if (substr_count($item->pathName, '/') < 2) {
-                    $arrProductFolders[] = $item;
-                }
-            }
-        } else {
-            $tmp = $this->msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/productfolder?filter=pathName~' . $pathName)->rows;
-            foreach ($tmp as $item) {
-                if (strpos($item->pathName, $pathName) === 0 and substr_count($item->pathName, '/') < 3) {
-                    $arrProductFolders[] = $item;
-                }
-            }
-        }
-        usort($arrProductFolders, function ($a, $b) {
-            $countA = substr_count($a->pathName, '/');
-            $countB = substr_count($b->pathName, '/');
 
-            if ($a->pathName === "") {
-                return -1;
-            } elseif ($b->pathName === "") {
-                return 1;
-            } elseif ($countA === 0 && $countB !== 0) {
-                return -1;
-            } elseif ($countA !== 1 && $countB === 1) {
-                return 1;
-            } elseif ($countA === 2 && $countB !== 2) {
-                return -1;
-            } elseif ($countA !== 3 && $countB === 3) {
-                return 1;
-            } else {
-                return strcmp($a->pathName, $b->pathName);
-            }
-        });
-        foreach ($arrProductFolders as $item) {
-            $nameCategory = $item->name;
-
-            if (preg_match('/^[0-9]+$/', $item->externalCode)) {
-                try {
-                    $this->udsClient->get('https://api.uds.app/partner/v2/goods/' . $item->externalCode);
-                } catch (BadResponseException) {
-                    if (property_exists($item, 'productFolder')) {
-                        $idNodeCategory = $this->msClient->get($item->productFolder->meta->href)->externalCode;
-                        if (preg_match('/^[0-9]+$/', $item->externalCode)) {
-                            try {
-                                $this->udsClient->get('https://api.uds.app/partner/v2/goods/' . $idNodeCategory);
-                                $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id, $idNodeCategory);
-                            } catch (BadResponseException) {
-                                $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id);
-                            }
-                        } else {
-                            $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id );
-                        }
-                    } else {
-                        $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id);
-                    }
-                }
-            } else {
-                if (property_exists($item, 'productFolder')) {
-                    $idNodeCategory = $this->msClient->get($item->productFolder->meta->href)->externalCode;
-                    if (preg_match('/^[0-9]+$/', $item->externalCode)) {
-                        try {
-                            $this->udsClient->get('https://api.uds.app/partner/v2/goods/' . $idNodeCategory);
-                            $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id, $idNodeCategory);
-                        } catch (BadResponseException) {
-                            $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id);
-                        }
-                    } else {
-                        $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id);
-                    }
-                } else {
-                    $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $item->id);
-                }
-            }
-
-
-        }
-    }
-
-    private function createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idMsProductFolder, $nodeId = ""): void
-    {
-        $body = [
-            "name" => $nameCategory,
-            "data" => [
-                "type" => "CATEGORY",
-            ],
-        ];
-        if (intval($nodeId) > 0 || $nodeId != "") {
-            $body["nodeId"] = intval($nodeId);
-        }
-
-        try {
-            $udsBodyPost = $this->udsClient->postHttp_errorsNo('https://api.uds.app/partner/v2/goods', $body);
-                if (property_exists($udsBodyPost, 'id')) {
-
-                } else return;
-        } catch (BadResponseException) {
-            return;
-        }
-
-
-        try {
-            $this->msClient->put("https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" . $idMsProductFolder, [
-                "externalCode" => "" . $udsBodyPost->id ,
-            ]);
-        } catch (ClientException) {
-            return;
-        }
-    }
 
 
     public function getUdsCheck(): array
@@ -258,30 +128,23 @@ class createProductForUDS
 
         return $result;
     }
-
     private function findNodesUds(&$result, $nodeId = 0, $path = ""): void
     {
         $offset = 0;
 
         do {
             $url = "https://api.uds.app/partner/v2/goods?max=50&offset={$offset}";
+            if ($nodeId > 0) $url .= "&nodeId={$nodeId}";
 
-            if ($nodeId > 0) {
-                $url .= "&nodeId={$nodeId}";
-            }
 
-            try {
-                $json = $this->udsClient->get($url);
-                $rows = $json->rows ?? [];
-            } catch (ClientException $e) {
-                break; // Прерываем цикл в случае ошибки
-            }
+            $get = $this->udsClient->newGET($url);
+            if ($get->status) $json = $get->data; else break;
+            $rows = $json->rows ?? [];
 
             foreach ($rows as $row) {
-                $currId = (string) $row->id;
-                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") {
-                    $result["productIds"][] = $currId;
-                } elseif ($row->data->type == "CATEGORY") {
+                $currId = (string)$row->id;
+                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") $result["productIds"][] = $currId;
+                elseif ($row->data->type == "CATEGORY") {
                     $result["categoryIds"][] = $currId;
                     $newPath = $path . "/" . $row->name;
                     $this->findNodesUds($result, $currId, $newPath);
@@ -292,5 +155,4 @@ class createProductForUDS
 
         } while (count($rows) > 0);
     }
-
 }

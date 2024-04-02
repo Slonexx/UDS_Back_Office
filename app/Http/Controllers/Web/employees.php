@@ -53,6 +53,8 @@ class employees extends Controller
             'employee' => $Body_employee,
             'security' => $security,
 
+            "message" => $request->message ?? '',
+            "class_message" => $request->class_message ?? 'is-info',
         ]);
     }
 }

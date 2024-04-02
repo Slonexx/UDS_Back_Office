@@ -34,11 +34,7 @@ class getSettingVendorController extends Controller
 
     public function __construct($accountId)
     {
-
-        $cfg = new cfg();
-
-        $appId = $cfg->appId;
-        $json = AppInstanceContoller::loadApp($appId, $accountId);
+        $json = AppInstanceContoller::loadApp($accountId);
 
         $this->appId = $json->appId;
         $this->accountId = $json->accountId;
