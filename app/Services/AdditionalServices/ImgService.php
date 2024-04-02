@@ -6,11 +6,9 @@ use App\Components\MsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use DateTime;
 use DateTimeInterface;
-use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\ArrayShape;
 
 
 class ImgService
@@ -48,12 +46,18 @@ class ImgService
                     $this->setImageToUds($imageType, $urlToUDS, $imgHref, $apiKeyMs);
                     $imgIds[] = $dataImgUds->imageId;
                 }
-            } catch (BadResponseException ) { }
+            } catch (GuzzleException) {
+            }
         }
+
+        dd($imgIds);
 
         return $imgIds;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function setImgMS($product, $urls, $apiKeyMs): void
     {
         $urlProduct = $product->meta->href;
@@ -76,6 +80,9 @@ class ImgService
         $client->put($urlProduct, $body);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function getImgContent($url): array
     {
         $client = new Client();
@@ -88,6 +95,9 @@ class ImgService
         ];
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): void
     {
         $clientMs = new Client([
@@ -112,7 +122,7 @@ class ImgService
         );
 
         $context = stream_context_create($opts);
-        $result = file_get_contents($url, false, $context);
+        file_get_contents($url, false, $context);
     }
 
     private function setUrlToUds($imgType, $companyId, $apiKey): array
@@ -122,19 +132,16 @@ class ImgService
         $date = new DateTime();
         $uuid_v4 = Str::uuid(); //генерация уникального идентификатора версии 4 (RFC 4122)
         $timestamp = $date->format(DateTimeInterface::ATOM);
-        $body = array(
-            'contentType' => $imgType,
-        );
+        $body = (object) [ 'contentType' => $imgType ];
 
-        $preparedAuthValue = "Basic" . base64_encode("$companyId:$apiKey");
-            
+
         $client = new Client([
             'headers' => [
                 'Accept' => 'application/json',
                 'Accept-Charset' => 'utf-8',
                 'Content-Type' => 'application/json',
-                'Authorization' => $preparedAuthValue,
-                'X-Origin-Request-Id' => $uuid_v4,
+                'Authorization' => ['Basic '. base64_encode($companyId.':'.$apiKey)],
+                'X-Origin-Request-Id' => $uuid_v4->toString(),
                 'X-Timestamp' => $timestamp
             ]
         ]);
@@ -142,27 +149,20 @@ class ImgService
         try {
             $urlRes = $client->post($url, [
                 'json' => $body,
-                'http_errors' => false
             ]);
             $encodedRes = $urlRes->getBody()->getContents();
             $response = json_decode($encodedRes);
             $statusCode = $urlRes->getStatusCode();
 
-            if ($statusCode == 200) 
-                $message = "Создан новый URL S3. Готово!";
-            else 
-                $message = "ОШИБКА: $response";
-
             $out["code"] = $statusCode;
             $out["result"] = $response;
-            $out["message"] = $message;
+            $out["message"] = "Создан новый URL S3. Готово!";;
             return $out;
-        } catch (Exception $e){
-            $out["code"] = 500;
+        } catch (GuzzleException $e){
+            $out["code"] = $e->getCode();
             $out["result"] = $e;
             $out["message"] = "ОШИБКА: " . $e->getMessage();
             return $out;
         }
-        
     }
 }
