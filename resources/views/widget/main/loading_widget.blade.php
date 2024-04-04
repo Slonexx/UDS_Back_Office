@@ -1,17 +1,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener("message", function (event) {
-            //const receivedMessage = event.data;
+            const receivedMessage = event.data;
             if (receivedMessage.name === 'Open') {
                 clearWidget();
                 GlobalobjectId = receivedMessage.objectId;
                 let settings = ajax_settings(`${url}CustomerOrder/EditObject/${accountId}/${set_extensionPoint(receivedMessage.extensionPoint)}/${receivedMessage.objectId}`, "GET", null);
-                console.log('initial request settings  ↓ ');
-                console.log(settings);
-                receivedMessage = null;
+                //receivedMessage = null;
                 $.ajax(settings).done(function (response) {
-                    console.log('initial request response  ↓ ');
-                    console.log(response);
                     let message = response.message;
                     switch (response.StatusCode) {
                         case "error": {

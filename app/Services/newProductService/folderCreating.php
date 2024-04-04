@@ -96,8 +96,8 @@ class folderCreating
             "name" => $nameCategory,
             "data" => [
                 "type" => "CATEGORY",
-                "externalId" => $idMsProductFolder,
             ],
+            "externalId" => $idMsProductFolder,
         ];
         if (intval($nodeId) > 0 || $nodeId != "") $body["nodeId"] = intval($nodeId);
         $udsBodyPost = $this->udsClient->newPOST('https://api.uds.app/partner/v2/goods', $body);

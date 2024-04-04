@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Console\Commands\product;
+namespace App\Console\Commands\update;
 
 use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use App\Models\newProductModel;
-use App\Services\newProductService\createProductForMS;
-use App\Services\newProductService\createProductForUDS;
-use GuzzleHttp\Exception\BadResponseException;
+use App\Services\newProductService\updateProductForUDS;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
 class CronCommandProductCreate extends Command
 {
-    protected $signature = 'cronCommand:ProductCreate';
+    protected $signature = 'cronCommand:ProductUpdate';
 
     protected $description = '';
 
@@ -53,10 +51,10 @@ class CronCommandProductCreate extends Command
                         $sql->countRound += 1;
                         $sql->save();
 
-                        if ($data['loading']) $create = new createProductForMS($data);
-                        else $create = new createProductForUDS($data);
-
-                        if ($data['countRound'] < 3) $create->initialization();
+                        if (!$data['loading']) {
+                            $update = new updateProductForUDS($data);
+                            if ($data['countRound'] < 3) $update->initialization();
+                        }
                     })->onQueue('default');
 
                     $this->info($data['accountId'].': успешно.');

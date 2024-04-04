@@ -28,12 +28,12 @@
     let operationsAccrue
     let operationsCancellation
 
-     let receivedMessage = {
+     /*let receivedMessage = {
          "name": "Open",
          "extensionPoint": "document.customerorder.edit",
          "objectId": "5f3023e9-05b3-11ee-0a80-06f20001197a",
          "messageId": 1,
          "displayMode": "expanded"
-     }
+     }*/
 
 </script>

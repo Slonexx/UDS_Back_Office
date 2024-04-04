@@ -10,10 +10,13 @@ return [
      */
     "agent" => "{$MsURL}entity/counterparty/",
 
+    "productAtt" => "{$MsURL}product/metadata/attributes/",
+
 
     /**
      * @int_url
      */
+    "goods" => "{$int}goods/",
     "int_setting" => "{$int}settings/",
 
 
@@ -30,6 +33,7 @@ return [
 
 
 
+    'entity' =>  'https://api.moysklad.ru/api/remap/1.2/entity/',
     'VendorEndpoint' =>  'https://apps-api.moysklad.ru/api/vendor/1.0',
     'JsonEndpoint' =>  'https://api.moysklad.ru/api/remap/1.2',
 ];

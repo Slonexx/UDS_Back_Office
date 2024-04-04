@@ -34,6 +34,8 @@ class createProductForUDS
         $find = ProductFoldersByAccountID::getInformation($this->setting->accountId);
         $baseUDS = $this->getUdsCheck();
 
+        //dd($baseUDS);
+
         if ($find->toArray == null) return ["message" => "Отсутствуют настройки папок"];
         foreach ($find->toArray as $itemFolderModel) {
             $folderName = ($itemFolderModel['FolderName'] === "Корневая папка") ? '' : $itemFolderModel['FolderName'];
@@ -43,10 +45,11 @@ class createProductForUDS
             $productsMs = $this->getMs($folderName);
 
             foreach ($productsMs->rows as $item) {
-                $is_create_sklad = $this->shouldCreateProduct($item);
                 $is_create = $this->shouldCreateProductForCheck($item, $baseUDS);
+                if ($is_create === false) continue;
+                $is_create_sklad = $this->shouldCreateProduct($item);
 
-                if ($is_create and ($is_create_sklad && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3)) {
+                if (($is_create_sklad && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3)) {
                     $createdProduct = $createProduct->createProductUds($item);
                     if ($createdProduct) $ARR_PRODUCT[] = $createdProduct;
                 }
@@ -77,19 +80,30 @@ class createProductForUDS
 
     private function shouldCreateProductForCheck($item, $baseUDS): bool
     {
-        $create = true;
+        if (in_array($item->id, $baseUDS["externalCode"]['product'])) {
+            if (property_exists($item, 'attributes'))
+                foreach ($item->attributes as $attribute) {
 
+                if ($attribute->name == "id (UDS)") {
+                    if (!in_array($attribute->value, $baseUDS["productIds"])) {
+                        //dd($attribute, $attribute->meta, $baseUDS["isSet"][$item->id]);
+                        $updatedAttribute = [ "meta" => $attribute->meta, "value" => "".$baseUDS["isSet"][$item->id] ];
+                        $this->msClient->newPUT($item->meta->href, ["attributes" => [$updatedAttribute]]);
+                    }
+                }
+
+            }
+            return false;
+        }
         if (property_exists($item, "attributes")) {
             foreach ($item->attributes as $attribute) {
-                if ($attribute->name == "id (UDS)") {
-                    if (in_array($attribute->value, $baseUDS["productIds"])) $create = false;
-                } elseif ($attribute->name == "Не выгружать товар в UDS ? (UDS)") {
-                    if ($attribute->value) $create = false;
+                if (($attribute->name == "id (UDS)" && in_array($attribute->value, $baseUDS["productIds"])) ||
+                    ($attribute->name == "Не выгружать товар в UDS ? (UDS)" && $attribute->value)) {
+                    return false;
                 }
             }
         }
-
-        return $create;
+        return true;
     }
 
 
@@ -115,23 +129,27 @@ class createProductForUDS
     }
 
 
-
-
     public function getUdsCheck(): array
     {
         $result = [
             "productIds" => [],
             "categoryIds" => [],
+            "externalCode" => [
+                "product" => [],
+                "category" => [],
+            ],
+            "isSet" => [
+            ],
         ];
 
         $this->findNodesUds($result);
 
         return $result;
     }
+
     private function findNodesUds(&$result, $nodeId = 0, $path = ""): void
     {
         $offset = 0;
-
         do {
             $url = "https://api.uds.app/partner/v2/goods?max=50&offset={$offset}";
             if ($nodeId > 0) $url .= "&nodeId={$nodeId}";
@@ -141,12 +159,20 @@ class createProductForUDS
             if ($get->status) $json = $get->data; else break;
             $rows = $json->rows ?? [];
 
+
             foreach ($rows as $row) {
                 $currId = (string)$row->id;
-                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") $result["productIds"][] = $currId;
-                elseif ($row->data->type == "CATEGORY") {
+                if ($row->data->type == "ITEM" || $row->data->type == "VARYING_ITEM") {
+                    $result["productIds"][] = $currId;
+                    if (property_exists($row, 'externalId')) if ($row->externalId != null) {
+                        $result["externalCode"]['product'][] = $row->externalId;
+                        $result["isSet"][$row->externalId] = $currId;
+                    }
+
+                } elseif ($row->data->type == "CATEGORY") {
                     $result["categoryIds"][] = $currId;
                     $newPath = $path . "/" . $row->name;
+                    if (property_exists($row, 'externalId')) if ($row->externalId != null) $result["externalCode"]['category'][] = $row->externalId;
                     $this->findNodesUds($result, $currId, $newPath);
                 }
             }

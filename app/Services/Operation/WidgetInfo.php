@@ -6,9 +6,9 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\getData\getSetting;
-use App\Http\Controllers\mainURL;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Facades\Config;
 
 class WidgetInfo
 {
@@ -26,8 +26,7 @@ class WidgetInfo
         $this->msClient = new MsClient($this->settingVendorController->TokenMoySklad);
         $this->udsClient = new UdsClient($this->settingVendorController->companyId, $this->settingVendorController->TokenUDS);
 
-        $urlAll = new mainURL();
-        $urlCounterparty = $urlAll->url_ms() . "$entity/$objectId";
+        $urlCounterparty = Config::get("Global.entity") . "$entity/$objectId?expand=agent,positions.assortment" ;
         try {
             $BodyMC = $this->msClient->get($urlCounterparty);
         } catch (BadResponseException $e) {
@@ -35,36 +34,22 @@ class WidgetInfo
         }
 
         $externalCode = $BodyMC->externalCode;
-        $body_agentId = $this->msClient->get($BodyMC->agent->meta->href);
-        $agentId = $body_agentId;
+        $agentId = $BodyMC->agent;
 
 
         if ($this->setting->operationsAccrue == '0') {
             if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
                 $phone = $this->AgentMCPhone($agentId);
-                $agentId = [
-                    'externalCode' => $agentId->externalCode,
-                    'phone' => $phone,
-                    'dontPhone' => true,
-                ];
-            } else {
+                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => $phone, 'dontPhone' => true ];
+            }
+            else {
                 if (property_exists($agentId, 'phone')) {
                     $phone = $this->AgentMCPhone($agentId);
-                    if (mb_strlen($phone) > 14) {
-                        return [
-                            'StatusCode' => 'error',
-                            'message' => 'Некорректный номер телефона: ' . $agentId->phone,
-                        ];
-                    }
-                    $agentId = [
-                        'externalCode' => $agentId->externalCode,
-                        'phone' => $phone,
-                    ];
-                } else {
-                    return [
-                        'StatusCode' => 'error',
-                        'message' => 'Отсутствует номер телефона у данного контрагента',
-                    ];
+                    if (mb_strlen($phone) > 14) return [ 'StatusCode' => 'error', 'message' => 'Некорректный номер телефона: ' . $agentId->phone ];
+                    $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $phone,];
+                }
+                else {
+                    return ['StatusCode' => 'error', 'message' => 'Отсутствует номер телефона у данного контрагента'];
                 }
             }
         }
@@ -88,13 +73,13 @@ class WidgetInfo
 
         try {
             if (is_numeric($externalCode) && ctype_digit($externalCode) && $externalCode > 10000) {
-                try {
-                    $body = $this->udsClient->get("https://api.uds.app/partner/v2/goods-orders/" . $externalCode);
-                    $goods_orders = $this->goods_orders($body, $externalCode);
+                $body = $this->udsClient->newGET("https://api.uds.app/partner/v2/goods-orders/" . $externalCode);
+
+                if ($body->status) {
+                    $goods_orders = $this->goods_orders($body->data, $externalCode);
                     $StatusCode = 'orders';
                     $message = $goods_orders['message'];
-                } catch (BadResponseException) {
-
+                } else {
                     $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
                     $StatusCode = 'successfulOperation';
                     $message = $data['data'];
@@ -124,9 +109,8 @@ class WidgetInfo
             $phone = "+7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $bodyMC->phone)), -10);
         } else {
             if ((int)$bodyMC->externalCode > 1000) {
-                $UdsClient = new UdsClient($this->settingVendorController->companyId, $this->settingVendorController->TokenUDS);
-                $body = $UdsClient->get('https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode);
-                if ($body->phone != null) $phone = $body->phone;
+                $body = $this->udsClient->newGET('https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode);
+                if ($body->status) $phone = $body->phone;
             }
         }
         return $phone;
@@ -158,34 +142,21 @@ class WidgetInfo
 
     public function newPostOperations(mixed $externalCode, mixed $agentId, mixed $BodyMC): array
     {
-        try {
-            $body = $this->udsClient->get('https://api.uds.app/partner/v2/operations/' . $externalCode);
-        } catch (BadResponseException) {
-            return [
-                'status' => false,
-                'data' => null,
-            ];
-        }
+        $body = $this->udsClient->newGET('https://api.uds.app/partner/v2/operations/' . $externalCode);
+        if (!$body->status) return [ 'status' => false, 'data' => null ];
+        $body = $body->data;
 
         $points = 0;
         $BonusPoint = 0;
         if ($body->points < 0) $points = $body->points * -1;
-        else {
-            foreach ($BodyMC->attributes as $item){
-                if ($item->name == "Количество списанных баллов (UDS)") {
-                    $points = $item->value;
-                }
-
-                if ($item->name == "Количество начисленных баллов (UDS)") {
-                    $BonusPoint = $item->value;
-                }
-
-            }
+        else foreach ($BodyMC->attributes as $item){
+            if ($item->name == "Количество списанных баллов (UDS)") $points = $item->value;
+            if ($item->name == "Количество начисленных баллов (UDS)") $BonusPoint = $item->value;
         }
 
+
         $parts = explode("=", $BodyMC->externalCode);
-        if (count($parts) > 1) $result = end($parts);
-        else $result = 0;
+        if (count($parts) > 1) $result = end($parts); else $result = 0;
 
         $total = $body->total - $result;
 
@@ -212,9 +183,15 @@ class WidgetInfo
         $info_total_and_SkipLoyaltyTotal = $this->TotalAndSkipLoyaltyTotal($BodyMC);
         if ($this->setting->operationsAccrue == '0') {
             $infoCustomers = $this->AgentMCID($agentId);
-            $availablePoints = $infoCustomers->participant->points;
-            $uid = $infoCustomers->uid;
-            $phone = $agentId['phone'];
+            if ($infoCustomers  === null) {
+                $availablePoints = null;
+                $uid = null;
+                $phone = null;
+            } else {
+                $availablePoints = $infoCustomers->participant->points;
+                $uid = $infoCustomers->uid;
+                $phone = $agentId['phone'];
+            }
         } else {
             $availablePoints = null;
             $uid = null;
@@ -224,8 +201,7 @@ class WidgetInfo
 
         $operationsAccrue = (int) $this->setting->operationsAccrue ?? 0;
         $operationsCancellation = (int) $this->setting->operationsCancellation?? 0;
-
-        $data = [
+        return [
             'total' => $info_total_and_SkipLoyaltyTotal['total'],
             'SkipLoyaltyTotal' => $info_total_and_SkipLoyaltyTotal['SkipLoyaltyTotal'],
             'availablePoints' => $availablePoints,
@@ -235,8 +211,6 @@ class WidgetInfo
             'operationsAccrue' => $operationsAccrue,
             'operationsCancellation' => $operationsCancellation,
         ];
-
-        return $data;
     }
 
     public function Calc($body, $agentId)
@@ -280,18 +254,20 @@ class WidgetInfo
 
     private function TotalAndSkipLoyaltyTotal(mixed $bodyOrder): array
     {
+
+        //dd($bodyOrder);
+
         $sum = $bodyOrder->sum / 100;
         $SkipLoyaltyTotal = 0;
-        $href = $bodyOrder->positions->meta->href;
-        $BodyPositions = $this->msClient->get($href)->rows;
-        //ВОЗМОЖНОСТЬ СДЕЛАТЬ КОСТОМНЫЕ НАЧИСЛЕНИЕ
+        $BodyPositions = $bodyOrder->positions->rows;
+
         foreach ($BodyPositions as $item) {
-            $body =  $this->msClient->get($item->assortment->meta->href);
+            $body = $item->assortment;
             $BonusProgramm = false;
 
             if (property_exists($body, 'attributes')) {
                 foreach ($body->attributes as $body_item) {
-                    if ('Не применять бонусную программу (UDS)' == $body_item->name) { $BonusProgramm = $body_item->value; }
+                    if ('Не применять бонусную программу (UDS)' == $body_item->name) $BonusProgramm = $body_item->value;
 
                     if ('Процент начисления (UDS)' == $body_item->name) {
                         $minPrice = 0;
@@ -325,13 +301,23 @@ class WidgetInfo
 
         if (is_numeric($AgentForPhoneAndCode['externalCode']) && ctype_digit($AgentForPhoneAndCode['externalCode']) && $AgentForPhoneAndCode['externalCode'] > 10000) {
             $url_UDS = 'https://api.uds.app/partner/v2/customers/' . $AgentForPhoneAndCode['externalCode'];
-            return $this->udsClient->get($url_UDS);
+            $body = $this->udsClient->newGET($url_UDS);
+            if ($body->status) return $body->data->user;
+            else {
+                $e164PhoneNumber = str_replace('+', '', $AgentForPhoneAndCode['phone']); // Удаляем символ "+"
+                $urlEncodedPhoneNumber = urlencode('%2b' . $e164PhoneNumber);
+                $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $urlEncodedPhoneNumber;
+                $body = $this->udsClient->newGET($url);
+                if ($body->status) return $body->data->user;
+                else return null;
+            }
         } else {
-            $phone = urlencode('+' .$AgentForPhoneAndCode['phone']);
-            $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $phone;
-            try {
-                return $this->udsClient->get($url)->user;
-            } catch (BadResponseException) {return null;}
+            $e164PhoneNumber = str_replace('+', '', $AgentForPhoneAndCode['phone']); // Удаляем символ "+"
+            $urlEncodedPhoneNumber = urlencode('%2b' . $e164PhoneNumber);
+            $url = 'https://api.uds.app/partner/v2/customers/find?phone=' . $urlEncodedPhoneNumber;
+            $body = $this->udsClient->newGET($url);
+            if ($body->status) return $body->data->user;
+            else return null;
         }
 
     }

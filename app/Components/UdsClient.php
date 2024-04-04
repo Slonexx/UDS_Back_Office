@@ -140,6 +140,21 @@ class UdsClient {
         }
     }
 
+    public function newPUT($url, mixed $body): object
+    {
+        try {
+            $res = $this->client->put($url,[
+                    "Accept" => "application/json",
+                    "X-Origin-Request-Id" => Str::uuid(),
+                    "X-Timestamp" => ( new DateTime() )->format(DateTimeInterface::ATOM),
+                    'json' => $body,
+                ]
+            );
+            return  $this->ResponseHandler($res);
+        } catch (BadResponseException $e) {
+            return $this->ResponseHandlerField($e);
+        }
+    }
 
     public function checkingSetting(): object
     {
@@ -176,4 +191,6 @@ class UdsClient {
             'data' => json_decode($e->getResponse()->getBody()->getContents()),
         ];
     }
+
+
 }

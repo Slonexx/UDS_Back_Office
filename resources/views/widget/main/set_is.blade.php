@@ -1,5 +1,8 @@
 <script>
-    function PointMax(max) { maxPoint.innerText = max.toString(); }
+    function PointMax(max) {
+        let point = max.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$& ');
+        maxPoint.innerText = point.toString();
+    }
 
     document.getElementById("QRCodePoint").addEventListener("change", function () {
         let v = parseInt(this.value);

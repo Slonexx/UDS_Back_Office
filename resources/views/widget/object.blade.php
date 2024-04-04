@@ -288,10 +288,7 @@
             };
 
             let settings = ajax_settings(url + 'Completes/Order/operationsCalc', "GET", data);
-            console.log('info operations request settings  ↓ ')
-            console.log(settings)
             $.ajax(settings).done(function (response) {
-                console.log('info operations request response  ↓ ')
                 console.log(response)
                 if (typeof response.Status != 'undefined') {
                     document.getElementById("undefined").style.display = "none"
@@ -302,11 +299,16 @@
                     operations_cash = response.cash;
                     operations_total = response.total;
                     operations_skipLoyaltyTotal = response.skipLoyaltyTotal;
-
                     cashBack = response.cashBack;
-                    document.getElementById("total").innerText = operations_total
-                    document.getElementById("cashBackOperation").innerText = cashBack
-                    document.getElementById("availablePoints").innerText = availablePoints
+                    let formattedCashBack = cashBack.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$& ');
+                    let formattedOperations_total = operations_total.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$& ');
+                    let formattedAvailablePoints = availablePoints.toFixed(1).replace(/\d(?=(\d{3})+\.)/g, '$& ');
+
+
+                    document.getElementById("total").innerText = formattedOperations_total
+
+                    document.getElementById("cashBackOperation").innerText = formattedCashBack;
+                    document.getElementById("availablePoints").innerText = formattedAvailablePoints
 
 
                     operations_Max_points = response.maxPoints
@@ -321,9 +323,8 @@
             window.document.getElementById('buttonOperations').style.display = 'none'
             window.document.getElementById('outLoud').style.display = 'block'
 
-            if (parseFloat(operations_points) > 0) {
-                operations_cash = operations_cash - operations_points
-            }
+            if (parseFloat(operations_points) > 0) operations_cash = operations_cash - operations_points
+
             let data = {
                 accountId: accountId,
                 objectId: GlobalobjectId,
@@ -340,13 +341,7 @@
             };
 
             let settings = ajax_settings(url + 'Completes/Order/operations/', "GET", data);
-            console.log('send operations parameters  ↓ ')
-            console.log(settings)
-
             $.ajax(settings).done(function (response) {
-                console.log('send operations response  ↓ ')
-                console.log(response)
-
                 if (response.status) {
                     document.getElementById("sendWarning").style.display = "block";
                     document.getElementById("buttonOperations").style.display = "none";

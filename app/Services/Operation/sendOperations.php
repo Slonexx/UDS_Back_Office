@@ -24,12 +24,10 @@ class sendOperations
             $data['phone'] = null;
         }
 
-        if ($data['receipt_points'] == "undefined") {
-            $data['receipt_points'] = '0';
-        }
-        if ($data['receipt_skipLoyaltyTotal'] == "undefined" || $data['receipt_skipLoyaltyTotal'] == "0") {
-            $data['receipt_skipLoyaltyTotal'] = null;
-        }
+        if ($data['receipt_points'] == "undefined") $data['receipt_points'] = '0';
+
+        if ($data['receipt_skipLoyaltyTotal'] == "undefined" || $data['receipt_skipLoyaltyTotal'] == "0") $data['receipt_skipLoyaltyTotal'] = null;
+
 
         $url = 'https://api.uds.app/partner/v2/operations';
         $Setting = new getSettingVendorController($data['accountId']);
@@ -64,11 +62,9 @@ class sendOperations
 
         try {
             $post = json_decode(json_encode($Client->postHttp_errorsNo($url, $body)), true);
-        } catch (BadResponseException $e) {
-            return [
-                'status' => false,
-                'message' => $e->getResponse()->getBody()->getContents(),
-            ];
+        }
+        catch (BadResponseException $e) {
+            return [ 'status' => false, 'message' => $e->getResponse()->getBody()->getContents() ];
         }
         if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
 
@@ -81,7 +77,7 @@ class sendOperations
         $post = json_decode(json_encode($post));
 
         $ClientMC = new MsClient($Setting->TokenMoySklad);
-        $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId']);
+        $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'].'?expand=positions.assortment');
 
         $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
         $setAttributes = $this->Attributes($data, $post, $Setting);
@@ -98,9 +94,13 @@ class sendOperations
 
         //dd($putBodyEntity);
 
-        $putBody = $ClientMC->put('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'],$putBodyEntity );
-        if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
-        $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+        $putBody = $ClientMC->newPUT('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], $putBodyEntity );
+        if ($putBody->status) {
+            $putBody = $putBody->data;
+            if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
+            $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+        }
+
 
         return [
             'status' => true,
@@ -115,8 +115,7 @@ class sendOperations
     public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting): array
     {
         $Positions = [];
-        $ClientMCPositions = new ClientMC($OldBody->positions->meta->href, $Setting->TokenMoySklad);
-        $OldPositions = $ClientMCPositions->requestGet()->rows;
+        $OldPositions = $OldBody->positions;
 
         $sumMC = $OldBody->sum - $postUDS->points * 100;
         $pointsPercent = $sumMC > 0 ? ($postUDS->points * 100) / ($OldBody->sum) * 100 : 0;
@@ -136,11 +135,14 @@ class sendOperations
         return $Positions;
     }
 
-    public function Attributes($data, $postUDS, $Setting): array
+    public function Attributes($data, $postUDS, $Setting): ?array
     {
         $url = 'https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/metadata/attributes';
-        $Client = new ClientMC($url, $Setting->TokenMoySklad);
-        $metadata = $Client->requestGet()->rows;
+
+        $Client = new MsClient($Setting->TokenMoySklad);
+        $metadata = $Client->newGet($url);
+        if ($metadata->status) $metadata = $metadata->data->rows;
+        else return null;
         $Attributes = [];
 
         foreach ($metadata as $item) {
@@ -198,11 +200,8 @@ class sendOperations
             $Store = $bodyStore[0]->id;
             $bodyAttributes = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows;
 
-            foreach ($OldBody->attributes as $item) {
-                $attributesValue[$item->name] = [
-                    'value' => $item->value,
-                ];
-            }
+            foreach ($OldBody->attributes as $item) $attributesValue[$item->name] = ['value' => $item->value];
+
             foreach ($bodyAttributes as $item) {
                 $attributeValue = $attributesValue[$item->name]['value'];
                 $attributes[] = [

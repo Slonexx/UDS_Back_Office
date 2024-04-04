@@ -25,7 +25,7 @@ class applicationCreatingProductForUDS
     }
 
 
-    public function createProductUds(mixed $product): ?object
+    public function createProductUds(mixed $product)//: ?object
     {
         $body = null;
 
@@ -42,20 +42,11 @@ class applicationCreatingProductForUDS
 
         if (isset($body['data']['price']))
         if ($body['data']['price'] == 0) return null;
+        $body['externalId'] = $product->id;
 
- $body['externalId'] = $product->id;
-
-
-
-        try {
-            $createdProduct = $this->udsClient->newPOST("https://api.uds.app/partner/v2/goods", $body);
-            if ($createdProduct->status) if ($createdProduct->data != null) $this->updateProduct($createdProduct, $product);
-
-
-            return $createdProduct;
-        } catch (BadResponseException $e) {
-            return null;
-        }
+        $createdProduct = $this->udsClient->newPOST("https://api.uds.app/partner/v2/goods", $body);
+        if ($createdProduct->status) if ($createdProduct->data != null) $this->updateProduct($createdProduct, $product);
+        else   dd($createdProduct, $body); //return null;
     }
 
     private function prepareVaryingItemBody($product): ?array

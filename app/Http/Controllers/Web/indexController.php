@@ -3,26 +3,23 @@
 namespace App\Http\Controllers\Web;
 
 use App\Components\MsClient;
-use App\Components\UdsClient;
-use App\Http\Controllers\BD\getMainSettingBD;
 use App\Http\Controllers\BD\newProductSettingBD;
-use App\Http\Controllers\Config\getSettingVendorController;
 use App\Http\Controllers\Config\Lib\VendorApiController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\mainURL;
 use App\Services\newProductService\createProductForUDS;
+use App\Services\newProductService\updateProductForUDS;
 use App\Services\Settings\SettingsService;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use JetBrains\PhpStorm\NoReturn;
 
 class indexController extends Controller
 {
 
-    public function index(Request $request): View|Factory|Application|\Illuminate\Http\RedirectResponse
+    public function index(Request $request): View|Factory|Application|RedirectResponse
     {
         $contextKey = $request->contextKey;
         if ($contextKey == null) {
@@ -102,7 +99,7 @@ class indexController extends Controller
     public function ObjectEdit(Request $request): Factory|View|Application
     {
         try {
-            /*$contextKey = $request->contextKey;
+            $contextKey = $request->contextKey;
             try {
                 $vendorAPI = new VendorApiController();
                 $employee = $vendorAPI->context($contextKey);
@@ -113,16 +110,16 @@ class indexController extends Controller
                     'code' => 400,
                     'message' => "Ошибка получения контекста приложения! Обновите страницу (F5)",
                 ]);
-            }*/
+            }
 
             return view('widget.object', [
-               /* 'accountId' => $accountId,
+                'accountId' => $accountId,
                 'cashier_id' => $employee->id,
-                'cashier_name' => $employee->name,*/
+                'cashier_name' => $employee->name,
 
-                'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
-                'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
-                'cashier_name' => "Сергей",
+                //'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+                //'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
+                //'cashier_name' => "Сергей",
             ]);
 
         } catch (BadResponseException $e) {
@@ -139,7 +136,7 @@ class indexController extends Controller
             return view('widget.Error', [
                 'status' => false,
                 'code' => 400,
-                'message' => $message,
+                'message' => $message ?? $e->getMessage(),
             ]);
         }
     }
@@ -157,7 +154,7 @@ class indexController extends Controller
     public function SalesreturnEdit(Request $request): View|Factory|Application
     {
         try {
-           /* $contextKey = $request->contextKey;
+            $contextKey = $request->contextKey;
             try {
                 $vendorAPI = new VendorApiController();
                 $employee = $vendorAPI->context($contextKey);
@@ -168,15 +165,15 @@ class indexController extends Controller
                     'code' => 400,
                     'message' => "Ошибка получения контекста приложения! Обновите страницу (F5)",
                 ]);
-            }*/
+            }
             return view('widgets.Salesreturn', [
-               /* 'accountId' => $accountId,
+                'accountId' => $accountId,
                 'cashier_id' => $employee->id,
-                'cashier_name' => $employee->name,*/
+                'cashier_name' => $employee->name,
 
-                 'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
+               /*  'accountId' => "1dd5bd55-d141-11ec-0a80-055600047495",
                  'cashier_id' => "5f3023e9-05b3-11ee-0a80-06f20001197a",
-                 'cashier_name' => "Сергей",
+                 'cashier_name' => "Сергей",*/
             ]);
         } catch (BadResponseException $e) {
 
@@ -192,7 +189,7 @@ class indexController extends Controller
             return view('widget.Error', [
                 'status' => false,
                 'code' => 400,
-                'message' => $message,
+                'message' => $message ?? $e->getMessage(),
             ]);
         }
 
@@ -213,7 +210,7 @@ class indexController extends Controller
                     dd($body);
                 }
 
-            } catch (BadResponseException $e) {
+            } catch (BadResponseException) {
                 continue;
             }
 
@@ -224,7 +221,9 @@ class indexController extends Controller
     function time(Request $request, $accountId)
     {
 
-        set_time_limit(3000);
+        $data = $request->all();
+
+        set_time_limit(30000);
         /*$setting = new getSettingVendorController($accountId);
         $ms = new MsClient($setting->TokenMoySklad);
         $counterparty = $ms->get('https://api.moysklad.ru/api/remap/1.2/entity/counterparty')->rows;
@@ -238,10 +237,10 @@ class indexController extends Controller
         }*/
 
         $item = new newProductSettingBD($accountId);
-        $mainSetting = new getMainSettingBD($item->accountId);
+        /*$mainSetting = new getMainSettingBD($item->accountId);
 
         $ClientCheckMC = new MsClient($mainSetting->tokenMs);
-        $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);
+        $ClientCheckUDS = new UdsClient($mainSetting->companyId, $mainSetting->TokenUDS);*/
 
         $data = [
             'accountId' => $item->accountId,
@@ -257,7 +256,7 @@ class indexController extends Controller
             $record->countRound = $item->countRound + 1;
             $record->save();*/
 
-            $create = new createProductForUDS($data);
+            $create = new updateProductForUDS($data);
             $create->initialization();
         }
 

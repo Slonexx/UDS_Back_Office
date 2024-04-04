@@ -8,6 +8,7 @@ use DateTime;
 use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
 
@@ -45,8 +46,7 @@ class ImgService
 
                     $responseImageUDS = $this->setUrlToUds($imageType, $companyId, $password);
                     if($responseImageUDS['code'] == 200) {
-                        $imgIds[] = $responseImageUDS['result']->imageId;
-                        $this->setImageToUds($imageType, $responseImageUDS['result']->url, $imgHref, $apiKeyMs);
+                        if ($this->setImageToUds($imageType, $responseImageUDS['result']->url, $imgHref, $apiKeyMs)) $imgIds[] = $responseImageUDS['result']->imageId;
                     }
                     else continue;
                 }
@@ -100,7 +100,7 @@ class ImgService
     /**
      * @throws GuzzleException
      */
-    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): void
+    private function setImageToUds($imgType, $url, $imageHref, $apiKeyMs): bool
     {
         $clientMs = new Client([
             'headers' => [
@@ -115,9 +115,24 @@ class ImgService
         $image = $res->getBody()->getContents();
 
         if($statusCode == 200){
-            $clientUds = new Client();
-            $clientUds->put($url, ['json' => json_decode($image), 'http_errors' => false]);
-        }
+            $client = new Client();
+
+            try {
+                $response = $client->put($url, [
+                    'headers' => [
+                        'Content-Type' => $imgType,
+                    ],
+                    'body' => $image,
+                    'http_errors' => false
+                ]);
+
+                $response->getBody()->getContents();
+                return true;
+            } catch (ClientException ) {
+                return false;
+            }
+        } else return false;
+
     }
 
     private function setUrlToUds($imgType, $companyId, $apiKey): array
