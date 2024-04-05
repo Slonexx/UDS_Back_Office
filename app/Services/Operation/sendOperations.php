@@ -119,7 +119,7 @@ class sendOperations
 
         $sumMC = $OldBody->sum - $postUDS->points * 100;
         $pointsPercent = $sumMC > 0 ? ($postUDS->points * 100) / ($OldBody->sum) * 100 : 0;
-        //dd($OldPositions);
+        //dd($OldPositions, $pointsPercent);
         foreach ($OldPositions as $item) {
             $Positions[] = [
                 'id' => $item->id,
@@ -129,7 +129,7 @@ class sendOperations
                 'discount' => $pointsPercent,
                 'vat' => $item->vat,
                 'vatEnabled' => $item->vatEnabled,
-                'assortment' => $item->assortment,
+                'assortment' => $item->assortment->meta,
                 'reserve' => 0,
             ];
         }
