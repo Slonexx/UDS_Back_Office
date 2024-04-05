@@ -80,7 +80,7 @@ class sendOperations
         $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'].'?expand=positions.assortment');
 
         $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $receipt_points);
-        $setAttributes = $this->Attributes($data, $post, $Setting);
+        $setAttributes = $this->Attributes($data, $post, $Setting, $receipt_points);
 
         $OldBody->externalCode = $post->id;
         $putBodyEntity = [
@@ -138,7 +138,7 @@ class sendOperations
         return $Positions;
     }
 
-    public function Attributes($data, $postUDS, $Setting): ?array
+    public function Attributes($data, $postUDS, $Setting, $receipt_points): ?array
     {
         $url = 'https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/metadata/attributes';
 
@@ -158,7 +158,8 @@ class sendOperations
                     ],
                     'value' => true,
                 ];
-            } elseif ($item->name == "Начисление баллов (UDS)" && $postUDS->cash > 0) {
+            }
+            elseif ($item->name == "Начисление баллов (UDS)" && $postUDS->cash > 0) {
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,
@@ -167,16 +168,22 @@ class sendOperations
                     ],
                     'value' => true,
                 ];
-            } elseif ($item->name == "Количество списанных баллов (UDS)"){
+            }
+            elseif ($item->name == "Количество списанных баллов (UDS)"){
+                $point = 0;
+                if ($postUDS->points > 0) $point = $receipt_points;
+                else $point = $postUDS->points;
+
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,
                         'type' => $item->meta->type,
                         'mediaType' => $item->meta->mediaType,
                     ],
-                    'value' => (float) $postUDS->points,
+                    'value' => (float) $point,
                 ];
-            }elseif ($item->name == "Количество начисленных баллов (UDS)"){
+            }
+            elseif ($item->name == "Количество начисленных баллов (UDS)"){
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,
