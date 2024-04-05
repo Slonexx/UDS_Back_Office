@@ -13,5 +13,6 @@
         document.getElementById("Error402").style.display = "none"
         document.getElementById("sendQRErrorID").style.display = "none"
         document.getElementById("errorMessage").style.display = "none"
+        document.getElementById("outLoud_message").style.display = "none"
     }
 </script>

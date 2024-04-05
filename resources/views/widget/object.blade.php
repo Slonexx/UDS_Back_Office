@@ -230,7 +230,7 @@
     @include('widget.main.isOrder')
     @include('widget.main.isBonusSystem')
 
-    @include('widget.main.loading_widget')
+
     <script>
 
         function onchangeQR() {
@@ -359,5 +359,5 @@
 
 
     </script>
-
+    @include('widget.main.loading_widget')
 @endsection

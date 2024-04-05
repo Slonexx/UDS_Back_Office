@@ -115,10 +115,11 @@ class sendOperations
     public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting): array
     {
         $Positions = [];
-        $OldPositions = $OldBody->positions;
+        $OldPositions = $OldBody->positions->rows;
 
         $sumMC = $OldBody->sum - $postUDS->points * 100;
         $pointsPercent = $sumMC > 0 ? ($postUDS->points * 100) / ($OldBody->sum) * 100 : 0;
+        //dd($OldPositions);
         foreach ($OldPositions as $item) {
             $Positions[] = [
                 'id' => $item->id,
