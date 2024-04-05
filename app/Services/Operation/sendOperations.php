@@ -79,7 +79,7 @@ class sendOperations
         $ClientMC = new MsClient($Setting->TokenMoySklad);
         $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'].'?expand=positions.assortment');
 
-        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $Setting);
+        $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $receipt_points);
         $setAttributes = $this->Attributes($data, $post, $Setting);
 
         $OldBody->externalCode = $post->id;
@@ -112,14 +112,16 @@ class sendOperations
         ];
     }
 
-    public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $Setting): array
+    public function Positions($postUDS, $skipLoyaltyTotal, $OldBody, $receipt_points): array
     {
         $Positions = [];
         $OldPositions = $OldBody->positions->rows;
+        if ($postUDS->points > 0) $points = $postUDS->points;
+        else $points = $receipt_points;
 
-        $sumMC = $OldBody->sum - $postUDS->points * 100;
-        $pointsPercent = $sumMC > 0 ? ($postUDS->points * 100) / ($OldBody->sum) * 100 : 0;
-        //dd($OldPositions, $pointsPercent);
+
+        $sumMC = $OldBody->sum - $points * 100;
+        $pointsPercent = $sumMC > 0 ? ($points * 100) / ($OldBody->sum) * 100 : 0;
         foreach ($OldPositions as $item) {
             $Positions[] = [
                 'id' => $item->id,
