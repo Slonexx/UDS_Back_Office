@@ -131,7 +131,7 @@ class sendOperations
                 'discount' => $pointsPercent,
                 'vat' => $item->vat,
                 'vatEnabled' => $item->vatEnabled,
-                'assortment' => $item->assortment->meta,
+                'assortment' => ['meta'=> $item->assortment->meta,],
                 'reserve' => 0,
             ];
         }
