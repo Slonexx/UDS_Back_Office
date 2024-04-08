@@ -302,7 +302,7 @@ class WidgetInfo
         if (is_numeric($AgentForPhoneAndCode['externalCode']) && ctype_digit($AgentForPhoneAndCode['externalCode']) && $AgentForPhoneAndCode['externalCode'] > 10000) {
             $url_UDS = 'https://api.uds.app/partner/v2/customers/' . $AgentForPhoneAndCode['externalCode'];
             $body = $this->udsClient->newGET($url_UDS);
-            if ($body->status) return $body->data->user;
+            if ($body->status) return $body->data;
             else {
                 $e164PhoneNumber = str_replace('+', '', $AgentForPhoneAndCode['phone']); // Удаляем символ "+"
                 $urlEncodedPhoneNumber = urlencode('%2b' . $e164PhoneNumber);
