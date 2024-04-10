@@ -54,9 +54,9 @@ class OperationsCalc
                 }
                 return $postBody->purchase;
             } else {
-                return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody];
+                return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody, 'body' => $body];
             }
-        } else  return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody];
+        } else  return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody, 'body' => $body];
 
     }
 
