@@ -35,7 +35,7 @@ class OperationsCalc
             'receipt' => [
                 'total' => $data['total'],
                 'points' => $data['points'],
-                'skipLoyaltyTotal' => $data['SkipLoyaltyTotal'],
+                'skipLoyaltyTotal' => round($data['SkipLoyaltyTotal'], 2),
                 'unredeemableTotal' => $unredeemableTotal,
             ],
         ];
