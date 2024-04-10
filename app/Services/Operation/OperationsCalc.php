@@ -40,9 +40,9 @@ class OperationsCalc
             ],
         ];
 
-        if ($body['receipt']['unredeemableTotal'] == null) {
-            unset($body['receipt']['unredeemableTotal']);
-        }
+        if ($body['receipt']['unredeemableTotal'] == null) unset($body['receipt']['unredeemableTotal']);
+        if ($body['receipt']['skipLoyaltyTotal'] <= 0) $body['receipt']['skipLoyaltyTotal'] = null;
+
         //dd($body);
         $postBody = $Client->newPOST('https://api.uds.app/partner/v2/operations/calc', $body);
 
