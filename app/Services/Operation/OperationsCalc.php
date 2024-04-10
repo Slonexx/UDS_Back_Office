@@ -44,17 +44,20 @@ class OperationsCalc
             unset($body['receipt']['unredeemableTotal']);
         }
         //dd($body);
-        $postBody = $Client->post('https://api.uds.app/partner/v2/operations/calc', $body);
+        $postBody = $Client->newPOST('https://api.uds.app/partner/v2/operations/calc', $body);
 
-        if (property_exists($postBody, 'purchase')) {
-            if ($SettingBD->customOperation == 1) {
-                $postBody->purchase->cashBack = $this->customOperation($ClientMS, $data['entity_type'], $data['object_Id'], 'accrue');
-                $postBody->purchase->maxPoints = $this->customOperation($ClientMS, $data['entity_type'], $data['object_Id'], 'cancellation');
+        if ($postBody->status) { $postBody = $postBody->data;
+            if (property_exists($postBody, 'purchase')) {
+                if ($SettingBD->customOperation == 1) {
+                    $postBody->purchase->cashBack = $this->customOperation($ClientMS, $data['entity_type'], $data['object_Id'], 'accrue');
+                    $postBody->purchase->maxPoints = $this->customOperation($ClientMS, $data['entity_type'], $data['object_Id'], 'cancellation');
+                }
+                return $postBody->purchase;
+            } else {
+                return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody];
             }
-            return $postBody->purchase;
-        } else {
-            return ['Status' => "", 'Message' => "Ошибка попробуйте позже"];
-        }
+        } else  return ['Status' => "", 'Message' => "Ошибка попробуйте позже", 'data' => $postBody];
+
     }
 
     private function unredeemableTotal(MsClient $ClientMS, mixed $entity_type, mixed $object_Id)
