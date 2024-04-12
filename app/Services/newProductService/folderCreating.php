@@ -45,6 +45,8 @@ class folderCreating
             else return strcmp($a->pathName, $b->pathName);
         });
 
+        //dd($arrProductFolders);
+
 
         foreach ($arrProductFolders as $item) {
             //$this->msClient->newPUT("https://api.moysklad.ru/api/remap/1.2/entity/productfolder/" .  $item->id, ["externalCode" => Str::uuid()->toString()]);
@@ -64,7 +66,8 @@ class folderCreating
         }
     }
 
-    private function processCategory($item, $nameCategory, $idCategory){
+    private function processCategory($item, $nameCategory, $idCategory): void
+    {
         if (property_exists($item, 'productFolder')) {
             $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
             //Проверка на ветку
@@ -73,7 +76,7 @@ class folderCreating
                 if ($getCategory->status === false) {
 
                     if ($getCategory->code === 404) {
-                        $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->externalCode, '');
+                        $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->id, '');
                         $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
                         $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);
                     }

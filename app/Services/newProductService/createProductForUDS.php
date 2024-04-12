@@ -34,7 +34,7 @@ class createProductForUDS
         $find = ProductFoldersByAccountID::getInformation($this->setting->accountId);
         $baseUDS = $this->getUdsCheck();
 
-        //dd($baseUDS);
+        //dd($baseUDS, $find);
 
         if ($find->toArray == null) return ["message" => "Отсутствуют настройки папок"];
         foreach ($find->toArray as $itemFolderModel) {
@@ -44,6 +44,7 @@ class createProductForUDS
             (new folderCreating($this->msClient, $this->udsClient))->addCategoriesToUds($folderName);
             $productsMs = $this->getMs($folderName);
 
+            //dd($productsMs);
             foreach ($productsMs->rows as $item) {
                 $is_create = $this->shouldCreateProductForCheck($item, $baseUDS);
                 if ($is_create === false) continue;
