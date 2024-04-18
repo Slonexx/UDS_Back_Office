@@ -110,6 +110,7 @@ class WidgetInfo
         } else {
             if ((int)$bodyMC->externalCode > 1000) {
                 $body = $this->udsClient->newGET('https://api.uds.app/partner/v2/customers/' . $bodyMC->externalCode);
+                //dd($body);
                 if ($body->status) $phone = $body->phone;
             }
         }
