@@ -53,7 +53,7 @@ class MsClient{
     {
         try {
             return  $this->ResponseHandler($this->client->get($url));
-        } catch (GuzzleException $e) {
+        } catch (BadResponseException $e) {
             return $this->ResponseHandlerField($e);
         }
     }
@@ -61,7 +61,7 @@ class MsClient{
     public function newPUT($url, $body){
         try {
             return  $this->ResponseHandler($this->client->put($url, ['json'=> $body]));
-        } catch (GuzzleException $e) {
+        } catch (BadResponseException $e) {
             return $this->ResponseHandlerField($e);
         }
     }

@@ -38,7 +38,6 @@ class applicationCreatingProductForUDS
 
         $this->processProductDetails($product, $body);
 
-        //dd($body);
 
         if (isset($body['data']['price']))
         if ($body['data']['price'] == 0) return null;
@@ -46,7 +45,7 @@ class applicationCreatingProductForUDS
 
         $createdProduct = $this->udsClient->newPOST("https://api.uds.app/partner/v2/goods", $body);
         if ($createdProduct->status) if ($createdProduct->data != null) $this->updateProduct($createdProduct, $product);
-        else   dd($createdProduct, $body); //return null;
+        else return null;//dd($createdProduct);//return null;
     }
 
     private function prepareVaryingItemBody($product): ?array
@@ -92,6 +91,10 @@ class applicationCreatingProductForUDS
             "data" => [
                 "type" => "ITEM",
                 "price" => $prices["salePrice"],
+                'offer' => [
+                    'offerPrice' => null,
+                    'skipLoyalty' => false,
+                ],
                 "measurement" => $nameOumUds,
                 "inventory" => ['inStock' => 0],
                 "description" => $description,
@@ -99,6 +102,10 @@ class applicationCreatingProductForUDS
                 "vatCode" => $vatCode,
             ],
         ];
+
+        if (isset($prices['offerPrice']))
+        if ($prices['offerPrice'] > 0 and $prices['salePrice'] > $prices['offerPrice']) $body['data']['offer']['offerPrice'] = $prices['offerPrice'];
+
 
         $inStock = $this->msClient->get("https://api.moysklad.ru/api/remap/1.2/report/stock/all?filter=store=https://api.moysklad.ru/api/remap/1.2/entity/store/" . $this->setting->Store . ";search=" . $product->name)->rows;
         if ($inStock) {
@@ -195,12 +202,6 @@ class applicationCreatingProductForUDS
 
         if ($isFractionProduct && ($nameOumUds == "KILOGRAM" || $nameOumUds == "LITRE" || $nameOumUds == "METRE")) return;
 
-
-        if (isset($prices['offerPrice'])) {
-            if ($isOfferProduct && ($prices['offerPrice'] <= 0 || $prices['offerPrice'] > $prices['salePrice'])) {
-                return;
-            }
-        }
 
         foreach ($product->attributes as $attribute) {
             if ($attribute->name == "Акционный товар (UDS)" && $attribute->value == 1) {

@@ -84,7 +84,7 @@ class folderCreating
                 else $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);// раб
             } //если нет, то создаем ветку и под ветку
             else {
-                $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->externalCode, '');
+                $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->externalCode);
                 $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
                 $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);
             }

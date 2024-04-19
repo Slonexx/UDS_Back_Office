@@ -21,6 +21,7 @@ class UdsClient {
                 'Authorization' => ['Basic '. base64_encode($companyId.':'.$apiKey)],
                 "Accept-Charset" => "utf-8",
                 'Content-Type' => 'application/json',
+                'verify' => false
             ]
         ]);
     }
@@ -52,6 +53,7 @@ class UdsClient {
                 "X-Origin-Request-Id" => $uuid_v4,
                 "X-Timestamp" => $date->format(DateTimeInterface::ATOM),
                 'http_errors' => false,
+
                 ]
         );
         return json_decode($res->getStatusCode());
@@ -116,6 +118,7 @@ class UdsClient {
                     "Accept" => "application/json",
                     "X-Origin-Request-Id" => Str::uuid(),
                     "X-Timestamp" => ( new DateTime() )->format(DateTimeInterface::ATOM),
+                    'verify' => false
                 ]
             );
             return  $this->ResponseHandler($res);
@@ -132,6 +135,7 @@ class UdsClient {
                     "X-Origin-Request-Id" => Str::uuid(),
                     "X-Timestamp" => ( new DateTime() )->format(DateTimeInterface::ATOM),
                     'json' => $body,
+                    'verify' => false
                 ]
             );
             return  $this->ResponseHandler($res);
@@ -148,6 +152,7 @@ class UdsClient {
                     "X-Origin-Request-Id" => Str::uuid(),
                     "X-Timestamp" => ( new DateTime() )->format(DateTimeInterface::ATOM),
                     'json' => $body,
+                    'verify' => false
                 ]
             );
             return  $this->ResponseHandler($res);
@@ -163,6 +168,7 @@ class UdsClient {
                     "Accept" => "application/json",
                     "X-Origin-Request-Id" => Str::uuid(),
                     "X-Timestamp" => ( new DateTime() )->format(DateTimeInterface::ATOM),
+                    'verify' => false
                 ]
             );
             return  $this->ResponseHandler($res);
