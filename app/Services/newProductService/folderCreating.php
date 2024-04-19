@@ -89,7 +89,28 @@ class folderCreating
                 $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);
             }
         }
-        else $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory);
+        else {
+            $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
+            //Проверка на ветку
+            if (preg_match('/^[0-9]+$/', $idNodeCategory->externalCode)) {
+                $getCategory = $this->udsClient->newGET('https://api.uds.app/partner/v2/goods/' . $idNodeCategory->externalCode);
+                if ($getCategory->status === false) {
+
+                    if ($getCategory->code === 404) {
+                        $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->id, '');
+                        $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
+                        $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);
+                    }
+                }
+                else $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);// раб
+            } //если нет, то создаем ветку и под ветку
+            else {
+                $this->createCategoryUdsAndUpdateProductFolderForMS($idNodeCategory->name, $idNodeCategory->externalCode);
+                $idNodeCategory = $this->msClient->get($item->productFolder->meta->href);
+                $this->createCategoryUdsAndUpdateProductFolderForMS($nameCategory, $idCategory, $idNodeCategory->externalCode);
+            }
+
+        }
     }
 
 
