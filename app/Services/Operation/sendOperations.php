@@ -59,6 +59,8 @@ class sendOperations
 
         if ($receipt_points > 0 ) $body['participant']['uid'] = null;
 
+        if ($data['accountId'] == '56212bce-5204-11ee-0a80-08370000a2b2' and $data['objectId'] == '16cee92b-006c-11ef-0a80-0b5e00309de5')
+            dd($url, $body);
 
         try {
             $post = json_decode(json_encode($Client->postHttp_errorsNo($url, $body)), true);
