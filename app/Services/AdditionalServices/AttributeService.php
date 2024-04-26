@@ -180,7 +180,9 @@ class AttributeService
             $this->createPaymentInAttributes($apiKeyMs);
             $this->createCashInAttributes($apiKeyMs);
             $this->createInvoiceOutAttributes($apiKeyMs);
-        } catch (ClientException $e){}
+        } catch (ClientException $e){
+            dd($e, $e->getMessage());
+        }
     }
 
     //returns doc attribute values
