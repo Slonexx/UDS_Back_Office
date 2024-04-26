@@ -154,10 +154,11 @@ class WidgetInfo
         $points = 0;
         $BonusPoint = 0;
         if ($body->points < 0) $points = $body->points * -1;
-        else foreach ($BodyMC->attributes as $item){
-            if ($item->name == "Количество списанных баллов (UDS)") $points = $item->value;
-            if ($item->name == "Количество начисленных баллов (UDS)") $BonusPoint = $item->value;
-        }
+        else if (property_exists($BodyMC, 'attributes'))
+            foreach ($BodyMC->attributes as $item){
+                if ($item->name == "Количество списанных баллов (UDS)") $points = $item->value;
+                if ($item->name == "Количество начисленных баллов (UDS)") $BonusPoint = $item->value;
+            }
 
 
         $parts = explode("=", $BodyMC->externalCode);
