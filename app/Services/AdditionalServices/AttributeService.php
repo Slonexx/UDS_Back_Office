@@ -175,14 +175,29 @@ class AttributeService
 
         try {
             $this->createProductAttributes($apiKeyMs);
+        } catch (ClientException){}
+
+        try {
             $this->createOrderAttributes($apiKeyMs);
+        } catch (ClientException){}
+
+        try {
             $this->createDemandAttributes($apiKeyMs);
+        } catch (ClientException){}
+
+        try {
             $this->createPaymentInAttributes($apiKeyMs);
+        } catch (ClientException){}
+
+        try {
             $this->createCashInAttributes($apiKeyMs);
+        } catch (ClientException){}
+
+        try {
             $this->createInvoiceOutAttributes($apiKeyMs);
-        } catch (ClientException $e){
-            dd($e, $e->getMessage());
-        }
+        } catch (ClientException){}
+
+
     }
 
     //returns doc attribute values
