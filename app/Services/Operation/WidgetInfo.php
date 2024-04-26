@@ -82,7 +82,7 @@ class WidgetInfo
                 } else {
                     $data = $this->newPostOperations($externalCode, $agentId, $BodyMC);
                     $StatusCode = 'successfulOperation';
-                    $message = $data['data'];
+                    $message = $data;
                 }
             } else {
                 $StatusCode = 'operation';
