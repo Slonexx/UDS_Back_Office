@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-    Route::post('attributes',[AttributeController::class,'setAllAttributes']);
+    Route::post('attributes/install/Ms',[AttributeController::class,'setAllAttributes']);
     Route::post('agentMs',[AgentController::class,'insertMs']);
 
 

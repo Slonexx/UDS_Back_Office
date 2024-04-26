@@ -16,7 +16,7 @@ class installContoller extends Controller
             $Setting = new getSettingVendorController($accountId);
 
             $client = new Client(['base_uri' => 'https://smartuds.kz/api/']);
-            $client->post('attributes',[
+            $client->post('attributes/install/Ms',[
                 'headers'=> ['Accept' => 'application/json'],
                 'form_params' => [
                     "tokenMs" => $Setting->TokenMoySklad,
