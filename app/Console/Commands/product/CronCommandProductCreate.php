@@ -25,7 +25,7 @@ class CronCommandProductCreate extends Command
 
     public function handle(): void
     {
-        $mutex = Cache::lock('process_NewProduct', 9000);
+        $mutex = Cache::lock('process_NewProduct_', 9000);
         if ($mutex->get()) {
         //if (true) {
             $allSettings = newProductModel::all();
@@ -49,15 +49,17 @@ class CronCommandProductCreate extends Command
                 if ($item['unloading'] == null) continue;
                 try {
 
-                    dispatch(function () use ($data, $sql) {
-                        $sql->countRound += 1;
-                        $sql->save();
+                    $sql->countRound += 1;
+                    $sql->save();
 
-                        if ($data['loading']) $create = new createProductForMS($data);
-                        else $create = new createProductForUDS($data);
+                    if ($data['loading']) $create = new createProductForMS($data);
+                    else $create = new createProductForUDS($data);
 
-                        if ($data['countRound'] < 3) $create->initialization();
-                    })->onQueue('default');
+                    if ($data['countRound'] < 3) $create->initialization();
+
+                  /*  dispatch(function () use ($data, $sql) {
+
+                    })->onQueue('default');*/
 
                     $this->info($data['accountId'].': успешно.');
                 } finally {
