@@ -21,7 +21,7 @@
             </div>
             <div id="update_uds_data">
                 <div class="mt-2 row">
-                    <div class="col-6"><label class="mx-3 mt-1 from-label">Сделать первичную выгрузку товаров и категорий </label> </div>
+                    <div class="col-6"><label class="mx-3 mt-1 from-label">Создать выгрузку товаров и категорий </label> </div>
                     <div class="col-2">
                         <select id="ProductFolder" name="ProductFolder" class="form-select text-black" onchange="FU_sendingGoods(this.value)">
                             <option value="0">Нет</option>
@@ -166,7 +166,7 @@
             </div>
 
             <hr class="href_padding">
-            <button class="btn btn-outline-dark gradient_focus"> Создать выгрузку </button>
+            <button class="btn btn-outline-dark gradient_focus"> Сохранить </button>
             <span onclick="activateClearModel()" class="btn btn-outline-dark gradient_focus"> Очистить базу в UDS</span>
         </form>
 
