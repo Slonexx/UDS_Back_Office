@@ -34,7 +34,6 @@ class createProductForUDS
         $find = ProductFoldersByAccountID::getInformation($this->setting->accountId);
         $baseUDS = $this->getUdsCheck();
 
-        //dd($baseUDS);
 
         if ($find->toArray == null) return ["message" => "Отсутствуют настройки папок"];
         foreach ($find->toArray as $itemFolderModel) {
@@ -44,17 +43,20 @@ class createProductForUDS
             (new folderCreating($this->msClient, $this->udsClient))->addCategoriesToUds($folderName);
             $productsMs = $this->getMs($folderName);
 
-            //dd($productsMs);
             foreach ($productsMs->rows as $item) {
-                $is_create = $this->shouldCreateProductForCheck($item, $baseUDS);
-                if ($is_create === false) continue;
+                if ($this->shouldCreateProductForCheck($item, $baseUDS) === false) continue;
                 $is_create_sklad = $this->shouldCreateProduct($item);
 
                 if (($is_create_sklad && strpos($item->pathName, $folderName) === 0 && substr_count($item->pathName, '/') < 3)) {
                     $createdProduct = $createProduct->createProductUds($item);
                     if ($createdProduct) $ARR_PRODUCT[] = $createdProduct;
                 }
+
+
+
             }
+
+
 
         }
 
@@ -82,17 +84,32 @@ class createProductForUDS
     private function shouldCreateProductForCheck($item, $baseUDS): bool
     {
         if (in_array($item->id, $baseUDS["externalCode"]['product'])) {
-            if (property_exists($item, 'attributes'))
-                foreach ($item->attributes as $attribute) {
+            $is_yes_att = true;
 
-                if ($attribute->name == "id (UDS)") {
-                    if (!in_array($attribute->value, $baseUDS["productIds"])) {
-                        //dd($attribute, $attribute->meta, $baseUDS["isSet"][$item->id]);
-                        $updatedAttribute = [ "meta" => $attribute->meta, "value" => "".$baseUDS["isSet"][$item->id] ];
-                        $this->msClient->newPUT($item->meta->href, ["attributes" => [$updatedAttribute]]);
+            if (property_exists($item, 'attributes')) {
+                foreach ($item->attributes as $attribute) {
+                    if ($attribute->name == "id (UDS)") {
+                        $is_yes_att = false;
+                        if (!in_array($attribute->value, $baseUDS["productIds"]) or $attribute->value == '') {
+                            $updatedAttribute = [ "meta" => $attribute->meta, "value" => "".$baseUDS["isSet"][$item->id] ];
+                            $this->msClient->newPUT($item->meta->href, ["attributes" => [$updatedAttribute]]);
+                        }
                     }
                 }
+            }
 
+            if ($is_yes_att) {
+                $get = $this->msClient->newGet('https://api.moysklad.ru/api/remap/1.2/entity/product/metadata/attributes');
+                if ($get->status and count($get->data->rows) > 0){
+                    foreach ($get->data->rows as $rows) {
+                        if ($rows->name == "id (UDS)") {
+                            if (isset($baseUDS["isSet"][$item->id])) {
+                                $updatedAttribute = [ "meta" => $rows->meta, "value" => "".$baseUDS["isSet"][$item->id] ];
+                                $this->msClient->newPUT($item->meta->href, ["attributes" => [$updatedAttribute]]);
+                            }
+                        }
+                    }
+                }
             }
             return false;
         }

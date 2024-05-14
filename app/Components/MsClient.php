@@ -16,6 +16,7 @@ class MsClient{
                 'Authorization' => $apiKey,
                 'Content-Type' => 'application/json',
                 'Accept-Encoding' => 'gzip',
+                'verify' => false
             ]
         ]);
     }
