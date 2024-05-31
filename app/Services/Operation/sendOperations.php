@@ -208,14 +208,16 @@ class sendOperations
 
             if (property_exists($newBodyMS, 'store')){
                 $Store = basename($newBodyMS->store->meta->href);
-            } else
-            if ($Setting->Store != null and $Setting->creatDocument == '1') {
-                $bodyStore = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Setting->Store)->rows;
-                $Store = $bodyStore[0]->id;
             } else {
-                $auto = Automation_new_update_MODEL::query()->where('accountId', $Setting->accountId)->get(['add_automationStore'])->first();
-                if ($auto != null) if ($auto->add_automationStore != null) $Store = $auto->add_automationStore;
+                if ($Setting->Store != null and $Setting->creatDocument == '1') {
+                    $bodyStore = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Setting->Store)->rows;
+                    $Store = $bodyStore[0]->id;
+                } else {
+                    $auto = Automation_new_update_MODEL::query()->where('accountId', $Setting->accountId)->get(['add_automationStore'])->first();
+                    if ($auto != null) if ($auto->add_automationStore != null) $Store = $auto->add_automationStore;
+                }
             }
+
 
             if ($Store != '') return;
 
@@ -297,7 +299,10 @@ class sendOperations
                         ],
                     ]);
                 }
-            } catch (BadResponseException) {
+            } catch (BadResponseException $e) {
+                if ($Setting->accountId = '9df72ee9-12a3-11ef-0a80-0f4c0000fb2b') {
+                    dd($e);
+                }
             }
         }
     }
