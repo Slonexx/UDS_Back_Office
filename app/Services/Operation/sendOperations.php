@@ -97,11 +97,15 @@ class sendOperations
         $putBody = $ClientMC->newPUT('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], $putBodyEntity);
         if ($putBody->status) {
             $putBody = $putBody->data;
+            if ($Setting->accountId = '9df72ee9-12a3-11ef-0a80-0f4c0000fb2b') {
+                dd($data['entity'] == 'customerorder', (!property_exists($putBody, 'demands')), ($data['entity'] == 'customerorder' and (!property_exists($putBody, 'demands'))) );
+            }
+
             if ($data['entity'] == 'customerorder' and (!property_exists($putBody, 'demands'))) {
                 $this->createDemands($Setting, $SettingBD, $putBody, (string)$post->id);
             }
             if (!property_exists($putBody, 'payments')) $this->createPaymentDocument($ClientMC, $SettingBD->operationsPaymentDocument, $putBody);
-        } else dd($putBody);
+        }
 
         return [
             'status' => true,
