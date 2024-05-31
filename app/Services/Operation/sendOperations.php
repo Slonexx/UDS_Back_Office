@@ -9,6 +9,7 @@ use App\Http\Controllers\getData\getSetting;
 use App\Http\Controllers\GuzzleClient\ClientMC;
 use App\Http\Controllers\mainURL;
 use App\Http\Controllers\Web\RewardController;
+use App\Models\Automation_new_update_MODEL;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\ClientException;
 
@@ -48,33 +49,29 @@ class sendOperations
                 'name' => $data['cashier_name'],
             ],
             'receipt' => [
-                'total' => (float) $data['receipt_total'],
-                'cash' => (float) $data['receipt_total'] - $receipt_points,
-                'points' => (float) $receipt_points,
+                'total' => (float)$data['receipt_total'],
+                'cash' => (float)$data['receipt_total'] - $receipt_points,
+                'points' => (float)$receipt_points,
                 'number' => null,
                 'skipLoyaltyTotal' => $data['receipt_skipLoyaltyTotal'],
             ],
             'tags' => null,
         ];
 
-        if ($receipt_points > 0 ) $body['participant']['uid'] = null;
-
-       /* if ($data['accountId'] == '56212bce-5204-11ee-0a80-08370000a2b2' and $data['objectId'] == '16cee92b-006c-11ef-0a80-0b5e00309de5')
-            dd($url, $body);*/
+        if ($receipt_points > 0) $body['participant']['uid'] = null;
 
         try {
             $post = json_decode(json_encode($Client->postHttp_errorsNo($url, $body)), true);
-        }
-        catch (BadResponseException $e) {
+        } catch (BadResponseException $e) {
             if ($e->getResponse()->getBody()->getContents() == '{"errorCode":"purchaseByPhoneDisabled","message":"Regular purchase via a phone number is not available"}') {
-                return [ 'status' => false, 'message' => 'Проведение операции по номеру телефона не разрешено настройками UDS.' ];
+                return ['status' => false, 'message' => 'Проведение операции по номеру телефона не разрешено настройками UDS.'];
             }
-            return [ 'status' => false, 'message' => $e->getResponse()->getBody()->getContents() ];
+            return ['status' => false, 'message' => $e->getResponse()->getBody()->getContents()];
         }
-        if ( $post['points'] < 0 ) $post['points'] = -$post['points'];
+        if ($post['points'] < 0) $post['points'] = -$post['points'];
 
         if ($SettingBD->customOperation == 1) {
-            if ( $data['receipt_points'] > 0 ) $post['points'] = $data['receipt_points'];
+            if ($data['receipt_points'] > 0) $post['points'] = $data['receipt_points'];
             (new RewardController())->Accrue($data['accountId'], $data['cashBack'], $post['customer']['id']);
             (new RewardController())->Cancellation($data['accountId'], $data['receipt_points'], $post['customer']['id']);
         }
@@ -82,30 +79,29 @@ class sendOperations
         $post = json_decode(json_encode($post));
 
         $ClientMC = new MsClient($Setting->TokenMoySklad);
-        $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'].'?expand=positions.assortment');
+        $OldBody = $ClientMC->get('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'] . '?expand=positions.assortment');
 
         $setPositions = $this->Positions($post, $data['receipt_skipLoyaltyTotal'], $OldBody, $receipt_points);
         $setAttributes = $this->Attributes($data, $post, $Setting, $receipt_points);
 
         $OldBody->externalCode = $post->id;
         $putBodyEntity = [
-            'externalCode' => (string) $post->id,
+            'externalCode' => (string)$post->id,
             'positions' => $setPositions,
             'attributes' => $setAttributes,
         ];
 
-        if ($putBodyEntity['attributes'] == null ) unset($putBodyEntity['attributes']);
-        if ($putBodyEntity['positions'] == null ) unset($putBodyEntity['positions']);
+        if ($putBodyEntity['attributes'] == null) unset($putBodyEntity['attributes']);
+        if ($putBodyEntity['positions'] == null) unset($putBodyEntity['positions']);
 
-        //dd($putBodyEntity);
-
-        $putBody = $ClientMC->newPUT('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], $putBodyEntity );
+        $putBody = $ClientMC->newPUT('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], $putBodyEntity);
         if ($putBody->status) {
             $putBody = $putBody->data;
-            if ($data['entity'] == 'customerorder') { $this->createDemands($Setting, $SettingBD, $putBody, (string) $post->id); }
-            $this->createPaymentDocument($Setting, $SettingBD, $putBody);
+            if ($data['entity'] == 'customerorder' and (!property_exists($putBody, 'demands'))) {
+                $this->createDemands($Setting, $SettingBD, $putBody, (string)$post->id);
+            }
+            if (!property_exists($putBody, 'payments')) $this->createPaymentDocument($ClientMC, $SettingBD->operationsPaymentDocument, $putBody);
         }
-
 
         return [
             'status' => true,
@@ -136,7 +132,7 @@ class sendOperations
                 'discount' => $pointsPercent,
                 'vat' => $item->vat,
                 'vatEnabled' => $item->vatEnabled,
-                'assortment' => ['meta'=> $item->assortment->meta,],
+                'assortment' => ['meta' => $item->assortment->meta,],
                 'reserve' => 0,
             ];
         }
@@ -163,8 +159,7 @@ class sendOperations
                     ],
                     'value' => true,
                 ];
-            }
-            elseif ($item->name == "Начисление баллов (UDS)" && $postUDS->cash > 0) {
+            } elseif ($item->name == "Начисление баллов (UDS)" && $postUDS->cash > 0) {
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,
@@ -173,8 +168,7 @@ class sendOperations
                     ],
                     'value' => true,
                 ];
-            }
-            elseif ($item->name == "Количество списанных баллов (UDS)"){
+            } elseif ($item->name == "Количество списанных баллов (UDS)") {
                 $point = 0;
                 if ($postUDS->points > 0) $point = $receipt_points;
                 else $point = $postUDS->points;
@@ -185,50 +179,58 @@ class sendOperations
                         'type' => $item->meta->type,
                         'mediaType' => $item->meta->mediaType,
                     ],
-                    'value' => (float) $point,
+                    'value' => (float)$point,
                 ];
-            }
-            elseif ($item->name == "Количество начисленных баллов (UDS)"){
+            } elseif ($item->name == "Количество начисленных баллов (UDS)") {
                 $Attributes[] = [
                     'meta' => [
                         'href' => $item->meta->href,
                         'type' => $item->meta->type,
                         'mediaType' => $item->meta->mediaType,
                     ],
-                    'value' => (float) $data['cashBack'],
+                    'value' => (float)$data['cashBack'],
                 ];
-            }
-            else continue;
+            } else continue;
         }
         return $Attributes;
     }
 
-    public function createDemands($Setting, $SettingBD, $OldBody, $externalCode): void
+    public function createDemands(getSettingVendorController $Setting, $SettingBD, $newBodyMS, $externalCode): void
     {
         if ($SettingBD->operationsDocument != 0 && $SettingBD->operationsDocument != null) {
+            $Store = '';
+
+
             $client = new MsClient($Setting->TokenMoySklad);
             $attributes = [];
             $positions = [];
             $attributesValue = [];
-            $Store = $Setting->Store;
-            $bodyStore = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Store)->rows;
-            $Store = $bodyStore[0]->id;
-            $bodyAttributes = $client->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows;
 
-            foreach ($OldBody->attributes as $item) $attributesValue[$item->name] = ['value' => $item->value];
-
-            foreach ($bodyAttributes as $item) {
-                $attributeValue = $attributesValue[$item->name]['value'];
-                $attributes[] = [
-                    'meta' => [
-                        'href' => $item->meta->href,
-                        'type' => $item->meta->type,
-                        'mediaType' => $item->meta->mediaType,
-                    ],
-                    'value' => $attributeValue,
-                ];
+            if ($Setting->Store != null and $Setting->creatDocument == '1') {
+                $bodyStore = $client->get('https://api.moysklad.ru/api/remap/1.2/entity/store?filter=name=' . $Setting->Store)->rows;
+                $Store = $bodyStore[0]->id;
+            } else {
+                $auto = Automation_new_update_MODEL::query()->where('accountId', $Setting->accountId)->get(['add_automationStore'])->first();
+                if ($auto->add_automationStore != null) $Store = $auto->add_automationStore;
             }
-            $hrefPositions = $OldBody->positions->meta->href;
+
+            if ($Store != '') return;
+
+            foreach ($newBodyMS->attributes as $item) $attributesValue[$item->name] = ['value' => $item->value];
+            foreach ($client->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows as $item)
+                if (in_array($item->name, $attributesValue)) {
+                    $attributeValue = $attributesValue[$item->name]['value'];
+                    $attributes[] = [
+                        'meta' => [
+                            'href' => $item->meta->href,
+                            'type' => $item->meta->type,
+                            'mediaType' => $item->meta->mediaType,
+                        ],
+                        'value' => $attributeValue,
+                    ];
+                }
+
+            $hrefPositions = $newBodyMS->positions->meta->href;
             $bodyPositions = $client->get($hrefPositions)->rows;
 
             foreach ($bodyPositions as $id => $item) {
@@ -248,14 +250,14 @@ class sendOperations
             $url = 'https://api.moysklad.ru/api/remap/1.2/entity/demand';
             $body = [
                 'organization' => ['meta' => [
-                    'href' => $OldBody->organization->meta->href,
-                    'type' => $OldBody->organization->meta->type,
-                    'mediaType' => $OldBody->organization->meta->mediaType,
+                    'href' => $newBodyMS->organization->meta->href,
+                    'type' => $newBodyMS->organization->meta->type,
+                    'mediaType' => $newBodyMS->organization->meta->mediaType,
                 ]],
                 'agent' => ['meta' => [
-                    'href' => $OldBody->agent->meta->href,
-                    'type' => $OldBody->agent->meta->type,
-                    'mediaType' => $OldBody->agent->meta->mediaType,
+                    'href' => $newBodyMS->agent->meta->href,
+                    'type' => $newBodyMS->agent->meta->type,
+                    'mediaType' => $newBodyMS->agent->meta->mediaType,
                 ]],
                 'store' => ['meta' => [
                     'href' => 'https://api.moysklad.ru/api/remap/1.2/entity/store/' . $Store,
@@ -267,20 +269,19 @@ class sendOperations
                 'positions' => $positions,
                 'customerOrder' => [
                     'meta' => [
-                        'href' => $OldBody->meta->href,
-                        'metadataHref' => $OldBody->meta->metadataHref,
-                        'type' => $OldBody->meta->type,
-                        'mediaType' => $OldBody->meta->mediaType,
-                        'uuidHref' => $OldBody->meta->uuidHref,
+                        'href' => $newBodyMS->meta->href,
+                        'metadataHref' => $newBodyMS->meta->metadataHref,
+                        'type' => $newBodyMS->meta->type,
+                        'mediaType' => $newBodyMS->meta->mediaType,
+                        'uuidHref' => $newBodyMS->meta->uuidHref,
                     ],
                 ],
             ];
 
             try {
                 $postBodyCreateDemand = $client->post($url, $body);
-
                 if ($SettingBD->operationsDocument == '2' || $SettingBD->operationsDocument == 2) {
-                    $body = [
+                    $client->post('https://api.moysklad.ru/api/remap/1.2/entity/factureout', [
                         'demands' => [
                             0 => [
                                 'meta' => [
@@ -291,60 +292,42 @@ class sendOperations
                                 ],
                             ],
                         ],
-                    ];
-
-                    $urlFacture = 'https://api.moysklad.ru/api/remap/1.2/entity/factureout';
-                    $client = new MsClient($Setting->TokenMoySklad);
-                    $client->post($urlFacture, $body);
+                    ]);
                 }
             } catch (BadResponseException) {
-                // Handle exception
             }
         }
     }
 
-    public function createPaymentDocument($Setting, $SettingBD, $OldBody): void
+    public function createPaymentDocument(MsClient $client, mixed $operationsPaymentDocument, mixed $newBodyMS): void
     {
-        if ($SettingBD->operationsPaymentDocument == 0 || $SettingBD->operationsPaymentDocument == null) {
-            return;
-        }
+        if ($operationsPaymentDocument == 0 || $operationsPaymentDocument == null) return;
 
-        $client = new MsClient($Setting->TokenMoySklad);
         $url = '';
         $body = [
             'organization' => ['meta' => [
-                'href' => $OldBody->organization->meta->href,
-                'type' => $OldBody->organization->meta->type,
-                'mediaType' => $OldBody->organization->meta->mediaType,
+                'href' => $newBodyMS->organization->meta->href,
+                'type' => $newBodyMS->organization->meta->type,
             ]],
             'agent' => ['meta' => [
-                'href' => $OldBody->agent->meta->href,
-                'type' => $OldBody->agent->meta->type,
-                'mediaType' => $OldBody->agent->meta->mediaType,
+                'href' => $newBodyMS->agent->meta->href,
+                'type' => $newBodyMS->agent->meta->type,
             ]],
-            'sum' => $OldBody->sum,
+            'sum' => $newBodyMS->sum,
             'operations' => [
                 0 => [
                     'meta' => [
-                        'href' => $OldBody->meta->href,
-                        'metadataHref' => $OldBody->meta->metadataHref,
-                        'type' => $OldBody->meta->type,
-                        'mediaType' => $OldBody->meta->mediaType,
-                        'uuidHref' => $OldBody->meta->uuidHref,
+                        'href' => $newBodyMS->meta->href,
+                        'type' => $newBodyMS->meta->type,
                     ],
-                    'linkedSum' => 0,
+                    'linkedSum' => $newBodyMS->sum,
                 ],
             ],
         ];
 
-        if ($SettingBD->operationsPaymentDocument == 1 || $SettingBD->operationsPaymentDocument == "1") {
-            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
-        }
+        if ($operationsPaymentDocument == 1) $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
+        if ($operationsPaymentDocument == 2) $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
 
-        if ($SettingBD->operationsPaymentDocument == 2) {
-            $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
-        }
-
-        $client->post($url, $body);
+        if ($url != '') $client->post($url, $body);
     }
 }

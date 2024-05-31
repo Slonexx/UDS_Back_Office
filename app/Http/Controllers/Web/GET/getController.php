@@ -180,7 +180,8 @@ class getController extends Controller
             $body_project = $Client->get($url_project);
 
             $Organization = $Client->get($urlCheck);
-        } else {
+        }
+        else {
             $Organization = "0";
 
             $body_organization = $Client->get($url_organization);

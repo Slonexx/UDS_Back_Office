@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div id="T1">
-                <div class="mb-1 row">
+                <div class="mt-1 row">
                     <div class="col-6">
                         <label class="mt-1 from-label">Начисление </label>
                     </div>
@@ -63,7 +63,7 @@
             </div>
             <div id="T2">
                 <div id="Enable_true_or_false" style="display:block;">
-                    <div class="row">
+                    <div class="row mt-1">
                         <P class="col-6 col-form-label"> Выберите какой тип документов создавать: </P>
                         <div class="col-5">
                             <select id="operationsDocument" name="operationsDocument" class="form-select text-black" >
@@ -98,7 +98,7 @@
             </div>
             <div id="T3">
                 <div style="display:block;">
-                    <div class="row">
+                    <div class="row mt-1">
                         <P class="col-6 col-form-label"> Выберите режим
                             <button type="button"
                                     class=" col-1 btn gradient_focus fa-solid fa-circle-info myPopover4 "
@@ -114,7 +114,7 @@
                         {{--Сводобный - Помимо стандратной операции в UDS, будет проводиться донаичслени или списание баллов --}}
                         <div class="col-5">
                             <select id="customOperation" name="customOperation" class="form-select text-black" >
-                                <option selected value="3"> Стандартный </option>
+                                <option selected value="3"> Стандартный (Рекомендуем) </option>
                                 <option value="0"> Ограниченный </option>
                                 <option value="1"> Свободный </option>
                             </select>
