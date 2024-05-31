@@ -298,9 +298,6 @@ class sendOperations
                     ]);
                 }
             } catch (BadResponseException $e) {
-                if ($Setting->accountId = '9df72ee9-12a3-11ef-0a80-0f4c0000fb2b') {
-                    dd($e);
-                }
             }
         }
     }
