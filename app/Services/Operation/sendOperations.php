@@ -217,9 +217,7 @@ class sendOperations
                     if ($auto != null) if ($auto->add_automationStore != null) $Store = $auto->add_automationStore;
                 }
             }
-
-            dd($Store, $newBodyMS, property_exists($newBodyMS, 'store'));
-            if ($Store != '') return;
+            if ($Store == '') return;
 
             foreach ($newBodyMS->attributes as $item) $attributesValue[$item->name] = ['value' => $item->value];
             foreach ($client->get("https://api.moysklad.ru/api/remap/1.2/entity/demand/metadata/attributes/")->rows as $item)
