@@ -106,7 +106,7 @@ class WidgetInfo
     }
 
 
-    public function AgentMCPhone(mixed $bodyMC): string
+    public function AgentMCPhone(mixed $bodyMC)
     {
         $phone = null;
         if (property_exists($bodyMC, 'phone')) {
