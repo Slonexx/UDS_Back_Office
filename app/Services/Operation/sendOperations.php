@@ -218,7 +218,7 @@ class sendOperations
                 }
             }
 
-
+            dd($Store, $newBodyMS, property_exists($newBodyMS, 'store'));
             if ($Store != '') return;
 
             foreach ($newBodyMS->attributes as $item) $attributesValue[$item->name] = ['value' => $item->value];
