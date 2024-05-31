@@ -40,21 +40,45 @@ class WidgetInfo
         if ($this->setting->operationsAccrue == '0') {
             if (is_numeric($agentId->externalCode) && ctype_digit($agentId->externalCode) && $agentId->externalCode > 10000) {
                 $phone = $this->AgentMCPhone($agentId);
-                $agentId = [ 'externalCode' => $agentId->externalCode, 'phone' => $phone, 'dontPhone' => true ];
-            }
-            else {
-                if (property_exists($agentId, 'phone')) {
-                    $phone = $this->AgentMCPhone($agentId);
-                    if (mb_strlen($phone) > 14) return [ 'StatusCode' => 'error', 'message' => 'Некорректный номер телефона: ' . $agentId->phone ];
-                    $agentId = ['externalCode' => $agentId->externalCode, 'phone' => $phone,];
+                if ($phone == null) {
+                    return [
+                        'StatusCode' => 'error',
+                        'message' => 'Отсутствует номер телефона у данного контрагента'
+                    ];
                 }
-                else {
-                    return ['StatusCode' => 'error', 'message' => 'Отсутствует номер телефона у данного контрагента'];
+                $agentId = [
+                    'externalCode' => $agentId->externalCode,
+                    'phone' => $phone,
+                    'dontPhone' => true
+                ];
+            } elseif (property_exists($agentId, 'phone')) {
+                $phone = $this->AgentMCPhone($agentId);
+                if (mb_strlen($phone) > 14) {
+                    return [
+                        'StatusCode' => 'error',
+                        'message' => 'Некорректный номер телефона: ' . $agentId->phone
+                    ];
                 }
+                $agentId = [
+                    'externalCode' => $agentId->externalCode,
+                    'phone' => $phone,
+                ];
+            } else {
+                return [
+                    'StatusCode' => 'error',
+                    'message' => 'Отсутствует номер телефона у данного контрагента'
+                ];
             }
         }
 
-        if ($entity == 'salesreturn' and property_exists($BodyMC, 'demand')) {
+        if ($entity == 'salesreturn') {
+            if (!property_exists($BodyMC, 'demand')) {
+                return [
+                    'StatusCode' => 'error',
+                    'message' => 'У данного документа отсутствуют связанные документы на которых была операция'
+                ];
+            }
+
             $demand = $this->msClient->get($BodyMC->demand->meta->href);
             if (is_numeric($demand->externalCode) && ctype_digit($demand->externalCode) && $demand->externalCode > 10000) {
                 $externalCode = $demand->externalCode;
@@ -62,11 +86,19 @@ class WidgetInfo
                 $customerOrder = $this->msClient->get($demand->customerOrder->meta->href);
                 if (is_numeric($customerOrder->externalCode) && ctype_digit($customerOrder->externalCode) && $customerOrder->externalCode > 10000) {
                     $externalCode = $customerOrder->externalCode;
-                } else  return ['StatusCode' => 'error', 'message' => 'У данного документа отсутствуют связанные документы на которых была операция'];
+                } else {
+                    return [
+                        'StatusCode' => 'error',
+                        'message' => 'У данного документа отсутствуют связанные документы на которых была операция'
+                    ];
+                }
+            } else {
+                return [
+                    'StatusCode' => 'error',
+                    'message' => 'У данного документа отсутствуют связанные документы на которых была операция'
+                ];
             }
         }
-        elseif ($entity == 'salesreturn') return ['StatusCode' => 'error', 'message' => 'У данного документа отсутствуют связанные документы на которых была операция'];
-
 
 
 
