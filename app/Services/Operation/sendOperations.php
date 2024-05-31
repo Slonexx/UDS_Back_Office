@@ -97,6 +97,9 @@ class sendOperations
         $putBody = $ClientMC->newPUT('https://api.moysklad.ru/api/remap/1.2/entity/' . $data['entity'] . '/' . $data['objectId'], $putBodyEntity);
         if ($putBody->status) {
             $putBody = $putBody->data;
+
+            dd($data['entity'] == 'customerorder', (!property_exists($putBody, 'demands')), ($data['entity'] == 'customerorder' and (!property_exists($putBody, 'demands'))) );
+
             if ($data['entity'] == 'customerorder' and (!property_exists($putBody, 'demands'))) {
                 $this->createDemands($Setting, $SettingBD, $putBody, (string)$post->id);
             }
