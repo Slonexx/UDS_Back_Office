@@ -17,6 +17,7 @@ use App\Services\Operation\WidgetInfo;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use TheSeer\Tokenizer\Exception;
 
 class ObjectController extends Controller
 {
@@ -35,30 +36,48 @@ class ObjectController extends Controller
 
     public function CompletesOrder($accountId, $objectId): array
     {
+        $StatusCode = "200";
+        $message = "Заказ завершён";
+
         $Setting = new getSettingVendorController($accountId);
         $Client = new UdsClient($Setting->companyId, $Setting->TokenUDS);
         $msClient = new MsClient($Setting->TokenMoySklad);
+
         try {
-            $url = 'https://api.uds.app/partner/v2/goods-orders/' . $objectId . '/complete';
-            $Client->post($url, null);
-            $StatusCode = "200";
-            $message = "Заказ завершён";
-
-            $body = $this->CreateDemand($Setting, $msClient, $objectId);
-            if ($body['status']) $demand = $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/demand', $body['data']);
-
-            //ЗАВТРА
-
+            /* $url = 'https://api.uds.app/partner/v2/goods-orders/' . $objectId . '/complete';
+           $Client->post($url, null);*/
+        } catch (BadResponseException $e) {
             return [
-                'StatusCode' => $StatusCode,
-                'message' => $message,
-            ];
-        } catch (BadResponseException $exception) {
-            return [
-                'StatusCode' => $exception->getCode(),
-                'message' => $exception->getMessage(),
+                'StatusCode' => $e->getCode(),
+                'message' => $e->getMessage(),
             ];
         }
+
+
+        try {
+            $Order = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode=' . $objectId)->rows['0'];
+        } catch (BadResponseException|\Throwable $e) {
+            return [ 'status' => false,  'message' =>  'Заказ завершен, но '.$e->getMessage() ];
+        }
+
+
+        $body = $this->CreateDemand($Setting, $msClient, $Order);
+        if ($body['status'] and (!property_exists($Order, 'demand'))) {
+            try {
+                $msClient->post('https://api.moysklad.ru/api/remap/1.2/entity/demand', $body['data']);
+            } catch (BadResponseException){
+                return [ 'StatusCode' => $StatusCode, 'message' => 'Заказ завершен, не удалось создать отгрузку' ];
+            }
+        }
+
+        if ((!property_exists($Order, 'payments'))) $this->CreatePaymentDocument($accountId, $msClient, $Order);
+
+
+
+        return [
+            'StatusCode' => $StatusCode,
+            'message' => $message,
+        ];
     }
 
     public function customers(Request $request): JsonResponse
@@ -125,23 +144,12 @@ class ObjectController extends Controller
         return response()->json((new sendOperations())->initiation($data));
     }
 
-    private function CreateDemand(getSettingVendorController $Setting, MsClient $msClient, $objectId)
+    private function CreateDemand(getSettingVendorController $Setting, MsClient $msClient, $Order)
     {
         $body = [];
         $orderSetting = orderSettingModel::where('accountId', $Setting->accountId)->get()->first();
         if ($orderSetting != null) $orderSetting = $orderSetting->toArray();
-        else return [
-            'status' => false,
-            'message' => 'Заказ завершён", Отсутствуют настройки создание отгрузки! '
-        ];;
-        try {
-            $Order = $msClient->get('https://api.moysklad.ru/api/remap/1.2/entity/customerorder?filter=externalCode=' . $objectId)->rows['0'];
-        } catch (BadResponseException $e) {
-            return [
-                'status' => false,
-                'message' => $e->getMessage()
-            ];
-        }
+        else return ['status' => false, 'message' => 'Заказ завершён", Отсутствуют настройки создание отгрузки!'];
 
 
         $body['organization'] = $Order->organization;
@@ -194,6 +202,39 @@ class ObjectController extends Controller
             'status' => true,
             'data' => $body
         ];
+    }
+
+    private function CreatePaymentDocument($accountId, MsClient $msClient, mixed $Order)
+    {
+        $SettingBD = (new getSetting())->getSendSettingOperations($accountId);
+        if ($SettingBD->operationsPaymentDocument == 0 || $SettingBD->operationsPaymentDocument == null) return;
+
+        $url = '';
+        $body = [
+            'organization' => ['meta' => [
+                'href' => $Order->organization->meta->href,
+                'type' => $Order->organization->meta->type,
+            ]],
+            'agent' => ['meta' => [
+                'href' => $Order->agent->meta->href,
+                'type' => $Order->agent->meta->type,
+            ]],
+            'sum' => $Order->sum,
+            'operations' => [
+                0 => [
+                    'meta' => [
+                        'href' => $Order->meta->href,
+                        'type' => $Order->meta->type,
+                    ],
+                    'linkedSum' => $Order->sum,
+                ],
+            ],
+        ];
+
+        if ($SettingBD->operationsPaymentDocument == 1) $url = 'https://api.moysklad.ru/api/remap/1.2/entity/cashin';
+        if ($SettingBD->operationsPaymentDocument == 2) $url = 'https://api.moysklad.ru/api/remap/1.2/entity/paymentin';
+
+        if ($url != '') $msClient->post($url, $body);
     }
 
 

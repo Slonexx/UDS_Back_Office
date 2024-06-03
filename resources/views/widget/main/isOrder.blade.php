@@ -1,11 +1,9 @@
 <script>
     function ButtonComplete() {
+        window.document.getElementById('ButtonComplete').style.display = 'none'
         let settings = ajax_settings(url + "CompletesOrder/{{$accountId}}/" + GlobalUDSOrderID, "GET", null)
-        console.log('Button Complete request settings  ↓ ')
-        console.log(settings)
         $.ajax(settings).done(function (response) {
-            console.log('Button Complete request response  ↓ ')
-            console.log(response)
+            window.document.getElementById('ButtonComplete').style.display = 'block'
             if (response.StatusCode == 200) {
                 document.getElementById("success").style.display = "block";
                 document.getElementById("danger").style.display = "none";

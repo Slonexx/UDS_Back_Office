@@ -77,8 +77,7 @@
                         <P class="col-sm-5 col-form-label"> Выберите какой тип платежного документа
                             создавать: </P>
                         <div class="col-sm-7">
-                            <select id="PaymentDocument" name="PaymentDocument" class="form-select text-black"
-                                    onclick="PaymentDocumentFun()">
+                            <select id="PaymentDocument" name="PaymentDocument" class="form-select text-black">
                                 <option value="0">Не создавать</option>
                                 <option value="1">Приходной ордер</option>
                                 <option value="2">Входящий платёж</option>
@@ -324,14 +323,14 @@
         function PaymentDocumentFun() {
             let select = document.getElementById('PaymentDocument');
             let option = select.options[select.selectedIndex];
-            if (option.value == 2) {
+            if (option.value == 2 || option.value == 1) {
                 document.getElementById("hidden_PaymentAccount").style.display = "block";
             } else {
                 document.getElementById("hidden_PaymentAccount").style.display = "none";
             }
         }
 
-        PaymentDocumentFun()
+        //PaymentDocumentFun()
         $('.myPopover1').popover();
     </script>
 

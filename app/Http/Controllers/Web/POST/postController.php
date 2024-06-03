@@ -83,22 +83,18 @@ class postController extends Controller
         $appId = $cfg->appId;
         $app = AppInstanceContoller::loadApp($accountId);
 
-        $Organization = $request->Organization;
-        if ('Нет расчетного счёта' != $request->$Organization) {
-            $PaymentAccount = $request->$Organization;
-        } else $PaymentAccount = null;
 
 
         if ($request->creatDocument == "1") {
+            $PaymentAccount = $request->PaymentAccount ?? '0';
             $app->creatDocument = $request->creatDocument;
             $app->Organization = $request->Organization;
             $app->Store = $request->Store;
             $app->Document = $request->Document;
             $app->PaymentDocument = $request->PaymentDocument;
-            if ($request->PaymentDocument == "2") $app->PaymentAccount = $PaymentAccount; else {
-                $app->PaymentAccount = null;
-                $PaymentAccount = null;
-            }
+            $app->PaymentAccount = $PaymentAccount;
+
+
             if ($request->Saleschannel == "0") {
                 $app->Saleschannel = null;
             } else {

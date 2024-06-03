@@ -28,8 +28,8 @@ class CronCommandCustomAgent extends Command
     public function handle(): void
     {
 
-        //$model = SettingMain::find('239d84db-0939-11eb-0a80-03af0000352d');
-        $model = SettingMain::find('1dd5bd55-d141-11ec-0a80-055600047495');
+        $model = SettingMain::find('239d84db-0939-11eb-0a80-03af0000352d');
+        //$model = SettingMain::find('1dd5bd55-d141-11ec-0a80-055600047495');
         if ($model != null) $model = $model->toArray();
 
         $client_ms = new MsClient($model['TokenMoySklad']);
@@ -42,10 +42,11 @@ class CronCommandCustomAgent extends Command
 
         $customers = $client_uds->newGET('https://api.uds.app/partner/v2/customers/find?phone=%2b'.'77777777777');
         if ($customers->status) $bonus = $customers->data->user->participant->membershipTier->rate;
-
+        //dd($list_counterparty);
         do {
-            $list_counterparty = $client_ms->newGet('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?offset=' . $offset);
-            if (!$list_counterparty->status) break;
+            $list_counterparty = $client_ms->newGet('https://api.moysklad.ru/api/remap/1.2/entity/counterparty?limit=1000&offset=' . $offset);
+
+            if (!$list_counterparty->status)break;
 
 
             if ($list_counterparty->data->rows != [])
@@ -107,6 +108,7 @@ class CronCommandCustomAgent extends Command
     {
         $phone = $item->phone;
         $phone_cleaned = preg_replace('/[\s\(\)\-]/', '', $phone);
+        $phone_cleaned = preg_replace(' ', '', $phone_cleaned);
         $last_ten = substr($phone_cleaned, -10);
         return '+7' . $last_ten;
     }

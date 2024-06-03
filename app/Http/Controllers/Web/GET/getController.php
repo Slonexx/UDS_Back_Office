@@ -200,7 +200,7 @@ class getController extends Controller
             $arr_PaymentAccount[$item->id] = $Client->get("https://api.moysklad.ru/api/remap/1.2/entity/organization/" . $item->id . "/accounts")->rows;
         }
 
-        return view('web.Setting.document', [
+        return view('web.Setting.newDocument', [
 
             "arr_Organization" => $arr_Organization,
             "arr_PaymentAccount" => $arr_PaymentAccount,
