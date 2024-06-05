@@ -51,7 +51,10 @@ class widgetCounterparty
         } else {
 
             if (property_exists($MSCounterparty, 'phone')) {
-                $phone = "%2b7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $MSCounterparty->phone)), -10);
+                $phone =  str_replace(" ", '', $MSCounterparty->phone);
+                $phone = str_replace("(", '', $phone);
+                $phone = str_replace(")", '', $phone);
+                $phone = "%2b7" . mb_substr($phone, -10);
                 try {
                     return response()->json([
                         'Bool' => true,
