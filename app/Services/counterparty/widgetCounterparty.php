@@ -6,10 +6,11 @@ use App\Components\MsClient;
 use App\Components\UdsClient;
 use App\Http\Controllers\BD\getMainSettingBD;
 use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\JsonResponse;
 
 class widgetCounterparty
 {
-    public function getInformation(string $accountId, string $objectId): \Illuminate\Http\JsonResponse
+    public function getInformation(string $accountId, string $objectId): JsonResponse
     {
         $Setting = new getMainSettingBD($accountId);
         $ClientMS = new MsClient($Setting->tokenMs);
@@ -28,46 +29,31 @@ class widgetCounterparty
                     'customers' => $ClientUDS->get('https://api.uds.app/partner/v2/customers/' . $MSCounterparty->externalCode)
                 ]);
             } catch (BadResponseException) {
+                return $this->isElseVariant($MSCounterparty, $ClientUDS);
+            }
 
-                if (property_exists($MSCounterparty, 'phone')) {
-                    $phone = "+7" . mb_substr(str_replace('+7', '', str_replace(" ", '', $MSCounterparty->phone)), -10);
+        } else return $this->isElseVariant($MSCounterparty, $ClientUDS);
+    }
 
-                    try {
-                        return response()->json([
-                            'Bool' => true,
-                            'customers' => $ClientMS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user
-                        ]);
 
-                    } catch (BadResponseException $e) {
-                        return response()->json(['Bool' => false]);
-                    }
-
-                } else {
-                    return response()->json(['Bool' => false]);
-                }
-
+    private function isElseVariant($MSCounterparty, $ClientUDS): JsonResponse
+    {
+        if (property_exists($MSCounterparty, 'phone')) {
+            $phone =  str_replace(" ", '', $MSCounterparty->phone);
+            $phone = str_replace("(", '', $phone);
+            $phone = str_replace(")", '', $phone);
+            $phone = "%2b7" . mb_substr($phone, -10);
+            try {
+                return response()->json([
+                    'Bool' => true,
+                    'customers' => $ClientUDS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user
+                ]);
+            } catch (BadResponseException $e) {
+                return response()->json(['Bool' => false]);
             }
 
         } else {
-
-            if (property_exists($MSCounterparty, 'phone')) {
-                $phone =  str_replace(" ", '', $MSCounterparty->phone);
-                $phone = str_replace("(", '', $phone);
-                $phone = str_replace(")", '', $phone);
-                $phone = "%2b7" . mb_substr($phone, -10);
-                try {
-                    return response()->json([
-                        'Bool' => true,
-                        'customers' => $ClientUDS->get('https://api.uds.app/partner/v2/customers/find?phone=' . $phone)->user
-                    ]);
-                } catch (BadResponseException $e) {
-                    return response()->json(['Bool' => false]);
-                }
-
-            } else {
-                return response()->json(['Bool' => false]);
-            }
+            return response()->json(['Bool' => false]);
         }
     }
-
 }
