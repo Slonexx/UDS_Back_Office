@@ -170,7 +170,7 @@
 
                         window.document.getElementById("displayName").innerHTML = json.customers.displayName;
                         window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0, 10);
-                        window.document.getElementById("points").innerHTML = participant.points;
+                        window.document.getElementById("points").innerHTML = formatNumberWithSpaces(participant.points);
                         window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
                         window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
 
@@ -266,6 +266,11 @@
             if (!/[\d.]/.test(event.key)) {
                 event.preventDefault();
             }
+        }
+
+        function formatNumberWithSpaces(number) {
+            // Преобразуем число в строку и используем регулярное выражение для добавления пробелов
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
         }
 
         function ajax_settings(url, method, data) {
