@@ -54,7 +54,8 @@
             <div class="col-10">
                 <div class="input-group">
                     <div class="input-group-text" id="btnGroupAddon">Введите баллы</div>
-                    <input type="text" name="Accrue" id="inputAccrue" class="form-control" required maxlength="10" oninput="handleInput(event)" onkeydown="handleKeyDown(event)">
+                    <input type="text" name="Accrue" id="inputAccrue" class="form-control" required maxlength="10"
+                           oninput="handleInput(event)" onkeydown="handleKeyDown(event)">
                     <button onclick="BonusProgramme('inputAccrue')" class="btn btn-success rounded-end">Начислить
                     </button>
                 </div>
@@ -151,51 +152,40 @@
             "displayMode": "expanded"
         }
 */
-        if (admin === "ALL") {
-            window.addEventListener("message", function (event) {
-                let receivedMessage = event.data
-                ObjectID = receivedMessage.objectId
-                if (receivedMessage.name === 'Open') {
-                    clr()
-                    let settings = ajax_settings(url + 'CounterpartyObject/' + accountId + '/' + receivedMessage.objectId, "GET", null)
-                    console.log('initial request settings  ↓ ')
-                    console.log(settings)
-                    $.ajax(settings).done(function (json) {
-                        console.log('initial request response  ↓ ')
-                        console.log(json)
-                        if (json.Bool === true) {
-                            document.getElementById("activated").style.display = "block";
-                            document.getElementById("undefined").style.display = "none";
+        window.addEventListener("message", function (event) {
+            let receivedMessage = event.data
+            ObjectID = receivedMessage.objectId
+            if (receivedMessage.name === 'Open') {
+                clr()
+                let settings = ajax_settings(url + 'CounterpartyObject/' + accountId + '/' + receivedMessage.objectId, "GET", null)
+                $.ajax(settings).done(function (json) {
+                    if (json.Bool === true) {
+                        document.getElementById("activated").style.display = "block";
+                        document.getElementById("undefined").style.display = "none";
 
-                            let participant = json.customers.participant;
-                            let membershipTier = participant.membershipTier
-                            UDSClientID = participant.id;
-                            GlobalxRefURL = "https://admin.uds.app/admin/customers/" + participant.id + '/info';
+                        let participant = json.customers.participant;
+                        let membershipTier = participant.membershipTier
+                        UDSClientID = participant.id;
+                        GlobalxRefURL = "https://admin.uds.app/admin/customers/" + participant.id + '/info';
 
-                            window.document.getElementById("displayName").innerHTML = json.customers.displayName;
-                            window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0, 10);
-                            window.document.getElementById("points").innerHTML = participant.points;
-                            window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
-                            window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
+                        window.document.getElementById("displayName").innerHTML = json.customers.displayName;
+                        window.document.getElementById("lastTransactionTime").innerHTML = participant.lastTransactionTime.substr(0, 10);
+                        window.document.getElementById("points").innerHTML = participant.points;
+                        window.document.getElementById("membershipTierName").innerHTML = membershipTier.name;
+                        window.document.getElementById("membershipTierRate").innerHTML = membershipTier.rate;
 
-                        } else {
-                            document.getElementById("activated").style.display = "none";
-                            document.getElementById("undefined").style.display = "block";
-                        }
+                    } else {
+                        document.getElementById("activated").style.display = "none";
+                        document.getElementById("undefined").style.display = "block";
+                    }
 
-                    })
+                })
 
-                }
-            });
-        } else {
-            window.document.getElementById('NoAdmin').style.display = "block"
-            window.document.getElementById('activated').style.display = "none"
-        }
+            }
+        });
 
 
-        function xRefURL() {
-            window.open(GlobalxRefURL);
-        }
+
 
         function BonusProgramme(ById) {
             document.getElementById("success").style.display = "none"
@@ -206,12 +196,7 @@
                 settings = ajax_settings(url + "Accrue/" + accountId + "/" + document.getElementById(ById).value + "/" + UDSClientID, "GET", null)
             } else settings = ajax_settings(url + "Cancellation/" + accountId + "/" + document.getElementById(ById).value + "/" + UDSClientID, "GET", null)
 
-            console.log('Accrue initial request settings  ↓ ')
-            console.log(settings)
             $.ajax(settings).done(function (json) {
-                console.log('Accrue initial request response  ↓ ')
-                console.log(json)
-
                 if (json.Bool === true) {
                     if (ById === 'inputAccrue') {
                         document.getElementById("success").style.display = "block"
@@ -240,30 +225,47 @@
         }
 
 
-        function handleInput(event) {
-            const input = event.target;
-            const sanitizedValue = input.value.replace(/[^0-9.]/g, '');
-            input.value = sanitizedValue;
-        }
-        function handleKeyDown(event) {
-            // Разрешить использование клавиш Backspace и Delete
-            if (event.key === 'Backspace' || event.key === 'Delete') {
-                return;
-            }
-
-            // Запретить ввод символов и букв
-            if (!/[\d.]/.test(event.key)) {
-                event.preventDefault();
-            }
-        }
 
 
         function clr() {
+            displayName.innerText = ''
+            lastTransactionTime.innerText = ''
+            points.innerText = ''
+
+            Accrue.style.display = 'none'
+            Cancellation.style.display = 'none'
+            success.style.display = 'none'
+            NotSuccess.style.display = 'none'
+            danger.style.display = 'none'
+            window.document.getElementById('undefined').style.display = 'none'
+            NoAdmin.style.display = 'none'
+
+
             document.getElementById('Bonus').value = 0;
             Bonus_UDS()
 
             document.getElementById("success").style.display = "none";
             document.getElementById("danger").style.display = "none";
+        }
+
+
+    </script>
+    <script>
+        function xRefURL() {
+            window.open(GlobalxRefURL);
+        }
+
+        function handleInput(event) {
+            const input = event.target;
+            input.value = input.value.replace(/[^0-9.]/g, '');
+        }
+        function handleKeyDown(event) {
+            if (event.key === 'Backspace' || event.key === 'Delete') return;
+
+            // Запретить ввод символов и букв
+            if (!/[\d.]/.test(event.key)) {
+                event.preventDefault();
+            }
         }
 
         function ajax_settings(url, method, data) {
@@ -287,37 +289,6 @@
 
     .s-min {
         font-size: 10pt;
-    }
-
-    .s-min-8 {
-        font-size: 8px;
-    }
-
-    .myPM {
-        padding-left: 4px !important;
-        margin: 2px !important;
-        margin-right: 11px !important;
-    }
-
-    .myButton {
-        box-shadow: 0px 4px 5px 0px #5d5d5d !important;
-        background-color: #00a6ff !important;
-        color: white !important;
-        border-radius: 50px !important;
-        display: inline-block !important;
-        cursor: pointer !important;
-        padding: 5px 5px !important;
-        text-decoration: none !important;
-    }
-
-    .myButton:hover {
-        background-color: #fffdfd !important;
-        color: #111111 !important;
-    }
-
-    .myButton:active {
-        position: relative !important;
-        top: 1px !important;
     }
 
     .my-bg-gray {
