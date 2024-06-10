@@ -122,14 +122,21 @@ class sendOperations
 
 
         $sumMC = $OldBody->sum - $points * 100;
+
         $pointsPercent = $sumMC > 0 ? ($points * 100) / ($OldBody->sum) * 100 : 0;
         foreach ($OldPositions as $item) {
+            $discount = 0;
+            if (property_exists($item, 'discount')) $discount = $item->discount;
+
+            $discount = $discount + $pointsPercent;
+            if ($discount > 100) $discount = 100;
+
             $Positions[] = [
                 'id' => $item->id,
                 'accountId' => $item->accountId,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
-                'discount' => $pointsPercent,
+                'discount' => $discount,
                 'vat' => $item->vat,
                 'vatEnabled' => $item->vatEnabled,
                 'assortment' => ['meta' => $item->assortment->meta,],
